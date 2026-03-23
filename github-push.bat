@@ -31,10 +31,10 @@ echo.
 echo [1/3] Dodajem sve fajlove...
 git add .
 
-REM Commit with timestamp
-for /f "tokens=1-3 delims=/ " %%a in ("%date%") do set DATUM=%%c-%%b-%%a
-for /f "tokens=1-2 delims=: " %%a in ("%time%") do set VRIJEME=%%a:%%b
-set COMMIT_MSG=update: %DATUM% %VRIJEME%
+REM Get timestamp using PowerShell (reliable on all Windows locales)
+for /f "delims=" %%T in ('powershell -NoProfile -Command "Get-Date -Format \"yyyy-MM-dd HH:mm\""') do set TIMESTAMP=%%T
+
+set COMMIT_MSG=update: %TIMESTAMP%
 
 echo [2/3] Komit: %COMMIT_MSG%
 git commit -m "%COMMIT_MSG%"
