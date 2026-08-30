@@ -38,7 +38,18 @@ only, no Data/Application/Domain/Infrastructure touchpoint.
       `--status-success-bg` tokens instead of a raw Tailwind class.
       Found (not fixed here, correctly out of scope): `PlanDisplay.tsx`
       has extensive hardcoded rainbow gradients — flagged for Task 5.
-- [ ] 4. AI response card restyle (inside `ChatInterface`)
+- [x] 4. AI response card restyle (inside `ChatInterface`) — done
+      2026-08-30. Colour/depth distinction between user, AI, and
+      generated-plan content (brief §18) was already correct via
+      Task 1 tokens. Real fix: user/AI message bubbles, the loading
+      indicator, and the error banner were using `.neu-card`/
+      `.neu-btn-primary` — button classes with hover/active states —
+      on non-clickable elements, implying interactivity that isn't
+      there. New static `.neu-bubble-user` / `.neu-bubble-ai` classes
+      (lighter depth-3, no hover escalation) replace them. Genuine
+      buttons (save, export, suggestions, send) correctly keep their
+      interactive classes — verified nothing non-interactive was
+      missed.
 - [ ] 5. Generated lesson-plan restyle (`PlanDisplay`, `PlanCard`)
 - [ ] 6. Conversation list / history restyle
 - [ ] 7. Suggested-prompt pills restyle

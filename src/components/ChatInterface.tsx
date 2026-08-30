@@ -204,8 +204,8 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
               <div className={cn(
                 'max-w-[85%] rounded-2xl',
                 msg.role === 'user'
-                  ? 'neu-btn-primary rounded-tr-lg px-5 py-4'
-                  : 'neu-card rounded-tl-lg px-5 py-4',
+                  ? 'neu-bubble-user rounded-tr-lg px-5 py-4'
+                  : 'neu-bubble-ai rounded-tl-lg px-5 py-4',
                 msg.isPlan && 'max-w-full w-full !px-4 !py-5'
               )}>
                 {msg.isPlan ? (
@@ -259,7 +259,7 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
             <div className="w-10 h-10 rounded-2xl overflow-hidden neu-card flex-shrink-0">
               <img src={aiAvatarImg} alt="AI" className="w-full h-full object-cover animate-pulse" />
             </div>
-            <div className="neu-card rounded-2xl rounded-tl-lg px-5 py-4 max-w-md">
+            <div className="neu-bubble-ai rounded-2xl rounded-tl-lg px-5 py-4 max-w-md">
               <LoadingIndicator />
             </div>
           </motion.div>
@@ -269,7 +269,7 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="mx-auto max-w-md bg-destructive/8 text-destructive rounded-2xl px-5 py-3.5 text-sm text-center border border-destructive/15 neu-card"
+            className="mx-auto max-w-md bg-destructive/8 text-destructive rounded-2xl px-5 py-3.5 text-sm text-center border border-destructive/15 shadow-depth-2"
           >
             ⚠️ {chat.error}
           </motion.div>

@@ -18,3 +18,8 @@ One line per feature, per Commander E-10.
   badge), replaced with brand/status tokens. New `--status-success`
   token added for the one legitimate non-brand status colour.
   Sprint 02, Task 3.
+- [2026-08-30] [DESIGN] Message bubbles, loading indicator, and error
+  banner in `ChatInterface` moved off button classes (`.neu-card`/
+  `.neu-btn-primary`) onto new static `.neu-bubble-user`/
+  `.neu-bubble-ai` classes — removes false hover/clickable affordance
+  on non-interactive chat content. Sprint 02, Task 4.

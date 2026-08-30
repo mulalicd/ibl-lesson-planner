@@ -214,6 +214,25 @@
     @apply neu-card;
   }
 
+  /* ========= Chat message bubbles (static — not buttons) =========
+     Brief §18: distinguish user/AI/generated-document content via
+     colour + depth, not decoration. Bubbles repeat many times down a
+     scrolling feed, so they use a lighter depth than a standalone
+     card (avoids a visually noisy stack of deep shadows) and have NO
+     hover/active states — unlike .neu-btn-primary / .neu-card, a
+     message bubble isn't clickable and shouldn't look like it is. */
+  .neu-bubble-user {
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    box-shadow: var(--depth-3);
+  }
+  .neu-bubble-ai {
+    background: hsl(var(--card));
+    color: hsl(var(--card-foreground));
+    box-shadow: var(--depth-3);
+    border: 1px solid hsl(var(--border) / 0.4);
+  }
+
   .gradient-mesh {
     background:
       radial-gradient(at 0% 0%, hsl(245 55% 60% / 0.05) 0px, transparent 50%),
