@@ -13,7 +13,14 @@ only, no Data/Application/Domain/Infrastructure touchpoint.
       `--idss-gold` usages already update automatically since
       components consume the tokens, not literal values. See
       `CHANGELOG.md`.
-- [ ] 2. `AppHeader` / navigation restyle
+- [x] 2. `AppHeader` / navigation restyle — done 2026-08-30. Official
+      IDSS logo (brief §33) replaces the AI avatar in the header
+      (avatar image kept, still used in `ChatInterface`). Header
+      elevation changed from the generic hover-escalating `.neu-card`
+      to a static `shadow-depth-2` (brief §44 — implementation
+      freedom on exact shadow values; a sticky bar shouldn't imply
+      it's clickable). Nav active-state colour already correct via
+      Task 1 tokens — no logic changed.
 - [ ] 3. Chat composer restyle (`InputWizard` + composer area in
       `ChatInterface`)
 - [ ] 4. AI response card restyle (inside `ChatInterface`)
