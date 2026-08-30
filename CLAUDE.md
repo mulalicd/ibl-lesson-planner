@@ -107,6 +107,12 @@ the filesystem is not (M-18).
   routine work; it is a separate, explicitly-scoped refactor if ever
   undertaken. Flagged as an architecture note, not a defect to fix
   silently.
+- **Filename convention deviates from E-9 (documented, permanent):**
+  existing component files use PascalCase `.tsx` (`ChatInterface.tsx`,
+  `PlanCard.tsx`), not E-9's kebab-case default. Follow the existing
+  convention for all new component files in this project — do not
+  rename existing files and do not introduce kebab-case alongside
+  them. See `specs/ui-ux-redesign-milky-neumorphic/PLAN.md`.
 - **CURRENT PRIORITY (per Director, 2026-08-30):** the application's
   functionality, AI mechanism, and generated lesson-plan quality are
   considered complete and satisfactory. The active mandate is a

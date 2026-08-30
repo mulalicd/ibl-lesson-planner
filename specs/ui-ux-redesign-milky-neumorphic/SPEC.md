@@ -79,17 +79,15 @@ institution it represents.
   toggle anywhere in `src/`). Not part of this feature unless the
   Director requests it explicitly as new scope.
 
+## Resolved Questions
+
+- **User roles (resolved 2026-08-30 by Director):** no login/roles
+  is intentional and permanent — every teacher shares the same
+  access. Navigation and IA for this redesign should NOT reserve
+  space for a future admin/teacher split.
+
 ## Open Questions
 
-- **User roles:** audit found no auth guard in `App.tsx` and no
-  app-level user/role table — `conversation_messages.role` is a
-  chat-turn label (`'user' | 'model'`), not a permission role. The
-  app currently appears to be single-role / no-login (every visitor
-  is treated as a teacher). Confirm this is intentional before
-  redesign touches navigation — if there *is* an intended
-  admin/teacher distinction planned for later, that changes how
-  navigation should be structured now (M-4: not assuming either way,
-  the Director should confirm).
 - **Two Supabase migration sets:** `supabase/migrations/` and
   `supabase_original/migrations/` both exist with different content
   (flagged in Sprint 01 handoff, `sprints/SPRINT_01.md`). Not
