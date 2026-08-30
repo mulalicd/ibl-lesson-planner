@@ -1,5 +1,15 @@
 # ACTIVITY_LOG.md — IBL Lesson Planner
 
+## 2026-08-30 — Sprint 02 (UI/UX Redesign), Task 1-2 push
+
+**Note (not a redesign task, logged for a future sprint):** after
+pushing Task 2, GitHub reported 29 Dependabot vulnerabilities on the
+default branch (14 high, 14 moderate, 1 low) — pre-existing, unrelated
+to this feature's changes. Out of scope for `ui-ux-redesign-milky-neumorphic`
+(PLAN.md explicitly scopes this to Presentation-layer styling only).
+Recommend a dedicated sprint to review `github.com/mulalicd/ibl-lesson-planner/security/dependabot`
+and update dependencies, especially the 14 "high" severity ones.
+
 ## 2026-08-30 — Sprint 01 (Commander Bootstrap)
 
 **Gotcha (environment):** No push/write credentials available in the

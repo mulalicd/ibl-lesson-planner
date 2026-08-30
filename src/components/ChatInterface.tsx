@@ -221,8 +221,8 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
                         className={cn(
                           'flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all',
                           savedPlanIds.has(msg.id)
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 cursor-default'
-                            : 'neu-btn-primary hover:shadow-md',
+                            ? 'bg-status-success-bg text-status-success border border-status-success/20 cursor-default'
+                            : 'neu-btn-primary hover:shadow-depth-3',
                           savingPlanId === msg.id && 'opacity-70 cursor-wait'
                         )}
                       >

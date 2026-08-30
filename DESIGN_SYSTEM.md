@@ -64,6 +64,12 @@ above instead of duplicated literal shadow values. Behaviour and
 rendered output are unchanged; only the source of the values changed
 (M-11: refactor, not behaviour change).
 
+## Status colours (separate from brand identity)
+
+| Token | Role |
+|---|---|
+| `--status-success` / `--status-success-bg` | "Saved/done" confirmation states — universal UI convention, deliberately kept out of the 5-colour brand palette rather than reusing e.g. bright blue for a meaning it doesn't carry. |
+
 ## Rule
 
 **Never hardcode a hex colour, shadow value, or radius pixel value

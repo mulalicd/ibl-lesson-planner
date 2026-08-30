@@ -21,8 +21,23 @@ only, no Data/Application/Domain/Infrastructure touchpoint.
       freedom on exact shadow values; a sticky bar shouldn't imply
       it's clickable). Nav active-state colour already correct via
       Task 1 tokens — no logic changed.
-- [ ] 3. Chat composer restyle (`InputWizard` + composer area in
-      `ChatInterface`)
+- [x] 3. Chat composer restyle (`InputWizard` + composer area in
+      `ChatInterface`) — done 2026-08-30. Composer itself
+      (`.neu-inset` input, `.neu-btn-primary` send button, `.neu-btn`
+      suggestion pills) was already correctly built and needed no
+      structural change — it inherited the real brand yellow/depth
+      automatically from Task 1's token fix. Actual work was E-11
+      cleanup: `InputWizard.tsx` had six hardcoded rainbow pastel
+      gradients per subject category, three hardcoded tier-badge
+      colours, and five hardcoded colours in the review-summary card
+      — all replaced with token-based treatments (brief §10: "don't
+      use all colours equally"). `ChatInterface.tsx` had one
+      hardcoded green "saved" badge — kept the semantic green
+      (universal save-confirmation convention, not a brand-identity
+      colour) but moved it into new `--status-success` /
+      `--status-success-bg` tokens instead of a raw Tailwind class.
+      Found (not fixed here, correctly out of scope): `PlanDisplay.tsx`
+      has extensive hardcoded rainbow gradients — flagged for Task 5.
 - [ ] 4. AI response card restyle (inside `ChatInterface`)
 - [ ] 5. Generated lesson-plan restyle (`PlanDisplay`, `PlanCard`)
 - [ ] 6. Conversation list / history restyle

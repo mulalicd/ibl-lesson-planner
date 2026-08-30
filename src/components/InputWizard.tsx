@@ -32,15 +32,6 @@ const LANGUAGE_OPTIONS: { value: Language; label: string; flag: string }[] = [
   { value: 'english', label: 'English', flag: '🇬🇧' },
 ];
 
-const PASTEL_CATEGORY_COLORS: Record<string, string> = {
-  'Sprachen': 'from-violet-50 to-purple-50 border-violet-200/60',
-  'Mathematik & Naturwissenschaften': 'from-blue-50 to-cyan-50 border-blue-200/60',
-  'Gesellschaft & Geschichte': 'from-amber-50 to-yellow-50 border-amber-200/60',
-  'Kreativität & Bewegung': 'from-rose-50 to-pink-50 border-rose-200/60',
-  'Technik & Digital': 'from-emerald-50 to-teal-50 border-emerald-200/60',
-  'Schulprogramm': 'from-slate-50 to-gray-50 border-slate-200/60',
-};
-
 export default function InputWizard({ onGenerate, isLoading }: InputWizardProps) {
   const [step, setStep] = useState(0);
   const [subject, setSubject] = useState('');
@@ -136,8 +127,8 @@ export default function InputWizard({ onGenerate, isLoading }: InputWizardProps)
                         className={cn(
                           'px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 border',
                           subject === s
-                            ? 'bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20'
-                            : `bg-gradient-to-br ${PASTEL_CATEGORY_COLORS[group.category] || 'from-muted to-muted'} hover:shadow-md hover:-translate-y-0.5`
+                            ? 'bg-primary text-primary-foreground border-primary shadow-depth-2'
+                            : 'bg-card border-border/50 text-foreground hover:shadow-depth-2 hover:-translate-y-0.5 hover:border-primary/30'
                         )}
                       >
                         {s}
@@ -257,9 +248,9 @@ export default function InputWizard({ onGenerate, isLoading }: InputWizardProps)
                       </div>
                       <span className={cn(
                         'text-[10px] px-2 py-0.5 rounded-full font-bold',
-                        tier === 'MICRO' ? 'bg-emerald-100 text-emerald-700' :
-                        tier === 'STANDARD' ? 'bg-blue-100 text-blue-700' :
-                        'bg-amber-100 text-amber-700'
+                        tier === 'MICRO' ? 'bg-muted text-muted-foreground' :
+                        tier === 'STANDARD' ? 'bg-accent text-accent-foreground' :
+                        'bg-primary/15 text-foreground'
                       )}>
                         {TIER_CONFIG[tier].label}
                       </span>
@@ -302,15 +293,15 @@ export default function InputWizard({ onGenerate, isLoading }: InputWizardProps)
               </div>
               <div className="neu-card p-6 space-y-4 max-w-lg mx-auto">
                 {[
-                  { label: 'Predmet', value: subject, color: 'bg-violet-50 text-violet-700' },
-                  { label: 'Razred', value: `${grade}. razred`, color: 'bg-blue-50 text-blue-700' },
-                  { label: 'Tema', value: topic, color: 'bg-emerald-50 text-emerald-700' },
-                  { label: 'Trajanje', value: `${duration} minuta (${TIER_CONFIG[deriveTier(duration)].label})`, color: 'bg-amber-50 text-amber-700' },
-                  { label: 'Jezik', value: LANGUAGE_OPTIONS.find(l => l.value === language)?.label || language, color: 'bg-rose-50 text-rose-700' },
+                  { label: 'Predmet', value: subject },
+                  { label: 'Razred', value: `${grade}. razred` },
+                  { label: 'Tema', value: topic },
+                  { label: 'Trajanje', value: `${duration} minuta (${TIER_CONFIG[deriveTier(duration)].label})` },
+                  { label: 'Jezik', value: LANGUAGE_OPTIONS.find(l => l.value === language)?.label || language },
                 ].map(item => (
                   <div key={item.label} className="flex items-center justify-between py-2 border-b border-border/20 last:border-0">
                     <span className="text-sm text-muted-foreground font-medium">{item.label}</span>
-                    <span className={cn('text-sm font-semibold px-3 py-1 rounded-lg', item.color)}>
+                    <span className="text-sm font-semibold px-3 py-1 rounded-lg bg-muted/60 text-foreground">
                       {item.value}
                     </span>
                   </div>

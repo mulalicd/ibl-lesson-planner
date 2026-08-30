@@ -86,6 +86,14 @@
     --idss-bright-blue: 196 93% 47%;
     --idss-red: 358 81% 53%;
 
+    /* System status colour (NOT part of the 5-colour brand palette,
+       brief §9 — this is a universal UI convention for "saved/done"
+       confirmation, kept separate from brand identity per E-11's
+       tokenization requirement rather than left as a hardcoded
+       Tailwind class). */
+    --status-success: 152 55% 40%;
+    --status-success-bg: 152 55% 95%;
+
     --sidebar-background: 245 30% 20%;
     --sidebar-foreground: 240 20% 95%;
     --sidebar-primary: 245 55% 65%;

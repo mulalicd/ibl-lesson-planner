@@ -60,6 +60,10 @@ export default {
           "bright-blue": "hsl(var(--idss-bright-blue))",
           red: "hsl(var(--idss-red))",
         },
+        status: {
+          success: "hsl(var(--status-success))",
+          "success-bg": "hsl(var(--status-success-bg))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
