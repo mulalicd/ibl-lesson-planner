@@ -2,7 +2,6 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { MessageSquare, LayoutGrid, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import aiAvatarImg from '@/assets/ai-avatar.jpg';
 
 export default function AppHeader() {
   const location = useLocation();
@@ -13,16 +12,22 @@ export default function AppHeader() {
   ];
 
   return (
-    <header className="flex-shrink-0 h-16 neu-card border-b border-border/30 sticky top-0 z-50 rounded-none">
+    <header className="flex-shrink-0 h-16 bg-card border-b border-border/30 shadow-depth-2 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 md:px-8 h-full flex items-center justify-between gap-4">
-        {/* Logo */}
+        {/* Logo — official IDSS mark. The published asset is white-only,
+            so it sits on a dark-blue (brand structure colour) chip
+            rather than directly on the milky-white header. */}
         <Link to="/chat" className="flex items-center gap-3 group flex-shrink-0">
           <motion.div
             whileHover={{ rotate: 6, scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="w-10 h-10 rounded-2xl overflow-hidden shadow-lg shadow-primary/15"
+            className="w-10 h-10 rounded-xl overflow-hidden bg-secondary shadow-depth-2 flex items-center justify-center p-1.5"
           >
-            <img src={aiAvatarImg} alt="IBL Planer" className="w-full h-full object-cover" />
+            <img
+              src="https://idss.edu.ba/wp-content/uploads/2024/03/logo_white.png"
+              alt="IDSS Sarajevo"
+              className="w-full h-full object-contain"
+            />
           </motion.div>
           <div className="hidden sm:block">
             <h1 className="text-sm font-bold text-foreground tracking-tight leading-tight">
@@ -52,7 +57,7 @@ export default function AppHeader() {
                 {active && (
                   <motion.div
                     layoutId="active-tab"
-                    className="absolute inset-0 rounded-xl bg-primary shadow-md shadow-primary/20"
+                    className="absolute inset-0 rounded-xl bg-primary shadow-depth-2"
                     transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                   />
                 )}
