@@ -57,6 +57,8 @@ export default {
           "light-blue": "hsl(var(--idss-light-blue))",
           "grey-bg": "hsl(var(--idss-grey-bg))",
           emerald: "hsl(var(--idss-emerald))",
+          "bright-blue": "hsl(var(--idss-bright-blue))",
+          red: "hsl(var(--idss-red))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
@@ -73,6 +75,14 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        xl: "var(--radius-xl)",
+      },
+      boxShadow: {
+        "depth-1": "var(--depth-1)",
+        "depth-2": "var(--depth-2)",
+        "depth-3": "var(--depth-3)",
+        "depth-4": "var(--depth-4)",
+        "depth-5": "var(--depth-5)",
       },
       keyframes: {
         "accordion-down": {

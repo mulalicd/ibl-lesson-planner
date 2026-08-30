@@ -6,8 +6,12 @@
 
 @layer base {
   :root {
-    /* Refined Pastel Lavender/Mint Palette */
-    --background: 240 20% 97.5%;
+    /* IDSS Brand Palette — Milky-White 3D Neumorphic (approved
+       Variation 1). Yellow = dominant accent, dark blue = structure,
+       bright blue = interaction/info, red = rare/special accent
+       (see Master UI/UX Redesign Brief §9-10, specs/
+       ui-ux-redesign-milky-neumorphic/PLAN.md "Design Tokens"). */
+    --background: 38 30% 97%;
     --foreground: 230 25% 15%;
 
     --card: 0 0% 100%;
@@ -16,32 +20,71 @@
     --popover: 0 0% 100%;
     --popover-foreground: 230 25% 15%;
 
-    --primary: 245 55% 60%;
-    --primary-foreground: 0 0% 100%;
+    /* Primary = brand yellow #FFCB29 (brief §10: "Yellow should
+       attract attention to primary actions"). Dark foreground for
+       contrast on a light, saturated background. */
+    --primary: 45 100% 58%;
+    --primary-foreground: 230 25% 15%;
 
-    --secondary: 162 40% 52%;
+    /* Secondary = brand dark blue #035EA1 (structure). */
+    --secondary: 206 96% 32%;
     --secondary-foreground: 0 0% 100%;
 
     --muted: 240 14% 93%;
     --muted-foreground: 230 12% 46%;
 
-    --accent: 245 40% 95%;
-    --accent-foreground: 245 55% 50%;
+    /* Accent = brand bright blue #08ABE6 (interaction/information),
+       light tint for badge/highlight backgrounds, saturated hue for
+       the foreground text/icon on top of it. */
+    --accent: 196 85% 95%;
+    --accent-foreground: 196 93% 38%;
 
-    --destructive: 0 65% 55%;
+    /* Destructive = brand red #E8262C (brief §10: "Red should remain
+       comparatively rare" — attention/warnings/destructive only). */
+    --destructive: 358 81% 53%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 240 12% 90%;
     --input: 240 12% 90%;
-    --ring: 245 55% 60%;
+    /* Focus ring stays bright blue regardless of what --primary is,
+       so it remains a clear, accessible indicator on any surface
+       (brief §31 accessibility). */
+    --ring: 196 93% 47%;
 
+    /* Default corner radius stays 16px (brief §15 approved default)
+       — full scale below for components that need a different step. */
     --radius: 1rem;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
 
-    --idss-dark-blue: 245 55% 60%;
-    --idss-gold: 42 78% 58%;
-    --idss-light-blue: 245 40% 96%;
-    --idss-grey-bg: 240 20% 97.5%;
+    /* Depth scale (brief §13): 1 subtle → 5 maximum. Approved
+       default for this project is depth 4. Values match what
+       .neu-card/.neu-btn already shipped with — this only gives
+       them names so a future personalization control (brief §23)
+       can swap depth by changing which token a surface points to,
+       without touching component files (E-11). */
+    --depth-1: 2px 2px 5px var(--neu-dark), -2px -2px 5px var(--neu-light);
+    --depth-2: 3px 3px 7px var(--neu-dark), -3px -3px 7px var(--neu-light);
+    --depth-3: 4px 4px 10px var(--neu-dark), -4px -4px 10px var(--neu-light);
+    --depth-4: 5px 5px 12px var(--neu-dark), -5px -5px 12px var(--neu-light);
+    --depth-5: 7px 7px 18px var(--neu-dark), -7px -7px 18px var(--neu-light);
+
+    /* IDSS-branded aliases (brief §9) — kept under the existing
+       `--idss-*` variable names already consumed by PlanCard.tsx /
+       PlanPage.tsx (`text-idss-gold`, `fill-idss-gold`) so those
+       call sites now render the correct brand yellow with zero code
+       changes. `--idss-emerald` is intentionally left untouched:
+       it isn't part of the approved 5-colour brand palette and isn't
+       referenced anywhere in the codebase (verified by audit). */
+    --idss-dark-blue: 206 96% 32%;
+    --idss-gold: 45 100% 58%;
+    --idss-light-blue: 196 85% 95%;
+    --idss-grey-bg: 38 30% 97%;
     --idss-emerald: 162 40% 52%;
+    --idss-bright-blue: 196 93% 47%;
+    --idss-red: 358 81% 53%;
 
     --sidebar-background: 245 30% 20%;
     --sidebar-foreground: 240 20% 95%;
@@ -104,16 +147,12 @@
   .neu-card {
     background: hsl(var(--card));
     border-radius: var(--radius);
-    box-shadow:
-      5px 5px 12px var(--neu-dark),
-      -5px -5px 12px var(--neu-light);
+    box-shadow: var(--depth-4);
     border: 1px solid hsl(var(--border) / 0.45);
     transition: box-shadow 0.25s ease, transform 0.2s ease;
   }
   .neu-card:hover {
-    box-shadow:
-      7px 7px 16px var(--neu-dark),
-      -7px -7px 16px var(--neu-light);
+    box-shadow: var(--depth-5);
   }
 
   .neu-inset {
@@ -128,16 +167,12 @@
   .neu-btn {
     background: hsl(var(--card));
     border-radius: calc(var(--radius) - 2px);
-    box-shadow:
-      3px 3px 7px var(--neu-dark),
-      -3px -3px 7px var(--neu-light);
+    box-shadow: var(--depth-2);
     border: 1px solid hsl(var(--border) / 0.35);
     transition: box-shadow 0.15s ease, transform 0.1s ease;
   }
   .neu-btn:hover {
-    box-shadow:
-      4px 4px 10px var(--neu-dark),
-      -4px -4px 10px var(--neu-light);
+    box-shadow: var(--depth-3);
   }
   .neu-btn:active {
     box-shadow:
