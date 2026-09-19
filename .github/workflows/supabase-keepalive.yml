@@ -1,1 +1,25 @@
+name: Supabase keepalive
 
+on:
+  schedule:
+    # Svaki dan u 06:00 UTC (GitHub cron uvijek radi u UTC)
+    - cron: "0 6 * * *"
+  workflow_dispatch: # omogućava ručno pokretanje iz Actions taba
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Query Supabase table
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_TABLE: ${{ secrets.SUPABASE_TABLE }}
+        run: |
+          curl --fail --silent --show-error \
+            --retry 3 --retry-delay 10 \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            "$SUPABASE_URL/rest/v1/$SUPABASE_TABLE?select=*&limit=1"
+          echo
+          echo "Supabase ping OK"
