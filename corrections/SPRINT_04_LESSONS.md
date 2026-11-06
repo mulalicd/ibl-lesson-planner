@@ -94,3 +94,9 @@ Date: 2026-11-06
   a real Gemini call (1 request of school quota) → post-deploy probes
   must use malformed or unauthenticated-only requests until the new
   function is confirmed live.
+- Deploy run #4: the Director deleted the old token but GitHub still
+  held it ("Invalid access token"). The ACA's gate 3 then reported
+  "Missing secrets", which was misleading: the list command failed and
+  its empty output was read as "no secrets" → a gate must
+  distinguish "check failed" from "check said no" (E-5: no silent
+  failures, specific messages).
