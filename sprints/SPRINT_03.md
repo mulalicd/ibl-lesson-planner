@@ -116,6 +116,26 @@ Details: audit report addendum N.
   Director approval to run.
 - P1 PLAN revised against the live schema (TASKS 0 done).
 
+## ADDENDUM 3 — plans delete lockdown applied (2026-11-06)
+
+The Director ran the preview (46 plans; conversations tables empty;
+full grants) and then `02_APPLY_lockdown.sql`.
+
+Verified live with the public key, using non-destructive zero-match
+requests:
+
+| Check | Result |
+|---|---|
+| plans read | still possible, count 46 (app unaffected) |
+| plans UPDATE (app favourite/soft-delete path) | HTTP 204, still works |
+| plans DELETE | HTTP 401 `permission denied` |
+| conversations read | HTTP 401 |
+| pin_sessions read | HTTP 401 |
+
+Remaining public exposure until P1:
+- anyone can read, create and change plans
+- `ibl-chat` is open
+
 ## HANDOFF NOTE — Sprint 03 / P0
 
 **Completed:** see OPSEG items 1–5.
