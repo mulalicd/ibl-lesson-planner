@@ -44,3 +44,31 @@ Date: 2026-11-06
 - `ENGINEERING_RULES.md` E-18 → add: "rehearse owner scripts on a
   copy built from a verified LIVE schema dump, not from the repo's
   migrations". Why: this project's migrations didn't match production.
+
+## Addendum — rollout (2026-11-06)
+
+### Gotchas Discovered
+- The Director ran rollout step 8 (deploy) right after step 4,
+  skipping 5–7. It failed only because `SUPABASE_ACCESS_TOKEN` was
+  missing; otherwise the new function would have refused every AI
+  request (no `consume_ai_quota` yet) → the order now lives in the
+  workflow itself (gates: token, step A applied, secrets present)
+  rather than only in a document. A written order is not a control.
+- The ACA probed RPC existence by calling `cleanup_expired_sessions`,
+  a function that DELETEs. It was harmless only because anon had been
+  revoked on `pin_sessions` → existence probes must target
+  side-effect-free functions only.
+- The production bundle was still the old one minutes after the merge
+  (`index-D52sT2gf.js`), and no Vercel check appears on PRs (Netlify
+  does) → whether Vercel auto-deploys `main` is unverified [UNK].
+- After a merged PR, restarting the designated branch from `main` is
+  a fast-forward of the old remote branch, so a plain push suffices;
+  a force push is neither needed nor allowed.
+
+### Commander Improvement Candidates
+- `ENGINEERING_RULES.md` E-18/E-19 → "encode rollout order as
+  machine-checked preconditions in the deploy path (CI gate), not
+  only as owner instructions". Why: a non-technical owner skipped
+  steps.
+- E-4 / M-4 → "never call an unknown or destructive RPC to test
+  existence; use a function known to be side-effect free".

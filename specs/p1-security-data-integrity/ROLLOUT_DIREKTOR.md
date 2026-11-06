@@ -17,7 +17,7 @@ snimak ekrana.
 | 5 | Prijaviti se jednom kao `direktor@idss.ba` na `https://ibl-lesson-planner.vercel.app` (link stiže na e-mail) | browser | — |
 | 6 | SQL korak A: `01_PREVIEW` → provjeriti → `02_APPLY` | `supabase/owner-scripts/2026-11-06_p1-a-roles-ownership/` | `03_ROLLBACK.sql` |
 | 7 | Secret `ALLOWED_ORIGINS` = `https://ibl-lesson-planner.vercel.app` | Supabase → Edge Functions → Secrets | obrisati secret |
-| 8 | Deploy Edge Function: GitHub → Actions → "Deploy Edge Function (manual)" → Run workflow → upisati `DEPLOY` | GitHub (treba secret `SUPABASE_ACCESS_TOKEN`) | ponovni deploy prethodne verzije |
+| 8 | Deploy Edge Function: GitHub → Actions → "Deploy Edge Function (manual)" → Run workflow → upisati `DEPLOY`. Prije toga jednom: Supabase → Account → Access Tokens → Generate, i upisati ga na GitHubu (Settings → Secrets and variables → Actions → New repository secret, ime `SUPABASE_ACCESS_TOKEN`). Deploy sam odbija start ako korak 6 ili 7 nije urađen | GitHub | ponovni deploy prethodne verzije |
 | 9 | SQL korak B: `01_PREVIEW` → provjeriti → `02_APPLY` | `supabase/owner-scripts/2026-11-06_p1-b-row-level-security/` | `03_ROLLBACK.sql` |
 | 10 | Test: vi vidite svih 46 planova; jedan nastavnik se prijavi i vidi samo svoje; generisanje plana radi | browser | rollback B |
 
