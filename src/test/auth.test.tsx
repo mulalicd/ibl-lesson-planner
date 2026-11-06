@@ -3,6 +3,7 @@ import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 const authMock = vi.hoisted(() => ({
+  listener: null as null | ((event: string, session: unknown) => void),
   session: null as null | { access_token: string; user: { email: string } },
   signInWithOtp: vi.fn(),
   signOut: vi.fn(),
@@ -12,7 +13,10 @@ vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
     auth: {
       getSession: vi.fn(async () => ({ data: { session: authMock.session }, error: null })),
-      onAuthStateChange: vi.fn(() => ({ data: { subscription: { unsubscribe: vi.fn() } } })),
+      onAuthStateChange: vi.fn((cb: (event: string, session: unknown) => void) => {
+        authMock.listener = cb;
+        return { data: { subscription: { unsubscribe: vi.fn() } } };
+      }),
       signInWithOtp: authMock.signInWithOtp,
       signOut: authMock.signOut,
     },
@@ -22,7 +26,7 @@ vi.mock('@/integrations/supabase/client', () => ({
 import AuthProvider from '@/components/AuthProvider';
 import RequireAuth from '@/components/RequireAuth';
 import LoginPage, { LOGIN_MESSAGES } from '@/pages/LoginPage';
-import { IDLE_TIMEOUT_MS, IDLE_WARNING_MS } from '@/hooks/useIdleSignOut';
+import { IDLE_TIMEOUT_MS, IDLE_WARNING_MS, LAST_ACTIVITY_KEY } from '@/hooks/useIdleSignOut';
 import { signalActivity } from '@/lib/auth';
 
 function renderAt(path: string) {
@@ -44,7 +48,7 @@ beforeEach(() => {
   authMock.signInWithOtp.mockReset();
   authMock.signOut.mockReset().mockResolvedValue({ error: null });
 });
-afterEach(() => vi.useRealTimers());
+afterEach(() => { vi.useRealTimers(); localStorage.clear(); });
 
 describe('route guard', () => {
   it('sends a signed-out visitor from /dashboard to the login page', async () => {
@@ -144,6 +148,42 @@ describe('30-minute idle sign-out', () => {
     expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument();
     await act(async () => { vi.advanceTimersByTime(IDLE_WARNING_MS + 1_000); });
     expect(authMock.signOut).not.toHaveBeenCalled();
+    vi.unstubAllGlobals();
+  });
+
+  it('signs out on return when the stored last activity is older than 30 min (closed tab)', async () => {
+    localStorage.setItem(LAST_ACTIVITY_KEY, String(Date.now() - IDLE_TIMEOUT_MS - 60_000));
+    const assign = await signedInChatNoWait();
+    await waitFor(() => expect(authMock.signOut).toHaveBeenCalled());
+    await waitFor(() => expect(assign).toHaveBeenCalledWith('/login?razlog=neaktivnost'));
+    vi.unstubAllGlobals();
+  });
+
+  it('keeps a recent session on return (last activity 5 min ago)', async () => {
+    localStorage.setItem(LAST_ACTIVITY_KEY, String(Date.now() - 5 * 60_000));
+    await signedInChat();
+    expect(authMock.signOut).not.toHaveBeenCalled();
+    vi.unstubAllGlobals();
+  });
+
+  async function signedInChatNoWait() {
+    authMock.session = { access_token: 't', user: { email: 'a@idss.ba' } };
+    const assign = vi.fn();
+    vi.stubGlobal('location', { ...window.location, assign, origin: 'http://localhost' });
+    renderAt('/chat');
+    return assign;
+  }
+
+  it('a fresh magic-link sign-in is not undone by a stale timestamp from yesterday', async () => {
+    localStorage.setItem(LAST_ACTIVITY_KEY, String(Date.now() - 24 * 60 * 60_000));
+    const assign = vi.fn();
+    vi.stubGlobal('location', { ...window.location, assign, origin: 'http://localhost' });
+    renderAt('/chat'); // not signed in yet -> login
+    await screen.findByRole('heading', { name: 'Prijava' });
+    const fresh = { access_token: 't2', user: { email: 'a@idss.ba' } };
+    await act(async () => { authMock.listener?.('SIGNED_IN', fresh); });
+    expect(authMock.signOut).not.toHaveBeenCalled();
+    expect(assign).not.toHaveBeenCalled();
     vi.unstubAllGlobals();
   });
 });
