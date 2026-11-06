@@ -71,7 +71,14 @@ jobs:
         run: |
           if ! out=$(supabase secrets list --project-ref "$PROJECT_REF" -o json 2>&1); then
             echo "$out"
-            echo "::error::Could not read Edge Function secrets — the SUPABASE_ACCESS_TOKEN is invalid, expired or lacks permission (see the line above). Nothing was deployed."
+            if echo "$out" | grep -q "edge_functions_secrets_read"; then
+              # Token may deploy but not read secrets. Existence of ALLOWED_ORIGINS and
+              # GEMINI_KEY_1 was verified in run #3 (2026-11-06 23:03); the post-deploy
+              # CORS check below detects a missing ALLOWED_ORIGINS.
+              echo "::warning::Token cannot read secrets (edge_functions_secrets_read). Skipping this gate; the post-deploy check verifies ALLOWED_ORIGINS."
+              exit 0
+            fi
+            echo "::error::Could not read Edge Function secrets — the SUPABASE_ACCESS_TOKEN is invalid or expired (see the line above). Nothing was deployed."
             exit 1
           fi
           names=$(echo "$out" | jq -r '.[].name')
@@ -97,6 +104,9 @@ jobs:
           sleep 10
           code=$(curl -sS -o /dev/null -w "%{http_code}" -X OPTIONS "$SUPABASE_URL/functions/v1/ibl-chat" -H "Origin: $PROD_ORIGIN" -H "Access-Control-Request-Method: POST")
           echo "preflight HTTP $code"
-          if [ "$code" != "204" ]; then
-            echo "::warning::Preflight for $PROD_ORIGIN returned $code (expected 204). Check ALLOWED_ORIGINS. With verify_jwt=on, the platform may also answer preflight itself."
+          allow=$(curl -sS -o /dev/null -D - -X OPTIONS "$SUPABASE_URL/functions/v1/ibl-chat" -H "Origin: $PROD_ORIGIN" -H "Access-Control-Request-Method: POST" | grep -i '^access-control-allow-origin:' | tr -d '\r' | awk '{print $2}')
+          echo "allow-origin: ${allow:-<none>}"
+          if [ "$allow" != "$PROD_ORIGIN" ]; then
+            echo "::error::The new function does not allow $PROD_ORIGIN — ALLOWED_ORIGINS is missing or wrong (Supabase -> Edge Functions -> Secrets). The AI planner will not work in the browser until it is fixed."
+            exit 1
           fi
