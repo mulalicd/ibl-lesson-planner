@@ -5,17 +5,16 @@ FEATURE_LIFECYCLE Step 3 and the E-19 rollout order in PLAN.md. Each
 task is its own commit `[p1-security] (Sprint 04, Task n)`.
 
 **Blocked until** (SPEC questions 2, 3 and 5 answered in DL-P06; still open: SMTP provider details for `direktor@idss.ba`, confirmation of the AI cap, Supabase plan Free/Pro, question 6):
-- (a) the Director returns the result of
-  `supabase/owner-scripts/2026-11-06_p1-schema-dump/01_READ_ONLY_schema_dump.sql`
-  and PLAN.md is re-checked against it
+- (a) ~~live schema dump~~ DONE 2026-11-06, PLAN.md revised (see its
+  "Live schema verified" section)
 - (b) the SPEC open questions 1–6 are answered
 - (c) explicit Director approval of this plan
 
-- [ ] 0. Re-check PLAN.md against the live schema dump; revise if it
+- [x] 0. Re-check PLAN.md against the live schema dump (2026-11-06); revise if it
       differs (no task below starts on an unverified schema).
 - [ ] 1. Database migration — PLAN.md "Data Model":
       - owner SQL A (roles, `is_admin()`, `owner_id`, backfill,
-        domain trigger) and owner SQL B (RLS, revokes, length
+        domain trigger) and owner SQL B (enable RLS + policies, revokes;
         constraints)
       - each with a read-only preview + `DO` block + rollback, in
         `supabase/owner-scripts/<date>_p1-*/`

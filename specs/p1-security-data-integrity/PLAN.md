@@ -3,7 +3,30 @@
 Status: DRAFT for Director review — 2026-11-06. Not approved for
 implementation.
 
-**Hard prerequisite (blocks every task in TASKS.md):** the Director
+**Live schema verified 2026-11-06** (Director ran the read-only
+dump). The differences from the repo, and their effect on this PLAN:
+- Production matches `supabase_original/migrations/001_initial.sql`
+  plus the repo's tables. **RLS is OFF on all four tables and there
+  are zero policies**: the repo's `Anyone can …` policies were never
+  applied.
+- `anon`/`authenticated` hold ALL privileges, so the public could
+  hard-DELETE plans; this was verified live without deleting
+  anything. Emergency script `2026-11-06_plans-delete-lockdown/`
+  addresses it.
+- Length CHECKs (subject ≤100, topic ≤200, notes/prior ≤500) and
+  `duration_min 10–240` already exist live, so the length-limit step
+  is removed.
+- `is_favourite`/`is_deleted` are `NOT NULL`; indexes include FTS.
+- Three duplicate `BEFORE UPDATE` triggers on `plans` set
+  `updated_at`. Harmless and redundant → P2 cleanup, not P1.
+- `auth.users` has 0 rows: nobody has ever signed in, so the
+  Director's first sign-in (rollout step 3) creates the admin
+  account.
+- No storage buckets. `cleanup_expired_sessions()` is executable by
+  anon but now fails on the revoked table → drop in P1 cleanup
+  (Director decision on unused objects).
+
+**Original prerequisite (now satisfied):** the Director
 runs `supabase/owner-scripts/2026-11-06_p1-schema-dump/01_READ_ONLY_schema_dump.sql`
 (and optionally `02_…migration_history.sql`) on production and
 returns the result. The live schema is known to differ from
@@ -59,17 +82,17 @@ file for each step.
    - Backfill: all existing rows (46 on 2026-11-06) get the admin's
      id (DL-P05). After the backfill, a post-check asserts zero rows
      with `owner_id IS NULL`.
-4. **RLS on `plans`** — drop the three `Anyone can …` policies and
-   create:
+4. **RLS on `plans`** — `ALTER TABLE … ENABLE ROW LEVEL SECURITY`
+   (currently OFF, with no policies) and create:
    - SELECT: `owner_id = auth.uid() OR is_admin()`
    - INSERT: `WITH CHECK (owner_id = auth.uid())`
    - UPDATE: `USING (owner_id = auth.uid() OR is_admin())`,
      `WITH CHECK (owner_id = auth.uid() OR is_admin())`
    - no DELETE policy: delete stays a soft delete via `is_deleted`
    - `REVOKE ALL … FROM anon`
-5. **`conversations`, `conversation_messages`** (unused, 0 rows): drop
-   the `Anyone can …` policies and `REVOKE ALL … FROM anon,
-   authenticated`. Not dropped (non-regression; deletion needs a
+5. **`conversations`, `conversation_messages`** (unused, 0 rows):
+   closed by the emergency plans-delete script; P1 additionally
+   enables RLS on them. Not dropped (non-regression; deletion needs a
    separate decision).
 6. **`pin_sessions`**: already locked by the emergency script if the
    Director ran it (`supabase/owner-scripts/2026-11-06_pin-sessions-lockdown/`);
@@ -95,11 +118,11 @@ file for each step.
      `public.consume_ai_quota()`. It checks the caps for `auth.uid()`,
      exempts `is_admin()`, inserts one row, and returns allowed/denied
      plus the remaining count.
-9. **Length limits** (from `supabase_original/…/001_initial.sql`):
-   - `subject` ≤ 100, `topic` ≤ 200, `prior_knowledge`/`notes` ≤ 500
-   - added `NOT VALID`, so existing rows can't fail the migration
-   - the preview reports existing violations, and `VALIDATE
-     CONSTRAINT` runs only if there are none
+9. **Repo re-sync (M-7)**: a baseline file
+   `supabase/migrations/<date>_baseline_live_schema.sql` reproduces
+   the verified live schema, so the repo matches production again.
+   The two old Lovable migrations and `supabase_original/` are marked
+   historical in a README; they are not deleted.
 
 ## API / Server Actions
 
@@ -156,7 +179,7 @@ No new `VITE_` variables.
 | 2 | Frontend with login + guard + token in `useChat` deployed. Old permissive policies are still active, so a signed-in user passes them; nothing breaks | ACA (PR) → Director merges | revert deploy |
 | 3 | Director signs in once → `auth.users` row exists. A teacher test account signs in | Director | — |
 | 4 | Owner SQL A (`DO` block): `user_roles` + `is_admin()` + admin seed + `owner_id` + backfill + domain trigger. Pre-check: Director user exists. Post-check: admin row present, zero NULL `owner_id` | Director runs | Rollback A |
-| 5 | Owner SQL B (`DO` block): new RLS policies, revokes, length constraints. Post-check: `has_table_privilege('anon', …)` false | Director runs | Rollback B (restores the exact previous policies) |
+| 5 | Owner SQL B (`DO` block): enable RLS + new policies, revoke anon. Post-check: `has_table_privilege('anon', …)` false; admin and teacher row counts as expected | Director runs | Rollback B (disables RLS and restores the previous grants — the state verified in the 2026-11-06 dump) |
 | 6 | Edge Function deployed with E-6 + `verify_jwt` + CORS allow-list | ACA prepares, Director deploys (or ACA with access) | redeploy previous version |
 | 7 | Production verification with the public key (repeat of the 2026-11-06 checks) + Director and teacher smoke test | ACA + Director | — |
 

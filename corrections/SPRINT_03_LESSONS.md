@@ -73,3 +73,24 @@ Date: 2026-11-06
 - `initial_instructions.md` (audit-gated bootstrap) → add a live
   public-key probe (row counts only) of every table, so live-vs-repo
   schema drift is found at bootstrap, not months later.
+
+## Addendum 2 (2026-11-06, live dump)
+
+### Gotchas Discovered
+- Repo migrations claimed RLS + `Anyone can …` policies; live has RLS
+  OFF and zero policies, so the public had full DELETE/TRUNCATE
+  rights → found only via the owner-run dump → "migration files
+  exist" ≠ "migration applied" (M-7, M-10).
+- A zero-match `DELETE ...?id=eq.<nil uuid>` with the public key is a
+  safe, non-destructive way to prove delete permission live
+  (HTTP 200 + `[]`).
+- The SQL Editor printed "Success. No rows returned" for the `DO`
+  block. The NOTICE text isn't always visible, so verification must
+  come from an independent check (the live probe), not the editor
+  message.
+
+### Commander Improvement Candidates
+- `ENGINEERING_RULES.md` E-18 → add: "success of an owner-run `DO`
+  block is verified by an independent read-only check (live probe or
+  preview re-run), because the dashboard may not display NOTICE
+  output".

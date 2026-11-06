@@ -100,6 +100,22 @@ Live production checks (public key, counts only, no writes):
 
 Details: audit report addendum N.
 
+## ADDENDUM 2 — Director ran owner scripts (2026-11-06)
+
+- `pin_sessions` preview: RLS off, 30 rows, newest 2026-03-19, 0
+  created in the last 30 days, full anon grants → lockdown applied
+  by the Director. **Verified live:** anon read → 401 `permission
+  denied for table pin_sessions`; `plans` still 46.
+- P1 schema dump received. RLS is off on all tables with zero
+  policies, so anon could hard-DELETE plans (verified with a
+  zero-match DELETE → HTTP 200; count unchanged at 46).
+- Prepared + tested second emergency script
+  `supabase/owner-scripts/2026-11-06_plans-delete-lockdown/`. It
+  revokes DELETE/TRUNCATE on `plans` and closes the empty
+  conversations tables; app operations are unchanged. Awaiting
+  Director approval to run.
+- P1 PLAN revised against the live schema (TASKS 0 done).
+
 ## HANDOFF NOTE — Sprint 03 / P0
 
 **Completed:** see OPSEG items 1–5.
