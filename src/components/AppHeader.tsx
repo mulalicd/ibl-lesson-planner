@@ -16,29 +16,21 @@ export default function AppHeader() {
   return (
     <header className="flex-shrink-0 h-16 bg-card border-b border-border/30 shadow-depth-2 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 md:px-8 h-full flex items-center justify-between gap-4">
-        {/* Logo — official IDSS mark. The published asset is white-only,
-            so it sits on a dark-blue (brand structure colour) chip
-            rather than directly on the milky-white header. */}
-        <Link to="/chat" className="flex items-center gap-3 group flex-shrink-0">
-          <motion.div
-            whileHover={{ rotate: 6, scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="w-10 h-10 rounded-xl overflow-hidden bg-secondary shadow-depth-2 flex items-center justify-center p-1.5"
-          >
-            <img
-              src="https://idss.edu.ba/wp-content/uploads/2024/03/logo_white.png"
-              alt="IDSS Sarajevo"
-              className="w-full h-full object-contain"
-            />
-          </motion.div>
-          <div className="hidden sm:block">
-            <h1 className="text-sm font-bold text-foreground tracking-tight leading-tight">
-              IBL Planer
-            </h1>
-            <p className="text-[10px] text-muted-foreground font-medium tracking-widest uppercase">
-              IDSS Sarajevo
-            </p>
-          </div>
+        {/* Official IDSS logo (Director-supplied, 2026-11-06), served locally
+            from /public/brand (no hot-link). Colours snapped to the exact
+            five IDSS hex values (CONSTITUTION rule 6); original kept as
+            public/brand/idss-logo-original.png. */}
+        <Link to="/chat" className="flex items-center gap-3 group flex-shrink-0" aria-label="IBL Planer — početna">
+          <img
+            src="/brand/idss-logo.png"
+            alt="Internationale Deutsche Schule Sarajevo"
+            width={1460}
+            height={443}
+            className="h-8 sm:h-9 w-auto"
+          />
+          <span className="hidden md:block border-l border-border/60 pl-3 text-sm font-bold text-foreground tracking-tight">
+            IBL Planer
+          </span>
         </Link>
 
         {/* Center Nav */}

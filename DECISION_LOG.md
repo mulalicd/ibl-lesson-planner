@@ -314,4 +314,27 @@ next Edge Function deploy.
 
 ---
 
+## DL-P11 — Official IDSS logo in the app
+
+**Date:** 2026-11-06 · **Decided by:** Director (logo supplied: "preuzmi,
+pohrani u projekat i primijeni")
+
+- `public/brand/idss-logo-original.png`: the file exactly as supplied
+  (reference, not displayed).
+- `public/brand/idss-logo.png`: identical artwork with colours snapped
+  to the exact five IDSS hex values. The supplied file was off by 1 in
+  each channel (e.g. `#035FA1` vs `#035EA1`), and CONSTITUTION rule 6
+  requires exact values. Used in the app header on the current light
+  theme.
+- `public/brand/idss-logo-on-dark.png`: **variant, pending Director
+  approval.** The black wordmark and black square are rendered in IDSS
+  yellow so the logo stays visible on black (login screen). No
+  five-colour background shows the original unchanged.
+- The header no longer hot-links `idss.edu.ba` (audit S-8 fixed).
+- Not changed: the favicon/app icons in `public/` (an illustrated
+  portrait uploaded by the Director in September). Director decision
+  needed.
+
+---
+
 *Project Decision Log — IBL Lesson Planner — under Commander v1.7.0*
