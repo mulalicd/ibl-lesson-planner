@@ -257,4 +257,27 @@ scope; each item is flagged for Director review.
 
 ---
 
+## DL-P08 — One production URL: Vercel only; the Netlify copy is retired
+
+**Date:** 2026-11-06 · **Decided by:** Director (option A)
+
+**Finding:** the repo was also connected to Netlify. Every push to
+`main` deployed a second public copy at
+`https://ibl-lesson-planner.netlify.app`.
+
+**Decision:** the only production URL is
+`https://ibl-lesson-planner.vercel.app` (DL-P06 item 2). The Director
+deletes the Netlify site or stops its builds. The Netlify origin is
+NOT added to Supabase Redirect URLs or `ALLOWED_ORIGINS`.
+
+**Rationale:**
+- P1 binds sign-in redirects and the AI CORS allow-list to one origin.
+- A second copy would break silently after rollout step 8.
+- Two live copies of one app violate M-7.
+
+**Leftover:** `public/_redirects` (a Netlify file) is harmless on
+Vercel. Remove it in P2 cleanup.
+
+---
+
 *Project Decision Log — IBL Lesson Planner — under Commander v1.7.0*

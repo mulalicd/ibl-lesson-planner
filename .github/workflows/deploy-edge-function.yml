@@ -83,7 +83,9 @@ jobs:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: |
           if [ "${{ inputs.verify_jwt }}" = "off" ]; then EXTRA="--no-verify-jwt"; else EXTRA=""; fi
-          supabase functions deploy ibl-chat --project-ref "$PROJECT_REF" $EXTRA
+          # --yes: the CLI asks for confirmation and cannot in CI ("Nothing was changed" otherwise).
+          # Choosing to run this workflow with DEPLOY is the confirmation.
+          supabase functions deploy ibl-chat --project-ref "$PROJECT_REF" --yes $EXTRA
 
       - name: "Check — CORS answers for the production origin"
         run: |

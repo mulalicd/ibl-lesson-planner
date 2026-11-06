@@ -84,3 +84,13 @@ Date: 2026-11-06
   ever reached production → the audit assumed "deployed on Vercel" =
   "main is live" [M-10] → a live check of the production bundle hash
   should be part of every bootstrap audit.
+- Deploy run #2: all three gates passed (token, step A, secrets), but
+  the latest Supabase CLI now requires `--yes` in non-interactive mode
+  ("Nothing was changed") → added `--yes` → using `version: latest`
+  for a CLI in CI invites behaviour changes; pin it once a working
+  version is known (P2).
+- While checking the live function, the ACA sent a valid-shaped chat
+  request with the public key. The OLD (unauthenticated) function ran
+  a real Gemini call (1 request of school quota) → post-deploy probes
+  must use malformed or unauthenticated-only requests until the new
+  function is confirmed live.
