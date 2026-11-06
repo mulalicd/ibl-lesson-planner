@@ -14,8 +14,7 @@ task is its own commit `[p1-security] (Sprint 04, Task n)`.
       differs (no task below starts on an unverified schema).
 - [ ] 1. Database migration — PLAN.md "Data Model":
       - owner SQL A (roles, `is_admin()`, `owner_id`, backfill,
-        domain trigger) and owner SQL B (enable RLS + policies, revokes;
-        constraints)
+        domain trigger) and owner SQL B (enable RLS + policies, revokes)
       - each with a read-only preview + `DO` block + rollback, in
         `supabase/owner-scripts/<date>_p1-*/`
       - rehearsed twice on a local Supabase-shaped copy with
