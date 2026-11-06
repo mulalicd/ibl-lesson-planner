@@ -7,7 +7,8 @@
 //
 // Required Edge Function secrets: GEMINI_KEY_1..GEMINI_KEY_8 (at least one),
 // ALLOWED_ORIGINS (comma-separated, e.g. https://ibl-lesson-planner.vercel.app).
-// Provided by the Supabase platform: SUPABASE_URL, SUPABASE_ANON_KEY.
+// Provided by the Supabase platform: SUPABASE_URL, SUPABASE_ANON_KEY
+// (optional fallback secret: PUBLISHABLE_KEY).
 
 import { createClient } from "@supabase/supabase-js";
 import { IblChatRequestSchema } from "../../../src/lib/validation/schemas.ts";
@@ -395,7 +396,9 @@ Deno.serve(async (req) => {
     const authHeader = req.headers.get("Authorization") ?? "";
     const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
-    const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
+    // Platform-provided; PUBLISHABLE_KEY is an optional fallback secret for projects
+    // whose legacy anon key is disabled (custom secrets may not start with SUPABASE_).
+    const anonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? Deno.env.get("PUBLISHABLE_KEY");
     if (!supabaseUrl || !anonKey) {
       logError("config", "SUPABASE_URL / SUPABASE_ANON_KEY missing");
       return fail(cors, "INTERNAL");

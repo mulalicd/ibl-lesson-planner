@@ -33,7 +33,7 @@ task is its own commit `[p1-security] (Sprint 04, Task n)`.
 - [x] 5. Repository function — OMITTED: per PLAN.md "Deviation
       recorded", no A-3 repository layer in P1 (DL-P01); RLS is the
       enforcement point.
-- [ ] 6. Domain logic — role/domain rules live in SQL
+- [x] 6. Domain logic — role/domain rules live in SQL
       (`is_admin()`, domain trigger) per PLAN.md; a client-side
       domain pre-check helper for the friendly message only.
 - [x] 7. Edge Function — `supabase/functions/ibl-chat/index.ts`:
@@ -41,10 +41,10 @@ task is its own commit `[p1-security] (Sprint 04, Task n)`.
       (key in header) → return (uniform errors, CORS allow-list from
       `ALLOWED_ORIGINS`); `supabase/config.toml` `project_id` +
       `verify_jwt = true`. Generation logic and prompt untouched.
-- [ ] 8. UI — idle sign-out hook (30 min, DL-P06 item 5); `src/pages/LoginPage.tsx` (magic link, domain message,
+- [x] 8. UI — idle sign-out hook (30 min, DL-P06 item 5); `src/pages/LoginPage.tsx` (magic link, domain message,
       "check your e-mail" state, error state; five-colour tokens
       only); route guard; sign-out in `AppHeader`.
-- [ ] 9. Integration — `useChat` sends the session access token; a 401
+- [x] 9. Integration — `useChat` sends the session access token; a 401
       anywhere → redirect to `/login`; the existing save, dashboard and
       plan page work unchanged under RLS.
 - [ ] 10. Self-review — FEATURE_LIFECYCLE Step 4; `project-guard
