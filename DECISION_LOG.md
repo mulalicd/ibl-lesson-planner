@@ -337,4 +337,32 @@ pohrani u projekat i primijeni")
 
 ---
 
+## DL-P12 — P6 design vision: binding requirements (Director, 2026-11-06)
+
+Recorded verbatim in intent for the P6 SPEC. Not yet approved for
+implementation.
+
+1. **Total transformation** of the whole web app to an AAA, cinematic,
+   3D illustrative style in the quality of major animated feature
+   films (the Director's reference: "3D Disney cinematographic"). The
+   logo work of DL-P11 is an interim step only.
+2. **Every device, platform, operating system and browser**: all
+   content adapts (phone, tablet, laptop, desktop; iOS, Android,
+   Windows, macOS, Linux; Chrome, Safari, Firefox, Edge).
+3. **Desktop and laptop: full-screen, edge to edge.** No centred
+   fixed-width column with empty side margins.
+4. Five IDSS colours only (CONSTITUTION rule 6), non-regression
+   (rule 5).
+
+**ACA notes for the P6 SPEC (to be confirmed):**
+- "Disney-quality" means the craft level, not Disney's IP. Characters,
+  scenes and assets must be original IDSS creations; no Disney
+  characters, names or recognisable designs. A legal and brand
+  requirement, not taste.
+- Edge-to-edge layout still needs a readable text measure for long
+  plans (~70–90 characters per line inside full-width compositions).
+  To be specified in P6.
+
+---
+
 *Project Decision Log — IBL Lesson Planner — under Commander v1.7.0*
