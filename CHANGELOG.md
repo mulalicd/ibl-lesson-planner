@@ -23,3 +23,9 @@ One line per feature, per Commander E-10.
   `.neu-btn-primary`) onto new static `.neu-bubble-user`/
   `.neu-bubble-ai` classes — removes false hover/clickable affordance
   on non-interactive chat content. Sprint 02, Task 4.
+- [2026-11-06] [GOVERNANCE] Commander automation upgraded v1.5.2 →
+  v1.7.0 (`.claude/hooks/package.json` CommonJS fix — hooks no longer
+  crash in this `"type": "module"` project; archive-aware
+  project-guard). Constitution v1.1, DL-P03 (five IDSS colours,
+  supersedes Milky-White Sprint 02), DL-P04 (scope P0–P6), DL-P05
+  (admin + teacher roles). Sprint 03 / P0. No application code changed.
