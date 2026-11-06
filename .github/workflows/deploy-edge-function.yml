@@ -69,7 +69,12 @@ jobs:
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: |
-          names=$(supabase secrets list --project-ref "$PROJECT_REF" -o json | jq -r '.[].name')
+          if ! out=$(supabase secrets list --project-ref "$PROJECT_REF" -o json 2>&1); then
+            echo "$out"
+            echo "::error::Could not read Edge Function secrets — the SUPABASE_ACCESS_TOKEN is invalid, expired or lacks permission (see the line above). Nothing was deployed."
+            exit 1
+          fi
+          names=$(echo "$out" | jq -r '.[].name')
           missing=""
           for s in ALLOWED_ORIGINS GEMINI_KEY_1; do echo "$names" | grep -qx "$s" || missing="$missing $s"; done
           if [ -n "$missing" ]; then
