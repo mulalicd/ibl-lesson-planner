@@ -165,6 +165,14 @@ confirmation (4); unanswered (6)
    the Supabase dashboard. **Open:** the mail provider for `idss.ba`
    and its SMTP host/port; the Director enters the credentials in
    the dashboard only (E-4: never in the repo or the chat).
+   **Resolved 2026-11-06:**
+   - the mailbox is cPanel-hosted: SMTP `mail.idss.ba`, port 465
+     (SSL/TLS), username `direktor@idss.ba`, authentication required
+   - the password is entered by the Director in Supabase → Auth →
+     SMTP Settings only
+   - before go-live, check the cPanel "Email Deliverability"
+     (SPF/DKIM) status for `idss.ba` and the hosting provider's
+     hourly sending limit [UNK]
 2. **Production URL:** `https://ibl-lesson-planner.vercel.app`. It is
    the Auth Site URL/redirect and the only `ALLOWED_ORIGINS` entry.
    Vercel preview URLs are not allowed unless added later.
@@ -179,7 +187,12 @@ confirmation (4); unanswered (6)
      project; Google states limits are not guaranteed. Consequence:
      the 8-key rotation adds capacity only if the keys belong to
      different projects [UNK].
-   - **Proposal:**
+   - **Confirmed by the Director 2026-11-06:** 30/24 h and 10/h per
+     teacher. The 8 keys come from **different** Google Cloud projects
+     (capacity scales per project); the Director can add 4 more from
+     different projects. Per M-4, rotation code handling
+     `GEMINI_KEY_9..12` is a P3 change, not P1.
+   - **Proposal (now accepted):**
      - per teacher: **30 AI requests per rolling 24 h** and **10 per
        hour** (admin exempt)
      - counted server-side in the Edge Function, after authentication
@@ -200,7 +213,9 @@ confirmation (4); unanswered (6)
    - Implementation: a client-side idle timer (30 min without
      input/navigation → sign out and clear the session) on every
      plan, plus the server-side setting if the project is on Pro.
-     The Supabase plan is **[UNK]**.
+     **Supabase plan = Free (Director, 2026-11-06)**, so there is NO
+     server-side inactivity timeout and the client-side idle timer is
+     the only mechanism.
    - The client-side timer is a usability/safety measure on shared
      school computers, not a hard security boundary [TI].
 6. **External use of `pin_sessions`:** no answer → **[UNK]**. Row 3 of

@@ -105,7 +105,7 @@ file for each step.
      alternative. Its current availability and behaviour must be
      checked in the docs before implementation [UNK]: `supabase.com`
      is not reachable from this session.
-8. **AI usage cap (DL-P06 item 4, pending Director confirmation)**:
+8. **AI usage cap (DL-P06 item 4, confirmed by the Director)**:
    - `public.ai_usage` (`id bigint identity PK`,
      `user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE`,
      `created_at timestamptz NOT NULL DEFAULT now()`, index
@@ -165,8 +165,11 @@ file for each step.
   - Email provider enabled with magic link
   - custom SMTP
   - Site URL `https://ibl-lesson-planner.vercel.app`
-  - server-side Inactivity timeout 30 min, only if the project is on
-    the Pro plan (DL-P06 item 5)
+  - custom SMTP: host `mail.idss.ba`, port 465, user
+    `direktor@idss.ba`, sender name "IBL Planer IDSS"; the password is
+    typed by the Director in the dashboard only
+  - no server-side inactivity timeout (Free plan); the client idle
+    timer only (DL-P06 item 5)
 
 No new `VITE_` variables.
 

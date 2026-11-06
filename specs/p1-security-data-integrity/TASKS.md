@@ -4,7 +4,7 @@ Status: NOT STARTED — implementation not approved. Order follows
 FEATURE_LIFECYCLE Step 3 and the E-19 rollout order in PLAN.md. Each
 task is its own commit `[p1-security] (Sprint 04, Task n)`.
 
-**Blocked until** (SPEC questions 2, 3 and 5 answered in DL-P06; still open: SMTP provider details for `direktor@idss.ba`, confirmation of the AI cap, Supabase plan Free/Pro, question 6):
+**Blocked until** (SPEC questions 2, 3 and 5 answered in DL-P06; all answered 2026-11-06 except question 6, which stays [UNK] and is guarded by the emergency preview):
 - (a) ~~live schema dump~~ DONE 2026-11-06, PLAN.md revised (see its
   "Live schema verified" section)
 - (b) the SPEC open questions 1–6 are answered
