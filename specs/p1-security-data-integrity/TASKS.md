@@ -1,6 +1,6 @@
 # TASKS — P1 Security & Data Integrity
 
-Status: NOT STARTED — implementation not approved. Order follows
+Status: IN PROGRESS — approved by the Director 2026-11-06 ("kreni na P1"); see sprints/SPRINT_04.md. Order follows
 FEATURE_LIFECYCLE Step 3 and the E-19 rollout order in PLAN.md. Each
 task is its own commit `[p1-security] (Sprint 04, Task n)`.
 
@@ -12,7 +12,7 @@ task is its own commit `[p1-security] (Sprint 04, Task n)`.
 
 - [x] 0. Re-check PLAN.md against the live schema dump (2026-11-06); revise if it
       differs (no task below starts on an unverified schema).
-- [ ] 1. Database migration — PLAN.md "Data Model":
+- [x] 1. Database migration — PLAN.md "Data Model":
       - owner SQL A (roles, `is_admin()`, `owner_id`, backfill,
         domain trigger) and owner SQL B (enable RLS + policies, revokes)
       - each with a read-only preview + `DO` block + rollback, in
@@ -21,7 +21,7 @@ task is its own commit `[p1-security] (Sprint 04, Task n)`.
         production-shaped rows (E-18, E-19)
       - versioned copies in `supabase/migrations/` so the repo
         matches production again (M-7)
-- [ ] 2. Authorization-matrix test — `supabase/tests/p1_authorization_matrix.sql`
+- [x] 2. Authorization-matrix test — `supabase/tests/p1_authorization_matrix.sql`
       (E-20); must pass locally before task 1's scripts go to the
       Director.
 - [ ] 3. TypeScript types — regenerate/extend

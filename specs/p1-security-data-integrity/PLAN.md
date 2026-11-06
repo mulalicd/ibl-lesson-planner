@@ -118,9 +118,14 @@ file for each step.
      `public.consume_ai_quota()`. It checks the caps for `auth.uid()`,
      exempts `is_admin()`, inserts one row, and returns allowed/denied
      plus the remaining count.
-9. **Repo re-sync (M-7)**: a baseline file
-   `supabase/migrations/<date>_baseline_live_schema.sql` reproduces
-   the verified live schema, so the repo matches production again.
+9. **Repo re-sync (M-7)**: `supabase/schema/live_schema_2026-11-06.sql`
+   reproduces the verified live schema, so the repo matches production
+   again.
+   - **Deviation from the first draft:** this file is NOT placed in
+     `supabase/migrations/`. A CLI `db push` would try to apply it to
+     a database where all its objects already exist. It is a
+     reference for local tests only, and P1's real changes are the
+     owner scripts A and B.
    The two old Lovable migrations and `supabase_original/` are marked
    historical in a README; they are not deleted.
 
