@@ -1,5 +1,5 @@
 # CONSTITUTION.md — IBL Lesson Planner
-# Project Constitution — governed by Commander v1.5.2
+# Project Constitution — governed by Commander v1.7.0
 # Wins over Commander documents on any project-specific conflict (per CONSTITUTION.md preamble)
 
 ---
@@ -17,14 +17,21 @@ uspješne i korisne nastavne planove časa (pisana priprema nastavnog
 časa) strogo po IBL (Inquiry-Based Learning) principu, za nastavnike
 IDSS Sarajevo.
 
-**Trenutno stanje (2026-08-30):** Direktor je zadovoljan mehanizmom,
-kvalitetom AI odgovora i kreiranim nastavnim časovima. Aplikacija
-je uveliko u funkciji i koristi se. Aktivni zadatak NIJE novi razvoj
-funkcionalnosti nego:
-1. Postavljanje superiornog UI/UX dizajna (vidi zaseban ACA UI/UX
-   Redesign Brief — Milky-White 3D Neumorphic, IDSS brend).
-2. Eventualna poboljšanja u backendu SAMO ako se pokažu potrebnim
-   tokom redizajna.
+**Trenutno stanje (2026-11-06 — zamjenjuje stanje od 2026-08-30):**
+Aplikacija je u funkciji i koristi se. Forenzički audit (2026-11-06)
+pokazao je da prije vizuelnog redizajna moraju doći sigurnost,
+integritet podataka i pouzdanost AI-ja. Direktor je odobrio proširenje
+opsega (DECISION_LOG.md DL-P04). Aktivni zadatak je roadmap P0–P6:
+1. P0 — popravka Commander upravljanja (hooks, CI guard, zapisi).
+2. P1 — sigurnost i integritet podataka (prijava, RLS, Edge Function).
+3. P2 — ispravke postojećih grešaka + prvi stvarni testovi.
+4. P3 — AI: jedan izvor istine za PSI, pouzdanost, validacija.
+5. P4 — proširenje pedagoške strukture pripreme.
+6. P5 — UX tok rada nastavnika.
+7. P6 — vizuelni sistem: pet IDSS boja, cinematic smjer (DL-P03).
+
+Svaka faza zahtijeva posebno, izričito odobrenje Direktora prije
+početka. Odobrenje jedne faze nikad ne odobrava sljedeću.
 
 ---
 
@@ -67,10 +74,24 @@ Detaljno objašnjenje i racionalno obrazloženje: `DECISION_LOG.md` DL-P01.
    metodologiji. Bilo kakva izmjena pedagoške logike, tona ili
    strukture ovog dokumenta zahtijeva eksplicitno odobrenje Direktora.
 
-2. **Uloge korisnika:** nastavnici IDSS Sarajevo (glavni korisnici
-   aplikacije). Tačan RBAC model (postoje li admin/super_admin uloge)
-   MORA se potvrditi čitanjem koda (`src/integrations/`, Supabase
-   schema) prije bilo kakve promjene autorizacije — ne pretpostavljati.
+   **Utvrđeno auditom 2026-11-06 (stanje, ne odluka):** produkcija
+   trenutno NE koristi ovaj dokument. `supabase/functions/ibl-chat`
+   koristi skraćeni ugrađeni prompt ("v8.1"), a `src/lib/psi.ts` se
+   nigdje ne koristi i razlikuje se od `.md` fajla. Usklađivanje je
+   zadatak faze P3 i zahtijeva odobrenje Direktora.
+
+2. **Uloge korisnika (odluka Direktora 2026-11-06, DL-P05):**
+   - `admin` — Direktor, `direktor@idss.ba`. Vidi sve planove.
+   - `teacher` — nastavnik s adresom `@idss.ba`, prijava putem
+     magic linka (Supabase Auth). Vidi i uređuje samo svoje planove.
+   - Postojeći (anonimno kreirani) planovi dodjeljuju se adminu.
+   Stanje koda na dan odluke: autentikacija NE postoji, RLS je javan.
+   Implementacija je faza P1 i podliježe Commander pravilima E-18,
+   E-19 (proba zaključavanja vlasnika + testiran rollback) i E-20
+   (matrica autorizacije).
+   **Stanje 2026-11-06:** P1 je implementiran i testiran na grani
+   `claude/serene-euler-u97sb6`, ali NIJE na produkciji dok Direktor
+   ne prođe korake iz `specs/p1-security-data-integrity/ROLLOUT_DIREKTOR.md`.
 
 3. **Jezici:** aplikacija operira mješovito na bosanskom, njemačkom i
    engleskom (vidi PSI v8.0 Mode A dijaloge). Ne hardkodovati
@@ -88,6 +109,35 @@ Detaljno objašnjenje i racionalno obrazloženje: `DECISION_LOG.md` DL-P01.
    funkcionalnost; mockup/dizajn dokumenti su source of truth samo za
    vizuelni jezik.
 
+6. **IDSS BOJE — APSOLUTNO PRAVILO (odluka Direktora 2026-11-06,
+   DL-P03):** cijela aplikacija koristi ISKLJUČIVO ovih pet boja:
+
+   | Boja | HEX |
+   |---|---|
+   | IDSS Black | `#000000` |
+   | IDSS Red | `#E8262C` |
+   | IDSS Blue | `#035EA1` |
+   | IDSS Yellow | `#FFCB29` |
+   | IDSS Light Blue | `#08ABE6` |
+
+   Važi za svaki vizuelni element: pozadine, tekst, ivice, ikone,
+   sjene, gradijente, ilustracije, 3D, grafikone, stanja greške i
+   uspjeha, DOCX/PDF izvoz. Zabranjene su bijela, siva, zelena i svaka
+   druga boja. Providnost je dozvoljena samo izvedena iz jedne od pet
+   boja. Sve vrijednosti dolaze iz jednog centralnog sistema tokena.
+   Čitljivost se rješava kombinacijama koje imaju dovoljan kontrast
+   (npr. crna/žuta 13,8:1, crna/svijetloplava 8,0:1), tipografijom i
+   rasporedom — nikad novom bojom. Smjer dizajna: AAA cinematic 3D.
+   Ovo zamjenjuje Milky-White 3D Neumorphic smjer iz Sprinta 02.
+   Postojeći kod još NIJE usklađen — to je faza P6.
+
+7. **UPRAVLJANJE — COMMANDER JE JEDINI AUTORITET:** svaka izmjena
+   repozitorija ide kroz Commander zadatak (SPEC → PLAN → TASKS),
+   s izričitim odobrenjem Direktora prije implementacije i izvještajem
+   o završetku. ACA radi samo na `claude/*` granama; nijedan agent ne
+   proširuje odobreni opseg. Izmjene direktno na `main` (npr. GitHub
+   "Add files via upload") zaobilaze Commander i trebaju se izbjegavati.
+
 Sve što nije eksplicitno pokriveno ovdje ili u PSI v8.0 dokumentu:
 **STOP i pitaj** (M-4, M-10).
 
@@ -98,6 +148,16 @@ Sve što nije eksplicitno pokriveno ovdje ili u PSI v8.0 dokumentu:
 Vidi `sprints/SPRINT_01.md`. Fokus: audit postojeće aplikacije +
 priprema za UI/UX redesign (skeleton, ne rušiti postojeće).
 
+## SPRINT 02 — ZAMIJENJEN
+
+Milky-White 3D Neumorphic redizajn (`specs/ui-ux-redesign-milky-neumorphic/`,
+Taskovi 1–4 na `main`). Zamijenjen odlukom DL-P03; Taskovi 5–14 se ne
+nastavljaju.
+
+## SPRINT 03 — AKTIVAN
+
+Vidi `sprints/SPRINT_03.md`. Faza P0 — popravka Commander upravljanja.
+
 ---
 
-*Project Constitution v1.0 — 2026-08-30 — pod Commander v1.5.2*
+*Project Constitution v1.1 — 2026-11-06 — pod Commander v1.7.0*

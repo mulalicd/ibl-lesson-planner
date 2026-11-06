@@ -5,7 +5,7 @@
 
 ## GOVERNANCE — TIERED LOADING (M-21)
 
-This project is governed by **Commander v1.5.2**
+This project is governed by **Commander v1.7.0**
 (github.com/IDSS123a/commander). The 🔴 CRITICAL rules are inlined
 below and always apply — do NOT bulk-load full Commander documents at
 session start. Read a full document only when the task enters its
@@ -60,8 +60,9 @@ The `lessons-guard` hook blocks session end if files changed without
 lessons captured. Append to `corrections/SPRINT_XX_LESSONS.md`
 **immediately** when: the Director corrects you, an environment gotcha
 bites, a rule-violation bug appears, a course correction happens, or a
-Commander improvement candidate surfaces. Consolidate at sprint close
-per DONE_CHECKLIST.md.
+Commander improvement candidate surfaces. Entry format:
+PROMPT_LIBRARY/sprint-lessons.md. Consolidate at sprint close per
+DONE_CHECKLIST.md.
 
 ---
 
@@ -74,6 +75,10 @@ Installed in `.claude/`:
   (config: `.claude/project-guard.config.json`)
 - `lessons-guard.js` + `patterns-detect.js` (Stop) — enforces lesson
   capture; pre-computes rule recurrence for KRAJ
+- `hooks/package.json` (`{"type":"commonjs"}`) — REQUIRED: this
+  project's root `package.json` is `"type": "module"`; without this
+  file every hook crashes (fixed in Commander v1.6, installed here in
+  Sprint 03 / P0). Never delete it.
 
 Treat guards as allies, not obstacles — session memory is unreliable,
 the filesystem is not (M-18).
@@ -113,15 +118,29 @@ the filesystem is not (M-18).
   convention for all new component files in this project — do not
   rename existing files and do not introduce kebab-case alongside
   them. See `specs/ui-ux-redesign-milky-neumorphic/PLAN.md`.
-- **CURRENT PRIORITY (per Director, 2026-08-30):** the application's
-  functionality, AI mechanism, and generated lesson-plan quality are
-  considered complete and satisfactory. The active mandate is a
-  UI/UX redesign (Milky-White 3D Neumorphic, IDSS branding — see the
-  separate ACA UI/UX Redesign Brief) plus targeted backend
-  improvements only if the redesign surfaces a real need. Non-
-  regression is paramount: no existing feature, route, or behaviour
-  may be removed. See CONSTITUTION.md "Ključna poslovna pravila."
+- **CURRENT PRIORITY (per Director, 2026-11-06 — supersedes the
+  2026-08-30 note):** the Master Forensic Audit & Controlled
+  Transformation roadmap, phases P0–P6, in this order: P0 governance
+  repair → P1 security & data integrity (auth, RLS) → P2 correctness
+  fixes + first real tests → P3 AI SSOT & reliability → P4 pedagogy
+  schema → P5 UX workflow → P6 five-colour cinematic visual system.
+  Scope expansion beyond UI/UX: `DECISION_LOG.md` DL-P04. Each phase
+  needs its own explicit Director approval before work starts — an
+  approved phase never authorises the next one. Non-regression is
+  paramount: no existing feature, route, or behaviour may be removed.
+  See CONSTITUTION.md "Ključna poslovna pravila."
+- **Design direction (DL-P03):** the Milky-White 3D Neumorphic
+  direction and `specs/ui-ux-redesign-milky-neumorphic/` are
+  SUPERSEDED. Do not continue its TASKS.md (Tasks 5–14). The binding
+  colour rule is CONSTITUTION.md rule 6 (five IDSS colours only).
+  `DESIGN_SYSTEM.md` describes the superseded system until P6
+  replaces it.
+- **Roles (DL-P05):** `admin` = Director (`direktor@idss.ba`);
+  `teacher` = any `@idss.ba` address signing in by magic link.
+  Teachers see only their own plans; admin sees all. Not implemented
+  yet — that is P1. Any role/identity change is bound by E-18, E-19
+  and E-20.
 
 ---
 
-*Commander v1.5.2 — IDSS123a Organisation — Davor Mulalić*
+*Commander v1.7.0 — IDSS123a Organisation — Davor Mulalić*

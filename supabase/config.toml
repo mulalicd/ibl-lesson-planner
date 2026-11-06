@@ -1,1 +1,9 @@
-project_id = "gikaxeskvqgvvdfbgjkq"
+# Production project (Director-confirmed 2026-11-06, DL-P06 / SPRINT_03).
+# Was "gikaxeskvqgvvdfbgjkq" (the original Lovable project) — wrong target.
+project_id = "pfwxbsucgjlnimvxbpyk"
+
+[functions.ibl-chat]
+# P1: the platform rejects calls without a valid JWT before the function
+# runs; the function then verifies the user itself (E-6).
+verify_jwt = true
+import_map = "./functions/deno.json"

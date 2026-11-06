@@ -6,6 +6,16 @@
 
 @layer base {
   :root {
+    /* IDSS five-colour brand palette — CONSTITUTION.md rule 6 (DL-P03).
+       EXACT values as RGB channels so Tailwind can derive transparency
+       from the SAME colour (bg-brand-yellow/20) without new colours.
+       New screens (P1 login, P6 redesign) use ONLY these tokens. */
+    --brand-black: 0 0 0;          /* #000000 */
+    --brand-red: 232 38 44;        /* #E8262C */
+    --brand-blue: 3 94 161;        /* #035EA1 */
+    --brand-yellow: 255 203 41;    /* #FFCB29 */
+    --brand-lightblue: 8 171 230;  /* #08ABE6 */
+
     /* IDSS Brand Palette — Milky-White 3D Neumorphic (approved
        Variation 1). Yellow = dominant accent, dark blue = structure,
        bright blue = interaction/info, red = rare/special accent

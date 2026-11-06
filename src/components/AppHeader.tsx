@@ -1,10 +1,12 @@
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { MessageSquare, LayoutGrid, Sparkles } from 'lucide-react';
+import { MessageSquare, LayoutGrid, Sparkles, LogOut } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
 
 export default function AppHeader() {
   const location = useLocation();
+  const { session, signOut } = useAuth();
 
   const navItems = [
     { path: '/chat', icon: MessageSquare, label: 'Planer' },
@@ -75,6 +77,17 @@ export default function AppHeader() {
           <span className="hidden md:flex items-center gap-1.5 text-[10px] text-muted-foreground/50 font-semibold bg-muted/30 px-3 py-1.5 rounded-full">
             <Sparkles className="w-3 h-3" /> PSI v8.0
           </span>
+          {session && (
+            <button
+              type="button"
+              onClick={() => { void signOut().then(() => window.location.assign('/login')); }}
+              title={`Odjava (${session.user.email ?? ''})`}
+              aria-label="Odjava"
+              className="w-10 h-10 rounded-xl neu-btn flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          )}
         </div>
       </div>
     </header>

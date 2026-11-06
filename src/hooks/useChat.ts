@@ -1,6 +1,8 @@
 import { useState, useCallback, useRef } from 'react';
 import type { ChatMessage, ChatMode, ConversationState, GenerateParams } from '@/lib/types';
 import { randomHex } from '@/lib/utils';
+import { getAccessToken, signalActivity } from '@/lib/auth';
+import { ERROR_MESSAGES } from '@/lib/constants';
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ibl-chat`;
 
@@ -74,11 +76,19 @@ export function useChat() {
     try {
       abortRef.current = new AbortController();
 
+      // P1: the Edge Function requires the signed-in user's token, not the anon key.
+      const accessToken = await getAccessToken();
+      if (!accessToken) {
+        window.location.assign('/login');
+        throw new Error(ERROR_MESSAGES.UNAUTHORIZED);
+      }
+
       const resp = await fetch(CHAT_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
           mode,
@@ -90,7 +100,10 @@ export function useChat() {
       });
 
       if (!resp.ok || !resp.body) {
-        const errData = await resp.json().catch(() => ({ error: 'Network error' }));
+        const errData = await resp.json().catch(() => ({ error: ERROR_MESSAGES.NETWORK_ERROR }));
+        if (resp.status === 401) {
+          window.location.assign('/login');
+        }
         throw new Error(errData.error || `HTTP ${resp.status}`);
       }
 
@@ -122,6 +135,7 @@ export function useChat() {
             const tokenContent = parsed.choices?.[0]?.delta?.content as string | undefined;
             if (tokenContent) {
               assistantSoFar += tokenContent;
+              signalActivity(); // keep the idle timer from firing mid-generation
               setState(prev => {
                 const msgs = [...prev.messages];
                 const lastMsg = msgs[msgs.length - 1];

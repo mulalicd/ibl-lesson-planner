@@ -30,6 +30,8 @@ export interface PlanRecord {
   is_favourite: boolean;
   is_deleted: boolean;
   docx_export_count: number;
+  /** Set by the database (DEFAULT auth.uid()); never sent by the client. */
+  owner_id?: string | null;
 }
 
 export type PlanCardData = Pick<

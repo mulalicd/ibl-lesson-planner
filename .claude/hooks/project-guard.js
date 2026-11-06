@@ -47,6 +47,10 @@ const DEFAULT_EXTENSIONS = [
 ];
 // .claude is excluded by default: the config file itself contains the
 // forbidden patterns as literal strings and must not self-trigger.
+// Archives cannot be pattern-scanned; a tracked zip holding a .env passed
+// --scan clean on personal-web-page (v1.6). CLI scan reports them by name.
+const ARCHIVE_EXTENSIONS = ['.zip', '.7z', '.rar', '.tar', '.gz', '.tgz'];
+
 const DEFAULT_EXCLUDE = [
   'node_modules', '.git', '.next', 'dist', 'build', '.vercel', '.claude',
 ];
@@ -115,6 +119,13 @@ function walk(dir, config, results, timedOut) {
     if (config.exclude.includes(entry.name)) continue;
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) walk(full, config, results, timedOut);
+    else if (ARCHIVE_EXTENSIONS.includes(path.extname(entry.name).toLowerCase()))
+      results.push({
+        file: full,
+        line: 0,
+        pattern: 'archive file',
+        reason: 'binary archive cannot be scanned — remove it from the repo or inspect it (E-4)',
+      });
     else if (config.extensions.includes(path.extname(entry.name).toLowerCase()))
       results.push(...scanFile(full, config, timedOut));
   }

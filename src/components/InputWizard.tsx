@@ -4,6 +4,7 @@ import { GraduationCap, BookOpen, FileText, Clock, Sparkles, ChevronRight, Chevr
 import { cn } from '@/lib/utils';
 import { SUBJECT_GROUPS, deriveTier, TIER_CONFIG } from '@/lib/constants';
 import type { Language } from '@/lib/types';
+import { LIMITS } from '@/lib/validation/schemas';
 
 interface InputWizardProps {
   onGenerate: (params: {
@@ -185,6 +186,7 @@ export default function InputWizard({ onGenerate, isLoading }: InputWizardProps)
                     type="text"
                     value={topic}
                     onChange={e => setTopic(e.target.value)}
+                    maxLength={LIMITS.topic}
                     placeholder="npr. Fotosinteza, Razlomci, Drugi svjetski rat..."
                     autoFocus
                     className="w-full neu-inset px-5 py-4 text-base focus:outline-none focus:ring-2 focus:ring-primary/30 placeholder:text-muted-foreground/35 font-medium"
@@ -197,6 +199,7 @@ export default function InputWizard({ onGenerate, isLoading }: InputWizardProps)
                   <textarea
                     value={priorKnowledge}
                     onChange={e => setPriorKnowledge(e.target.value)}
+                    maxLength={LIMITS.priorKnowledge}
                     placeholder="Šta učenici već znaju o ovoj temi?"
                     rows={2}
                     className="w-full neu-inset px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 placeholder:text-muted-foreground/35 resize-none"
@@ -209,6 +212,7 @@ export default function InputWizard({ onGenerate, isLoading }: InputWizardProps)
                   <textarea
                     value={notes}
                     onChange={e => setNotes(e.target.value)}
+                    maxLength={LIMITS.notes}
                     placeholder="Posebni zahtjevi, fokus na određeni aspekt..."
                     rows={2}
                     className="w-full neu-inset px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 placeholder:text-muted-foreground/35 resize-none"
