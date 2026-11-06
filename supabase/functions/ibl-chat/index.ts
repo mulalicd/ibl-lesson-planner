@@ -1,9 +1,57 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+// supabase/functions/ibl-chat — AI lesson-plan generation (Gemini, streamed SSE)
+//
+// P1 (2026-11-06, Commander E-6): authenticate -> authorise (AI quota)
+// -> validate (Zod, shared with the browser) -> execute -> return.
+// Generation logic, the PSI prompt and the stream format are UNCHANGED
+// from the pre-P1 version (prompt/AI changes are P3; stream decoding is P2).
+//
+// Required Edge Function secrets: GEMINI_KEY_1..GEMINI_KEY_8 (at least one),
+// ALLOWED_ORIGINS (comma-separated, e.g. https://ibl-lesson-planner.vercel.app).
+// Provided by the Supabase platform: SUPABASE_URL, SUPABASE_ANON_KEY.
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+import { createClient } from "@supabase/supabase-js";
+import { IblChatRequestSchema } from "../../../src/lib/validation/schemas.ts";
+
+// ─── CORS (allow-list, never "*") ────────────────────────────────────────────
+const ALLOWED_ORIGINS = (Deno.env.get("ALLOWED_ORIGINS") ?? "")
+  .split(",")
+  .map((o) => o.trim())
+  .filter(Boolean);
+
+function corsFor(req: Request): Record<string, string> {
+  const origin = req.headers.get("Origin") ?? "";
+  const headers: Record<string, string> = {
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Vary": "Origin",
+  };
+  if (ALLOWED_ORIGINS.includes(origin)) headers["Access-Control-Allow-Origin"] = origin;
+  return headers;
+}
+
+// ─── Uniform public errors (E-4 / E-5): user-facing text + machine code ─────
+const PUBLIC_ERRORS = {
+  UNAUTHORIZED: { status: 401, message: "Sesija je istekla. Molimo prijavite se ponovo." },
+  FORBIDDEN_ORIGIN: { status: 403, message: "Pristup nije dozvoljen." },
+  INVALID_INPUT: { status: 400, message: "Zahtjev nije ispravan. Provjerite unesene podatke." },
+  AI_QUOTA_EXCEEDED: { status: 429, message: "Dostigli ste ograničenje AI zahtjeva. Pokušajte ponovo kasnije." },
+  ALL_KEYS_EXHAUSTED: { status: 429, message: "Svi API ključevi su privremeno preopterećeni. Sačekajte 1 minutu." },
+  INTERNAL: { status: 500, message: "Greška na serveru. Pokušajte ponovo." },
+} as const;
+type PublicErrorCode = keyof typeof PUBLIC_ERRORS;
+
+function fail(cors: Record<string, string>, code: PublicErrorCode, extra: Record<string, unknown> = {}): Response {
+  const e = PUBLIC_ERRORS[code];
+  return new Response(
+    JSON.stringify({ success: false, error: e.message, code, ...extra }),
+    { status: e.status, headers: { ...cors, "Content-Type": "application/json" } },
+  );
+}
+
+function logError(where: string, err: unknown): void {
+  const e = err instanceof Error ? err : new Error(String(err));
+  console.error(JSON.stringify({ ts: new Date().toISOString(), where, message: e.message, stack: e.stack }));
+}
 
 // ─── PSI SYSTEM PROMPT v8.1 ──────────────────────────────────────────────────
 const PSI_SYSTEM_PROMPT = `You are the world's best IBL (Inquiry-Based Learning) lesson plan creator for the Internationale Deutsche Schule Sarajevo (IDSS). You hold a PhD in pedagogy and 20 years of classroom experience. Every plan you create is used directly by teachers the next day.
@@ -239,12 +287,11 @@ function selectKey(requestId: string): number {
 async function callGemini(
   messages: { role: string; content: string }[],
   requestId: string,
+  cors: Record<string, string>,
 ): Promise<Response> {
   if (GEMINI_KEYS.length === 0) {
-    return new Response(
-      JSON.stringify({ error: "No Gemini API keys configured. Set GEMINI_KEY_1 through GEMINI_KEY_8 in Supabase secrets." }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    logError("callGemini", "No Gemini API keys configured (GEMINI_KEY_1..8)");
+    return fail(cors, "INTERNAL");
   }
 
   const startIndex = selectKey(requestId);
@@ -259,12 +306,13 @@ async function callGemini(
   for (let i = 0; i < GEMINI_KEYS.length; i++) {
     const keyIndex = (startIndex + i) % GEMINI_KEYS.length;
     const apiKey = GEMINI_KEYS[keyIndex];
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?key=${apiKey}&alt=sse`;
+    // Key in a header, never in the URL (it would land in proxy/access logs).
+    const geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse";
 
     try {
       const resp = await fetch(geminiUrl, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
         body: JSON.stringify({
           system_instruction: { parts: [{ text: systemInstruction }] },
           contents,
@@ -318,29 +366,72 @@ async function callGemini(
       });
 
       return new Response(resp.body!.pipeThrough(transformStream), {
-        headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
+        headers: { ...cors, "Content-Type": "text/event-stream" },
       });
 
     } catch (err) {
-      console.error(`Gemini key ${keyIndex + 1} fetch error:`, err);
+      logError(`callGemini key ${keyIndex + 1}`, err);
       continue;
     }
   }
 
-  return new Response(
-    JSON.stringify({ error: "ALL_KEYS_EXHAUSTED: All Gemini API keys are rate limited. Please wait 1 minute." }),
-    { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-  );
+  return fail(cors, "ALL_KEYS_EXHAUSTED");
 }
 
-// ─── MAIN HANDLER ────────────────────────────────────────────────────────────
-serve(async (req) => {
+// ─── MAIN HANDLER (E-6) ──────────────────────────────────────────────────────
+Deno.serve(async (req) => {
+  const cors = corsFor(req);
+
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { status: cors["Access-Control-Allow-Origin"] ? 204 : 403, headers: cors });
+  }
+  if (req.method !== "POST") return fail(cors, "INVALID_INPUT");
+  if (req.headers.get("Origin") && !cors["Access-Control-Allow-Origin"]) {
+    return fail(cors, "FORBIDDEN_ORIGIN");
   }
 
   try {
-    const { mode, messages, plan_context, params } = await req.json();
+    // 1. Authenticate — a signed-in Supabase user, never the anon key alone
+    const authHeader = req.headers.get("Authorization") ?? "";
+    const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
+    if (!supabaseUrl || !anonKey) {
+      logError("config", "SUPABASE_URL / SUPABASE_ANON_KEY missing");
+      return fail(cors, "INTERNAL");
+    }
+    if (!token) return fail(cors, "UNAUTHORIZED");
+    const supabase = createClient(supabaseUrl, anonKey, {
+      global: { headers: { Authorization: `Bearer ${token}` } },
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const { data: userData, error: userError } = await supabase.auth.getUser(token);
+    if (userError || !userData?.user) return fail(cors, "UNAUTHORIZED");
+
+    // 2. Validate (before spending quota on a malformed request)
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch {
+      return fail(cors, "INVALID_INPUT");
+    }
+    const parsed = IblChatRequestSchema.safeParse(body);
+    if (!parsed.success) return fail(cors, "INVALID_INPUT");
+
+    // 3. Authorise — per-teacher AI quota (DL-P06: 30/day, 10/hour; admin exempt)
+    const { data: quota, error: quotaError } = await supabase.rpc("consume_ai_quota");
+    if (quotaError) {
+      logError("consume_ai_quota", quotaError.message);
+      return fail(cors, "INTERNAL");
+    }
+    const q = (quota ?? {}) as { allowed?: boolean; reason?: string; retry_after_s?: number };
+    if (q.reason === "UNAUTHORIZED") return fail(cors, "UNAUTHORIZED");
+    if (!q.allowed) {
+      return fail(cors, "AI_QUOTA_EXCEEDED", { reason: q.reason, retry_after_s: q.retry_after_s });
+    }
+
+    // 4. Execute — unchanged generation logic
+    const { mode, messages, plan_context, params } = parsed.data;
     const requestId = crypto.randomUUID();
 
     const aiMessages: { role: string; content: string }[] = [
@@ -435,13 +526,11 @@ serve(async (req) => {
       }
     }
 
-    return await callGemini(aiMessages, requestId);
+    // 5. Return (stream)
+    return await callGemini(aiMessages, requestId, cors);
 
   } catch (e) {
-    console.error("Handler error:", e);
-    return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    logError("handler", e);
+    return fail(cors, "INTERNAL");
   }
 });

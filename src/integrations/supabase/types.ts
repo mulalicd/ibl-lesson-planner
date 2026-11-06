@@ -1,3 +1,5 @@
+// NOTE (P1, 2026-11-06): plans.owner_id was added by hand; the ACA could not
+// regenerate these types from production. Regenerate (supabase gen types) when access exists.
 export type Json =
   | string
   | number
@@ -98,6 +100,7 @@ export type Database = {
           is_favourite: boolean | null
           language: string
           notes: string | null
+          owner_id: string | null
           plan_text: string
           prior_knowledge: string | null
           subject: string
@@ -118,6 +121,7 @@ export type Database = {
           is_favourite?: boolean | null
           language?: string
           notes?: string | null
+          owner_id?: string | null
           plan_text: string
           prior_knowledge?: string | null
           subject: string
@@ -138,6 +142,7 @@ export type Database = {
           is_favourite?: boolean | null
           language?: string
           notes?: string | null
+          owner_id?: string | null
           plan_text?: string
           prior_knowledge?: string | null
           subject?: string

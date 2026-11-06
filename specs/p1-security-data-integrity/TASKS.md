@@ -24,19 +24,19 @@ task is its own commit `[p1-security] (Sprint 04, Task n)`.
 - [x] 2. Authorization-matrix test — `supabase/tests/p1_authorization_matrix.sql`
       (E-20); must pass locally before task 1's scripts go to the
       Director.
-- [ ] 3. TypeScript types — regenerate/extend
+- [x] 3. TypeScript types — regenerate/extend
       `src/integrations/supabase/types.ts` for `owner_id`,
       `user_roles`; `PlanRecord` in `src/lib/types.ts`.
-- [ ] 4. Zod validation schema — `IblChatRequestSchema` in
+- [x] 4. Zod validation schema — `IblChatRequestSchema` in
       `src/lib/validation/schemas.ts` (E-2) + unit tests (valid,
       oversize, wrong enum, missing params).
-- [ ] 5. Repository function — OMITTED: per PLAN.md "Deviation
+- [x] 5. Repository function — OMITTED: per PLAN.md "Deviation
       recorded", no A-3 repository layer in P1 (DL-P01); RLS is the
       enforcement point.
 - [ ] 6. Domain logic — role/domain rules live in SQL
       (`is_admin()`, domain trigger) per PLAN.md; a client-side
       domain pre-check helper for the friendly message only.
-- [ ] 7. Edge Function — `supabase/functions/ibl-chat/index.ts`:
+- [x] 7. Edge Function — `supabase/functions/ibl-chat/index.ts`:
       authenticate (`getUser`) → authorise → validate (Zod) → execute
       (key in header) → return (uniform errors, CORS allow-list from
       `ALLOWED_ORIGINS`); `supabase/config.toml` `project_id` +
