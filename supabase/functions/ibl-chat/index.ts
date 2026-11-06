@@ -412,9 +412,17 @@ Deno.serve(async (req) => {
     if (userError || !userData?.user) return fail(cors, "UNAUTHORIZED");
 
     // 2. Validate (before spending quota on a malformed request)
+    // Size cap BEFORE parsing: Zod 3 can exhaust memory on oversized
+    // collections (npm audit, 2026-11-06). Legit requests stay far below
+    // (LIMITS.totalChars = 400 000 characters).
+    const MAX_BODY_BYTES = 1_000_000;
+    const declared = Number(req.headers.get("Content-Length") ?? "0");
+    if (declared > MAX_BODY_BYTES) return fail(cors, "INVALID_INPUT");
     let body: unknown;
     try {
-      body = await req.json();
+      const raw = await req.text();
+      if (raw.length > MAX_BODY_BYTES) return fail(cors, "INVALID_INPUT");
+      body = JSON.parse(raw);
     } catch {
       return fail(cors, "INVALID_INPUT");
     }

@@ -224,4 +224,37 @@ confirmation (4); unanswered (6)
 
 ---
 
+## DL-P07 — P1 implementation decisions and deviations
+
+**Date:** 2026-11-06 · **Decided by:** ACA within the approved P1
+scope; each item is flagged for Director review.
+
+1. **Live schema reference, not a CLI migration:**
+   `supabase/schema/live_schema_2026-11-06.sql`. A `db push` must
+   never re-create objects that already exist live. Production
+   changes are owner scripts only (E-18).
+2. **Added dev-only dependency `@testing-library/dom@10.4.0`.** It is
+   a required peer of the already-declared
+   `@testing-library/react@16`; without it no component test could
+   run. There is no runtime or bundle effect. `bun.lock` was not
+   updated (see DEPENDENCY_TRIAGE.md).
+3. **Manual deploy workflow** `.github/workflows/deploy-edge-function.yml`:
+   - `workflow_dispatch` only, `main` only, must type `DEPLOY`
+   - uses repository secret `SUPABASE_ACCESS_TOKEN`
+   - lets a non-technical owner deploy without installing the CLI
+4. **`verify_jwt = true`, with a documented fallback "off".**
+   Whether the platform JWT check accepts this project's tokens
+   depends on its JWT signing-key setup [UNK]. The function verifies
+   the user itself (`getUser`), so "off" stays secure.
+5. **The idle rule persists last activity in localStorage.** The
+   Supabase session survives a closed tab, so without this the 30-min
+   rule (DL-P06 item 5) would not hold across browser restarts.
+6. **Edge Function 1 MB body cap**: mitigation for the zod 3
+   memory-exhaustion advisory (DEPENDENCY_TRIAGE.md rank 1).
+7. **Quota is consumed before the Gemini call**, so a request that
+   fails at Gemini still counts. This keeps it simple and atomic.
+   Revisit in P3 if teachers hit the cap because of provider errors.
+
+---
+
 *Project Decision Log — IBL Lesson Planner — under Commander v1.7.0*

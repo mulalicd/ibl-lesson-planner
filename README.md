@@ -18,3 +18,9 @@ Internationale Deutsche Schule Sarajevo.
 ## Environment Variables
 VITE_SUPABASE_URL=
 VITE_SUPABASE_PUBLISHABLE_KEY=
+
+## Sign-in (P1)
+Teachers sign in with their `@idss.ba` e-mail (link, no password).
+Teachers see only their own plans; the Director (admin) sees all.
+Deployment steps: `specs/p1-security-data-integrity/ROLLOUT_DIREKTOR.md`.
+Database scripts and tests: `supabase/README.md`.

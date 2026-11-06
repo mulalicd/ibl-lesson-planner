@@ -1,0 +1,36 @@
+name: Deploy Edge Function (manual)
+
+# Director-run deploy of supabase/functions/ibl-chat to PRODUCTION
+# (pfwxbsucgjlnimvxbpyk). Manual only: never runs on push.
+# Requires the repository secret SUPABASE_ACCESS_TOKEN (Supabase account ->
+# Access Tokens). Edge Function secrets (GEMINI_KEY_*, ALLOWED_ORIGINS) are
+# set in the Supabase dashboard, never here.
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type DEPLOY to deploy ibl-chat to production'
+        required: true
+      verify_jwt:
+        description: 'Platform JWT check (keep "on"; use "off" only if every signed-in call fails with Invalid JWT — the function still checks the user itself)'
+        required: true
+        default: 'on'
+        type: choice
+        options: ['on', 'off']
+
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main' && inputs.confirm == 'DEPLOY'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Deploy ibl-chat
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          if [ "${{ inputs.verify_jwt }}" = "off" ]; then EXTRA="--no-verify-jwt"; else EXTRA=""; fi
+          supabase functions deploy ibl-chat --project-ref pfwxbsucgjlnimvxbpyk $EXTRA

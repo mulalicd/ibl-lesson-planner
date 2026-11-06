@@ -47,10 +47,10 @@ task is its own commit `[p1-security] (Sprint 04, Task n)`.
 - [x] 9. Integration — `useChat` sends the session access token; a 401
       anywhere → redirect to `/login`; the existing save, dashboard and
       plan page work unchanged under RLS.
-- [ ] 10. Self-review — FEATURE_LIFECYCLE Step 4; `project-guard
+- [x] 10. Self-review — FEATURE_LIFECYCLE Step 4; `project-guard
       --scan`; no secrets, no `VITE_` secrets, no hex outside the
       tokens.
-- [ ] 11. Testing — FEATURE_LIFECYCLE Step 5:
+- [~] 11. Testing (local/CI parts DONE: 25 Vitest, 13 Edge e2e, 51 SQL checks, browser smoke + colour audit + mocked regression. PENDING: production verification with the public key and Director/teacher smoke test, rollout step 10) — FEATURE_LIFECYCLE Step 5:
       - matrix test
       - Vitest (schemas, guard)
       - Playwright smoke: login page, guarded redirect
@@ -59,10 +59,10 @@ task is its own commit `[p1-security] (Sprint 04, Task n)`.
         401/permission denied everywhere)
       - mobile viewport
       - loading and error states
-- [ ] 12. Documentation — CHANGELOG, DECISION_LOG (SMTP choice, cap,
+- [x] 12. Documentation — CHANGELOG, DECISION_LOG (SMTP choice, cap,
       session length), CONSTITUTION rule 2 "implemented", `.env.example`
       (`ALLOWED_ORIGINS` as an Edge secret), README sign-in note.
-- [ ] 13. Triage — `npm audit` summary of the 51 Dependabot alerts,
+- [x] 13. Triage — `npm audit` summary of the 51 Dependabot alerts,
       ranked; no upgrades (separate approval).
 - [ ] 14. Commit and handoff — FEATURE_LIFECYCLE Step 7,
       DONE_CHECKLIST, Sprint 04 close-out, Director rollout steps per

@@ -29,3 +29,10 @@ One line per feature, per Commander E-10.
   project-guard). Constitution v1.1, DL-P03 (five IDSS colours,
   supersedes Milky-White Sprint 02), DL-P04 (scope P0–P6), DL-P05
   (admin + teacher roles). Sprint 03 / P0. No application code changed.
+- [2026-11-06] [SECURITY] P1 prepared (not yet deployed): sign-in by
+  @idss.ba e-mail link, route guard, 30-min idle sign-out; owner SQL
+  steps A (roles, plan ownership, @idss.ba rule, AI quota 30/day +
+  10/hour) and B (row-level security: own plans, admin all); Edge
+  Function authenticate → validate → quota → execute with CORS
+  allow-list and uniform errors. Tests: 25 Vitest, 13 Edge e2e, 51 SQL
+  matrix/rehearsal checks. Sprint 04, `specs/p1-security-data-integrity/`.

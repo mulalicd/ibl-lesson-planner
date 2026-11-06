@@ -89,6 +89,9 @@ Detaljno objašnjenje i racionalno obrazloženje: `DECISION_LOG.md` DL-P01.
    Implementacija je faza P1 i podliježe Commander pravilima E-18,
    E-19 (proba zaključavanja vlasnika + testiran rollback) i E-20
    (matrica autorizacije).
+   **Stanje 2026-11-06:** P1 je implementiran i testiran na grani
+   `claude/serene-euler-u97sb6`, ali NIJE na produkciji dok Direktor
+   ne prođe korake iz `specs/p1-security-data-integrity/ROLLOUT_DIREKTOR.md`.
 
 3. **Jezici:** aplikacija operira mješovito na bosanskom, njemačkom i
    engleskom (vidi PSI v8.0 Mode A dijaloge). Ne hardkodovati

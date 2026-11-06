@@ -76,6 +76,7 @@ await check("system-role injection -> 400", { token: "teacher", body: JSON.strin
 await check("quota exceeded -> 429 with retry", { token: "limited", body: gen }, 429, "AI_QUOTA_EXCEEDED", (_h, b) => JSON.parse(b).retry_after_s === 120);
 await check("quota RPC failure -> 500 uniform", { token: "rpcfail", body: gen }, 500, "INTERNAL", (_h, b) => !b.includes("boom"));
 await check("valid request reaches Gemini (fake key -> ALL_KEYS_EXHAUSTED)", { token: "teacher", body: gen }, 429, "ALL_KEYS_EXHAUSTED", (h) => h.get("access-control-allow-origin") === ORIGIN);
+await check("oversized body (2 MB) -> 400 before parsing", { token: "teacher", body: JSON.stringify({ mode: "chat", messages: [{ role: "user", content: "x".repeat(2_000_000) }] }) }, 400, "INVALID_INPUT");
 await check("request without Origin header (server-to-server) still needs auth", { origin: null, body: gen }, 401, "UNAUTHORIZED");
 
 fn.kill("SIGTERM");
