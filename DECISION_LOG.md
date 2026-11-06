@@ -155,4 +155,58 @@ rollback) and E-20 (authorization-matrix test).
 
 ---
 
+## DL-P06 — P1 configuration answers (SPEC open questions 1–6)
+
+**Date:** 2026-11-06
+**Decided by:** Director (answers 1, 2, 3, 5); ACA proposal pending
+confirmation (4); unanswered (6)
+
+1. **Sign-in e-mail sender:** `direktor@idss.ba`, via custom SMTP in
+   the Supabase dashboard. **Open:** the mail provider for `idss.ba`
+   and its SMTP host/port; the Director enters the credentials in
+   the dashboard only (E-4: never in the repo or the chat).
+2. **Production URL:** `https://ibl-lesson-planner.vercel.app`. It is
+   the Auth Site URL/redirect and the only `ALLOWED_ORIGINS` entry.
+   Vercel preview URLs are not allowed unless added later.
+3. **Non-`@idss.ba` staff:** refused by default. Exceptions are a
+   Director decision per case; P1 builds no exception mechanism. Each
+   exception needs its own approval.
+4. **AI usage cap — ACA PROPOSAL, not yet confirmed:**
+   - **Facts (third-party, unverified against Google's own table):**
+     free-tier Gemini limits are counted per Google Cloud
+     **project**, not per API key. Figures for `gemini-2.5-flash`
+     range from ~10–15 requests/min and ~250–1,500 requests/day per
+     project; Google states limits are not guaranteed. Consequence:
+     the 8-key rotation adds capacity only if the keys belong to
+     different projects [UNK].
+   - **Proposal:**
+     - per teacher: **30 AI requests per rolling 24 h** and **10 per
+       hour** (admin exempt)
+     - counted server-side in the Edge Function, after authentication
+     - over the cap → HTTP 429 with a clear message
+     - both numbers live in one place: a settings row the Director
+       can change by SQL
+   - **Rationale:** one plan = 1 request, and a typical follow-up
+     session = 3–8 more, so 30/day comfortably covers ~3 full plans
+     per teacher per day. It also keeps 20 active teachers under a
+     single project's conservative ~250/day floor only if usage is
+     uneven [TI]. The real limits are read from Google AI Studio for
+     each project behind `GEMINI_KEY_1..8` before go-live.
+5. **Session length:** sign-out after **30 minutes without
+   activity**; no fixed maximum while the teacher is active.
+   - Supabase's server-side "Inactivity timeout" is a Pro-plan
+     feature, and it is only enforced at the next token refresh
+     (Supabase sessions docs).
+   - Implementation: a client-side idle timer (30 min without
+     input/navigation → sign out and clear the session) on every
+     plan, plus the server-side setting if the project is on Pro.
+     The Supabase plan is **[UNK]**.
+   - The client-side timer is a usability/safety measure on shared
+     school computers, not a hard security boundary [TI].
+6. **External use of `pin_sessions`:** no answer → **[UNK]**. Row 3 of
+   the emergency preview ("Rows created in last 30 days") must be 0
+   before the lockdown script is run.
+
+---
+
 *Project Decision Log — IBL Lesson Planner — under Commander v1.7.0*

@@ -4,7 +4,7 @@ Status: NOT STARTED — implementation not approved. Order follows
 FEATURE_LIFECYCLE Step 3 and the E-19 rollout order in PLAN.md. Each
 task is its own commit `[p1-security] (Sprint 04, Task n)`.
 
-**Blocked until:**
+**Blocked until** (SPEC questions 2, 3 and 5 answered in DL-P06; still open: SMTP provider details for `direktor@idss.ba`, confirmation of the AI cap, Supabase plan Free/Pro, question 6):
 - (a) the Director returns the result of
   `supabase/owner-scripts/2026-11-06_p1-schema-dump/01_READ_ONLY_schema_dump.sql`
   and PLAN.md is re-checked against it
@@ -43,7 +43,7 @@ task is its own commit `[p1-security] (Sprint 04, Task n)`.
       (key in header) → return (uniform errors, CORS allow-list from
       `ALLOWED_ORIGINS`); `supabase/config.toml` `project_id` +
       `verify_jwt = true`. Generation logic and prompt untouched.
-- [ ] 8. UI — `src/pages/LoginPage.tsx` (magic link, domain message,
+- [ ] 8. UI — idle sign-out hook (30 min, DL-P06 item 5); `src/pages/LoginPage.tsx` (magic link, domain message,
       "check your e-mail" state, error state; five-colour tokens
       only); route guard; sign-out in `AppHeader`.
 - [ ] 9. Integration — `useChat` sends the session access token; a 401

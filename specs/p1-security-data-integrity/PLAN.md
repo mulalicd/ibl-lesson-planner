@@ -19,7 +19,7 @@ All five layers are touched (A-1), mapped per DL-P01:
 
 | Layer | Change |
 |---|---|
-| Presentation | New `src/pages/LoginPage.tsx` (route `/login`); route guard around `/chat`, `/dashboard`, `/plan/:id`; sign-out control in `AppHeader`. Five-colour tokens only (CONSTITUTION rule 6). |
+| Presentation | New `src/pages/LoginPage.tsx` (route `/login`); route guard around `/chat`, `/dashboard`, `/plan/:id`; sign-out control in `AppHeader`; `src/hooks/useIdleSignOut.ts`, which signs out after 30 min without pointer/keyboard/navigation activity. It warns 60 s before, and resets the timer while a plan is streaming (DL-P06 item 5). Five-colour tokens only (CONSTITUTION rule 6). |
 | Application | `supabase/functions/ibl-chat`: E-6 sequence authenticate → authorise → validate → execute → return. `verify_jwt = true` in `supabase/config.toml`. |
 | Domain | Role rule: admin if listed in `user_roles`, otherwise teacher. Domain rule: only `@idss.ba` may create an account. |
 | Infrastructure | Supabase client: `useChat` sends the user's session access token instead of the anon key. Existing direct `supabase.from('plans')` calls keep working; RLS scopes them. |
@@ -82,7 +82,20 @@ file for each step.
      alternative. Its current availability and behaviour must be
      checked in the docs before implementation [UNK]: `supabase.com`
      is not reachable from this session.
-8. **Length limits** (from `supabase_original/…/001_initial.sql`):
+8. **AI usage cap (DL-P06 item 4, pending Director confirmation)**:
+   - `public.ai_usage` (`id bigint identity PK`,
+     `user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE`,
+     `created_at timestamptz NOT NULL DEFAULT now()`, index
+     `(user_id, created_at)`). The cascade is acceptable because the
+     table holds only usage counters, no content (A-10).
+   - `public.app_settings` (`key text PK`, `value jsonb NOT NULL`),
+     seeded with `ai_cap_per_day = 30` and `ai_cap_per_hour = 10`.
+   - Both tables: RLS on, no anon/authenticated access; written and
+     read only by the Edge Function via a `SECURITY DEFINER` function
+     `public.consume_ai_quota()`. It checks the caps for `auth.uid()`,
+     exempts `is_admin()`, inserts one row, and returns allowed/denied
+     plus the remaining count.
+9. **Length limits** (from `supabase_original/…/001_initial.sql`):
    - `subject` ≤ 100, `topic` ≤ 200, `prior_knowledge`/`notes` ≤ 500
    - added `NOT VALID`, so existing rows can't fail the migration
    - the preview reports existing violations, and `VALIDATE
@@ -95,9 +108,10 @@ file for each step.
 1. **Authenticate** — `verify_jwt = true` plus `supabase.auth.getUser(token)`
    inside the function. No user → 401
    `{ success: false, error: 'UNAUTHORIZED' }`.
-2. **Authorise** — any signed-in user (teacher or admin) may generate.
-   An optional per-user cap is added only if Director answers SPEC
-   question 4.
+2. **Authorise** — any signed-in user (teacher or admin) may generate,
+   then `consume_ai_quota()` runs. If denied → 429
+   `{ success: false, error: 'AI_QUOTA_EXCEEDED', retry_after_s }`,
+   with a Bosnian message in the UI. Values per DL-P06 item 4.
 3. **Validate** — Zod schema `IblChatRequestSchema` in
    `src/lib/validation/schemas.ts` (E-2), imported by relative path
    (A-8 Vite + Edge Functions note):
@@ -113,8 +127,9 @@ file for each step.
    the URL query to the `x-goog-api-key` header. The prompt and
    streaming behaviour are untouched (P2/P3).
 5. **Return** — CORS `Access-Control-Allow-Origin` is restricted to an
-   allow-list read from a new Edge Function secret `ALLOWED_ORIGINS`
-   (comma-separated, values from SPEC question 2).
+   allow-list read from a new Edge Function secret `ALLOWED_ORIGINS`.
+   Initial value: `https://ibl-lesson-planner.vercel.app` (DL-P06
+   item 2).
 
 `supabase/config.toml`: `project_id` corrected to
 `pfwxbsucgjlnimvxbpyk` (Director-confirmed production) and
@@ -126,7 +141,9 @@ file for each step.
   - Site URL and Redirect URLs = production domain(s)
   - Email provider enabled with magic link
   - custom SMTP
-  - session length (SPEC question 5)
+  - Site URL `https://ibl-lesson-planner.vercel.app`
+  - server-side Inactivity timeout 30 min, only if the project is on
+    the Pro plan (DL-P06 item 5)
 
 No new `VITE_` variables.
 
@@ -178,8 +195,8 @@ Each script is run twice to prove re-runs are harmless.
   every step; rollback per step; rehearsal on a local copy.
 - **E-20:** `supabase/tests/p1_authorization_matrix.sql` asserts
   allow/deny for each of {anon, teacher A, teacher B, admin} ×
-  {plans, user_roles, conversations, conversation_messages,
-  pin_sessions} × {SELECT, INSERT, UPDATE, DELETE}. It runs locally
+  {plans, user_roles, ai_usage, app_settings, conversations,
+  conversation_messages, pin_sessions} × {SELECT, INSERT, UPDATE, DELETE}. It runs locally
   and must pass before step 4.
 - **A-8:** zero SELECT policies return empty results silently, so the
   matrix test asserts row counts, not just the absence of errors.

@@ -86,7 +86,21 @@ because security and data integrity outrank every visual goal
 - Upgrading third-party packages flagged by GitHub (51 alerts on
   `main`). P1 produces a triage list only.
 
-## Open Questions (Director)
+## Answers received 2026-11-06 → recorded in DECISION_LOG.md DL-P06
+
+1. Sender: `direktor@idss.ba`. Its mail provider and SMTP details
+   are still needed (open).
+2. Production: `https://ibl-lesson-planner.vercel.app`.
+3. Non-`@idss.ba` staff: the Director decides case by case. P1
+   refuses them by default and has no exception mechanism.
+4. AI cap: the Director asked the ACA to propose one; see DL-P06
+   (proposal, awaiting confirmation).
+5. Sign-out after 30 min without activity; otherwise the session
+   lasts as long as the teacher works.
+6. Unanswered: treated as unknown. The emergency preview (row 3)
+   remains the guard.
+
+## Open Questions (Director) — original wording
 
 1. **E-mail sender for sign-in links:** which mailbox sends them? A
    zero-cost option is an existing IDSS mailbox's SMTP (Commander
