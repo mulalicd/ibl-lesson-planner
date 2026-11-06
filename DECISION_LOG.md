@@ -280,4 +280,38 @@ Vercel. Remove it in P2 cleanup.
 
 ---
 
+## DL-P09 — Shared plan library: every teacher reads all plans
+
+**Date:** 2026-11-06 · **Decided by:** Director (corrects DL-P05 /
+DL-P06 "teachers see only their own plans")
+
+**Decision:**
+- Every signed-in `@idss.ba` user can **read all plans**.
+- **Changing or soft-deleting** a plan: only its **author** or the
+  **admin** (Director).
+- Nobody can delete permanently (unchanged).
+
+**Implementation:** P1 step B, policy
+`plans_select_all_staff USING (true)` for `authenticated` (anon: no
+access). INSERT/UPDATE policies unchanged (own or admin). Matrix test
+updated: 52/52 pass.
+
+**Known UX consequence (P5):** the dashboard title "Moji IBL planovi"
+and the favourite star are now shared. A teacher can star only their
+own plans; on someone else's plan the update silently touches 0 rows.
+Needs an author label, a "moji / svi" filter and per-user favourites.
+
+---
+
+## DL-P10 — Footer contact: maja.ljubovic@idss.ba
+
+**Date:** 2026-11-06 · **Decided by:** Director. The plan footer
+contact changes from a personal Gmail address to the institutional
+`maja.ljubovic@idss.ba`. This is an explicitly approved PSI change
+(CONSTITUTION rule 1), applied in `IDSS_IBL_PSI_v8_final.md` and
+`supabase/functions/ibl-chat/index.ts`. It takes effect after the
+next Edge Function deploy.
+
+---
+
 *Project Decision Log — IBL Lesson Planner — under Commander v1.7.0*

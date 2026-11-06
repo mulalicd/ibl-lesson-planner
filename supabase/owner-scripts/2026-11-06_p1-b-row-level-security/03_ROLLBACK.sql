@@ -8,6 +8,7 @@
 DO $do$
 BEGIN
   DROP POLICY IF EXISTS plans_select_own_or_admin ON public.plans;
+  DROP POLICY IF EXISTS plans_select_all_staff ON public.plans;
   DROP POLICY IF EXISTS plans_insert_own ON public.plans;
   DROP POLICY IF EXISTS plans_update_own_or_admin ON public.plans;
   ALTER TABLE public.plans DISABLE ROW LEVEL SECURITY;

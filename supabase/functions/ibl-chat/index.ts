@@ -267,7 +267,7 @@ SECTION 9 — LESSON DELIVERY RECOMMENDATIONS
 [MINIMUM 30 LINES. Timed schedule. Exact teacher dialogue in quotes. ZPD tips. Misconceptions. Transition phrases.]
 
 SECTION 10 — FOOTER
-Za savjete, pitanja i ideje budite slobodni da se obratite gospođi Maji Ljubović na: majaljubovic@gmail.com`;
+Za savjete, pitanja i ideje budite slobodni da se obratite gospođi Maji Ljubović na: maja.ljubovic@idss.ba`;
 
 // ─── GEMINI KEY ROTATION ─────────────────────────────────────────────────────
 const GEMINI_KEYS: string[] = [];

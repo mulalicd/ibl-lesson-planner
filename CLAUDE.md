@@ -137,8 +137,8 @@ the filesystem is not (M-18).
   replaces it.
 - **Roles (DL-P05):** `admin` = Director (`direktor@idss.ba`);
   `teacher` = any `@idss.ba` address signing in by magic link.
-  Teachers see only their own plans; admin sees all. Not implemented
-  yet — that is P1. Any role/identity change is bound by E-18, E-19
+  Everyone signed in READS all plans (DL-P09); only the author or the
+  admin may change or soft-delete a plan. Implemented in P1. Any role/identity change is bound by E-18, E-19
   and E-20.
 
 ---

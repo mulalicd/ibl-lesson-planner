@@ -1545,7 +1545,7 @@ MODULE 3.12 — MANDATORY FOOTER
 
 ================================================================================
   Za savjete, pitanja i ideje budite slobodni da se obratite
-  gospodi Maji Ljubovic na: majaljubovic@gmail.com
+  gospodi Maji Ljubovic na: maja.ljubovic@idss.ba
 
   IBL Planer kreiran uz pomoc AI alata za
   Internationale Deutsche Schule Sarajevo

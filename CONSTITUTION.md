@@ -81,9 +81,10 @@ Detaljno objašnjenje i racionalno obrazloženje: `DECISION_LOG.md` DL-P01.
    zadatak faze P3 i zahtijeva odobrenje Direktora.
 
 2. **Uloge korisnika (odluka Direktora 2026-11-06, DL-P05):**
-   - `admin` — Direktor, `direktor@idss.ba`. Vidi sve planove.
+   - `admin` — Direktor, `direktor@idss.ba`. Čita, mijenja i briše sve planove.
    - `teacher` — nastavnik s adresom `@idss.ba`, prijava putem
-     magic linka (Supabase Auth). Vidi i uređuje samo svoje planove.
+     magic linka (Supabase Auth). **Čita sve planove** (zajednička
+     biblioteka, DL-P09); mijenja i briše samo svoje.
    - Postojeći (anonimno kreirani) planovi dodjeljuju se adminu.
    Stanje koda na dan odluke: autentikacija NE postoji, RLS je javan.
    Implementacija je faza P1 i podliježe Commander pravilima E-18,

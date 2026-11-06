@@ -86,6 +86,11 @@ because security and data integrity outrank every visual goal
 - Upgrading third-party packages flagged by GitHub (51 alerts on
   `main`). P1 produces a triage list only.
 
+## Correction 2026-11-06 (DL-P09)
+All signed-in teachers READ all plans; only the author or the admin may
+change or soft-delete. This supersedes the "own plans only" stories
+and criteria below.
+
 ## Answers received 2026-11-06 → recorded in DECISION_LOG.md DL-P06
 
 1. Sender: `direktor@idss.ba` via cPanel SMTP `mail.idss.ba:465`
