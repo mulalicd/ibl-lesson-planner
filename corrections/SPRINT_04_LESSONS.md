@@ -72,3 +72,15 @@ Date: 2026-11-06
   steps.
 - E-4 / M-4 → "never call an unknown or destructive RPC to test
   existence; use a function known to be side-effect free".
+- **Director correction (2026-11-06):** the ACA told the Director "do
+  not run step 8 yet" after the Director had already run it and
+  reported the failure output → the ACA should have answered the
+  report first ("your run changed nothing, here is why") and only
+  then given the next-step guidance → C-12: answer what the owner
+  just did before giving new instructions; don't repeat a step order
+  as if it hadn't been followed.
+- Vercel "Project Link not found": the Git integration had been broken
+  since 2026-03-23, so NOTHING merged to `main` (including Sprint 02)
+  ever reached production → the audit assumed "deployed on Vercel" =
+  "main is live" [M-10] → a live check of the production bundle hash
+  should be part of every bootstrap audit.
