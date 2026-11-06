@@ -70,8 +70,9 @@ closed without further tasks.
         block before the lessons file existed
 - [x] `node .claude/hooks/project-guard.js --scan` →
       "clean — no forbidden patterns found", exit 0 (local)
-- [ ] `Commander Project Guard (E-13)` workflow green on this branch's
-      push (verify on GitHub Actions after push)
+- [x] `Commander Project Guard (E-13)` workflow green on this branch's
+      push: run #10 (id 42277693517, commit `24d1b2e`) = success. The
+      previous runs #8 and #9 on `main` had failed.
 - [ ] Branch protection on `main` (Director)
 
 ## HANDOFF NOTE — Sprint 03 / P0

@@ -51,3 +51,4 @@ initial_instructions.md's "never `main`" rule, not to the unreleased
 - [2026-11-06 19:12] Edit: CONSTITUTION.md
 - [2026-11-06 19:12] Edit: DECISION_LOG.md
 - [2026-11-06 19:12] Write: sprints/SPRINT_03.md
+- [2026-11-06 19:13] Edit: sprints/SPRINT_03.md
