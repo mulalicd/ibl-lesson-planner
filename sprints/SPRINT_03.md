@@ -75,6 +75,31 @@ closed without further tasks.
       previous runs #8 and #9 on `main` had failed.
 - [ ] Branch protection on `main` (Director)
 
+## ADDENDUM — approved 2026-11-06 (after P0)
+
+Director approved ("ok") two further items, documents/scripts only:
+1. **Emergency containment script** for `pin_sessions` (live finding:
+   30 rows publicly readable) —
+   `supabase/owner-scripts/2026-11-06_pin-sessions-lockdown/`
+   (01 preview read-only, 02 apply `DO` block, 03 rollback). Tested on
+   local PostgreSQL 16 Supabase-shaped copies (RLS off; RLS on with a
+   permissive policy): anon read → permission denied, rows unchanged,
+   service_role kept, `plans` untouched, apply and rollback both
+   harmless on re-run, missing table → abort. **Not run on
+   production** — the Director runs it (E-18).
+2. **P1 SPEC → PLAN → TASKS** — `specs/p1-security-data-integrity/`,
+   plus the read-only production dump
+   `supabase/owner-scripts/2026-11-06_p1-schema-dump/` (tested on a
+   local copy: single result table, e-mails reduced to domain, zero
+   writes). P1 implementation is NOT approved.
+
+Live production checks (public key, counts only, no writes):
+- 46 plans and 30 `pin_sessions` rows publicly readable
+- `ibl-chat` reachable with no key
+- CORS `*`
+
+Details: audit report addendum N.
+
 ## HANDOFF NOTE — Sprint 03 / P0
 
 **Completed:** see OPSEG items 1–5.

@@ -37,3 +37,39 @@ Date: 2026-11-06
 - `initial_instructions.md` → when bootstrapping into an existing repo,
   check `package.json` `"type"` and assert all hooks run (smoke test
   with `{}` on stdin) as a mandatory bootstrap step.
+
+## Addendum (2026-11-06, emergency + P1 docs)
+
+### Gotchas Discovered
+- Live production schema ≠ repository migrations: `pin_sessions`
+  (from `supabase_original/`) exists live with 30 publicly readable
+  rows → found only by probing production with the public key → the
+  repo's `supabase/migrations/` cannot be treated as SSOT until P1
+  re-syncs it (M-7).
+- `supabase/config.toml` `project_id` (`gikaxeskvqgvvdfbgjkq`, old
+  Lovable project) ≠ Director-confirmed production
+  (`pfwxbsucgjlnimvxbpyk`) → a CLI deploy from the repo could target
+  the wrong project → fix scheduled in P1.
+- The Supabase SQL Editor shows only the last statement's result → a
+  three-SELECT preview would hide two results → rewritten as one
+  `UNION ALL` result table (E-18 spirit).
+- Local rehearsal caught a GROUP BY error in the schema-dump script
+  before the Director ever ran it → E-18 "tested on a migrated copy"
+  paid off directly.
+- The connected Supabase MCP account doesn't own the production
+  project; the session network blocked `*.supabase.co` and
+  `supabase.com` docs → a personal environment allowing only the
+  project host was created; docs remain unreachable (open [UNK] items
+  in P1 PLAN).
+- The local `postgres` user can't traverse the session scratchpad
+  path → the test cluster lives in `/var/lib/postgresql`, and is
+  removed after each run.
+
+### Commander Improvement Candidates
+- `ENGINEERING_RULES.md` E-18 → add: "the Supabase SQL Editor displays
+  only the last statement's result; a preview script must return ONE
+  result set". Why: a multi-SELECT preview silently hides checks from
+  the owner.
+- `initial_instructions.md` (audit-gated bootstrap) → add a live
+  public-key probe (row counts only) of every table, so live-vs-repo
+  schema drift is found at bootstrap, not months later.
