@@ -2,13 +2,16 @@
 
 Svaki korak radite samo vi. Nazivi menija u Supabase-u mogu se malo razlikovati od navedenih. ACA ništa ne mijenja na produkciji.
 Poslije svakog koraka javite ACA-u da je urađen; on provjerava prije
-sljedećeg. Ako bilo šta ne izgleda kako je opisano: STOP i pošaljite
+sljedećeg.
+
+Kolona "poništenje" NIJE dio koraka. To je rezervni plan koji se koristi
+samo ako nakon koraka nešto ne radi. Ako bilo šta ne izgleda kako je opisano: STOP i pošaljite
 snimak ekrana.
 
-| # | Šta | Gdje | Poništenje |
+| # | Šta uraditi | Gdje | Samo ako nešto pođe po zlu (poništenje) |
 |---|---|---|---|
-| 1 | SMTP: Host `mail.idss.ba`, Port `465`, Username `direktor@idss.ba`, Password = lozinka e-maila, Sender email `direktor@idss.ba`, Sender name `IBL Planer IDSS` | Supabase → Authentication → Emails → SMTP Settings → Enable custom SMTP | isključiti custom SMTP |
-| 2 | Site URL `https://ibl-lesson-planner.vercel.app`; Redirect URLs: dodati `https://ibl-lesson-planner.vercel.app/**` | Supabase → Authentication → URL Configuration | vratiti staro |
+| 1 | SMTP: Host `mail.idss.ba`, Port `465`, Username `direktor@idss.ba`, Password = lozinka e-maila, Sender email `direktor@idss.ba`, Sender name `IBL Planer IDSS` | Supabase → Authentication → Emails → SMTP Settings → Enable custom SMTP | Ništa ne isključivati. Samo ako linkovi za prijavu ne stižu: isključiti custom SMTP i javiti ACA-u |
+| 2 | Site URL `https://ibl-lesson-planner.vercel.app`; Redirect URLs: dodati `https://ibl-lesson-planner.vercel.app/**` | Supabase → Authentication → URL Configuration | Samo ako prijava ne radi: vratiti prethodne vrijednosti |
 | 3 | Provjeriti da je Email provider uključen i "Allow new users to sign up" uključeno | Supabase → Authentication → Sign In / Providers | — |
 | 4 | Spojiti (merge) izmjene u `main` | GitHub pull request | Vercel → Deployments → prethodni → Promote |
 | 5 | Prijaviti se jednom kao `direktor@idss.ba` na `https://ibl-lesson-planner.vercel.app` (link stiže na e-mail) | browser | — |
