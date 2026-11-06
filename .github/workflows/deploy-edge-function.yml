@@ -5,6 +5,13 @@ name: Deploy Edge Function (manual)
 # Requires the repository secret SUPABASE_ACCESS_TOKEN (Supabase account ->
 # Access Tokens). Edge Function secrets (GEMINI_KEY_*, ALLOWED_ORIGINS) are
 # set in the Supabase dashboard, never here.
+#
+# Safety gates (P1 rollout order, ROLLOUT_DIREKTOR.md):
+#   1. token present            -> otherwise stop with a clear message
+#   2. SQL step A applied       -> consume_ai_quota() must exist, else the new
+#                                  function would refuse every AI request
+#   3. required secrets exist   -> ALLOWED_ORIGINS and GEMINI_KEY_1
+#   4. after deploy: CORS answers for the production origin
 
 on:
   workflow_dispatch:
@@ -19,18 +26,70 @@ on:
         type: choice
         options: ['on', 'off']
 
+env:
+  PROJECT_REF: pfwxbsucgjlnimvxbpyk
+  SUPABASE_URL: https://pfwxbsucgjlnimvxbpyk.supabase.co
+  # Publishable (public) key — the same value every visitor's browser receives.
+  PUBLISHABLE_KEY: sb_publishable_R3bb3reMeXTkdizB16ae-w_iRqtyOvd
+  PROD_ORIGIN: https://ibl-lesson-planner.vercel.app
+
 jobs:
   deploy:
     if: github.ref == 'refs/heads/main' && inputs.confirm == 'DEPLOY'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: supabase/setup-cli@v1
         with:
           version: latest
+
+      - name: "Gate 1 — access token present"
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
+            echo "::error::Repository secret SUPABASE_ACCESS_TOKEN is missing (Settings -> Secrets and variables -> Actions). Nothing was deployed."
+            exit 1
+          fi
+
+      - name: "Gate 2 — SQL step A applied (consume_ai_quota exists)"
+        run: |
+          # Anonymous call: after step A the function exists but anon may not
+          # execute it (permission error = OK). Only "function not found"
+          # (PGRST202) means step A is missing. The call never runs the quota.
+          body=$(curl -sS -X POST "$SUPABASE_URL/rest/v1/rpc/consume_ai_quota" \
+            -H "apikey: $PUBLISHABLE_KEY" -H "Content-Type: application/json" --data '{}')
+          echo "probe: $body"
+          if echo "$body" | grep -q '"PGRST202"'; then
+            echo "::error::SQL step A (2026-11-06_p1-a-roles-ownership) is not applied yet. Run it first (ROLLOUT_DIREKTOR.md step 6). Nothing was deployed."
+            exit 1
+          fi
+
+      - name: "Gate 3 — required Edge Function secrets exist"
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          names=$(supabase secrets list --project-ref "$PROJECT_REF" -o json | jq -r '.[].name')
+          missing=""
+          for s in ALLOWED_ORIGINS GEMINI_KEY_1; do echo "$names" | grep -qx "$s" || missing="$missing $s"; done
+          if [ -n "$missing" ]; then
+            echo "::error::Missing Edge Function secret(s):$missing (Supabase -> Edge Functions -> Secrets). Nothing was deployed."
+            exit 1
+          fi
+          echo "secrets present: ALLOWED_ORIGINS, GEMINI_KEY_1"
+
       - name: Deploy ibl-chat
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: |
           if [ "${{ inputs.verify_jwt }}" = "off" ]; then EXTRA="--no-verify-jwt"; else EXTRA=""; fi
-          supabase functions deploy ibl-chat --project-ref pfwxbsucgjlnimvxbpyk $EXTRA
+          supabase functions deploy ibl-chat --project-ref "$PROJECT_REF" $EXTRA
+
+      - name: "Check — CORS answers for the production origin"
+        run: |
+          sleep 10
+          code=$(curl -sS -o /dev/null -w "%{http_code}" -X OPTIONS "$SUPABASE_URL/functions/v1/ibl-chat" -H "Origin: $PROD_ORIGIN" -H "Access-Control-Request-Method: POST")
+          echo "preflight HTTP $code"
+          if [ "$code" != "204" ]; then
+            echo "::warning::Preflight for $PROD_ORIGIN returned $code (expected 204). Check ALLOWED_ORIGINS. With verify_jwt=on, the platform may also answer preflight itself."
+          fi
