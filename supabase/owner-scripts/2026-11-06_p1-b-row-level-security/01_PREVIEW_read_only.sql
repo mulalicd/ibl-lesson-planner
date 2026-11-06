@@ -1,4 +1,4 @@
--- Preview: P1 step B (row-level security) — READ-ONLY, changes nothing
+-- Preview: P1 step B (row-level security; all staff read all plans, DL-P09) — READ-ONLY, changes nothing
 -- Project: pfwxbsucgjlnimvxbpyk (IBL Lesson Planner production)
 -- Run in Supabase Dashboard -> SQL Editor. One result table.
 

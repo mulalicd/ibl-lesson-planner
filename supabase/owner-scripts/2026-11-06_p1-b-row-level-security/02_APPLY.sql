@@ -1,8 +1,9 @@
--- Migration: P1 step B — row-level security: teachers see only their own plans
+-- Migration: P1 step B — row-level security: sign-in required; all staff read all plans
 -- Project: pfwxbsucgjlnimvxbpyk (IBL Lesson Planner production)
 -- Run ONLY after step A and after the new app version with sign-in is live.
 -- From this moment, NOTHING is readable or writable without signing in.
--- Teacher: own plans only. Admin (Director): all plans.
+-- Every signed-in @idss.ba user READS all plans (DL-P09, Director 2026-11-06).
+-- Changing / soft-deleting a plan: its author or the admin (Director) only.
 -- One DO block: all or nothing. Safe to run twice. Undo: 03_ROLLBACK.sql
 
 DO $do$
@@ -25,11 +26,12 @@ BEGIN
   -- plans -------------------------------------------------------------
   ALTER TABLE public.plans ENABLE ROW LEVEL SECURITY;
   DROP POLICY IF EXISTS plans_select_own_or_admin ON public.plans;
+  DROP POLICY IF EXISTS plans_select_all_staff ON public.plans;
   DROP POLICY IF EXISTS plans_insert_own ON public.plans;
   DROP POLICY IF EXISTS plans_update_own_or_admin ON public.plans;
-  CREATE POLICY plans_select_own_or_admin ON public.plans
+  CREATE POLICY plans_select_all_staff ON public.plans
     FOR SELECT TO authenticated
-    USING (owner_id = auth.uid() OR public.is_admin());
+    USING (true);  -- shared school library (DL-P09); anon has no access at all
   CREATE POLICY plans_insert_own ON public.plans
     FOR INSERT TO authenticated
     WITH CHECK (owner_id = auth.uid());
@@ -69,6 +71,6 @@ BEGIN
     RAISE EXCEPTION 'ABORT: RLS not enabled — rolled back';
   END IF;
 
-  RAISE NOTICE 'OK: step B done — sign-in required; teachers see own plans, admin sees all.';
+  RAISE NOTICE 'OK: step B done — sign-in required; all staff read all plans; only author or admin can change.';
 END
 $do$;

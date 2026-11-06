@@ -100,3 +100,14 @@ Date: 2026-11-06
   its empty output was read as "no secrets" → a gate must
   distinguish "check failed" from "check said no" (E-5: no silent
   failures, specific messages).
+- **Director correction (2026-11-06):** "Svi nastavnici će vidjeti sve
+  planove" — the role model the ACA had recorded ("own plans only",
+  from the Director's earlier multiple-choice answer) was wrong for
+  the institution's intent. Fixed before step B ran (DL-P09). Then the
+  Director confirmed edit rights: author + admin. → For role models,
+  restate the full matrix in plain words (who reads / changes /
+  deletes) and get it confirmed before the last irreversible step; a
+  quick choice in a question card is not a confirmed matrix (E-20,
+  M-4).
+- **Director correction:** Maja Ljubović's contact is
+  `maja.ljubovic@idss.ba`, not the Gmail address in PSI → DL-P10.

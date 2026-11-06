@@ -1,4 +1,5 @@
 -- LOCAL TEST ONLY. P1 authorization matrix (Commander E-20), run AFTER step B.
+-- DL-P09: every signed-in user READS all plans; only author/admin may change.
 -- Users: :admin_id, :ta (teacher A), :tb (teacher B). Seed: 46 admin plans
 -- (legacy, backfilled), 2 plans of A, 2 plans of B.
 -- Roles x tables x operations, including every refusal.
@@ -10,18 +11,19 @@ SELECT test.expect(:P,'anon insert plan','DENIED','anon',NULL,$$insert into publ
 SELECT test.expect(:P,'anon update plans','DENIED','anon',NULL,'update public.plans set is_favourite = true');
 SELECT test.expect(:P,'anon delete plans','DENIED','anon',NULL,'delete from public.plans');
 -- plans: teacher A
-SELECT test.expect(:P,'A sees only own plans','2','authenticated',:'ta','select count(*) from public.plans');
-SELECT test.expect(:P,'A cannot see B plans','0','authenticated',:'ta',format('select count(*) from public.plans where owner_id = %L', :'tb'));
-SELECT test.expect(:P,'A cannot see legacy/admin plans','0','authenticated',:'ta',format('select count(*) from public.plans where owner_id = %L', :'admin_id'));
+SELECT test.expect(:P,'A sees all plans (shared library)','50','authenticated',:'ta','select count(*) from public.plans');
+SELECT test.expect(:P,'A sees B plans','2','authenticated',:'ta',format('select count(*) from public.plans where owner_id = %L', :'tb'));
+SELECT test.expect(:P,'A sees legacy/admin plans','46','authenticated',:'ta',format('select count(*) from public.plans where owner_id = %L', :'admin_id'));
 SELECT test.expect(:P,'A insert own plan (owner default)','ROWS:1','authenticated',:'ta',$$insert into public.plans(language,subject,grade,topic,tier,plan_text) values('german','Physik',7,'a-new','MICRO','x')$$);
 SELECT test.expect(:P,'A insert plan owned by B','DENIED','authenticated',:'ta',format($$insert into public.plans(language,subject,grade,topic,tier,plan_text,owner_id) values('german','Physik',7,'spoof','MICRO','x',%L)$$, :'tb'));
-SELECT test.expect(:P,'A update own (favourite)','ROWS:2','authenticated',:'ta','update public.plans set is_favourite = true');
+SELECT test.expect(:P,'A update (favourite) touches only own rows','ROWS:2','authenticated',:'ta','update public.plans set is_favourite = true');
 SELECT test.expect(:P,'A soft-delete own','ROWS:1','authenticated',:'ta',$$update public.plans set is_deleted = true where topic = 'a1'$$);
 SELECT test.expect(:P,'A update B plan (silently 0 rows)','ROWS:0','authenticated',:'ta',$$update public.plans set plan_text = 'hacked' where topic = 'b1'$$);
 SELECT test.expect(:P,'A give own plan to B','DENIED','authenticated',:'ta',format($$update public.plans set owner_id = %L where topic = 'a1'$$, :'tb'));
 SELECT test.expect(:P,'A hard delete own','DENIED','authenticated',:'ta',$$delete from public.plans where topic = 'a1'$$);
 -- plans: teacher B (symmetry)
-SELECT test.expect(:P,'B sees only own plans','2','authenticated',:'tb','select count(*) from public.plans');
+SELECT test.expect(:P,'B sees all plans','50','authenticated',:'tb','select count(*) from public.plans');
+SELECT test.expect(:P,'B soft-delete A plan (silently 0 rows)','ROWS:0','authenticated',:'tb',$$update public.plans set is_deleted = true where topic = 'a2'$$);
 SELECT test.expect(:P,'B update A plan (silently 0 rows)','ROWS:0','authenticated',:'tb',$$update public.plans set plan_text = 'hacked' where topic = 'a1'$$);
 -- plans: admin (E-19: Director still reaches everything)
 SELECT test.expect(:P,'admin sees all plans','50','authenticated',:'admin_id','select count(*) from public.plans');
