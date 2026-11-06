@@ -69,9 +69,17 @@ export default function LoginPage() {
     <main className="min-h-screen bg-brand-black text-brand-yellow flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <p className="text-brand-yellow text-4xl font-extrabold tracking-[0.2em]">IDSS</p>
-          <h1 className="text-brand-lightblue text-lg font-bold mt-2">IBL Planer</h1>
-          <p className="text-brand-lightblue text-sm mt-1">Internationale Deutsche Schule Sarajevo</p>
+          {/* Dark-surface variant of the official logo: the black wordmark and
+              square are rendered in IDSS yellow so they stay visible on black
+              (five-colour rule). Pending Director approval of this variant. */}
+          <img
+            src="/brand/idss-logo-on-dark.png"
+            alt="Internationale Deutsche Schule Sarajevo"
+            width={1460}
+            height={443}
+            className="mx-auto h-16 sm:h-20 w-auto"
+          />
+          <h1 className="text-brand-lightblue text-lg font-bold mt-6">IBL Planer</h1>
         </div>
 
         <div className="rounded-2xl border-2 border-brand-blue p-6 sm:p-8">
