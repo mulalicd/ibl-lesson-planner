@@ -37,6 +37,7 @@ jobs:
         run: node scripts/build-psi.mjs --check
       - name: Gemini diagnostics (models, quotas, deprecation notices)
         if: inputs.variants == 'probe'
+        timeout-minutes: 8
         env:
           GEMINI_EVAL_KEY: ${{ secrets.GEMINI_EVAL_KEY }}
         run: deno run --allow-net --allow-env scripts/eval/probe.ts
