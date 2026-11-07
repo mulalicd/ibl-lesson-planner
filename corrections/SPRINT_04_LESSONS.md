@@ -111,3 +111,24 @@ Date: 2026-11-06
   M-4).
 - **Director correction:** Maja Ljubović's contact is
   `maja.ljubovic@idss.ba`, not the Gmail address in PSI → DL-P10.
+
+## Addendum — P1 close / P3 planning (2026-11-07)
+
+### Gotchas Discovered
+- PSI v8.0 (the declared SoT) writes Bosnian labels WITHOUT
+  diacritics ("ISTRAZIVACKO PITANJE", "Skola", "cas") and uses
+  different headings and box formatting than the compressed production
+  prompt. Switching production to PSI therefore needs the display
+  parser and the save-metadata regexes updated, or the card view and
+  saving regress → found by reading PSI Modules 3.1/3.10 before
+  planning, not after → in the P3 PLAN as a non-regression task;
+  diacritics are Director question Q3.
+- PSI 3.1 leaves the header date blank ("Datum: ____"). The invented
+  date in production plans comes from the compressed prompt
+  (`Date: [today's date]` with no date supplied), not from PSI.
+
+### Commander Improvement Candidates
+- `FEATURE_LIFECYCLE.md` Step 2 → "when a feature swaps an AI prompt,
+  diff the OUTPUT FORMAT the new prompt mandates against every parser
+  that consumes the output (display, save, export) before writing the
+  plan". Why: prompt changes silently break downstream parsers.
