@@ -33,6 +33,11 @@ const variants = arg("variants", "v81,v80").split(",").map((v) => v.trim()).filt
 const limit = Number(arg("limit", "999"));
 const only = arg("only", "");
 const out = arg("out", "eval-out");
+// Model under test (production today: gemini-2.5-flash). Quotas are per model AND per project.
+const model = arg("model", "gemini-2.5-flash");
+if (!/^gemini-[a-z0-9.\-]+$/.test(model)) { console.error(`invalid model ${model}`); Deno.exit(2); }
+// Set when Google reports an exhausted per-DAY quota: retrying is pointless until the reset.
+let dailyQuotaHit = "";
 const key = Deno.env.get("GEMINI_EVAL_KEY") ?? "";
 if (!key) { console.error("GEMINI_EVAL_KEY missing"); Deno.exit(2); }
 for (const v of variants) if (!VARIANTS[v]) { console.error(`unknown variant ${v}`); Deno.exit(2); }
@@ -58,6 +63,7 @@ async function generate(messages: AiMessage[]) {
     // identical to production (supabase/functions/ibl-chat/index.ts)
     generationConfig: { temperature: 0.7, topK: 40, topP: 0.95, maxOutputTokens: 16384 },
   });
+  if (dailyQuotaHit) return { ok: false as const, ms: 0, error: `skipped: daily quota exhausted (${dailyQuotaHit})` };
   for (let attempt = 1; attempt <= 4; attempt++) {
     const wait = lastCall + MIN_INTERVAL_MS - Date.now();
     if (wait > 0) await sleep(wait);
@@ -65,7 +71,7 @@ async function generate(messages: AiMessage[]) {
     const t0 = performance.now();
     let resp: Response;
     try {
-      resp = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent", {
+      resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-goog-api-key": key },
         body,
@@ -78,8 +84,14 @@ async function generate(messages: AiMessage[]) {
     }
     const ms = Math.round(performance.now() - t0);
     if (resp.status === 429 || resp.status >= 500) {
+      const errText = await resp.text();
+      const perDay = errText.match(/"quotaId":\s*"([^"]*PerDay[^"]*)"/);
+      if (resp.status === 429 && perDay) {
+        dailyQuotaHit = perDay[1];
+        console.warn(`  HTTP 429 daily quota exhausted (${perDay[1]}) — stopping, no retries`);
+        return { ok: false as const, ms, error: `daily quota exhausted (${perDay[1]})` };
+      }
       console.warn(`  HTTP ${resp.status}, retry ${attempt}`);
-      await resp.body?.cancel();
       await sleep(20_000 * attempt);
       continue;
     }
@@ -101,7 +113,7 @@ async function writeOutputs(): Promise<string> {
 
   // ---- report
   const median = (a: number[]) => { if (!a.length) return 0; const s = [...a].sort((x, y) => x - y); return s[Math.floor(s.length / 2)]; };
-  const lines: string[] = [`# P3 golden evaluation — ${new Date().toISOString().slice(0, 16)}Z`, "", `Inputs: ${inputs.length} lessons · model gemini-2.5-flash · production generation settings`, ""];
+  const lines: string[] = [`# P3 golden evaluation — ${new Date().toISOString().slice(0, 16)}Z`, "", `Inputs: ${inputs.length} lessons · model ${model} · production generation settings`, ""];
   const allChecks = [...new Set(rows.flatMap((r) => r.report?.checks.map((c) => c.id) ?? []))];
   lines.push("| Variant | Plans OK | Avg score | Fully passing | Median latency | Median prompt tokens | Median output tokens | Not STOP |", "|---|---|---|---|---|---|---|---|");
   for (const v of variants) {

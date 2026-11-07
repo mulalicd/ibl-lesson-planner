@@ -16,6 +16,10 @@ on:
         description: 'Max number of golden lessons (24 = all)'
         required: true
         default: '24'
+      model:
+        description: 'Gemini model (production today: gemini-2.5-flash; candidates: gemini-3.8-flash, gemini-3.5-flash)'
+        required: true
+        default: 'gemini-2.5-flash'
       only:
         description: 'Optional: only these lesson ids, e.g. g08,g12'
         required: false
@@ -49,7 +53,7 @@ jobs:
           if [ -z "$GEMINI_EVAL_KEY" ]; then echo "::error::Repository secret GEMINI_EVAL_KEY is missing."; exit 1; fi
           deno run --allow-net --allow-read --allow-write --allow-env \
             --config supabase/functions/deno.json scripts/eval/run.ts \
-            --variants "${{ inputs.variants }}" --limit "${{ inputs.limit }}" --only "${{ inputs.only }}" --out eval-out
+            --variants "${{ inputs.variants }}" --limit "${{ inputs.limit }}" --only "${{ inputs.only }}" --model "${{ inputs.model }}" --out eval-out
       - name: Summary
         if: always()
         run: test -f eval-out/report.md && cat eval-out/report.md >> "$GITHUB_STEP_SUMMARY" || true
