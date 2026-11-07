@@ -73,3 +73,17 @@ Date: 2026-11-07
 - Commander improvement candidate: E-5 → "a retry loop must classify
   the error (transient vs. quota-window vs. permanent) from the
   provider's structured error, and never retry a per-day quota".
+
+## Rule-violation bug (2026-11-07) — the prompt's own examples contradicted its rules
+- PSI v9 A1 demands č ć š ž đ, but the inherited v8.0 output templates
+  were written in ASCII Bosnian. Gemini 2.5 Flash followed the templates,
+  not the rule (0/2 diacritics). The validator found the symptom, and
+  reading the template found the cause. Lesson: in a system prompt,
+  examples and templates outrank prose rules. Every template must obey
+  every rule.
+- The first `not_truncated` failure (0/3) was the validator's error:
+  it did not know the PSI's own post-plan block. Printing the failed-check
+  detail and the plan tail in the eval log found the cause in one run.
+  Rule: an eval must log WHY a check failed, not only that it failed.
+- Commander improvement candidate: E-15 → "an AI quality gate logs the
+  failing evidence (detail + excerpt) for each failed check".

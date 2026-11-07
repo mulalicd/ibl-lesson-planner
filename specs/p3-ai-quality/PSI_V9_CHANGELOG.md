@@ -35,3 +35,23 @@ v8.0 are **kept**.
 - (c) shorten the prompt ONLY if measurement shows no quality loss;
   quality comes first ("ova web app je korisna onoliko koliko je
   kvalitetan AI odgovor")
+
+## 2026-11-07 — evidence-driven fixes (eval runs 42354465883, 42356033884)
+- **Orthography of the Protocol 3 templates (A1 enforcement):** the
+  output templates inherited from v8.0 were written in ASCII Bosnian
+  ("ISTRAZIVACKO PITANJE", "Skola", "CASA", "STA MOZETE…"). Gemini 2.5
+  Flash copies templates verbatim and failed `bosnian_diacritics` 0/2
+  despite rule A1. 110 template lines (Modules 3.1–3.13) are now spelled
+  with č ć š ž đ. The wording and structure are unchanged: only
+  diacritics, plus 2 Cyrillic look-alike letters replaced ("Sluzи",
+  "uceniсka").
+- **A15 — order of the closing elements:** Module 3.13 said "the very
+  last element before any footer", which contradicted A13 (Tips is the
+  last section before the footer). The fixed order is now: … Tips &
+  Tricks → footer → "ŠTA MOŽETE URADITI SLJEDEĆE" block (an app hint,
+  not part of the plan). This is what the model already produced.
+- Validator: the next-steps block after the footer is no longer flagged
+  as truncation (max 4,000 chars after the footer). German total lines
+  "Insgesamt / Gesamtdauer / Summe" are recognised.
+- Still a DRAFT: needs the Director's approval before production
+  (CONSTITUTION rule 1).

@@ -94,6 +94,22 @@ Recommendation [I]:
 2. Keep 2.5 Flash in production for now: reliable today, while 3.8 Flash is not.
 3. Re-test 3.8 Flash on all 24 lessons when it is stable, then migrate in a separate, approved step with a fallback to 2.5 Flash.
 
+### 4d. Diagnostic rerun — eval run 42356033884 (08:34 UTC, 2.5 Flash, v90)
+
+- [V] g02 (de): 18/20. After the footer the model printed the PSI Module 3.13 block
+  ("3. EINEN NEUEN PLAN ERSTELLEN"). Cause of `not_truncated` 0/3: the **validator**, not
+  truncation. Root cause: the PSI contradicted itself on the order (3.13 vs A13) → A15 + validator fix.
+- [V] `timeline` in g02: "ends at 25 min", no total line recognised. [I] Likely "Insgesamt", which the
+  validator did not know; now added. To be confirmed on the next run.
+- [V] Cause of `bosnian_diacritics` 0/2 on 2.5 Flash: the PSI's own output templates were ASCII Bosnian
+  and the model copies them. Templates diacritised (PSI_V9_CHANGELOG 2026-11-07).
+- [V] usageMetadata v90 g02 on 2.5 Flash: prompt 24,610 · output 8,245 · **thinking 3,925** · total 36,780.
+  Thinking ≈ 48 % of the visible output; cost estimates must include it.
+  3.8 Flash cost per v90 plan incl. thinking [I]: 24.6k × $0.75 + (8.2k + 3.9k) × $3.75 per 1M ≈ **$0.064** (2026), ≈ $0.13 (2027).
+- [V] Quota: the request after this plan already got the per-day 429, i.e. after only ~10 requests since the reset
+  (8 at 08:12 incl. two 503s, 1 here). [U] Why this is not 20: either 503 attempts count, or the window or limit
+  differs from the probe's "limit=20". Practical rule: ≤ 8 full plans per model per day on this key.
+
 ## 5. Price (official pricing page, captured 2026-11-07, paid tier, per 1M tokens, USD)
 
 - [V] **Gemini 3.8 Flash** (standard): input **$0.75**, output incl. thinking **$3.75**, through

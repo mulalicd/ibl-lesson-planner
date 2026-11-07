@@ -58,6 +58,9 @@ const ENGLISH_LABELS = [
 // Bosnian headings written without diacritics (DL-P13 item 3: correct spelling required).
 const ASCII_FOLDED_BS = [/ISTRAZIVACKO PITANJE/, /DOKAZ UCENJA/, /\bSkola:/, /PREPORUKE ZA IZVODJENJE CASA/, /\bZAKLJUCAK\b/, /\bcasa\b/];
 
+// Footer + the PSI 3.13 "next steps" block (~2,000 chars incl. box borders).
+const MAX_AFTER_FOOTER = 4000;
+
 const SOURCE_HINT = /(youtube|youtu\.be|https?:\/\/|www\.|\bverlag\b|\bstr\.\s*\d|\bs\.\s*\d|\bseite\s*\d|\bpage\s*\d|\bp\.\s*\d|\bkanal\b|\bchannel\b|\budzbenik\b|\budžbenik\b|\btextbook\b)/i;
 const VERIFY_MARK = /(ZA PROVJERU|ZU PR(Ü|UE)FEN|TO VERIFY)/i;
 
@@ -67,8 +70,8 @@ function hasSection(foldedUpper: string, key: string): boolean {
 
 function timelineCheck(text: string, duration: number): CheckResult {
   const folded = fold(text);
-  // 1) explicit total line: "Ukupno: 45 min" / "Gesamt: 45 Min" / "Total: 45 min"
-  const total = folded.match(/\b(UKUPNO|GESAMT|TOTAL)\b[^\n\d]{0,30}(\d{1,3})\s*min/i);
+  // 1) explicit total line: "Ukupno: 45 min" / "Gesamt: 45 Min" / "Insgesamt: 45 Minuten" / "Total: 45 min"
+  const total = folded.match(/\b(UKUPNO|INSGESAMT|GESAMTDAUER|GESAMT|SUMME|TOTAL)\b[^\n\d]{0,30}(\d{1,3})\s*min/i);
   // 2) clock ranges "00:40-00:45" and minute ranges "40-45 min"
   let maxEnd = 0;
   let ranges = 0;
@@ -126,9 +129,15 @@ export function validatePlan(text: string, params: ValidateParams): ValidationRe
   // Footer contact (DL-P10) and truncation (footer must be near the end)
   const footerIdx = text.lastIndexOf("maja.ljubovic@idss.ba");
   add("footer_contact", footerIdx >= 0, footerIdx >= 0 ? "present" : "missing or old address");
-  // Truncation: the footer block (any address) must be at the very end.
+  // Truncation: the footer block (any address) must close the plan. PSI v9 A15
+  // allows only the short "ŠTA MOŽETE URADITI SLJEDEĆE" app hint after it.
   const footerMarker = Math.max(...[/Maj[ai] Ljubovi[cć]/gi].flatMap((re) => [...text.matchAll(re)].map((m) => m.index ?? -1)), -1);
-  add("not_truncated", footerMarker >= 0 && text.length - footerMarker < 1500, footerMarker >= 0 ? "footer at end" : "no footer → likely truncated");
+  const afterFooter = footerMarker >= 0 ? text.length - footerMarker : -1;
+  add(
+    "not_truncated",
+    footerMarker >= 0 && afterFooter < MAX_AFTER_FOOTER,
+    footerMarker < 0 ? "no footer → likely truncated" : afterFooter < MAX_AFTER_FOOTER ? "footer closes the plan" : `${afterFooter} chars after the footer`,
+  );
 
   // No invented date (PSI 3.1 leaves the date blank)
   const dateLine = lines.find((l) => /^\s*\|?\s*(Datum|Date)\s*:/i.test(l)) ?? "";

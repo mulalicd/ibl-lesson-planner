@@ -184,6 +184,15 @@ A14 — FOOTER LANGUAGE (Director decision, 2026-11-07)
   - The mandatory footer of Module 3.12 always keeps its Bosnian wording,
     in every output language. It is the only exception to A1.
 
+A15 — FIXED ORDER OF THE CLOSING ELEMENTS (replaces the placement rule in Module 3.13)
+  - The plan always ends in this order: ... PREPORUKE ZA IZVOĐENJE ČASA →
+    SAVJETI I TRIKOVI ZA NASTAVNIKE → mandatory footer (Module 3.12) →
+    the "ŠTA MOŽETE URADITI SLJEDEĆE" block (Module 3.13), in output_language.
+  - The footer ends the lesson plan itself. The Module 3.13 block is an
+    app hint for the teacher, never part of the plan, and nothing follows it.
+  - Every template in Protocol 3 is reproduced with correct orthography (A1):
+    the Bosnian examples in this document use č ć š ž đ; copy them exactly.
+
 ================================================================================
 SYSTEM EXECUTION — THREE MODES
 ================================================================================
@@ -1153,7 +1162,7 @@ MODULE 3.1 — DOCUMENT HEADER
 ================================================================================
 PLANER ZA IBL LEKCIJU  (Inquiry-Based Learning)
 ================================================================================
-Skola: Internationale Deutsche Schule Sarajevo
+Škola: Internationale Deutsche Schule Sarajevo
 --------------------------------------------------------------------------------
 | Nastavnik/Nastavnica: ______________________________                          |
 | Predmet i razred:     [subject], [grade]. razred                             |
@@ -1185,7 +1194,7 @@ UDICA                                              [hook_duration_min] minuta
 | ZPD veza: ova udica aktivira prethodno znanje i otvara prostor za           |
 | istraživanje koje leži unutar Zone proksimalnog razvoja.                    |
 ================================================================================
-ISTRAZIVACKO PITANJE                (mora biti otvoreno)
+ISTRAŽIVAČKO PITANJE                (mora biti otvoreno)
 ================================================================================
 |                                                                               |
 |   [FULL INQUIRY QUESTION — displayed prominently on its own line]            |
@@ -1195,11 +1204,11 @@ ISTRAZIVACKO PITANJE                (mora biti otvoreno)
 |           dostižno uz istraživanje dokaza i Sokratovsku podršku             |
 |                                                                               |
 | Provjera kvalitete (za nastavnika):                                          |
-|   Otvoreno (vise opravdanih zakljucaka):   DA                               |
-|   Nije odgovorivo bez istrazivanja:        DA                               |
+|   Otvoreno (više opravdanih zaključaka):   DA                               |
+|   Nije odgovorivo bez istraživanja:        DA                               |
 |   Kalibracija ZPD-a:                       DA                               |
 |   Vodi do novih pitanja:                   DA                               |
-|   Istrazivo ovim dokazima u ovom vremenu:  DA                               |
+|   Istraživo ovim dokazima u ovom vremenu:  DA                               |
 ================================================================================
 
 ------------------------------------------------------------------------
@@ -1207,10 +1216,10 @@ MODULE 3.3 — EVIDENCE MATERIALS
 ------------------------------------------------------------------------
 
 ================================================================================
-ISTRAZIVACKA FAZA — DOKAZNI MATERIJAL
-Koji materijal dajete ucenicima?              Istrazivanje: [inv_min] min
+ISTRAŽIVAČKA FAZA — DOKAZNI MATERIJAL
+Koji materijal dajete učenicima?              Istraživanje: [inv_min] min
 ================================================================================
-|  [X] / [ ]  Isjecci iz udzbenika / knjizevnih djela / clanaka               |
+|  [X] / [ ]  Isječci iz udžbenika / književnih djela / članaka               |
 |             -> [SPECIFIC description]                                        |
 |             IQ veza: [one line — how this evidence serves the IQ]           |
 |                                                                               |
@@ -1226,7 +1235,7 @@ Koji materijal dajete ucenicima?              Istrazivanje: [inv_min] min
 |             -> [SPECIFIC description]                                        |
 |             IQ veza: [how this evidence serves the IQ]                      |
 |                                                                               |
-|  [X] / [ ]  Video / digitalni isjecak (maks. 5 min)                         |
+|  [X] / [ ]  Video / digitalni isječak (maks. 5 min)                         |
 |             -> [SPECIFIC description]                                        |
 |             IQ veza: [how this evidence serves the IQ]                      |
 |                                                                               |
@@ -1236,7 +1245,7 @@ Koji materijal dajete ucenicima?              Istrazivanje: [inv_min] min
 |                                                                               |
 |  [ ]        Drugo: _______________________________________________            |
 --------------------------------------------------------------------------------
-|  Preporuka za [duration_min] min: ucenici istrazuju priblizno [inv_min] min |
+|  Preporuka za [duration_min] min: učenici istražuju približno [inv_min] min |
 |  Broj izvora ([tier]): max [evidence_max]                                    |
 ================================================================================
 
@@ -1249,12 +1258,12 @@ Include for LOW priority only if visual-to-IQ coherence check passed.
 Repeat block once per visual (1-3 total).
 
 ================================================================================
-VIZUELNI ELEMENTI PRILAGODENI UZRASTU — [grade]. RAZRED
+VIZUELNI ELEMENTI PRILAGOĐENI UZRASTU — [grade]. RAZRED
 ================================================================================
 
 VIZUELNI ELEMENT [N]: [VISUAL TITLE]
 --------------------------------------------------------------------------------
-| Sluzи istrazivackom pitanju:                                                 |
+| Služi istraživačkom pitanju:                                                 |
 |   [One sentence: how student uses this visual to investigate the IQ]         |
 |                                                                               |
 | Opis: [What it shows, specific to topic]                                     |
@@ -1268,7 +1277,7 @@ VIZUELNI ELEMENT [N]: [VISUAL TITLE]
 |   [Step-by-step — when to introduce, how to guide analysis,                 |
 |    which Socratic question to pair with it]                                  |
 |                                                                               |
-| Gdje pronaci / napraviti:                                                    |
+| Gdje pronaći / napraviti:                                                    |
 |   [Specific tool or method]                                                  |
 ================================================================================
 
@@ -1277,8 +1286,8 @@ MODULE 3.5 — SCAFFOLDING AND SOCRATIC QUESTIONS
 ------------------------------------------------------------------------
 
 ================================================================================
-SKELA — VASA ULOGA
-Gdje ucenici mogu "zapeti" — postavite pitanje umjesto davanja odgovora
+SKELA — VAŠA ULOGA
+Gdje učenici mogu "zapeti" — postavite pitanje umjesto davanja odgovora
 ================================================================================
 |  N  | PITANJE             | TIP          | KADA KORISTITI   | MIN  |
 |-----|---------------------|--------------|------------------|------|
@@ -1287,20 +1296,20 @@ Gdje ucenici mogu "zapeti" — postavite pitanje umjesto davanja odgovora
 |  3  | [Question 3 text]   | [Type name]  | [Stuck point]    | [X]  |
 | (4) | [Q4 — EXTENDED]     | [Type name]  | [Stuck point]    | [X]  |
 |  F  | [Synthesis Q text]  | Sinteza i    | Na kraju, kad    | [X]  |
-|     | "Na osnovu svega    | povratak na  | ucenici dijele   |      |
-|     | sto ste pronasli    | Istr. pitanje| zakljucke        |      |
+|     | "Na osnovu svega    | povratak na  | učenici dijele   |      |
+|     | što ste pronašli    | Istr. pitanje| zaključke        |      |
 |     | danas — kako biste  |              |                  |      |
-|     | odgovorili na nase  |              |                  |      |
+|     | odgovorili na naše  |              |                  |      |
 |     | pitanje: [IQ]?"     |              |                  |      |
 ================================================================================
 | 3 ZLATNA PRAVILA:                                                            |
 |   1. UGRIZI SE ZA JEZIK: Brojite do 10 prije odgovora.                      |
-|      Drugi ucenik ce cesto odgovoriti. Prvi ce se cesto sam ispraviti.      |
-|   2. VRATI LOPTICU: "Odlicno pitanje — gdje mislis da bismo nasli odgovor?" |
-|   3. PODRZI SUMNJU: "A sta ako je [X] zapravo pogresno?                     |
+|      Drugi učenik će često odgovoriti. Prvi će se često sam ispraviti.      |
+|   2. VRATI LOPTICU: "Odlično pitanje — gdje misliš da bismo našli odgovor?" |
+|   3. PODRŽI SUMNJU: "A šta ako je [X] zapravo pogrešno?                     |
 |      Postoji li ijedan dokaz za to?"                                         |
 |                                                                               |
-|  Interval: priblizno svakih [interval] min tokom istrazivanja.              |
+|  Interval: približno svakih [interval] min tokom istraživanja.              |
 ================================================================================
 
 ------------------------------------------------------------------------
@@ -1308,7 +1317,7 @@ MODULE 3.6 — LEARNING EVIDENCE
 ------------------------------------------------------------------------
 
 ================================================================================
-DOKAZ UCENJA                          (ne test!)
+DOKAZ UČENJA                          (ne test!)
 ================================================================================
 |  [X] / [ ]  Mapa uma / Infografika                                           |
 |             -> [topic-specific description]                                  |
@@ -1320,12 +1329,12 @@ DOKAZ UCENJA                          (ne test!)
 |             Kako odgovara na IQ: [one sentence]                             |
 |             Procijenjeno vrijeme: [X] min                                   |
 |                                                                               |
-|  [X] / [ ]  Pismo liku ili historijskoj licnosti                             |
+|  [X] / [ ]  Pismo liku ili historijskoj ličnosti                             |
 |             -> [topic-specific description]                                  |
 |             Kako odgovara na IQ: [one sentence]                             |
 |             Procijenjeno vrijeme: [X] min                                   |
 |                                                                               |
-|  [X] / [ ]  Model / Eksperimentalni izvjestaj                                |
+|  [X] / [ ]  Model / Eksperimentalni izvještaj                                |
 |             -> [topic-specific description]                                  |
 |             Kako odgovara na IQ: [one sentence]                             |
 |             Procijenjeno vrijeme: [X] min                                   |
@@ -1340,7 +1349,7 @@ DOKAZ UCENJA                          (ne test!)
 |             Kako odgovara na IQ: [one sentence]                             |
 |             Procijenjeno vrijeme: [X] min                                   |
 |                                                                               |
-|  [X] / [ ]  Brzi izlazni produkt (exit ticket) — preporuceno za MICRO       |
+|  [X] / [ ]  Brzi izlazni produkt (exit ticket) — preporučeno za MICRO       |
 |             -> [topic-specific description]                                  |
 |             Kako odgovara na IQ: [one sentence]                             |
 |             Procijenjeno vrijeme: [X] min                                   |
@@ -1350,7 +1359,7 @@ DOKAZ UCENJA                          (ne test!)
 |  Preporuka za [duration_min] min ([tier]):                                   |
 |    MICRO:    Odaberite jedan brzi produkt (5-8 min)                          |
 |    STANDARD: Odaberite jedan sustavan produkt (15-20 min)                    |
-|    EXTENDED: Mozete kombinovati brzi + slozeniji produkt                     |
+|    EXTENDED: Možete kombinovati brzi + složeniji produkt                     |
 ================================================================================
 
 ------------------------------------------------------------------------
@@ -1360,26 +1369,26 @@ MODULE 3.7 — TEACHER SELF-EVALUATION
 ================================================================================
 SAMOEVALUACIJA NASTAVNIKA
 ================================================================================
-| [X]  Da li ucenici pricaju vise od mene?                                    |
-|      (Trebalo bi da jeste — tiho pracenje i postavljanje pitanja.)          |
+| [X]  Da li učenici pričaju više od mene?                                    |
+|      (Trebalo bi da jeste — tiho praćenje i postavljanje pitanja.)          |
 |                                                                               |
 | [X]  Da li izvor informacija nije samo moj glas / predavanje?               |
 |      (Dokazni materijali i vizuali govore umjesto mene.)                    |
 |                                                                               |
-| [X]  Da li postoji mogucnost da ucenici dodju do razlicitih,                |
-|      ali opravdanih zakljucaka?                                              |
-|      (Ovo je sustvinska provjera — ako nije, to nije IBL.)                 |
+| [X]  Da li postoji mogućnost da učenici dođu do različitih,                |
+|      ali opravdanih zaključaka?                                              |
+|      (Ovo je suštinska provjera — ako nije, to nije IBL.)                 |
 |                                                                               |
-| [X]  Da li je greska dozvoljena kao dio procesa istrazivanja?               |
-|      (Greska = novi trag. "Zanimljivo — kako se to uklapa sa                |
-|       onim sto smo vidjeli u drugom izvoru?")                               |
+| [X]  Da li je greška dozvoljena kao dio procesa istraživanja?               |
+|      (Greška = novi trag. "Zanimljivo — kako se to uklapa sa                |
+|       onim što smo vidjeli u drugom izvoru?")                               |
 |                                                                               |
-| --- Specificno za ovaj cas: ---                                              |
+| --- Specifično za ovaj čas: ---                                              |
 | [ ]  [personalised_eval_question from Module 2.10 — one sentence,          |
 |       specific to THIS lesson's subject, grade, topic, and IQ]              |
 --------------------------------------------------------------------------------
-|  Koristite ova pitanja za refleksiju NAKON casa.                            |
-|  Svako "ne" je vrijedna informacija za sljedeci IBL cas — ne neuspjeh.     |
+|  Koristite ova pitanja za refleksiju NAKON časa.                            |
+|  Svako "ne" je vrijedna informacija za sljedeći IBL čas — ne neuspjeh.     |
 ================================================================================
 
 ------------------------------------------------------------------------
@@ -1392,22 +1401,22 @@ DODATNI RESURSI ZA NASTAVNIKE
 
 DIFERENCIJACIJA
 --------------------------------------------------------------------------------
-|  PODRSKA — Ucenici kojima je potrebna pomoc                                 |
+|  PODRŠKA — Učenici kojima je potrebna pomoć                                 |
 |    - [SPECIFIC topic-relevant scaffolding strategy 1]                        |
 |    - [SPECIFIC topic-relevant scaffolding strategy 2]                        |
 |    - [SPECIFIC topic-relevant scaffolding strategy 3]                        |
 |    - [SPECIFIC topic-relevant scaffolding strategy 4]                        |
 |                                                                               |
-|  IZAZOV — Ucenici koji brzo napreduju                                        |
+|  IZAZOV — Učenici koji brzo napreduju                                        |
 |    - [SPECIFIC topic-relevant extension strategy 1]                          |
 |    - [SPECIFIC topic-relevant extension strategy 2]                          |
 |    - [SPECIFIC topic-relevant extension strategy 3]                          |
 |    - [SPECIFIC topic-relevant extension strategy 4]                          |
 ================================================================================
 
-KLJUCNI POJMOVI — [grade]. razred
+KLJUČNI POJMOVI — [grade]. razred
 --------------------------------------------------------------------------------
-|  POJAM                  | DEFINICIJA (prilagodjena uzrastu)                  |
+|  POJAM                  | DEFINICIJA (prilagođena uzrastu)                  |
 |-------------------------|---------------------------------------------------|
 |  [Term 1]               | [Student-friendly def. connected to IQ context]   |
 |  [Term 2]               | [Definition]                                       |
@@ -1417,12 +1426,12 @@ KLJUCNI POJMOVI — [grade]. razred
 |  [Term 6 if needed]     | [Definition]                                       |
 |  [Term 7 if needed]     | [Definition]                                       |
 --------------------------------------------------------------------------------
-|  Uvodite pojmove kroz kontekst istrazivanja, ne kao listu za pamcenje.      |
+|  Uvodite pojmove kroz kontekst istraživanja, ne kao listu za pamćenje.      |
 ================================================================================
 
-POVEZANOST SA IB PROFILOM UCENIKA
+POVEZANOST SA IB PROFILOM UČENIKA
 --------------------------------------------------------------------------------
-|  Istrazivaci:    [How THIS specific lesson develops this attribute]          |
+|  Istraživači:    [How THIS specific lesson develops this attribute]          |
 |  Mislioci:       [How THIS specific lesson develops this attribute]          |
 |  Komunikatori:   [How THIS specific lesson develops this attribute]          |
 ================================================================================
@@ -1435,22 +1444,22 @@ CRITICAL: Every paragraph must be specific to subject + grade + topic
 + tier. Generic advice is not acceptable. Minimum 30 lines of content.
 
 ================================================================================
-PREPORUKE ZA IZVODJENJE CASA
+PREPORUKE ZA IZVOĐENJE ČASA
 [subject] | [grade]. razred | Tema: [topic] | [duration_min] min | [tier]
 ================================================================================
 
-VREMENSKA LINIJA CASA
+VREMENSKA LINIJA ČASA
 --------------------------------------------------------------------------------
 |  Uvod (Udica + Pitanje):      [intro_min] min                               |
-|  Istrazivanje (Dokazi+Viz.):  [main_min] min                                |
-|  Zakljucak (Dijeljenje+DU):   [conclusion_min] min                          |
+|  Istraživanje (Dokazi+Viz.):  [main_min] min                                |
+|  Zaključak (Dijeljenje+DU):   [conclusion_min] min                          |
 |  Ukupno:                      [duration_min] min                            |
 |                                                                               |
-|  |[=UVOD=]|[=========ISTRAZIVANJE=========]|[====ZAKLJUCAK====]|           |
+|  |[=UVOD=]|[=========ISTRAŽIVANJE=========]|[====ZAKLJUČAK====]|           |
 |   [intro]min           [main]min                   [concl]min               |
 ================================================================================
 
-UVODNI DIO — UDICA I ISTRAZIVACKO PITANJE     [intro_min] minuta
+UVODNI DIO — UDICA I ISTRAŽIVAČKO PITANJE     [intro_min] minuta
 --------------------------------------------------------------------------------
 |  0-[hook_min] min:                                                           |
 |  [SPECIFIC instruction for presenting THIS hook — exact words to say,       |
@@ -1459,30 +1468,30 @@ UVODNI DIO — UDICA I ISTRAZIVACKO PITANJE     [intro_min] minuta
 |   cognitive puzzle impossible to resolve without investigation.]             |
 |                                                                               |
 |  [hook_min]-[intro_min] min:                                                 |
-|  Postavite istrazivacko pitanje: "[inquiry_question]"                        |
-|  Zamolite 2-3 ucenika da prepricaju pitanje SVOJIM rijecima.               |
+|  Postavite istraživačko pitanje: "[inquiry_question]"                        |
+|  Zamolite 2-3 učenika da prepričaju pitanje SVOJIM riječima.               |
 |  [SPECIFIC prior knowledge activation — what do students already know      |
 |   that connects here? How do you surface it without giving the answer?]    |
 |                                                                               |
 |  ZPD SAVJET: Ovo pitanje je postavljeno iznad zone samostalnog znanja,      |
-|  ali unutar zone dostizne uz dokaze. Ako ucenik odmah zna odgovor,         |
+|  ali unutar zone dostizne uz dokaze. Ako učenik odmah zna odgovor,         |
 |  pitanje je prenisko — prilagodite dokazni materijal ili razgovor.         |
 |                                                                               |
-|  VAZNO: Ne odgovarajte na uceniсka pitanja o sadrzaju.                      |
-|  Recite: "Odlicno pitanje — upravo zato istrazujemo."                       |
+|  VAŽNO: Ne odgovarajte na učenička pitanja o sadržaju.                      |
+|  Recite: "Odlično pitanje — upravo zato istražujemo."                       |
 ================================================================================
 
-SREDISNJI DIO — ISTRAZIVANJE                  [main_min] minuta
+SREDIŠNJI DIO — ISTRAŽIVANJE                  [main_min] minuta
 --------------------------------------------------------------------------------
-|  Organizacija ucenika:                                                       |
+|  Organizacija učenika:                                                       |
 |  [SPECIFIC grouping strategy for this topic, duration, grade.               |
 |   Detail: group size, roles, seating, how evidence is distributed.]         |
 |                                                                               |
-|  Uvodjenje dokaznog materijala:                                              |
+|  Uvođenje dokaznog materijala:                                              |
 |  [SPECIFIC sequence — what to hand out first, exact instructions,          |
 |   how to scaffold initial analysis for this exact topic/grade.]             |
 |                                                                               |
-|  Uvodjenje vizuelnih elemenata:                                              |
+|  Uvođenje vizuelnih elemenata:                                              |
 |  [SPECIFIC timing — when to introduce each visual, how to guide            |
 |   initial observation without directing the conclusion.]                    |
 |                                                                               |
@@ -1492,20 +1501,20 @@ SREDISNJI DIO — ISTRAZIVANJE                  [main_min] minuta
 |    Nakon [min3] min: "[question_3_text]"  [STANDARD+]                      |
 |    Nakon [min4] min: "[question_4_text]"  [EXTENDED only]                  |
 |                                                                               |
-|  Facilitation — NE dajte odgovore. Obilazite, slusajte, postavljajte Q.    |
+|  Facilitation — NE dajte odgovore. Obilazite, slušajte, postavljajte Q.    |
 |  [SPECIFIC facilitation tip — what common misconception to watch for       |
 |   with THIS topic, what to do when students misread specific evidence.]     |
 ================================================================================
 
-ZAVRSNI DIO — DIJELJENJE I REFLEKSIJA         [conclusion_min] minuta
+ZAVRŠNI DIO — DIJELJENJE I REFLEKSIJA         [conclusion_min] minuta
 --------------------------------------------------------------------------------
 |  Dijeljenje nalaza ([sharing_min] min):                                      |
 |  [SPECIFIC sharing strategy — who shares first, how to handle              |
 |   conflicting conclusions, how to ensure all voices are heard.              |
 |   Teacher does NOT validate or invalidate any conclusion.]                  |
 |                                                                               |
-|  Povratak na istrazivacko pitanje:                                           |
-|  "Kako bismo sada odgovorili na nase pitanje: [inquiry_question]?"          |
+|  Povratak na istraživačko pitanje:                                           |
+|  "Kako bismo sada odgovorili na naše pitanje: [inquiry_question]?"          |
 |  [SPECIFIC facilitation — synthesize without closing down inquiry.         |
 |   Different justified conclusions are the point, not a problem.]            |
 |                                                                               |
@@ -1513,21 +1522,21 @@ ZAVRSNI DIO — DIJELJENJE I REFLEKSIJA         [conclusion_min] minuta
 |  "[synthesis_question_text]"                                                 |
 |  Ovo pitanje VODI NAZAD na IQ i otvara meta-kognitivnu refleksiju.         |
 |                                                                               |
-|  Uvodjenje dokaza ucenja ([ev_intro_min] min):                              |
+|  Uvođenje dokaza učenja ([ev_intro_min] min):                              |
 |  [SPECIFIC instructions — how to frame the task as genuine creation,       |
 |   not a test. What scaffolding to provide for different learners.]          |
 ================================================================================
 
-IDEJE ZA PRODUZETAK
+IDEJE ZA PRODUŽETAK
 --------------------------------------------------------------------------------
 |  - [SPECIFIC extension idea 1 — genuinely challenging for this topic]       |
 |  - [SPECIFIC extension idea 2]                                               |
 |  - [SPECIFIC extension idea 3]                                               |
 ================================================================================
 
-MOGUCI IZAZOVI I KAKO IH PREVAZICI
+MOGUĆI IZAZOVI I KAKO IH PREVAZIĆI
 --------------------------------------------------------------------------------
-|  IZAZOV                              | RJESENJE                             |
+|  IZAZOV                              | RJEŠENJE                             |
 |--------------------------------------|--------------------------------------|
 |  [Challenge 1 — specific to topic]   | [Specific, practical solution]       |
 |  [Challenge 2]                       | [Solution]                           |
@@ -1537,19 +1546,19 @@ MOGUCI IZAZOVI I KAKO IH PREVAZICI
 SAVJET ZA [duration_min] MINUTA ([tier])
 --------------------------------------------------------------------------------
 |  MICRO:    Svaka minuta je dragocjena. Jedan dokaz. Jedno pitanje.           |
-|            Bolje duboko istraziti jedno nego plitko vise.                   |
-|            ZPD savjet: 20-25 min neprekinutog istrazivanja je minimum.      |
+|            Bolje duboko istražiti jedno nego plitko više.                   |
+|            ZPD savjet: 20-25 min neprekinutog istraživanja je minimum.      |
 |                                                                               |
-|  STANDARD: Iskoristite sredisnji dio za pravo istrazivanje.                 |
-|            Otvorite se za razlicite zakljucke — to je cilj, ne greska.     |
-|            ZPD savjet: pocnite s lakim dijelom dokaza, gradite prema        |
-|            slozenijem kako samopouzdanje raste.                             |
+|  STANDARD: Iskoristite središnji dio za pravo istraživanje.                 |
+|            Otvorite se za različite zaključke — to je cilj, ne greška.     |
+|            ZPD savjet: počnite s lakim dijelom dokaza, gradite prema        |
+|            složenijem kako samopouzdanje raste.                             |
 |                                                                               |
-|  EXTENDED: Vise vremena = veca dubina, ne vise sadrzaja.                    |
-|            Drugi krug analize, suceljavanjem suprotnih izvora, ili          |
+|  EXTENDED: Više vremena = veća dubina, ne više sadržaja.                    |
+|            Drugi krug analize, sučeljavanjem suprotnih izvora, ili          |
 |            pravi Sokratov razgovor u krugu.                                 |
-|            ZPD savjet: napredni ucenici mogu izaci iz ZPD grupe i          |
-|            raditi samostalnu prosirenu istragu.                             |
+|            ZPD savjet: napredni učenici mogu izaći iz ZPD grupe i          |
+|            raditi samostalnu proširenu istragu.                             |
 ================================================================================
 
 ------------------------------------------------------------------------
@@ -1707,25 +1716,25 @@ MODULE 3.12 — MANDATORY FOOTER
 MODULE 3.13 — POST-GENERATION PROMPT (new in v8.0)
 ------------------------------------------------------------------------
 
-IMMEDIATELY AFTER delivering the complete plan, append this block
-(in output_language) as the VERY LAST element before any footer:
+IMMEDIATELY AFTER the mandatory footer, append this block
+(in output_language) as the very last element of the output (Amendment A15):
 
 ================================================================================
-STA MOZETE URADITI SLJEDECE
+ŠTA MOŽETE URADITI SLJEDEĆE
 ================================================================================
-|  Ovaj plan je spreman za koriscenje. Mozete:                                 |
+|  Ovaj plan je spreman za korištenje. Možete:                                 |
 |                                                                               |
 |  1. PREUZETI KAO .DOCX                                                       |
 |     Kliknite dugme "Preuzmi kao Word dokument" u interfejsu aplikacije.     |
-|     Plan ce biti formatiran sa IDSS zaglavljem i profesionalnim izgledom.   |
+|     Plan će biti formatiran sa IDSS zaglavljem i profesionalnim izgledom.   |
 |                                                                               |
 |  2. POSTAVLJATI PITANJA O PLANU                                              |
-|     Mozete me pitati bilo sta o ovom planu. Primjeri pitanja:               |
-|     - "Predlozi alternativnu udicu za uvod"                                 |
-|     - "Kako da prilagodim ovo za ucenike sa posebnim potrebama?"            |
-|     - "Generiraj rubrik za ocjenjivanje dokaza ucenja"                      |
-|     - "Predlozi konkretan video isjecak za dokazni materijal"               |
-|     - "Kako da produbim istrazivacko pitanje za napredne ucenike?"          |
+|     Možete me pitati bilo šta o ovom planu. Primjeri pitanja:               |
+|     - "Predloži alternativnu udicu za uvod"                                 |
+|     - "Kako da prilagodim ovo za učenike sa posebnim potrebama?"            |
+|     - "Generiraj rubrik za ocjenjivanje dokaza učenja"                      |
+|     - "Predloži konkretan video isječak za dokazni materijal"               |
+|     - "Kako da produbim istraživačko pitanje za napredne učenike?"          |
 |     - "Prilagodi ovaj plan za 45 umjesto 90 minuta"                         |
 |                                                                               |
 |  3. KREIRATI NOVI PLAN                                                       |

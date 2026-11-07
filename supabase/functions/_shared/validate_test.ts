@@ -84,3 +84,29 @@ Deno.test("missing Tips & Tricks / outcomes / real-life sections fail", () => {
   const f = failed(GOOD_BS.replace("SAVJETI I TRIKOVI ZA NASTAVNIKE", "").replace("ISHODI UČENJA", "").replace("UPORIŠTE U STVARNOM ŽIVOTU", ""));
   for (const id of ["section_tips", "section_outcomes", "section_realLife", "tips_before_footer"]) if (!f.includes(id)) throw new Error(id);
 });
+
+const NEXT_STEPS = `
+================================================================================
+ŠTA MOŽETE URADITI SLJEDEĆE
+================================================================================
+|  Ovaj plan je spreman za korištenje. Možete:                                 |
+|  1. PREUZETI KAO .DOCX                                                       |
+|  2. POSTAVLJATI PITANJA O PLANU                                              |
+|     - "Kako da produbim istraživačko pitanje za napredne učenike?"          |
+|  3. KREIRATI NOVI PLAN                                                       |
+================================================================================
+`;
+
+Deno.test("the PSI 3.13 next-steps block after the footer is not truncation (A15)", () => {
+  const f = failed(GOOD_BS + NEXT_STEPS);
+  if (f.length) throw new Error(f.join());
+});
+
+Deno.test("a long lesson section after the footer still fails not_truncated", () => {
+  if (!failed(GOOD_BS + "\nDIFERENCIJACIJA\n" + "x".repeat(5000)).includes("not_truncated")) throw new Error("not caught");
+});
+
+Deno.test("German total line 'Insgesamt: 45 Minuten' is recognised", () => {
+  const de = GOOD_BS.replace("| Ukupno: 45 min |", "| Insgesamt: 45 Minuten |");
+  if (failed(de).includes("timeline_matches_duration")) throw new Error("Insgesamt not recognised");
+});
