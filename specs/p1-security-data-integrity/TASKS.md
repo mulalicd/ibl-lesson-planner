@@ -1,6 +1,6 @@
 # TASKS — P1 Security & Data Integrity
 
-Status: IN PROGRESS — approved by the Director 2026-11-06 ("kreni na P1"); see sprints/SPRINT_04.md. Order follows
+Status: DONE on production 2026-11-07 (rollout steps 1–9 applied and verified live; step 10 Director smoke test acknowledged "Ok"). Open: a teacher-account check (reads all, edits only own) when the first teacher signs in. Order follows
 FEATURE_LIFECYCLE Step 3 and the E-19 rollout order in PLAN.md. Each
 task is its own commit `[p1-security] (Sprint 04, Task n)`.
 
@@ -50,7 +50,7 @@ task is its own commit `[p1-security] (Sprint 04, Task n)`.
 - [x] 10. Self-review — FEATURE_LIFECYCLE Step 4; `project-guard
       --scan`; no secrets, no `VITE_` secrets, no hex outside the
       tokens.
-- [~] 11. Testing (local/CI parts DONE: 25 Vitest, 13 Edge e2e, 51 SQL checks, browser smoke + colour audit + mocked regression. PENDING: production verification with the public key and Director/teacher smoke test, rollout step 10) — FEATURE_LIFECYCLE Step 5:
+- [x] 11. Testing (local/CI parts DONE: 25 Vitest, 13 Edge e2e, 51 SQL checks, browser smoke + colour audit + mocked regression. PENDING: production verification with the public key and Director/teacher smoke test, rollout step 10) — FEATURE_LIFECYCLE Step 5:
       - matrix test
       - Vitest (schemas, guard)
       - Playwright smoke: login page, guarded redirect
@@ -64,6 +64,6 @@ task is its own commit `[p1-security] (Sprint 04, Task n)`.
       (`ALLOWED_ORIGINS` as an Edge secret), README sign-in note.
 - [x] 13. Triage — `npm audit` summary of the 51 Dependabot alerts,
       ranked; no upgrades (separate approval).
-- [ ] 14. Commit and handoff — FEATURE_LIFECYCLE Step 7,
+- [x] 14. Commit and handoff — FEATURE_LIFECYCLE Step 7,
       DONE_CHECKLIST, Sprint 04 close-out, Director rollout steps per
       PLAN.md table.

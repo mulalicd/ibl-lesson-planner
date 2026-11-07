@@ -36,3 +36,8 @@ One line per feature, per Commander E-10.
   Function authenticate → validate → quota → execute with CORS
   allow-list and uniform errors. Tests: 25 Vitest, 13 Edge e2e, 51 SQL
   matrix/rehearsal checks. Sprint 04, `specs/p1-security-data-integrity/`.
+- [2026-11-07] [SECURITY] P1 live on production: sign-in required
+  (@idss.ba magic link), shared plan library (all staff read, author
+  or admin edits), AI generator authenticated + quota, no public
+  access to any table. Footer contact maja.ljubovic@idss.ba. Official
+  IDSS logo in header/login. Vercel Git deployment restored.
