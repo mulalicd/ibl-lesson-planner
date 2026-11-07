@@ -32,7 +32,7 @@ to PSI v9.0 additionally needs Director approval of the v9.0 text.
       - display regression on old plans
       - golden evaluation old vs new → `eval/results/<date>/report.md`
       - the Director's blind rating
-- [ ] 10b. PSI v9.0 draft (`IDSS_IBL_PSI_v9_draft.md`) + change log vs
+- [~] 10b. PSI v9.0 draft (DRAFT written: amendments A1–A11 + 3.10 table + footer; `PSI_V9_CHANGELOG.md`; PENDING: evaluation + Director approval) (`IDSS_IBL_PSI_v9_draft.md`) + change log vs
       v8.0 → Director review → approval → becomes the SSOT input of
       `build-psi.mjs` (DL-P13 item 1).
 - [ ] 11. Documentation: DECISION_LOG (Q1–Q5 answers), CHANGELOG,

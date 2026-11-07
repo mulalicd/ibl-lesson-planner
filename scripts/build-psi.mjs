@@ -10,8 +10,9 @@ import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 
 const SOURCES = [
   { id: 'v80', md: 'IDSS_IBL_PSI_v8_final.md', exportName: 'PSI_V80_PROMPT' },
-  // v9.0 is added here once the draft exists (DL-P13); it goes to
+  // v9.0 DRAFT (DL-P13): used by the golden evaluation only. It goes to
   // production only after the Director approves its text.
+  { id: 'v90', md: 'IDSS_IBL_PSI_v9_draft.md', exportName: 'PSI_V90_PROMPT' },
 ];
 const check = process.argv.includes('--check');
 let stale = 0;
