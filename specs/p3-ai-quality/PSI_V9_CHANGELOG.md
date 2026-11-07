@@ -41,7 +41,7 @@ v8.0 are **kept**.
   output templates inherited from v8.0 were written in ASCII Bosnian
   ("ISTRAZIVACKO PITANJE", "Skola", "CASA", "STA MOZETE…"). Gemini 2.5
   Flash copies templates verbatim and failed `bosnian_diacritics` 0/2
-  despite rule A1. 110 template lines (Modules 3.1–3.13) are now spelled
+  despite rule A1. The template lines of Modules 3.1–3.13 (two correction passes) are now spelled
   with č ć š ž đ. The wording and structure are unchanged: only
   diacritics, plus 2 Cyrillic look-alike letters replaced ("Sluzи",
   "uceniсka").
