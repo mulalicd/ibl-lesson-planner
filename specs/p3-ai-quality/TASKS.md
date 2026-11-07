@@ -1,7 +1,7 @@
 # TASKS — P3 AI Quality & Single Source of Truth
 
-Status: NOT STARTED — waiting for the Director's approval and answers
-to SPEC Open Questions 1–5.
+Status: IN PROGRESS — approved 2026-11-07 (DL-P13). Production switch
+to PSI v9.0 additionally needs Director approval of the v9.0 text.
 
 - [ ] 0. Baseline: tag the current production prompt (`p3-baseline`);
       collect 3 real pre-P3 plan texts for display regression (from
@@ -32,6 +32,9 @@ to SPEC Open Questions 1–5.
       - display regression on old plans
       - golden evaluation old vs new → `eval/results/<date>/report.md`
       - the Director's blind rating
+- [ ] 10b. PSI v9.0 draft (`IDSS_IBL_PSI_v9_draft.md`) + change log vs
+      v8.0 → Director review → approval → becomes the SSOT input of
+      `build-psi.mjs` (DL-P13 item 1).
 - [ ] 11. Documentation: DECISION_LOG (Q1–Q5 answers), CHANGELOG,
       CONSTITUTION rule 1 note ("production uses PSI v8.0").
 - [ ] 12. Rollout: merge → Vercel; Edge deploy via the gated workflow;

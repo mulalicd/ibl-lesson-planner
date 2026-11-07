@@ -365,4 +365,31 @@ implementation.
 
 ---
 
+## DL-P13 — P3 approved: PSI as single source, revised to v9.0
+
+**Date:** 2026-11-07 · **Decided by:** Director (answers to P3 SPEC
+questions 1–5)
+
+1. **Canonical PSI = `IDSS_IBL_PSI_v8_final.md`, with a condition:**
+   it must be **revised and maximally improved to an expert,
+   world-class level**.
+   - Implementation: the ACA drafts **PSI v9.0**
+     (`IDSS_IBL_PSI_v9_draft.md`) with a change log against v8.0.
+   - **v9.0 replaces v8.0 in production only after the Director
+     explicitly approves the v9.0 text** (CONSTITUTION rule 1) and
+     the golden evaluation shows v9.0 ≥ v8.0.
+   - The inline "v8.1" prompt and `src/lib/psi.ts` are removed.
+2. **Sources (ODR-6): approved.** Evidence is described precisely.
+   Any specific external source is marked ZA PROVJERU / ZU PRÜFEN /
+   TO VERIFY.
+3. **Diacritics: approved.** Output uses correct Bosnian/German
+   spelling in all headings and labels.
+4. **Gemini test key: approved.** The Director adds it as an
+   environment network secret (header `x-goog-api-key`), never in
+   chat or repo.
+5. **Repair: option (a).** A validation badge plus a teacher-triggered
+   "Popravi"; no automatic extra call.
+
+---
+
 *Project Decision Log — IBL Lesson Planner — under Commander v1.7.0*
