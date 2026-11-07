@@ -37,10 +37,10 @@ jobs:
         run: node scripts/build-psi.mjs --check
       - name: Gemini diagnostics (models, quotas, deprecation notices)
         if: inputs.variants == 'probe'
-        timeout-minutes: 8
+        timeout-minutes: 20
         env:
           GEMINI_EVAL_KEY: ${{ secrets.GEMINI_EVAL_KEY }}
-        run: deno run --allow-net --allow-env scripts/eval/probe.ts
+        run: deno run --allow-net --allow-env --allow-read --config supabase/functions/deno.json scripts/eval/probe.ts
       - name: Run golden evaluation
         if: inputs.variants != 'probe'
         env:
