@@ -42,3 +42,17 @@ Date: 2026-11-07
   from production as its first fixture, and must flag exactly that
   sample's known defects". Why: it calibrates the validator against
   reality, not against invented examples.
+
+## Director correction (2026-11-07) — instructions to a non-coder
+- The ACA asked for a "GitHub secret" with a link and steps, but did
+  not warn that GitHub shows **Secrets** and **Variables** side by
+  side. The Director stored the key as a plain-text **Variable**, and
+  the eval run failed ("secret missing") → the Director: "ti
+  pretpostavljaš da ja možda znam … uvijek ćeš mi dati hirurški
+  precizne instrukcije" → standing order in CONSTITUTION rule 8 +
+  CLAUDE.md: exact link, exact button and field names, what NOT to
+  click when two similar options exist, and what success looks like
+  → C-12.
+- Commander improvement candidate: C-12 → add "name the look-alike
+  option the owner must NOT use (Secrets vs. Variables, Environment vs.
+  Repository) and describe the expected screen after each step".

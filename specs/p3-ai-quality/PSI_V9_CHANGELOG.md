@@ -17,19 +17,21 @@ v8.0 are **kept**.
 | 5 | A3 — evidence creates tension and never gives the answer; explanation only after exploration (5E) | amendment | the explainer video gave the answer away |
 | 6 | A4 — Teacher Dictionary binding; no "Tačno / Tako je / Bravo"; three anticipated answers (shallow / misconception / off-track) with facilitative replies | amendment | the dialogue validated answers ("Tako je!") |
 | 7 | A5 — no recall questions; varied Paul & Elder types; last = synthesis | amendment | Q1 was recall ("koji su sastojci") |
-| 8 | **A6 — learning goal + 3 "Mogu…" success criteria, visible in the learning evidence** | amendment | expert lesson-planning standard; was missing. **Structural addition, decide explicitly** |
+| 8 | **A6 — ISHODI UČENJA: a goal + 3–4 detailed, measurable outcomes (verb, content, condition, evidence, Bloom level) + matching "Mogu…" success criteria** | amendment | Director 2026-11-07: "jasno i detaljno razrađeni ishodi učenja" (approved) |
 | 9 | A7 — explicit minutes and an "Ukupno: N min" line that equals the duration; revised Bloom names | amendment | timing not verifiable; "Sinteza (Synthesis)" = old taxonomy |
 | 10 | A8 — ASCII only if aligned and ≤ 60 chars, else a drawing instruction | amendment | broken box in the Director's plan |
 | 11 | A9 — differentiation always covers the language learner (DaZ/BHS/EAL), SEN, extension | amendment | German school, multilingual classes |
 | 12 | A10 — quality check printed as short reasons, never bare "YES" lists | amendment | 7× "YES" self-assessment |
 | 13 | A11 — never truncate; footer always last | amendment | completeness |
+| 13a | **A12 — UPORIŠTE U STVARNOM ŽIVOTU: 2–3 concrete real-life situations (home, Sarajevo/BiH, nature, sport, technology, jobs), used in hook/evidence/transfer** | amendment | Director 2026-11-07 |
+| 13b | **A13 — SAVJETI I TRIKOVI ZA NASTAVNIKE: the closing section, 6–8 expert topic-specific ideas (preparation / delivery / after)** | amendment | Director 2026-11-07 |
+| 13c | A14 — the footer stays Bosnian in every language | amendment | Director decision (b) |
 | 14 | Module 3.10 table rewritten with correct spelling + new labels (Cilj učenja, Kriteriji uspjeha, Ukupno, Česte zablude …) | 3.10 | A1/A6/A7 need the labels |
 | 15 | Footer: correct spelling, PSI v9.0, contact maja.ljubovic@idss.ba | 3.12 | DL-P10 |
 
-**Open questions for the Director:**
-- (a) Change 8 (learning goal + success criteria): accept as part of
-  v9.0, or move to P4?
-- (b) Footer language: keep it Bosnian in German/English plans (as
-  today), or translate it?
-- (c) After the measurement, should anything in v8.0 be shortened?
-  The full document is about 26k tokens per request.
+**Director decisions (2026-11-07):**
+- (a) outcomes accepted in v9.0, expanded to detailed outcomes
+- (b) the footer stays Bosnian
+- (c) shorten the prompt ONLY if measurement shows no quality loss;
+  quality comes first ("ova web app je korisna onoliko koliko je
+  kvalitetan AI odgovor")

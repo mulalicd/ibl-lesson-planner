@@ -13,6 +13,9 @@ Deno.test("Director's real v8.1 plan: the known defects are detected (and only r
   for (const must of ["no_english_labels", "no_invented_date", "sources_marked_to_verify", "footer_contact"]) {
     if (!f.has(must)) throw new Error(`expected failure ${must}; got ${[...f]}`);
   }
+  for (const must2 of ["section_outcomes", "section_realLife", "section_tips"]) {
+    if (!f.has(must2)) throw new Error(`v8.1 plan has no ${must2}; expected failure`);
+  }
   for (const ok of ["section_iq", "section_hook", "iq_is_a_question", "timeline_matches_duration", "socratic_synthesis_present"]) {
     if (f.has(ok)) throw new Error(`unexpected failure ${ok}: ${JSON.stringify(r.checks.find((c) => c.id === ok))}`);
   }
@@ -29,6 +32,10 @@ UDICA
 "Pogledajte ovu biljku."
 ISTRAŽIVAČKO PITANJE (mora biti otvoreno)
 Kako biljka koja ne jede može rasti i davati nam hranu?
+ISHODI UČENJA
+I1 Učenik može uporediti …
+UPORIŠTE U STVARNOM ŽIVOTU
+Bašta u dvorištu škole …
 DOKAZNI MATERIJAL
 - Kratak animirani isječak o fotosintezi (ZA PROVJERU: YouTube, nastavnik provjerava prije časa)
 SKELA — VAŠA ULOGA
@@ -38,6 +45,8 @@ SAMOEVALUACIJA NASTAVNIKA
 DIFERENCIJACIJA
 PREPORUKE ZA IZVOĐENJE ČASA
 | Ukupno: 45 min |
+SAVJETI I TRIKOVI ZA NASTAVNIKE
+PRIPREMA: …
 Za savjete, pitanja i ideje budite slobodni da se obratite gospođi Maji Ljubović na: maja.ljubovic@idss.ba
 `;
 
@@ -69,4 +78,9 @@ Deno.test("a truncated plan (no footer) fails footer + truncation", () => {
 
 Deno.test("a plan without any timeline fails (never passes by default)", () => {
   if (!failed(GOOD_BS.replace("| Ukupno: 45 min |", "")).includes("timeline_matches_duration")) throw new Error("not caught");
+});
+
+Deno.test("missing Tips & Tricks / outcomes / real-life sections fail", () => {
+  const f = failed(GOOD_BS.replace("SAVJETI I TRIKOVI ZA NASTAVNIKE", "").replace("ISHODI UČENJA", "").replace("UPORIŠTE U STVARNOM ŽIVOTU", ""));
+  for (const id of ["section_tips", "section_outcomes", "section_realLife", "tips_before_footer"]) if (!f.includes(id)) throw new Error(id);
 });

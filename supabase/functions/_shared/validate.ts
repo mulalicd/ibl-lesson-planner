@@ -40,7 +40,11 @@ const SECTIONS: Record<string, string[]> = {
   learningEvidence: ["DOKAZ UCENJA", "LERNNACHWEIS", "LEARNING EVIDENCE", "EVIDENCE OF LEARNING"],
   selfEval: ["SAMOEVALUACIJA", "SELBSTREFLEXION", "SELF-EVALUATION", "SELF EVALUATION"],
   differentiation: ["DIFERENCIJACIJA", "DIFFERENZIERUNG", "DIFFERENTIATION", "SUPPORT PATH", "PODRSKA"],
-  delivery: ["PREPORUKE ZA IZVODJENJE", "UNTERRICHTSEMPFEHLUNG", "DELIVERY RECOMMENDATION", "LESSON DELIVERY"],
+  delivery: ["PREPORUKE ZA IZVODJENJE", "UNTERRICHTSEMPFEHLUNG", "EMPFEHLUNGEN ZUR DURCHFUHRUNG", "DELIVERY RECOMMENDATION", "LESSON DELIVERY"],
+  // Director requirements (2026-11-07, PSI v9 A6/A12/A13):
+  outcomes: ["ISHODI UCENJA", "LERNERGEBNISSE", "LEARNING OUTCOMES"],
+  realLife: ["UPORISTE U STVARNOM ZIVOTU", "BEZUG ZUM ALLTAG", "REAL-LIFE CONNECTION", "REAL LIFE CONNECTION"],
+  tips: ["SAVJETI I TRIKOVI", "TIPPS & TRICKS", "TIPS & TRICKS", "TIPS AND TRICKS"],
 };
 
 // English template labels that must not appear in a Bosnian or German plan.
@@ -106,6 +110,11 @@ export function validatePlan(text: string, params: ValidateParams): ValidationRe
     }
   }
   add("iq_is_a_question", !!iqLine, iqLine ? iqLine.slice(0, 120) : "no question found after the heading");
+
+  // Tips & Tricks is the closing section: after delivery recommendations, before the footer
+  const tipsAt = Math.max(...SECTIONS.tips.map((k) => upper.lastIndexOf(k)));
+  const footerAtU = upper.lastIndexOf("MAJ");
+  add("tips_before_footer", tipsAt >= 0 && footerAtU > tipsAt, tipsAt < 0 ? "no tips section" : footerAtU > tipsAt ? "ok" : "tips after footer");
 
   // Synthesis / return to the IQ (PSI 2.6/2.10)
   const synth = /(SINTEZ|SYNTHES|RETURN TO (THE )?IQ|POVRATAK NA|RUCKKEHR|RUECKKEHR)/.test(upper);
