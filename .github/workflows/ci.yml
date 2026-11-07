@@ -1,0 +1,36 @@
+name: CI (tests)
+
+# Runs on every push and pull request: app tests, type check, PSI sync check,
+# Edge Function tests. Does not deploy and needs no secrets.
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: npm ci --no-audit --no-fund
+      - name: PSI generated modules in sync with the .md source (M-7)
+        run: npm run psi:check
+      - name: TypeScript
+        run: npx tsc -p tsconfig.app.json --noEmit
+      - name: App tests (Vitest)
+        run: npm test
+      - name: Edge Function type check
+        run: deno check --config supabase/functions/deno.json supabase/functions/ibl-chat/index.ts scripts/eval/run.ts
+      - name: Edge shared module tests (SSE stream, plan validator)
+        run: deno test --allow-read --config supabase/functions/deno.json supabase/functions/_shared/
+      - name: Edge Function end-to-end (mock Supabase)
+        run: deno run --allow-net --allow-env --allow-run --allow-read --config supabase/functions/deno.json supabase/tests/edge/ibl-chat.e2e.ts

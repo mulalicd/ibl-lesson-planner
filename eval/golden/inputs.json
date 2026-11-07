@@ -1,0 +1,282 @@
+[
+ {
+  "id": "g01",
+  "params": {
+   "language": "bosnian",
+   "subject": "Sachkunde",
+   "grade": 1,
+   "topic": "Zašto se snijeg topi?",
+   "duration_min": 45,
+   "tier": "MICRO"
+  }
+ },
+ {
+  "id": "g02",
+  "params": {
+   "language": "german",
+   "subject": "Deutsch",
+   "grade": 2,
+   "topic": "Märchenfiguren: gut oder böse?",
+   "duration_min": 45,
+   "tier": "MICRO",
+   "prior_knowledge": "Sie kennen Rotkäppchen."
+  }
+ },
+ {
+  "id": "g03",
+  "params": {
+   "language": "english",
+   "subject": "Englisch",
+   "grade": 3,
+   "topic": "Animals and their homes",
+   "duration_min": 60,
+   "tier": "STANDARD",
+   "prior_knowledge": "Basic animal names in English."
+  }
+ },
+ {
+  "id": "g04",
+  "params": {
+   "language": "bosnian",
+   "subject": "Mathematik",
+   "grade": 3,
+   "topic": "Razlomci: dijeljenje pizze",
+   "duration_min": 45,
+   "tier": "MICRO",
+   "prior_knowledge": "Znaju sabiranje i oduzimanje do 100."
+  }
+ },
+ {
+  "id": "g05",
+  "params": {
+   "language": "bosnian",
+   "subject": "Naturkunde",
+   "grade": 4,
+   "topic": "Kruženje vode u prirodi",
+   "duration_min": 90,
+   "tier": "STANDARD"
+  }
+ },
+ {
+  "id": "g06",
+  "params": {
+   "language": "german",
+   "subject": "Kunst",
+   "grade": 4,
+   "topic": "Farben und Gefühle",
+   "duration_min": 90,
+   "tier": "STANDARD",
+   "notes": "Viel praktische Arbeit."
+  }
+ },
+ {
+  "id": "g07",
+  "params": {
+   "language": "english",
+   "subject": "Musik",
+   "grade": 5,
+   "topic": "How does sound travel?",
+   "duration_min": 45,
+   "tier": "MICRO"
+  }
+ },
+ {
+  "id": "g08",
+  "params": {
+   "language": "bosnian",
+   "subject": "Biologie",
+   "grade": 5,
+   "topic": "Fotosinteza",
+   "duration_min": 45,
+   "tier": "MICRO"
+  }
+ },
+ {
+  "id": "g09",
+  "params": {
+   "language": "bosnian",
+   "subject": "Geschichte",
+   "grade": 5,
+   "topic": "Život u srednjovjekovnoj Bosni",
+   "duration_min": 90,
+   "tier": "STANDARD",
+   "prior_knowledge": "Znaju šta je dvorac."
+  }
+ },
+ {
+  "id": "g10",
+  "params": {
+   "language": "german",
+   "subject": "Erdkunde",
+   "grade": 6,
+   "topic": "Warum leben Menschen an Flüssen?",
+   "duration_min": 90,
+   "tier": "STANDARD"
+  }
+ },
+ {
+  "id": "g11",
+  "params": {
+   "language": "english",
+   "subject": "Informatik",
+   "grade": 6,
+   "topic": "What is an algorithm?",
+   "duration_min": 45,
+   "tier": "MICRO",
+   "prior_knowledge": "They use tablets daily."
+  }
+ },
+ {
+  "id": "g12",
+  "params": {
+   "language": "bosnian",
+   "subject": "Ethik",
+   "grade": 6,
+   "topic": "Da li je laž ikada opravdana?",
+   "duration_min": 45,
+   "tier": "MICRO",
+   "notes": "Sokratski seminar."
+  }
+ },
+ {
+  "id": "g13",
+  "params": {
+   "language": "bosnian",
+   "subject": "Physik",
+   "grade": 7,
+   "topic": "Zašto brodovi plutaju?",
+   "duration_min": 90,
+   "tier": "STANDARD",
+   "prior_knowledge": "Znaju pojam mase."
+  }
+ },
+ {
+  "id": "g14",
+  "params": {
+   "language": "german",
+   "subject": "Chemie",
+   "grade": 7,
+   "topic": "Ist Wasser immer gleich Wasser?",
+   "duration_min": 90,
+   "tier": "STANDARD"
+  }
+ },
+ {
+  "id": "g15",
+  "params": {
+   "language": "bosnian",
+   "subject": "B/H/S",
+   "grade": 7,
+   "topic": "Narodna epska pjesma: junak ili nasilnik?",
+   "duration_min": 90,
+   "tier": "STANDARD",
+   "prior_knowledge": "Pročitali su 'Smrt Omer-bega'."
+  }
+ },
+ {
+  "id": "g16",
+  "params": {
+   "language": "english",
+   "subject": "Gesellschaft",
+   "grade": 7,
+   "topic": "Who decides the rules in a community?",
+   "duration_min": 45,
+   "tier": "MICRO"
+  }
+ },
+ {
+  "id": "g17",
+  "params": {
+   "language": "bosnian",
+   "subject": "Lebenskunde",
+   "grade": 8,
+   "topic": "Kako se nositi sa stresom pred ispite?",
+   "duration_min": 45,
+   "tier": "MICRO"
+  }
+ },
+ {
+  "id": "g18",
+  "params": {
+   "language": "german",
+   "subject": "Geschichte",
+   "grade": 8,
+   "topic": "Warum begann der Erste Weltkrieg in Sarajevo?",
+   "duration_min": 90,
+   "tier": "STANDARD",
+   "prior_knowledge": "Sie kennen das Jahr 1914."
+  }
+ },
+ {
+  "id": "g19",
+  "params": {
+   "language": "bosnian",
+   "subject": "Mathematik",
+   "grade": 8,
+   "topic": "Pitagorina teorema u svakodnevnom životu",
+   "duration_min": 90,
+   "tier": "STANDARD",
+   "prior_knowledge": "Znaju površinu kvadrata."
+  }
+ },
+ {
+  "id": "g20",
+  "params": {
+   "language": "english",
+   "subject": "Biologie",
+   "grade": 8,
+   "topic": "Are viruses alive?",
+   "duration_min": 90,
+   "tier": "STANDARD",
+   "prior_knowledge": "Cells and cell structure."
+  }
+ },
+ {
+  "id": "g21",
+  "params": {
+   "language": "bosnian",
+   "subject": "Umweltkunde",
+   "grade": 9,
+   "topic": "Može li Sarajevo imati čist zrak zimi?",
+   "duration_min": 135,
+   "tier": "EXTENDED",
+   "prior_knowledge": "Znaju šta je smog.",
+   "notes": "Projektni rad, 3x45."
+  }
+ },
+ {
+  "id": "g22",
+  "params": {
+   "language": "german",
+   "subject": "Physik",
+   "grade": 9,
+   "topic": "Erneuerbare Energie für unsere Schule",
+   "duration_min": 135,
+   "tier": "EXTENDED"
+  }
+ },
+ {
+  "id": "g23",
+  "params": {
+   "language": "bosnian",
+   "subject": "Nachmittagsprogramm",
+   "grade": 4,
+   "topic": "Školski vrt: šta možemo uzgojiti?",
+   "duration_min": 90,
+   "tier": "STANDARD"
+  }
+ },
+ {
+  "id": "g24",
+  "params": {
+   "language": "english",
+   "subject": "Technik",
+   "grade": 9,
+   "topic": "Designing a bridge that holds 1 kg",
+   "duration_min": 180,
+   "tier": "EXTENDED",
+   "prior_knowledge": "Forces and simple structures.",
+   "notes": "Hands-on project week."
+  }
+ }
+]
