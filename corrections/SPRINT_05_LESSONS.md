@@ -56,3 +56,20 @@ Date: 2026-11-07
 - Commander improvement candidate: C-12 → add "name the look-alike
   option the owner must NOT use (Secrets vs. Variables, Environment vs.
   Repository) and describe the expected screen after each step".
+
+## Environment gotcha (2026-11-07) — free-tier quota is per DAY per model
+- The first 24-lesson eval delivered 2 of 72 plans. The cause was NOT
+  prompt size or tokens per minute: the eval key's project is on the
+  Gemini free tier with **20 requests/day per model**
+  (`GenerateRequestsPerDayPerProjectPerModel-FreeTier`). The script
+  treated every 429 as retryable, so it spent 3 hours retrying a quota
+  that resets only at midnight Pacific.
+- Fix: read the `quotaId` in the 429 body and stop at once on a
+  per-day quota. Size eval batches to ≤ 20 calls per model per day.
+- Diagnosing first (probe that prints the raw quotaId) found the real
+  cause in one 2-minute run, after a 3-hour blind run. Rule of thumb:
+  run a 1-call diagnostic before any long batch job against an external
+  quota.
+- Commander improvement candidate: E-5 → "a retry loop must classify
+  the error (transient vs. quota-window vs. permanent) from the
+  provider's structured error, and never retry a per-day quota".
