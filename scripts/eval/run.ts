@@ -154,6 +154,9 @@ for (const g of inputs) {
     rows.push({ variant: v, id: g.id, ok: true, ms: r.ms, finish: r.finish, usage: r.usage, report, chars: r.text.length });
     await writeOutputs(); // results + report on disk after EVERY plan (survives a job timeout)
     console.log(`   ${report.passed}/${report.total} in ${(r.ms / 1000).toFixed(1)}s, ${r.text.length} chars, finish=${r.finish}`);
+    for (const c of report.checks.filter((x) => !x.ok)) console.log(`     ✗ ${c.id}: ${c.detail}`);
+    console.log(`     usage: ${JSON.stringify(r.usage)}`);
+    console.log(`     tail: ${JSON.stringify(r.text.slice(-400))}`);
   }
 }
 
