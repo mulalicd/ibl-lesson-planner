@@ -3,7 +3,7 @@
 // P1 (2026-11-06, Commander E-6): authenticate -> authorise (AI quota)
 // -> validate (Zod, shared with the browser) -> execute -> return.
 // Generation logic, the PSI prompt and the stream format are UNCHANGED
-// from the pre-P1 version (prompt/AI changes are P3; stream decoding is P2).
+// from the pre-P1 version (prompt/AI changes are P3). Stream decoding fixed in P3 (_shared/sse.ts).
 //
 // Required Edge Function secrets: GEMINI_KEY_1..GEMINI_KEY_8 (at least one),
 // ALLOWED_ORIGINS (comma-separated, e.g. https://ibl-lesson-planner.vercel.app).
@@ -12,6 +12,7 @@
 
 import { createClient } from "@supabase/supabase-js";
 import { IblChatRequestSchema } from "../../../src/lib/validation/schemas.ts";
+import { createGeminiToOpenAiTransform } from "../_shared/sse.ts";
 
 // ─── CORS (allow-list, never "*") ────────────────────────────────────────────
 const ALLOWED_ORIGINS = (Deno.env.get("ALLOWED_ORIGINS") ?? "")
@@ -337,34 +338,8 @@ async function callGemini(
         continue;
       }
 
-      const transformStream = new TransformStream({
-        transform(chunk, controller) {
-          const text = new TextDecoder().decode(chunk);
-          const lines = text.split("\n");
-          for (const line of lines) {
-            if (!line.startsWith("data: ")) continue;
-            const jsonStr = line.slice(6).trim();
-            if (!jsonStr || jsonStr === "[DONE]") continue;
-            try {
-              const parsed = JSON.parse(jsonStr);
-              const content = parsed.candidates?.[0]?.content?.parts?.[0]?.text;
-              if (content) {
-                const openAiChunk = {
-                  choices: [{ delta: { content }, finish_reason: null }],
-                };
-                controller.enqueue(
-                  new TextEncoder().encode(`data: ${JSON.stringify(openAiChunk)}\n\n`)
-                );
-              }
-            } catch {
-              // ignore stream parse errors
-            }
-          }
-        },
-        flush(controller) {
-          controller.enqueue(new TextEncoder().encode("data: [DONE]\n\n"));
-        },
-      });
+      // D-1 fix (P3): one streaming decoder + line buffer across chunks.
+      const transformStream = createGeminiToOpenAiTransform();
 
       return new Response(resp.body!.pipeThrough(transformStream), {
         headers: { ...cors, "Content-Type": "text/event-stream" },

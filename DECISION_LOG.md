@@ -337,4 +337,59 @@ pohrani u projekat i primijeni")
 
 ---
 
+## DL-P12 — P6 design vision: binding requirements (Director, 2026-11-06)
+
+Recorded verbatim in intent for the P6 SPEC. Not yet approved for
+implementation.
+
+1. **Total transformation** of the whole web app to an AAA, cinematic,
+   3D illustrative style in the quality of major animated feature
+   films (the Director's reference: "3D Disney cinematographic"). The
+   logo work of DL-P11 is an interim step only.
+2. **Every device, platform, operating system and browser**: all
+   content adapts (phone, tablet, laptop, desktop; iOS, Android,
+   Windows, macOS, Linux; Chrome, Safari, Firefox, Edge).
+3. **Desktop and laptop: full-screen, edge to edge.** No centred
+   fixed-width column with empty side margins.
+4. Five IDSS colours only (CONSTITUTION rule 6), non-regression
+   (rule 5).
+
+**ACA notes for the P6 SPEC (to be confirmed):**
+- "Disney-quality" means the craft level, not Disney's IP. Characters,
+  scenes and assets must be original IDSS creations; no Disney
+  characters, names or recognisable designs. A legal and brand
+  requirement, not taste.
+- Edge-to-edge layout still needs a readable text measure for long
+  plans (~70–90 characters per line inside full-width compositions).
+  To be specified in P6.
+
+---
+
+## DL-P13 — P3 approved: PSI as single source, revised to v9.0
+
+**Date:** 2026-11-07 · **Decided by:** Director (answers to P3 SPEC
+questions 1–5)
+
+1. **Canonical PSI = `IDSS_IBL_PSI_v8_final.md`, with a condition:**
+   it must be **revised and maximally improved to an expert,
+   world-class level**.
+   - Implementation: the ACA drafts **PSI v9.0**
+     (`IDSS_IBL_PSI_v9_draft.md`) with a change log against v8.0.
+   - **v9.0 replaces v8.0 in production only after the Director
+     explicitly approves the v9.0 text** (CONSTITUTION rule 1) and
+     the golden evaluation shows v9.0 ≥ v8.0.
+   - The inline "v8.1" prompt and `src/lib/psi.ts` are removed.
+2. **Sources (ODR-6): approved.** Evidence is described precisely.
+   Any specific external source is marked ZA PROVJERU / ZU PRÜFEN /
+   TO VERIFY.
+3. **Diacritics: approved.** Output uses correct Bosnian/German
+   spelling in all headings and labels.
+4. **Gemini test key: approved.** The Director adds it as an
+   environment network secret (header `x-goog-api-key`), never in
+   chat or repo.
+5. **Repair: option (a).** A validation badge plus a teacher-triggered
+   "Popravi"; no automatic extra call.
+
+---
+
 *Project Decision Log — IBL Lesson Planner — under Commander v1.7.0*

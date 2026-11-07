@@ -63,3 +63,45 @@ deployed):** TASKS.md 0–10, 12, 13.
 - the stream-decoding defect (D-1)
 - the hand-edited Supabase types
 - the hot-linked logo (S-8)
+
+
+## CLOSE-OUT — 2026-11-07
+
+**Production state after P1 (verified live with the public key, no
+writes):**
+- no table is readable or writable without sign-in
+- `ibl-chat` refuses requests without a valid user (401), CORS allows
+  only `https://ibl-lesson-planner.vercel.app`
+- the Director signed in by magic link and generated a plan
+  successfully
+- 48 plans, all owned (DL-P05/DL-P09)
+
+**Rollout incidents (all recovered, nothing lost):**
+- the Vercel Git link had been broken since 2026-03-23, relinked
+- the deploy ran out of order once and stopped on its first gate; gates
+  were added
+- token permissions took three attempts
+- CLI `--yes`
+
+Details: `corrections/SPRINT_04_LESSONS.md`.
+
+**Decisions:** DL-P07 to DL-P12.
+
+**Carried to P2/P3/P5/P6:**
+- dependency triage
+- duplicate triggers
+- lockfiles
+- per-user favourites and author label (DL-P09)
+- Netlify `_redirects`
+- hand-edited types
+- logo dark variant (DL-P11, superseded by P6)
+- design vision (DL-P12)
+
+```
+COMMANDER COMPLIANCE — Sprint 04
+──────────────────────────────────
+Rules followed without reminder:      E-6, E-18, E-19, E-20, M-7
+Rules violated, caught by ACA:        safe-probe rule (destructive RPC probe, harmless), gate message (E-5)
+Rules violated, caught by Director:   C-12 (answer what the owner did first); role matrix (DL-P09)
+New rules suggested:                  see corrections/SPRINT_04_LESSONS.md
+```

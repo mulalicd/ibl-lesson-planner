@@ -52,3 +52,6 @@ initial_instructions.md's "never `main`" rule, not to the unreleased
 - [2026-11-06 19:12] Edit: DECISION_LOG.md
 - [2026-11-06 19:12] Write: sprints/SPRINT_03.md
 - [2026-11-06 19:13] Edit: sprints/SPRINT_03.md
+- [2026-11-07 00:06] Write: specs/p3-ai-quality/SPEC.md
+- [2026-11-07 00:07] Write: specs/p3-ai-quality/PLAN.md
+- [2026-11-07 00:07] Write: specs/p3-ai-quality/TASKS.md
