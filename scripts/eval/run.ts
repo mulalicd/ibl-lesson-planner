@@ -63,11 +63,19 @@ async function generate(messages: AiMessage[]) {
     if (wait > 0) await sleep(wait);
     lastCall = Date.now();
     const t0 = performance.now();
-    const resp = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-goog-api-key": key },
-      body,
-    });
+    let resp: Response;
+    try {
+      resp = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-goog-api-key": key },
+        body,
+        signal: AbortSignal.timeout(240_000), // one plan may never block the whole run
+      });
+    } catch (e) {
+      console.warn(`  request failed (${e instanceof Error ? e.name : e}), retry ${attempt}`);
+      await sleep(10_000 * attempt);
+      continue;
+    }
     const ms = Math.round(performance.now() - t0);
     if (resp.status === 429 || resp.status >= 500) {
       console.warn(`  HTTP ${resp.status}, retry ${attempt}`);
@@ -88,6 +96,38 @@ type Row = { variant: string; id: string; ok: boolean; ms: number; finish?: stri
 const rows: Row[] = [];
 await Deno.mkdir(`${out}/plans`, { recursive: true });
 
+async function writeOutputs(): Promise<string> {
+  await Deno.writeTextFile(`${out}/results.json`, JSON.stringify(rows, null, 1));
+
+  // ---- report
+  const median = (a: number[]) => { if (!a.length) return 0; const s = [...a].sort((x, y) => x - y); return s[Math.floor(s.length / 2)]; };
+  const lines: string[] = [`# P3 golden evaluation — ${new Date().toISOString().slice(0, 16)}Z`, "", `Inputs: ${inputs.length} lessons · model gemini-2.5-flash · production generation settings`, ""];
+  const allChecks = [...new Set(rows.flatMap((r) => r.report?.checks.map((c) => c.id) ?? []))];
+  lines.push("| Variant | Plans OK | Avg score | Fully passing | Median latency | Median prompt tokens | Median output tokens | Not STOP |", "|---|---|---|---|---|---|---|---|");
+  for (const v of variants) {
+    const rs = rows.filter((r) => r.variant === v);
+    const okr = rs.filter((r) => r.ok && r.report);
+    const avg = okr.length ? okr.reduce((s, r) => s + r.report!.passed / r.report!.total, 0) / okr.length : 0;
+    const full = okr.filter((r) => r.report!.failed.length === 0).length;
+    lines.push(`| ${v} — ${VARIANTS[v].label} | ${okr.length}/${rs.length} | ${(avg * 100).toFixed(1)} % | ${full}/${okr.length} | ${(median(okr.map((r) => r.ms)) / 1000).toFixed(1)} s | ${median(okr.map((r) => r.usage?.promptTokenCount ?? 0))} | ${median(okr.map((r) => r.usage?.candidatesTokenCount ?? 0))} | ${okr.filter((r) => r.finish !== "STOP").length} |`);
+  }
+  lines.push("", "## Pass rate per check", "", `| Check | ${variants.join(" | ")} |`, `|---|${variants.map(() => "---").join("|")}|`);
+  for (const c of allChecks) {
+    const cells = variants.map((v) => {
+      const okr = rows.filter((r) => r.variant === v && r.report);
+      const applicable = okr.filter((r) => r.report!.checks.some((x) => x.id === c));
+      const pass = applicable.filter((r) => r.report!.checks.find((x) => x.id === c)!.ok).length;
+      return applicable.length ? `${pass}/${applicable.length}` : "–";
+    });
+    lines.push(`| ${c} | ${cells.join(" | ")} |`);
+  }
+  const errs = rows.filter((r) => !r.ok);
+  if (errs.length) lines.push("", "## Errors", "", ...errs.map((e) => `- ${e.variant} ${e.id}: ${e.error}`));
+  await Deno.writeTextFile(`${out}/report.md`, lines.join("\n") + "\n");
+  return lines.join("\n");
+
+}
+
 for (const g of inputs) {
   const req = IblChatRequestSchema.parse({ mode: "generate", messages: [{ role: "user", content: `${g.params.subject} ${g.params.grade} ${g.params.topic}` }], plan_context: null, params: g.params });
   for (const v of variants) {
@@ -95,40 +135,14 @@ for (const g of inputs) {
     const msgs = buildMessages(req, conf.kind, conf.text);
     console.log(`[${v}] ${g.id} ${req.params!.subject} ${req.params!.grade} "${req.params!.topic}" ${req.params!.duration_min}min`);
     const r = await generate(msgs);
-    if (!r.ok) { rows.push({ variant: v, id: g.id, ok: false, ms: r.ms, error: r.error }); console.log(`   ERROR ${r.error}`); continue; }
+    if (!r.ok) { rows.push({ variant: v, id: g.id, ok: false, ms: r.ms, error: r.error }); console.log(`   ERROR ${r.error}`); await writeOutputs(); continue; }
     const report = validatePlan(r.text, { language: req.params!.language, duration_min: req.params!.duration_min, tier: req.params!.tier });
     await Deno.mkdir(`${out}/plans/${v}`, { recursive: true });
     await Deno.writeTextFile(`${out}/plans/${v}/${g.id}.txt`, r.text);
     rows.push({ variant: v, id: g.id, ok: true, ms: r.ms, finish: r.finish, usage: r.usage, report, chars: r.text.length });
+    await writeOutputs(); // results + report on disk after EVERY plan (survives a job timeout)
     console.log(`   ${report.passed}/${report.total} in ${(r.ms / 1000).toFixed(1)}s, ${r.text.length} chars, finish=${r.finish}`);
   }
 }
 
-await Deno.writeTextFile(`${out}/results.json`, JSON.stringify(rows, null, 1));
-
-// ---- report
-const median = (a: number[]) => { if (!a.length) return 0; const s = [...a].sort((x, y) => x - y); return s[Math.floor(s.length / 2)]; };
-const lines: string[] = [`# P3 golden evaluation — ${new Date().toISOString().slice(0, 16)}Z`, "", `Inputs: ${inputs.length} lessons · model gemini-2.5-flash · production generation settings`, ""];
-const allChecks = [...new Set(rows.flatMap((r) => r.report?.checks.map((c) => c.id) ?? []))];
-lines.push("| Variant | Plans OK | Avg score | Fully passing | Median latency | Median prompt tokens | Median output tokens | Not STOP |", "|---|---|---|---|---|---|---|---|");
-for (const v of variants) {
-  const rs = rows.filter((r) => r.variant === v);
-  const okr = rs.filter((r) => r.ok && r.report);
-  const avg = okr.length ? okr.reduce((s, r) => s + r.report!.passed / r.report!.total, 0) / okr.length : 0;
-  const full = okr.filter((r) => r.report!.failed.length === 0).length;
-  lines.push(`| ${v} — ${VARIANTS[v].label} | ${okr.length}/${rs.length} | ${(avg * 100).toFixed(1)} % | ${full}/${okr.length} | ${(median(okr.map((r) => r.ms)) / 1000).toFixed(1)} s | ${median(okr.map((r) => r.usage?.promptTokenCount ?? 0))} | ${median(okr.map((r) => r.usage?.candidatesTokenCount ?? 0))} | ${okr.filter((r) => r.finish !== "STOP").length} |`);
-}
-lines.push("", "## Pass rate per check", "", `| Check | ${variants.join(" | ")} |`, `|---|${variants.map(() => "---").join("|")}|`);
-for (const c of allChecks) {
-  const cells = variants.map((v) => {
-    const okr = rows.filter((r) => r.variant === v && r.report);
-    const applicable = okr.filter((r) => r.report!.checks.some((x) => x.id === c));
-    const pass = applicable.filter((r) => r.report!.checks.find((x) => x.id === c)!.ok).length;
-    return applicable.length ? `${pass}/${applicable.length}` : "–";
-  });
-  lines.push(`| ${c} | ${cells.join(" | ")} |`);
-}
-const errs = rows.filter((r) => !r.ok);
-if (errs.length) lines.push("", "## Errors", "", ...errs.map((e) => `- ${e.variant} ${e.id}: ${e.error}`));
-await Deno.writeTextFile(`${out}/report.md`, lines.join("\n") + "\n");
-console.log("\n" + lines.join("\n"));
+console.log("\n" + await writeOutputs());
