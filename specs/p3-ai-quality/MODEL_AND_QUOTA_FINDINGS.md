@@ -62,6 +62,38 @@ Lessons g08 (Fotosinteza, bs, 45), g12 (Laž, bs, 45), g02 (Märchen, de, 45); p
 - [I] Latency of 3.5 min is non-streamed total time. Production streams, so the teacher sees text after seconds; this still needs a UX check.
 - [U] The output token count is `candidatesTokenCount`. Thinking tokens, which are billed as output, are not in the summary table. The artifact with the full `usageMetadata` could not be downloaded from the ACA sandbox, because the blob host is not on the allow-list.
 
+### 4b. Like-for-like run on 2.5 Flash — eval run 42354465883 (08:12–08:18 UTC, after the quota reset)
+
+| Variant | Plans OK | Avg score | Fully passing | Median latency | Prompt tok | Output tok |
+|---|---|---|---|---|---|---|
+| v81 | 3/3 | 67.8 % | 0/3 | 52.4 s | 2,938 | 5,183 |
+| v90 | 3/3 | 85.4 % | 0/3 | 62.6 s | 24,610 | 8,570 |
+
+Per plan (v81 → v90): g02 de 14/20 → 16/20; g08 bs 14/21 → 18/21; g12 bs 14/21 → 19/21.
+
+- [V] Availability: 6/6 plans arrived; 2 requests needed one retry each after a 503. 2.5 Flash was reliable and about 3× faster than 3.8 Flash.
+- [V] v90 fixes on 2.5 Flash: outcomes 3/3, real-life anchor 3/3, English labels 3/3, invented date 3/3, sources 2/3 (v81 1/3), tips 2/3.
+- [V] v90 still fails on 2.5 Flash:
+  - `not_truncated` 0/3, although every plan ended with finish=STOP. The footer is followed by more than 1,500 characters, so this is a validator assumption or an ordering issue in the PSI, not truncation. A diagnostic rerun (detail + plan tail) was dispatched.
+  - `bosnian_diacritics` 0/2 (also 0/2 for v81): 2.5 Flash writes ASCII headings ("ISTRAZIVACKO PITANJE"). The single 3.8 Flash plan passed this check.
+  - timeline 2/3.
+
+### 4c. Comparison 2.5 vs 3.8 Flash (same 3 lessons, same prompts) [I, small n]
+
+| | 2.5 Flash | 3.8 Flash |
+|---|---|---|
+| Reliability this morning | 6/6 | 3/6 (503 overload) |
+| Latency (v90, non-streamed) | ~63 s | ~209 s |
+| v90 score (g08 only, the plan both models produced) | 18/21 | 21/21 |
+| Bosnian diacritics in headings | fails | passes |
+| Model status | access-limited, "served until further notice" | Google's recommended model |
+| Price per v90 plan (paid tier) | [U] not captured | ≈ $0.05 (2026), ≈ $0.10 (2027) |
+
+Recommendation [I]:
+1. The **prompt** (PSI v9) is the big lever: +17.6 pts on 2.5 Flash. Ship it on 2.5 Flash first, after the Director approves the text.
+2. Keep 2.5 Flash in production for now: reliable today, while 3.8 Flash is not.
+3. Re-test 3.8 Flash on all 24 lessons when it is stable, then migrate in a separate, approved step with a fallback to 2.5 Flash.
+
 ## 5. Price (official pricing page, captured 2026-11-07, paid tier, per 1M tokens, USD)
 
 - [V] **Gemini 3.8 Flash** (standard): input **$0.75**, output incl. thinking **$3.75**, through
