@@ -55,3 +55,7 @@ initial_instructions.md's "never `main`" rule, not to the unreleased
 - [2026-11-07 00:06] Write: specs/p3-ai-quality/SPEC.md
 - [2026-11-07 00:07] Write: specs/p3-ai-quality/PLAN.md
 - [2026-11-07 00:07] Write: specs/p3-ai-quality/TASKS.md
+- [2026-11-07 00:22] Write: supabase/functions/_shared/validate.ts
+- [2026-11-07 00:23] Write: supabase/functions/_shared/validate_test.ts
+- [2026-11-07 00:25] Write: scripts/eval/run.ts
+- [2026-11-07 00:25] Write: .github/workflows/eval-ai-quality.yml

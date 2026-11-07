@@ -1,0 +1,54 @@
+name: Evaluate AI plan quality (manual)
+
+# P3 golden evaluation (specs/p3-ai-quality). Manual only.
+# Uses the repository secret GEMINI_EVAL_KEY (a SEPARATE Google project, so
+# teachers' production quota is not touched). Generated plans are uploaded
+# as a workflow artifact, never committed.
+
+on:
+  workflow_dispatch:
+    inputs:
+      variants:
+        description: 'Prompt variants, comma-separated (v81 = production today, v80 = full PSI v8.0, v90 = PSI v9.0 draft)'
+        required: true
+        default: 'v81,v80'
+      limit:
+        description: 'Max number of golden lessons (24 = all)'
+        required: true
+        default: '24'
+      only:
+        description: 'Optional: only these lesson ids, e.g. g08,g12'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  eval:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: PSI generated modules are in sync with the .md source
+        run: node scripts/build-psi.mjs --check
+      - name: Run golden evaluation
+        env:
+          GEMINI_EVAL_KEY: ${{ secrets.GEMINI_EVAL_KEY }}
+        run: |
+          if [ -z "$GEMINI_EVAL_KEY" ]; then echo "::error::Repository secret GEMINI_EVAL_KEY is missing."; exit 1; fi
+          deno run --allow-net --allow-read --allow-write --allow-env \
+            --config supabase/functions/deno.json scripts/eval/run.ts \
+            --variants "${{ inputs.variants }}" --limit "${{ inputs.limit }}" --only "${{ inputs.only }}" --out eval-out
+      - name: Summary
+        if: always()
+        run: test -f eval-out/report.md && cat eval-out/report.md >> "$GITHUB_STEP_SUMMARY" || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: eval-${{ github.run_number }}
+          path: eval-out/
+          retention-days: 30

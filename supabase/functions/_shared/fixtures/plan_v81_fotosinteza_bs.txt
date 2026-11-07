@@ -1,0 +1,169 @@
+SECTION 1 - HEADER
+School:       Internationale Deutsche Schule Sarajevo
+Teacher:      ___________________________
+Subject:      Biologie          Grade:    5. razred
+Topic:        Fotosinteza
+Duration:     45 min            Tier:     MICRO
+Language:     Bosnian           ZPD:      BASIC
+Date:         2023-10-27
+
+SECTION 2 - HOOK + INQUIRY QUESTION
+"Danas sam preskočio doručak i već osjećam kako mi nedostaje energije! Kada ste zadnji put bili jako gladni? Kako se osjećate kad ste gladni? Mi jedemo da bismo dobili energiju. Ali, pogledajte ovu biljku ovdje (pokazuje na saksiju sa cvijećem). Da li ste ikada vidjeli da biljka jede? Da li ima usta? Kako onda ova biljka raste, stvara novo lišće, cvjeta, a ne jede ništa što mi jedemo?"
+
+INQUIRY QUESTION (IQ):
+Kako biljke, koje ne jedu, dobijaju energiju da rastu i žive, i zašto je to važno za nas?
+
+IQ QUALITY CHECK (Wiggins-McTighe):
+1. Open-ended - YES: Zahtijeva objašnjenje procesa i implikacija, a ne jednostavan odgovor.
+2. Thought-provoking - YES: Izaziva uobičajeno shvatanje izvora energije i stvara kognitivni disbalans.
+3. Requires higher-order thinking - YES: Zahtijeva razumijevanje, analizu i sintezu informacija o fotosintezi i njenom značaju.
+4. Transferable - YES: Povezuje se sa konceptima lanca ishrane, ekosistema i opstanka života na Zemlji.
+5. Raises further questions - YES: Otvara pitanja o ishrani drugih organizama, ulozi kisika, uticaju na okoliš.
+6. Requires evidence and justification - YES: Odgovor zahtijeva pozivanje na naučne dokaze o procesu fotosinteze.
+7. Worth revisiting - YES: Učenici će na kraju lekcije imati mnogo dublje i informisanije odgovore.
+
+SECTION 3 - EVIDENCE MATERIALS
+1. VIDEO: "Šta je fotosinteza? - Nauka za djecu" (YouTube kanal: Nauka za djecu)
+   DESCRIPTION: Kratak, animirani video koji na jednostavan način objašnjava osnovne korake fotosinteze, šta je biljkama potrebno i šta proizvode.
+   IQ COHERENCE NOTE: Prikazuje osnovne korake fotosinteze i objašnjava šta je biljkama potrebno da bi je obavile, direktno odgovarajući na dio IQ-a "kako dobijaju energiju".
+   [X] essential
+2. TEKST/DIJAGRAM: "Shema fotosinteze" (Iz udžbenika Biologije za 5. razred, npr. "Biologija 5" - Klett Verlag, str. 34)
+   DESCRIPTION: Jednostavan dijagram koji vizuelno prikazuje ulazne (sunčeva svjetlost, voda, ugljen-dioksid) i izlazne (kisik, šećer/hrana) elemente procesa fotosinteze u biljci.
+   IQ COHERENCE NOTE: Vizuelno prikazuje šta biljka uzima iz okoline i šta proizvodi, pomažući razumijevanju procesa i njegove važnosti za sve ostale organizme.
+   [X] essential
+
+SECTION 4 - VISUAL ELEMENTS
+TITLE: Proces fotosinteze: Ulaz i izlaz
+SERVES IQ NOTE: Vizuelno pojednostavljuje ključne elemente fotosinteze, pokazujući šta biljke koriste i proizvode, direktno odgovarajući na pitanje "kako dobijaju energiju".
+
+  SUNCE
+     |
+     V
+  +------+
+  | BILJKA | --- Ugljen-dioksid (iz zraka)
+  |      | --- Voda (iz tla)
+  +------+
+     |
+     V
+  Kisik (u zrak)
+  Šećer (za energiju)
+
+USAGE INSTRUCTIONS: Projektovati na tabli ili nacrtati na tabli dok se objašnjavaju ulazni i izlazni elementi. Pitati učenike da identifikuju svaki dio.
+
+SECTION 5 - SCAFFOLDING: SOCRATIC QUESTIONS
+
+3 GOLDEN RULES:
+1. BITE YOUR TONGUE — count to 10 before speaking after asking a question
+2. RETURN THE BALL — "Where could we find the answer to that?"
+3. SUPPORT DOUBT — "What if [assumed fact] was actually wrong?"
+
+1. TYPE: Evidence
+   QUESTION: "Na osnovu videa i dijagrama, koji su to 'sastojci' koje biljka koristi da bi napravila svoju 'hranu'?"
+   - Student Response 1: "Koristi sunce i vodu."
+     Teacher Follow-up 1: "Odlično! A da li joj treba još nešto, nešto što mi izdišemo?"
+   - Student Response 2: "Ugljen-dioksid!"
+     Teacher Follow-up 2: "Tako je! Dakle, imamo sunce, vodu i ugljen-dioksid. Gdje ste to vidjeli u materijalima?"
+   - Student Response 3: "Piše u videu i na dijagramu strelice pokazuju!"
+     Teacher Follow-up 3: "Bravo! Dakle, vidimo da su to ključni elementi. Šta se dešava sa tim sastojcima?"
+
+2. TYPE: Synthesis / Return to IQ
+   QUESTION: "Sada kada smo istražili šta biljke koriste i šta proizvode, vratimo se našem početnom pitanju: Kako biljke, koje ne jedu, dobijaju energiju da rastu i žive, i zašto je to važno za nas? Kako biste sada odgovorili, koristeći ono što ste otkrili?"
+   - Student Response 1: "Biljke prave svoju hranu od sunca, vode i zraka, to je ta energija."
+     Teacher Follow-up 1: "Odlično! A kako se zove taj proces i zašto je to važno za nas?"
+   - Student Response 2: "To je fotosinteza, i važno je jer nam daju kisik i mi jedemo biljke."
+     Teacher Follow-up 2: "Izvrsno! Dakle, daju nam kisik i hranu. Može li neko to proširiti, šta bi se desilo da nema fotosinteze?"
+   - Student Response 3: "Bez fotosinteze ne bi bilo ni biljaka ni kisika, pa ni nas."
+     Teacher Follow-up 3: "Vrlo promišljeno! Dakle, vidimo koliko je fotosinteza ključna za sav život na Zemlji. Hvala vam!"
+
+SECTION 6 - LEARNING EVIDENCE (DOKAZ UCENJA)
+1. NAME: Posteri "Život bez kupovine hrane"
+   TIME: 15 min
+   BLOOM'S LEVEL: Sinteza (Synthesis)
+   IQ ANSWER NOTE: Učenici će vizuelno i tekstualno predstaviti svoje razumijevanje procesa fotosinteze (kako biljke dobijaju energiju) i njene važnosti za život (zašto je važno za nas), odgovarajući na oba dijela IQ-a.
+
+SECTION 7 - TEACHER SELF-EVALUATION
+1. Did I bite my tongue (10 seconds)? [ ]
+2. Did I return the ball? [ ]
+3. Did I support doubt? [ ]
+4. Were all students included? [ ]
+5. Da li sam uspio/uspjela kod učenika petog razreda probuditi osjećaj čuđenja i važnosti prema biljkama, ili je fotosinteza ostala samo 'još jedna tema iz biologije'? [ ]
+
+SECTION 8 - ADDITIONAL RESOURCES
+
+SUPPORT PATH:
+1. "Fotosinteza za najmlađe" - interaktivna edukativna igra na platformi "Školski portal" ili sličnoj, koja vizuelno prikazuje proces.
+2. Jednostavne kartice sa slikama (sunce, voda, CO2, biljka, O2, šećer) za fizičko slaganje procesa fotosinteze u pravilnom redoslijedu.
+3. Rad sa partnerom: Učenici rade u paru, objašnjavajući proces fotosinteze jedan drugome koristeći ključne riječi i crteže.
+
+EXTENSION PATH:
+1. "Istraživanje: Uloga hlorofila" - kratak tekst o hlorofilu i njegovoj ulozi u apsorpciji sunčeve svjetlosti, sa pitanjima za diskusiju o boji biljaka.
+2. "Šta ako nema sunca?" - Istraživanje drugih izvora energije za život (npr. hemoautotrofi na dnu okeana) i diskusija o razlici u odnosu na fotosintezu.
+3. "Lanac ishrane" - Nacrtati ili objasniti jednostavan lanac ishrane (npr. trava -> zec -> lisica) i objasniti kako fotosinteza podržava cijeli lanac, uključujući i ljude.
+
+KEY VOCABULARY:
+- Fotosinteza: Proces kojim biljke stvaraju vlastitu hranu koristeći sunčevu svjetlost.
+- Hlorofil: Zeleni pigment u biljkama koji upija sunčevu svjetlost.
+- Ugljen-dioksid: Gas iz zraka koji biljke koriste za fotosintezu.
+- Kisik: Gas koji biljke ispuštaju tokom fotosinteze, a mi ga udišemo.
+- Energija: Sposobnost obavljanja rada; biljke je dobijaju iz sunčeve svjetlosti.
+- Sunčeva svjetlost: Glavni izvor energije za fotosintezu.
+- Voda: Biljke je upijaju kroz korijenje za fotosintezu.
+- Šećer (glukoza): Hrana koju biljke proizvode tokom fotosinteze za vlastitu energiju i rast.
+
+IB LEARNER PROFILE CONNECTIONS:
+1. Istraživači (Inquirers): Učenici su bili istraživači dok su postavljali pitanja o tome kako biljke dobijaju energiju i tražili dokaze u videu i dijagramima.
+2. Mislitelji (Thinkers): Analizirali su informacije o fotosintezi i razmišljali o njenoj važnosti za sav život, razvijajući dublje razumijevanje bioloških procesa.
+
+SECTION 9 - LESSON DELIVERY RECOMMENDATIONS
+
+TIMED SCHEDULE:
+00:00-00:05 - Uvod i Udica (Hook)
+00:05-00:10 - Predstavljanje IQ-a i objašnjenje svrhe
+00:10-00:20 - Istraživanje dokaza (Video "Šta je fotosinteza?" i dijagram iz udžbenika)
+00:20-00:25 - Sokratovsko pitanje 1 (Evidencija)
+00:25-00:30 - Vizuelni element i diskusija
+00:30-00:40 - Aktivnost: Posteri "Život bez kupovine hrane"
+00:40-00:45 - Sokratovsko pitanje 2 (Sinteza/Povratak na IQ) i Zaključak
+
+EXACT TEACHER DIALOGUE:
+(00:00-00:05) Uvod i Udica: "Dobar dan svima! Nadam se da ste doručkovali? Ja sam danas preskočio/la doručak i već osjećam kako mi nedostaje energije! Kada ste zadnji put bili jako gladni? Kako se osjećate kad ste gladni? Mi jedemo da bismo dobili energiju i mogli učiti, igrati se, rasti. Ali, pogledajte ovu biljku ovdje (pokazuje na saksiju sa cvijećem u učionici, ako je dostupna, ili na sliku biljke). Da li ste ikada vidjeli da biljka jede? Da li ima usta? Da li je ikada otišla u prodavnicu? Kako onda ova biljka raste, stvara novo lišće, cvjeta, a ne jede ništa što mi jedemo?"
+(00:05-00:10) Predstavljanje IQ-a: "Upravo to je naše današnje veliko pitanje, naš izazov koji ćemo zajedno istražiti: Kako biljke, koje ne jedu, dobijaju energiju da rastu i žive, i zašto je to važno za nas? Razmislite na trenutak o tome. Nema pogrešnih odgovora sada, samo razmišljamo."
+(00:10-00:20) Istraživanje dokaza: "Da bismo pronašli odgovore na ovo zagonetno pitanje, pogledajmo zajedno neke materijale. Prvo, imamo kratak video koji će nam pokazati šta se dešava unutar biljke. Pažljivo gledajte i pokušajte uočiti šta biljka koristi, a šta proizvodi. Nakon videa, pogledaćemo i jedan dijagram iz udžbenika koji nam to dodatno pojašnjava." (Pustiti video, zatim prikazati dijagram i dati minutu-dvije da ga učenici prouče).
+(00:20-00:25) Sokratovsko pitanje 1: "Vidjeli smo video i dijagram. Sada, na osnovu toga, želim da razmislite: koji su to 'sastojci' koje biljka koristi da bi napravila svoju 'hranu'?" (Koristiti zlatna pravila: 'Bite your tongue', 'Return the ball', 'Support doubt').
+(00:25-00:30) Vizuelni element i diskusija: "Odlično ste to uočili! Hajde da sumiramo to što smo vidjeli u jednom jednostavnom dijagramu. Pogledajte ovdje (pokazuje na tablu/projektor gdje je prikazan ASCII dijagram). Šta nam ovaj dijagram govori o tome šta ulazi i izlazi iz biljke? Zašto je sunce na vrhu?"
+(00:30-00:40) Aktivnost: Posteri: "Sada kada imamo bolju sliku, želim da radite u grupama od po tri učenika. Svaka grupa će napraviti poster pod nazivom 'Život bez kupovine hrane'. Na posteru objasnite kako biljke dobijaju energiju i zašto je to ključno za sve nas, uključujući i životinje i ljude. Možete crtati, pisati, koristiti ključne riječi iz vokabulara koje smo spomenuli. Budite kreativni!"
+(00:40-00:45) Sokratovsko pitanje 2 i Zaključak: "Odlični posteri! Vidim da ste puno toga naučili i razumjeli. Sada kada smo istražili šta biljke koriste i šta proizvode, vratimo se našem početnom pitanju: Kako biljke, koje ne jedu, dobijaju energiju da rastu i žive, i zašto je to važno za nas? Kako biste sada odgovorili, koristeći ono što ste otkrili?" (Koristiti zlatna pravila). "Nevjerovatno ste razmišljali danas! Vidimo da su biljke prave male tvornice energije i kisika, i da bez njih, naš svijet ne bi bio isti. Svaki put kad vidite biljku, sjetite se njene super-moći! Hvala vam na aktivnom učešću!"
+
+ZPD-INFORMED TIPS (BASIC level):
+- Koristiti puno vizuelnih pomagala i konkretnih primjera (npr. prava biljka u učionici, slike različitih biljaka).
+- Pojednostaviti jezik, izbjegavati previše stručnih termina na početku. Uvoditi ih postepeno uz vizuelne asocijacije.
+- Podsticati crtanje i vizuelno predstavljanje ideja tokom aktivnosti postera. Fizičko crtanje pomaže u učvršćivanju koncepata.
+- Često provjeravati razumijevanje kratkim pitanjima tokom cijelog časa ("Šta ste primijetili?", "Šta mislite da se dešava?").
+- Povezivati fotosintezu sa svakodnevnim životom (zašto jedemo povrće, zašto je zrak čistiji u prirodi).
+
+DIFFERENTIATION STRATEGIES:
+- Za učenike kojima je teško: Ponuditi unaprijed pripremljene kartice sa ključnim riječima ili slikama (sunce, voda, CO2, list, O2, šećer) koje mogu koristiti za slaganje procesa fotosinteze na posteru. Omogućiti rad u paru sa jačim učenikom koji može pružiti mentorstvo.
+- Za napredne učenike: Zamoliti ih da razmisle o "nusproizvodima" fotosinteze osim šećera i kisika, ili da objasne ulogu korijena i listova u procesu preciznije. Mogu pokušati nacrtati unutrašnjost lista.
+
+SUBJECT-SPECIFIC ADVICE:
+- Naglasiti da biljke "proizvode" svoju hranu, za razliku od životinja koje je "jedu". Ovo je ključna razlika za razumijevanje autotrofije.
+- Koristiti jednostavne analogije za proces (npr. biljka kao "solarna kuhinja" ili "tvornica hrane").
+- Razjasniti da sunčeva svjetlost nije hrana, već energija koja pokreće proces, kao što je struja energija za naš televizor.
+
+COMMON MISCONCEPTIONS:
+1. Misconception: Biljke jedu zemlju/gnojivo kao hranu.
+   Correction: Objasniti da zemlja pruža vodu i minerale, koji su kao vitamini za nas – važni su, ali ne i osnovna energija/hrana koju biljka sama stvara. Fokusirati se na sunčevu svjetlost, vodu i ugljen-dioksid kao glavne sastojke.
+2. Misconception: Biljke dišu kisik kao i mi.
+   Correction: Razjasniti da biljke proizvode kisik kao nusprodukt fotosinteze (posebno danju), ali da i one vrše ćelijsko disanje (koristeći kisik) da bi razgradile šećer za energiju, baš kao i mi. Međutim, u kontekstu fotosinteze, primarno je da kisik oslobađaju.
+3. Misconception: Fotosinteza se dešava samo u sunčanim danima.
+   Correction: Objasniti da je sunčeva svjetlost potrebna, ali da se proces odvija dok ima dovoljno svjetla, ne samo direktnog sunca. Biljke u sjeni također fotosintetiziraju, samo sporije.
+
+TRANSITION PHRASES:
+- "U redu, pređimo sada na sljedeći korak našeg istraživanja..."
+- "Sada kada smo to vidjeli, idemo dalje i pokušajmo dublje razumjeti..."
+- "Da bismo bolje razumjeli ovaj dijagram, pogledajmo šta on pokazuje..."
+- "Vrijeme je da primijenimo ono što smo naučili i pokažemo svoje razumijevanje..."
+- "Za kraj, vratimo se našem velikom pitanju i vidimo kako su se vaši odgovori promijenili..."
+
+SECTION 10 - FOOTER
+Za savjete, pitanja i ideje budite slobodni da se obratite gospođi Maji Ljubović na: majaljubovic@gmail.com

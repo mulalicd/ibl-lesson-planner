@@ -3,14 +3,14 @@
 Status: IN PROGRESS — approved 2026-11-07 (DL-P13). Production switch
 to PSI v9.0 additionally needs Director approval of the v9.0 text.
 
-- [ ] 0. Baseline: tag the current production prompt (`p3-baseline`);
+- [x] 0. Baseline (prompt kept verbatim in `_shared/psi_v81.ts`; Director's real plan as fixture): tag the current production prompt (`p3-baseline`);
       collect 3 real pre-P3 plan texts for display regression (from
       the Director's own saved plans).
 - [ ] 1. Database migration — OMITTED (PLAN: no data model change).
 - [ ] 2. Types — `ValidationReport` type.
 - [ ] 3. Zod — `ValidationReportSchema` in `src/lib/validation/schemas.ts`.
 - [ ] 4. Repository — OMITTED (no DB access in P3).
-- [ ] 5. Domain logic:
+- [~] 5. Domain logic (DONE: build-psi + psi:check, psi_v80.generated.ts, buildMessages (v81 byte-identical 3/3), validatePlan (14 tests), SSE fix; PENDING: v9.0 module):
       - `scripts/build-psi.mjs` + `npm run psi:check` (CI)
       - `supabase/functions/_shared/psi.generated.ts`
       - `buildMessages()`
@@ -26,7 +26,7 @@ to PSI v9.0 additionally needs Director approval of the v9.0 text.
 - [ ] 8. Integration: `useChat` handles the validation event; the
       repair sends a targeted Mode C message.
 - [ ] 9. Self-review (FEATURE_LIFECYCLE Step 4).
-- [ ] 10. Testing:
+- [~] 10. Testing (DONE: unit + e2e + CI workflow; golden harness `scripts/eval/run.ts` + manual workflow; PENDING: runs and the Director's rating):
       - unit tests
       - Edge e2e
       - display regression on old plans
