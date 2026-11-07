@@ -46,6 +46,22 @@ Evidence class per line: **[V]** verified (observed API response / fetched offic
 - [V] No full-size plan has been produced on 3.5 / 3.8 yet ⇒ **no quality comparison is possible yet.**
 - [I] A 503 at 04:26 UTC is a single sample; it says nothing about normal availability.
 
+### 4a. First measured run on 3.8 Flash — eval run 42339760198 (04:44–05:38 UTC)
+
+Lessons g08 (Fotosinteza, bs, 45), g12 (Laž, bs, 45), g02 (Märchen, de, 45); production generation settings.
+
+| Variant | Plans OK | Avg validator score | Fully passing | Median latency | Prompt tokens | Output tokens |
+|---|---|---|---|---|---|---|
+| v81 (production prompt today) | 2/3 | 65.8 % | 0/2 | 137.9 s | 2,938 | 5,034 |
+| v90 (PSI v9.0 draft) | 1/3 (g08) | 100 % (21/21) | 1/1 | 208.6 s | 24,593 | 7,943 |
+
+- [V] Availability: 3 of 6 requests failed after 4 attempts each, all on HTTP 503 "high demand". **The 3.8 Flash free tier was not reliable this morning.**
+- [V] v81 on 3.8 Flash fails the same checks it fails on 2.5 Flash: outcomes, real-life anchor, tips, timeline, English labels, unmarked sources. The defects come from the prompt, not the model.
+- [V] The single v90 plan passed every deterministic check (structure, timeline 45 min, footer, ZA PROVJERU, diacritics).
+- [I] n = 1 for v90. The validator measures structure and rule compliance, not pedagogical depth. The Director's own reading of that plan is still required (blind A/B file, pending).
+- [I] Latency of 3.5 min is non-streamed total time. Production streams, so the teacher sees text after seconds; this still needs a UX check.
+- [U] The output token count is `candidatesTokenCount`. Thinking tokens, which are billed as output, are not in the summary table. The artifact with the full `usageMetadata` could not be downloaded from the ACA sandbox, because the blob host is not on the allow-list.
+
 ## 5. Price (official pricing page, captured 2026-11-07, paid tier, per 1M tokens, USD)
 
 - [V] **Gemini 3.8 Flash** (standard): input **$0.75**, output incl. thinking **$3.75**, through
@@ -55,23 +71,24 @@ Evidence class per line: **[V]** verified (observed API response / fetched offic
 - [U] The extractor shows passages without column headers. The rows $0.375/$1.875 and $1.35/$6.75
   under the 3.8 section most likely belong to other service levels (batch / priority). Not confirmed.
 
-### Cost estimate per plan on 3.8 Flash [I]
+### Cost per plan on 3.8 Flash — measured tokens (run 42339760198), thinking tokens excluded [V tokens / I cost]
 
-Assumptions: PSI v9 system prompt ≈ 30k input tokens (109,617 bytes ÷ ~3.6), output + thinking ≈ 10k
-tokens. These are not measured; the 3.8 run below replaces them with real token counts.
+v90: 24,593 input × $0.75/1M = $0.018; 7,943 output × $3.75/1M = $0.030 ⇒ **≈ $0.05 per plan**
+(≈ $0.10 from 1.1.2027). Thinking tokens would add to this; the true figure is ≤ ~$0.06–0.07 if
+thinking is in the low thousands [I]. v81 on 3.8 Flash: ≈ $0.02 per plan.
 
 | | through 31.12.2026 | from 1.1.2027 |
 |---|---|---|
-| one plan | ≈ $0.06 | ≈ $0.12 |
-| 1,000 plans/month | ≈ $60 | ≈ $120 |
-| 200 plans/month | ≈ $12 | ≈ $24 |
+| one v90 plan | ≈ $0.05 | ≈ $0.10 |
+| 200 plans/month | ≈ $10 | ≈ $20 |
+| 1,000 plans/month | ≈ $50 | ≈ $100 |
 
 Context caching ($0.075 per 1M cached input tokens through 2026) would cut the repeated
 30k-token PSI cost by ~90 %. That is a P3 engineering option, not yet designed.
 
 ## 6. Next measurements
 
-1. 3.8 Flash mini-run (v81 vs v90, lessons g08/g12/g02): dispatched 2026-11-07 ~04:46 UTC.
+1. 3.8 Flash mini-run (v81 vs v90, lessons g08/g12/g02): done, see 4a.
 2. After 08:00 UTC reset: the same 3 lessons on 2.5 Flash (6 calls, within the 20/day limit) for a like-for-like comparison.
 3. A full 24-lesson eval fits the free tier only at ≤ 20 calls per model per day. A paid eval
    key (Director decision) makes it a single run of a few dollars.
