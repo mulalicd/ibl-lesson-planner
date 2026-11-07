@@ -21,3 +21,24 @@ Date: 2026-11-07
 - A-5 (AI provider) → "streaming adapters must be tested by splitting
   the byte stream at EVERY offset (cheap, exhaustive)". Why: random
   or happy-path tests miss chunk-boundary bugs.
+
+## Addendum — P3 infrastructure (2026-11-07)
+
+### Gotchas Discovered
+- Folding "Đ" to "D" broke heading matching: PSI's ASCII spelling uses
+  "DJ" ("IZVODJENJE"). The validator test on a clean PSI-style plan
+  caught it → fold Đ→DJ, đ→dj.
+- The first validator version flagged the Director's plan as
+  "truncated" only because the footer had the OLD e-mail → truncation
+  and the footer address are now separate checks (a check must test
+  one thing).
+- Refactoring the prompt into a shared module needed proof that
+  production behaviour is unchanged: the old message building,
+  extracted from git HEAD, was compared byte-for-byte with the new
+  `buildMessages` on 3 request types (3/3 identical).
+
+### Commander Improvement Candidates
+- E-15 → "an AI quality gate is introduced with a real failing sample
+  from production as its first fixture, and must flag exactly that
+  sample's known defects". Why: it calibrates the validator against
+  reality, not against invented examples.
