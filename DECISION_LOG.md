@@ -430,6 +430,10 @@ made with this information.
 - **Groq result (2026-11-09, findings §5e):** the free tier rejects every PSI v9 request (TPM 8,000 /
   ITPM 7,000 < ~23,000 tokens per request). Groq free is not a viable fallback; the ACA recommends
   dropping it.
+- **Live (2026-11-09):** the Edge Function reading `GEMINI_KEY_1..20` was deployed from `main` f6dbd1d (deploy run #10,
+  42603685134; all gates green). Independent check: an anonymous POST returns 401, CORS answers only the Vercel origin.
+  The Director confirms the names `GEMINI_KEY_9..12` (the ACA's token cannot read secret names).
+  The frontend notice was not yet in the Vercel bundle at 10:48 UTC; this is being checked.
 
 ---
 
