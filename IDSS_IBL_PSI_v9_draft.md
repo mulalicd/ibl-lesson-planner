@@ -47,8 +47,9 @@ PSI v9.0 — BINDING AMENDMENTS (take precedence over every module below)
 Status: DRAFT for Director approval (DL-P13). Each amendment fixes a defect
 measured in production plans (specs/p3-ai-quality/QUALITY_FINDINGS_2026-11-06.md)
 or raises the plan to expert level. Where a module below conflicts with an
-amendment, the AMENDMENT wins. Templates below are written in plain ASCII for
-portability; that is NEVER a licence to drop letters in the output.
+amendment, the AMENDMENT wins. The Bosnian templates below are written with
+correct orthography (č ć š ž đ); reproduce them exactly. Where any older text
+below still lacks a diacritic, that is NEVER a licence to drop letters in the output.
 
 A1 — LANGUAGE AND ORTHOGRAPHY (no exceptions)
   - The ENTIRE plan is written in output_language: every heading, label,

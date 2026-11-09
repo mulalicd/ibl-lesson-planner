@@ -2,6 +2,7 @@
 // ONE implementation, so production and evaluation cannot diverge (M-7).
 
 import { PSI_V81_PROMPT } from "./psi_v81.ts";
+import { PSI_V90_PROMPT } from "./psi_v90.generated.ts";
 import type { IblChatRequest } from "../../../src/lib/validation/schemas.ts";
 
 export type AiMessage = { role: string; content: string };
@@ -12,6 +13,18 @@ export type PromptVariant = "v81" | "psi";
  * "psi": a full PSI document (v8.0 / v9.0) as the system instruction, with a
  * minimal wrapper that adds no rules of its own: PSI owns every rule.
  */
+/**
+ * THE switch for the production prompt (DL-P13 item 1). "v81" until the Director
+ * approves the PSI v9.0 text; then set to "v90" in ONE reviewed change and deploy.
+ * Rollback = set back to "v81" and deploy.
+ */
+export const PRODUCTION_PSI: "v81" | "v90" = "v81";
+
+/** What the Edge Function sends to Gemini. Tests cover both settings. */
+export function buildProductionMessages(req: IblChatRequest, psi: "v81" | "v90" = PRODUCTION_PSI): AiMessage[] {
+  return psi === "v90" ? buildMessages(req, "psi", PSI_V90_PROMPT) : buildMessages(req, "v81");
+}
+
 export function buildMessages(req: IblChatRequest, variant: PromptVariant = "v81", psiText?: string): AiMessage[] {
   if (variant === "psi") {
     if (!psiText) throw new Error("buildMessages: psiText required for variant 'psi'");

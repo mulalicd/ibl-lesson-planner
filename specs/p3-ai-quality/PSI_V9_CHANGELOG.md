@@ -55,3 +55,9 @@ v8.0 are **kept**.
   "Insgesamt / Gesamtdauer / Summe" are recognised.
 - Still a DRAFT: needs the Director's approval before production
   (CONSTITUTION rule 1).
+
+## 2026-11-09 — preamble consistency
+- The amendments preamble still said the templates were "plain ASCII", which
+  contradicted the diacritised templates of 2026-11-07. It now says the templates use correct
+  orthography and must be copied exactly. Same class of defect as the template
+  diacritics: an instruction that contradicts the examples.

@@ -13,7 +13,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { IblChatRequestSchema } from "../../../src/lib/validation/schemas.ts";
 import { createGeminiToOpenAiTransform } from "../_shared/sse.ts";
-import { buildMessages } from "../_shared/prompt.ts";
+import { buildProductionMessages } from "../_shared/prompt.ts";
 import { PSI_V81_PROMPT } from "../_shared/psi_v81.ts";
 import { validatePlan } from "../_shared/validate.ts";
 
@@ -251,7 +251,7 @@ Deno.serve(async (req) => {
     // 4. Execute — unchanged generation logic
     const requestId = crypto.randomUUID();
 
-    const aiMessages = buildMessages(parsed.data, "v81");
+    const aiMessages = buildProductionMessages(parsed.data); // PRODUCTION_PSI in _shared/prompt.ts
 
     // 5. Return (stream)
     const p = parsed.data.params;
