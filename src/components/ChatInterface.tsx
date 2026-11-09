@@ -13,6 +13,7 @@ import aiAvatarImg from '@/assets/ai-avatar.jpg';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import type { Language } from '@/lib/types';
+import { PrivacyNotice } from '@/components/PrivacyNotice';
 
 interface ChatInterfaceProps {
   initialPlan?: { id: string; text: string } | null;
@@ -346,7 +347,8 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
             </div>
           </div>
         </div>
-        <p className="text-center text-[11px] text-muted-foreground/40 mt-3 font-medium tracking-wide">
+        <PrivacyNotice className="justify-center text-center mt-3 max-w-2xl mx-auto" />
+        <p className="text-center text-[11px] text-muted-foreground/40 mt-2 font-medium tracking-wide">
           IBL Planer v2.0 · PSI v8.0 · IDSS Sarajevo
         </p>
       </div>

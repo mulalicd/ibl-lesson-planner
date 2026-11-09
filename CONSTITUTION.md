@@ -139,6 +139,21 @@ Detaljno objašnjenje i racionalno obrazloženje: `DECISION_LOG.md` DL-P01.
    proširuje odobreni opseg. Izmjene direktno na `main` (npr. GitHub
    "Add files via upload") zaobilaze Commander i trebaju se izbjegavati.
 
+8. **KOMUNIKACIJA S DIREKTOROM — SISTEMSKA NAREDBA (Direktor,
+   2026-11-07):** Direktor nije programer. SVAKA instrukcija koju mu
+   ACA daje mora biti hirurški precizna:
+   - numerisani koraci, po jedna radnja po koraku;
+   - tačan, kliktabilan link do tačne stranice (ne "idite u postavke");
+   - tačan naziv svakog dugmeta, kartice i polja, kako piše na ekranu;
+   - šta se tačno upisuje (ime, vrijednost) i šta se NE smije upisati;
+   - kako izgleda uspjeh ("trebate vidjeti …") i šta ako ne izgleda
+     tako;
+   - kad postoje dvije slične opcije (npr. Secrets vs. Variables),
+     izričito reći koju NE koristiti.
+
+   ACA nikad ne pretpostavlja da Direktor nešto zna. Ovo važi za
+   svaki budući rad na projektu (Commander C-12).
+
 Sve što nije eksplicitno pokriveno ovdje ili u PSI v8.0 dokumentu:
 **STOP i pitaj** (M-4, M-10).
 

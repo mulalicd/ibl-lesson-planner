@@ -89,6 +89,19 @@ the filesystem is not (M-18).
 
 ---
 
+## 🔴 OWNER COMMUNICATION — STANDING ORDER (Director, 2026-11-07)
+
+The Director is a non-coder. Every instruction to him is surgically
+precise:
+- numbered steps, one action each
+- the exact clickable link to the exact page
+- exact button, tab and field names as shown on screen
+- exactly what to type, and what NOT to use when two similar options
+  exist (e.g. Secrets vs. Variables)
+- what success looks like, and what to do if it doesn't
+
+Never assume he knows. See CONSTITUTION.md rule 8.
+
 ## PROJECT-SPECIFIC NOTES
 
 - **Stack deviation (M-16):** Vite + React 18 + TypeScript SPA, NOT

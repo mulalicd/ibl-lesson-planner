@@ -392,4 +392,42 @@ questions 1–5)
 
 ---
 
+## DL-P14 — AI provider tier: stay on the free tier (Director, 2026-11-09)
+
+**Decided by:** Director, answer "B" to the P3 data-use question.
+
+**Facts presented before the decision** (official Gemini API Terms, read 2026-11-09,
+`specs/p3-ai-quality/MODEL_AND_QUOTA_FINDINGS.md` §5b): on unpaid quota Google uses
+submitted content and responses to improve its products, human reviewers may read it,
+and "Do not submit sensitive, confidential, or personal information to the Unpaid
+Services". The paid tier does not use content for training and comes with a Data
+Processing Addendum.
+
+**Decision:**
+1. Production stays on the free Gemini tier. The Director accepts the data-use risk above.
+2. Mitigation: an in-app notice where teachers type (`src/components/PrivacyNotice.tsx`,
+   single source of the wording). Wording set by the Director (2026-11-09), exactly:
+   "VAŽNO: Ne upisujte imena učenika niti lične podatke (zdravlje, posebne potrebe, ocjene, porodica)".
+   It does not mention Google or the free tier.
+3. Capacity: the Director adds 4 more free keys from separate Google projects
+   (`GEMINI_KEY_9..12`). The Edge Function now reads up to `GEMINI_KEY_20`.
+4. Groq: the Director offers up to 10 free Groq keys "if needed". **Not adopted yet.** A second
+   provider is an architecture change (DL-005 / stack in CONSTITUTION). It needs its own
+   evaluation of PSI v9 quality in Bosnian and German, plus Groq's data terms, before
+   any decision.
+
+**Verified 2026-11-09 (findings §5c):** the Google APIs ToS forbid attempts to
+"circumvent" documented limits, and Gemini limits apply per project. Groq lists
+"rate-limit circumvention" as suspected abuse. The ACA advised the Director that more
+projects or keys used to multiply free quota risk suspension. Step 3 is the Director's call,
+made with this information.
+
+**Director decision after the risk was presented (2026-11-09): "Groq test da" + "dodajem ključeve".**
+- The Director accepts the suspension risk and adds `GEMINI_KEY_9..12` (4 new free projects).
+- Groq evaluation approved: ONE Groq account with Zero Data Retention enabled, used only by the
+  eval workflow (repository secret `GROQ_EVAL_KEY`). This is a quality and limits test of PSI v9 on Groq models, with no
+  production use. Any production use of Groq needs a separate decision after the results.
+
+---
+
 *Project Decision Log — IBL Lesson Planner — under Commander v1.7.0*
