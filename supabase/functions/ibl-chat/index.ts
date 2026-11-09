@@ -5,7 +5,7 @@
 // Generation logic, the PSI prompt and the stream format are UNCHANGED
 // from the pre-P1 version (prompt/AI changes are P3). Stream decoding fixed in P3 (_shared/sse.ts).
 //
-// Required Edge Function secrets: GEMINI_KEY_1..GEMINI_KEY_8 (at least one),
+// Required Edge Function secrets: GEMINI_KEY_1..GEMINI_KEY_20 (at least one),
 // ALLOWED_ORIGINS (comma-separated, e.g. https://ibl-lesson-planner.vercel.app).
 // Provided by the Supabase platform: SUPABASE_URL, SUPABASE_ANON_KEY
 // (optional fallback secret: PUBLISHABLE_KEY).
@@ -61,8 +61,10 @@ function logError(where: string, err: unknown): void {
 
 
 // ─── GEMINI KEY ROTATION ─────────────────────────────────────────────────────
+// Free-tier keys from separate Google projects (DL-P14). Gaps are allowed.
+const MAX_GEMINI_KEYS = 20;
 const GEMINI_KEYS: string[] = [];
-for (let i = 1; i <= 8; i++) {
+for (let i = 1; i <= MAX_GEMINI_KEYS; i++) {
   const key = Deno.env.get(`GEMINI_KEY_${i}`);
   if (key && key.trim()) GEMINI_KEYS.push(key.trim());
 }
@@ -82,7 +84,7 @@ async function callGemini(
   cors: Record<string, string>,
 ): Promise<Response> {
   if (GEMINI_KEYS.length === 0) {
-    logError("callGemini", "No Gemini API keys configured (GEMINI_KEY_1..8)");
+    logError("callGemini", "No Gemini API keys configured (GEMINI_KEY_1..20)");
     return fail(cors, "INTERNAL");
   }
 

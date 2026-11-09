@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { SUBJECT_GROUPS, deriveTier, TIER_CONFIG } from '@/lib/constants';
 import type { Language } from '@/lib/types';
 import { LIMITS } from '@/lib/validation/schemas';
+import { PrivacyNotice } from '@/components/PrivacyNotice';
 
 interface InputWizardProps {
   onGenerate: (params: {
@@ -217,6 +218,7 @@ export default function InputWizard({ onGenerate, isLoading }: InputWizardProps)
                     rows={2}
                     className="w-full neu-inset px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 placeholder:text-muted-foreground/35 resize-none"
                   />
+                  <PrivacyNotice className="mt-2" />
                 </div>
               </div>
             </div>
