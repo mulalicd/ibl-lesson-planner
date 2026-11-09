@@ -26,6 +26,13 @@ await docLines("https://ai.google.dev/gemini-api/docs/pricing", /3\.8 flash|3\.5
 await docLines("https://ai.google.dev/gemini-api/docs/pricing", /improve our products|used to improve|data/i, 20);
 await docLines("https://ai.google.dev/gemini-api/terms", /improve|human review|unpaid|paid services|free|retain|minors|under 18|personal data|confidential/i, 40);
 await docLines("https://ai.google.dev/gemini-api/docs/pricing", /gemini 2\.5 flash|\$0\.\d+|\$\d\.\d+/i, 40);
+// Multiple projects / keys to raise free quota: what Google's API terms say.
+await docLines("https://developers.google.com/terms", /circumvent|multiple|usage limit|quota|rate limit|exceed/i, 20);
+await docLines("https://ai.google.dev/gemini-api/terms", /circumvent|multiple (api )?projects|usage limit|rate limit|quota/i, 20);
+await docLines("https://ai.google.dev/gemini-api/docs/rate-limits", /per project|not per api key|multiple|circumvent/i, 20);
+// Groq (Director 2026-11-09 mentions Groq keys as a fallback): its data use on the free plan.
+await docLines("https://groq.com/privacy-policy", /train|improve|retain|personal data|children|minors/i, 20);
+await docLines("https://console.groq.com/docs/your-data", /train|retain|zero data|delete|days/i, 20);
 // "probe-docs": read the official pages only, spend no generation quota.
 if (Deno.env.get("PROBE_DOCS_ONLY") === "1") Deno.exit(0);
 
