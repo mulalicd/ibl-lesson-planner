@@ -4,6 +4,7 @@
  */
 
 import { SUBJECTS } from './constants';
+import type { ValidationReportInput } from './validation/schemas';
 
 export type Language = 'bosnian' | 'german' | 'english';
 export type Tier = 'MICRO' | 'STANDARD' | 'EXTENDED';
@@ -69,6 +70,8 @@ export interface ChatMessage {
   timestamp: string;
   isPlan?: boolean;
   plan_id?: string;
+  /** P3 quality report from the Edge Function (generated plans only). */
+  validation?: ValidationReportInput;
 }
 
 export interface ConversationState {

@@ -72,6 +72,29 @@ export const IblChatRequestSchema = z
 export type IblChatRequest = z.infer<typeof IblChatRequestSchema>;
 export type GenerateParamsInput = z.infer<typeof GenerateParamsSchema>;
 
+/**
+ * Quality report of a generated plan (P3, DL-P13 item 5). Produced by
+ * supabase/functions/_shared/validate.ts (validatePlan) and sent by the Edge
+ * Function as one extra SSE event: data: {"type":"validation","report":{…}}.
+ * The browser validates it with this schema before showing it.
+ */
+export const CheckResultSchema = z.object({
+  id: z.string().min(1).max(64),
+  ok: z.boolean(),
+  detail: z.string().max(500),
+});
+export const ValidationReportSchema = z.object({
+  passed: z.number().int().min(0),
+  total: z.number().int().min(0),
+  failed: z.array(z.string().max(64)).max(64),
+  checks: z.array(CheckResultSchema).max(64),
+});
+export const ValidationEventSchema = z.object({
+  type: z.literal('validation'),
+  report: ValidationReportSchema,
+});
+export type ValidationReportInput = z.infer<typeof ValidationReportSchema>;
+
 /** Sign-in e-mail: only @idss.ba (server enforces the same rule in auth.users). */
 export const IDSS_EMAIL_DOMAIN = 'idss.ba';
 export const SignInEmailSchema = z

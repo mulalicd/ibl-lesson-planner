@@ -7,8 +7,8 @@ to PSI v9.0 additionally needs Director approval of the v9.0 text.
       collect 3 real pre-P3 plan texts for display regression (from
       the Director's own saved plans).
 - [ ] 1. Database migration — OMITTED (PLAN: no data model change).
-- [ ] 2. Types — `ValidationReport` type.
-- [ ] 3. Zod — `ValidationReportSchema` in `src/lib/validation/schemas.ts`.
+- [x] 2. Types — `ValidationReport` type (inferred from Zod; `ChatMessage.validation`).
+- [x] 3. Zod — `ValidationReportSchema` + `ValidationEventSchema` in `src/lib/validation/schemas.ts`; a vitest checks that the Deno validator output parses, and a Deno test checks that the emitted event parses.
 - [ ] 4. Repository — OMITTED (no DB access in P3).
 - [~] 5. Domain logic (DONE: build-psi + psi:check, psi_v80.generated.ts, buildMessages (v81 byte-identical 3/3), validatePlan (14 tests), SSE fix; PENDING: v9.0 module):
       - `scripts/build-psi.mjs` + `npm run psi:check` (CI)
@@ -17,14 +17,9 @@ to PSI v9.0 additionally needs Director approval of the v9.0 text.
       - `validatePlan()`
       - stream decoder fix (D-1)
       - unit tests for all of the above
-- [ ] 6. Edge Function: use the generated PSI, the wrapper, the
-      validation SSE event; delete the inline prompt and
-      `src/lib/psi.ts`.
-- [ ] 7. UI: heading recognition (bs/de/en ± diacritics, old patterns
-      kept); save metadata without invented defaults; validation badge
-      + "Popravi".
-- [ ] 8. Integration: `useChat` handles the validation event; the
-      repair sends a targeted Mode C message.
+- [~] 6. Edge Function: DONE: validation SSE event (only when the request carries params; never breaks the stream); `src/lib/psi.ts` deleted (unused). PENDING (needs the Director's approval of the PSI v9 text): switch `buildMessages` to the generated v9 PSI and delete the inline v8.1 prompt.
+- [~] 7. UI: DONE: heading recognition (v9 sections, diacritic-insensitive, old patterns kept, display-regression test with the Director's plan); `QualityBadge` + "Popravi" (labels in `src/lib/qualityChecks.ts`, wording PENDING the Director's approval). PENDING: save metadata without invented defaults.
+- [x] 8. Integration: `useChat` handles the validation event (Zod-checked); `repairPlan` sends a visible chat message with the failed checks and the last params, so the corrected plan is re-checked.
 - [ ] 9. Self-review (FEATURE_LIFECYCLE Step 4).
 - [~] 10. Testing (DONE: unit + e2e + CI workflow; golden harness `scripts/eval/run.ts` + manual workflow; PENDING: runs and the Director's rating):
       - unit tests

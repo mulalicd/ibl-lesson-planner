@@ -62,3 +62,15 @@ Deno.test("missing trailing newline at end of stream is flushed", async () => {
   const { text } = await run(b, []);
   if (text !== "kraj") throw new Error(text);
 });
+
+Deno.test("the validation event the server emits is accepted by the browser schema (P3 contract)", async () => {
+  const { validatePlan } = await import("./validate.ts");
+  const { ValidationEventSchema } = await import("../../../src/lib/validation/schemas.ts");
+  const { raw } = await run(BYTES, [7, 40], (full) =>
+    JSON.stringify({ type: "validation", report: validatePlan(full, { language: "bosnian", duration_min: 45 }) }));
+  const lines = raw.split("\n").filter((l) => l.startsWith("data: "));
+  const last = lines[lines.length - 1], beforeLast = lines[lines.length - 2];
+  if (last !== "data: [DONE]") throw new Error("stream must end with [DONE]");
+  const ev = ValidationEventSchema.safeParse(JSON.parse(beforeLast.slice(6)));
+  if (!ev.success) throw new Error("browser schema rejects the event: " + JSON.stringify(ev.error.issues));
+});

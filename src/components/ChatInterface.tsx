@@ -14,6 +14,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import type { Language } from '@/lib/types';
 import { PrivacyNotice } from '@/components/PrivacyNotice';
+import { QualityBadge } from '@/components/QualityBadge';
 
 interface ChatInterfaceProps {
   initialPlan?: { id: string; text: string } | null;
@@ -212,6 +213,9 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
                 {msg.isPlan ? (
                   <div className="space-y-4">
                     <PlanDisplay planText={msg.content} planId={msg.plan_id} />
+                    {msg.validation && (
+                      <QualityBadge report={msg.validation} onRepair={chat.repairPlan} disabled={chat.isLoading} />
+                    )}
                     {/* Action buttons: Save + Export */}
                     <div className="flex flex-wrap items-center gap-3 pt-3 border-t border-border/30">
                       {/* Save button */}
