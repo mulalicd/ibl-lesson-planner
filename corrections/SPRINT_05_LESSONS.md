@@ -101,3 +101,14 @@ Date: 2026-11-07
 - Commander improvement candidate: C-12 → "before instructing the owner
   to add capacity or credentials, verify (a) the code consumes them and
   (b) the provider's terms allow the pattern".
+
+## Director correction (2026-11-09) — user-facing wording is the Director's
+- The ACA wrote the privacy notice itself, including a sentence about
+  Google reviewing the text. The Director replaced it with the exact text
+  "VAŽNO: Ne upisujte imena učenika niti lične podatke (zdravlje,
+  posebne potrebe, ocjene, porodica)". Lesson: text that teachers see is
+  institutional communication. Propose the wording and get it approved
+  before implementing it, and keep the approved wording verbatim in one place.
+- Commander improvement candidate: M-4 → "user-facing institutional
+  wording (notices, warnings, legal text) is proposed to the owner and never
+  shipped as ACA-authored text".

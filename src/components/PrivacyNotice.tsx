@@ -7,9 +7,9 @@ import { ShieldAlert } from 'lucide-react';
  * Google's products, and "Do not submit sensitive, confidential, or personal
  * information". Single source of this wording — reuse, do not copy.
  */
+// Exact wording set by the Director (2026-11-09). Do not change without his approval.
 export const PRIVACY_NOTICE_TEXT =
-  'Ne upisujte imena učenika niti lične podatke (zdravlje, posebne potrebe, ocjene, porodica). ' +
-  'Tekst obrađuje besplatni Google Gemini; Google ga može pregledati i koristiti za razvoj svojih proizvoda.';
+  'VAŽNO: Ne upisujte imena učenika niti lične podatke (zdravlje, posebne potrebe, ocjene, porodica)';
 
 export function PrivacyNotice({ className = '' }: { className?: string }) {
   return (

@@ -406,7 +406,9 @@ Processing Addendum.
 **Decision:**
 1. Production stays on the free Gemini tier. The Director accepts the data-use risk above.
 2. Mitigation: an in-app notice where teachers type (`src/components/PrivacyNotice.tsx`,
-   single source of the wording) tells them not to enter pupils' names or personal data.
+   single source of the wording). Wording set by the Director (2026-11-09), exactly:
+   "VAŽNO: Ne upisujte imena učenika niti lične podatke (zdravlje, posebne potrebe, ocjene, porodica)".
+   It does not mention Google or the free tier.
 3. Capacity: the Director adds 4 more free keys from separate Google projects
    (`GEMINI_KEY_9..12`). The Edge Function now reads up to `GEMINI_KEY_20`.
 4. Groq: the Director offers up to 10 free Groq keys "if needed". **Not adopted yet.** A second
