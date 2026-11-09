@@ -136,6 +136,41 @@ thinking is in the low thousands [I]. v81 on 3.8 Flash: ≈ $0.02 per plan.
 Context caching ($0.075 per 1M cached input tokens through 2026) would cut the repeated
 30k-token PSI cost by ~90 %. That is a P3 engineering option, not yet designed.
 
+## 5b. Data use — official Gemini API Terms (ai.google.dev/gemini-api/terms, read 2026-11-09 via probe-docs run 42597676044)
+
+Verbatim, [V]:
+- Unpaid Services (free quota): "Google uses the content you submit to the Services and any generated
+  responses to provide, improve, and develop Google products and services and machine learning
+  technologies" … "human reviewers may read, annotate, and process your API input and output" …
+  "**Do not submit sensitive, confidential, or personal information to the Unpaid Services.**"
+- Paid Services: "Google doesn't use your prompts (including associated system instructions, cached
+  content, and files …) or responses to improve our products, and will process your prompts and
+  responses in accordance with the Data Processing Addendum for Products Where Google is a Data
+  Processor." Prompts are logged "for a limited period of time, solely for detecting and preventing
+  violations of the Prohibited Use Policy".
+- "You may use only Paid Services when making API Clients available to users in the European Economic
+  Area, Switzerland, or the United Kingdom."
+- Pricing page: free tier "Content used to improve our products"; paid tier "Content **not** used to improve our products".
+
+Assessment [I]:
+1. Production runs **entirely on Unpaid Services** (Director, 2026-11-09). Teachers' prompts, the lesson
+   plans and the chat, including any pupil names, SEN or behaviour details typed into the
+   differentiation or chat, may be read by Google's human reviewers and used for training. The terms
+   explicitly say not to submit personal information. **This is the most serious open finding of P3:
+   a data-protection risk, not a quality risk.**
+2. The EEA/CH/UK clause: Bosnia and Herzegovina is in none of these, so the clause does not forbid the
+   current use on its face. [U] Whether IDSS (a German school abroad) is bound by GDPR-equivalent rules or
+   by its own data-protection policy is a legal question for the Director, not something the ACA can verify.
+3. The DPA (data processor terms) exists only on the paid tier. Without it the school has no processor agreement with Google.
+
+Options for the Director (no action taken):
+- A. Paid tier for production (recommended): content is not used for training, the DPA applies, and the free-tier daily
+  ceiling (80–160 calls/school/day) disappears. Cost: § 5, ≈ $0.064 per PSI v9 plan on 3.8 Flash; [U] the
+  2.5 Flash price row could not be tied to its model heading in the extracted passages.
+- B. Stay free and add an in-app warning ("do not enter pupils' names or personal data") plus
+  server-side redaction. This lowers the risk but does not remove it; the terms still apply.
+- C. Both: paid tier plus the warning (defence in depth).
+
 ## 6. Next measurements
 
 1. 3.8 Flash mini-run (v81 vs v90, lessons g08/g12/g02): done, see 4a.
