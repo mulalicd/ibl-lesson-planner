@@ -213,6 +213,14 @@ prompt are unverified. A Groq evaluation is a separate, approvable task (archite
 in a parallel run). [I] 503 attempts most likely count against RPD, so production retries across keys after a
 503 consume quota on every key they touch.
 
+## 5d. Groq evaluation account (DL-P14) — models visible to GROQ_EVAL_KEY (run 42601978224, 2026-11-09)
+
+[V] HTTP 200. Chat-capable models with context ≥ 32k: `openai/gpt-oss-120b` (131,072), `openai/gpt-oss-20b`
+(131,072), `qwen/qwen3.8-27b` (131,072). The others are speech, guard or small models (allam-2-7b at 4k context;
+whisper, orpheus, prompt-guard, gpt-oss-safeguard).
+Evaluated first: gpt-oss-120b and qwen3.8-27b on g08 and g12 (PSI v9). Results go in 5e.
+[U] ZDR status of the Groq account: set by the Director in Data Controls; the ACA cannot see it.
+
 ## 6. Next measurements
 
 1. 3.8 Flash mini-run (v81 vs v90, lessons g08/g12/g02): done, see 4a.
