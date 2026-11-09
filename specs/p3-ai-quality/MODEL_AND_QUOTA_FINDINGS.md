@@ -21,8 +21,10 @@ Evidence class per line: **[V]** verified (observed API response / fetched offic
   the hard ceiling is ≈ 8 × 20 = 160 Gemini calls/day for the whole school. That
   covers generate + chat + refine, and it assumes the key rotation spreads the load. The app quota (30/day/teacher) is far above
   what Google allows per key.
-- [U] Billing status of the 8 production projects is unknown — only the Director can see it
-  in Google AI Studio.
+- [V] Billing status of the 8 production projects: **all on the free tier, always have been** (Director,
+  2026-11-09). [I] So the school's daily ceiling is about 8 × (10–20) = **80–160 Gemini calls/day** for
+  generate + chat + refine together. With PSI v9 (~25k-token prompt) the tokens-per-minute limit may also
+  bind; this is not measured yet. The app's quota (30/day per teacher) does not protect against this.
 - [U] Data use on the free tier: Google's pricing page has historically marked free-tier
   content as "used to improve our products". This was not captured by this probe and must be read on the
   pricing page before any decision (school data / GDPR-relevant).
