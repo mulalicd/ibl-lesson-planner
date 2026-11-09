@@ -112,6 +112,21 @@ Recommendation [I]:
   (8 at 08:12 incl. two 503s, 1 here). [U] Why this is not 20: either 503 attempts count, or the window or limit
   differs from the probe's "limit=20". Practical rule: ≤ 8 full plans per model per day on this key.
 
+### 4e. Confirmation of the 2026-11-07 fixes — eval run 42597230077 (2026-11-09, 2.5 Flash, v90)
+
+| Lesson | 2026-11-07 (run 42354465883) | 2026-11-09 |
+|---|---|---|
+| g02 Märchenfiguren (de) | 16/20 | 20/20 (not_truncated and timeline now pass) |
+| g12 Da li je laž… (bs) | 19/21 | **21/21** (bosnian_diacritics now passes) |
+| g08 Fotosinteza (bs) | 18/21 | lost: 4 × HTTP 503 |
+
+- [V] All 21 checks pass on both plans that arrived. The three fixes are confirmed: diacritised templates,
+  A15 + validator, and "Insgesamt".
+- [V] Thinking tokens on g12: 4,896, on top of 8,900 visible output tokens.
+- [V] 2.5 Flash also returned 503 today (1 of 3 plans lost after 4 attempts). On the free tier, overload
+  errors hit both models.
+- [I] n = 2. Deterministic checks are necessary, not sufficient: the Director's reading is the gate.
+
 ## 5. Price (official pricing page, captured 2026-11-07, paid tier, per 1M tokens, USD)
 
 - [V] **Gemini 3.8 Flash** (standard): input **$0.75**, output incl. thinking **$3.75**, through

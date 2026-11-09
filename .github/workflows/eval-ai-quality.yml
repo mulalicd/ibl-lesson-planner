@@ -57,7 +57,13 @@ jobs:
             --variants "${{ inputs.variants }}" --limit "${{ inputs.limit }}" --only "${{ inputs.only }}" --model "${{ inputs.model }}" --out eval-out
       - name: Summary
         if: always()
-        run: test -f eval-out/report.md && cat eval-out/report.md >> "$GITHUB_STEP_SUMMARY" || true
+        run: |
+          test -f eval-out/report.md && cat eval-out/report.md >> "$GITHUB_STEP_SUMMARY" || true
+          # Full plan texts for the Director's reading (generated lesson plans only, no personal data)
+          for f in eval-out/plans/*/*.txt; do
+            [ -f "$f" ] || continue
+            { echo; echo "<details><summary><b>$(basename "$(dirname "$f")") / $(basename "$f" .txt)</b> (click to open)</summary>"; echo; echo '```text'; cat "$f"; echo; echo '```'; echo "</details>"; } >> "$GITHUB_STEP_SUMMARY"
+          done
       - uses: actions/upload-artifact@v4
         if: always()
         with:
