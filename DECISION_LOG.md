@@ -427,6 +427,9 @@ made with this information.
 - Groq evaluation approved: ONE Groq account with Zero Data Retention enabled, used only by the
   eval workflow (repository secret `GROQ_EVAL_KEY`). This is a quality and limits test of PSI v9 on Groq models, with no
   production use. Any production use of Groq needs a separate decision after the results.
+- **Groq result (2026-11-09, findings §5e):** the free tier rejects every PSI v9 request (TPM 8,000 /
+  ITPM 7,000 < ~23,000 tokens per request). Groq free is not a viable fallback; the ACA recommends
+  dropping it.
 
 ---
 

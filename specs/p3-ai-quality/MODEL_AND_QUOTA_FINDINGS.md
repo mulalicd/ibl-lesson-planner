@@ -221,6 +221,20 @@ whisper, orpheus, prompt-guard, gpt-oss-safeguard).
 Evaluated first: gpt-oss-120b and qwen3.8-27b on g08 and g12 (PSI v9). Results go in 5e.
 [U] ZDR status of the Groq account: set by the Director in Data Controls; the ACA cannot see it.
 
+## 5e. Groq free tier cannot run PSI v9 (runs 42602170084, 42602174296, 2026-11-09)
+
+[V] Both models rejected every PSI v9 request **before generation** with HTTP 413:
+- `openai/gpt-oss-120b`: "Request too large … service tier `on_demand` on tokens per minute (TPM): **Limit 8000, Requested 22998**".
+- `qwen/qwen3.8-27b`: "… input tokens per minute (ITPM): **Limit 7000, Requested 24263**".
+- Groq's message: "Need more tokens? Upgrade to Dev Tier".
+
+[I] Conclusions:
+1. A single PSI v9 request (~23–24k tokens) is three times larger than the free per-minute budget, so it can never pass. The same
+   holds for PSI v8.0 (~22k). **More Groq keys do not help**: the limit applies to the size of one request.
+2. Only the compressed v8.1 prompt (~3k tokens) would fit, and v8.1 is the low-quality baseline P3 exists to replace.
+3. Groq is viable for PSI v9 only on its paid Dev Tier, which contradicts DL-P14 (everything free). **Groq free is not a fallback.**
+   Recommendation: drop Groq. No production work and no further Groq keys.
+
 ## 6. Next measurements
 
 1. 3.8 Flash mini-run (v81 vs v90, lessons g08/g12/g02): done, see 4a.
