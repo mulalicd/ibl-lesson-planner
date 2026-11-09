@@ -15,6 +15,7 @@ import { IblChatRequestSchema } from "../../../src/lib/validation/schemas.ts";
 import { createGeminiToOpenAiTransform } from "../_shared/sse.ts";
 import { buildMessages } from "../_shared/prompt.ts";
 import { PSI_V81_PROMPT } from "../_shared/psi_v81.ts";
+import { validatePlan } from "../_shared/validate.ts";
 
 // ─── CORS (allow-list, never "*") ────────────────────────────────────────────
 const ALLOWED_ORIGINS = (Deno.env.get("ALLOWED_ORIGINS") ?? "")
@@ -82,6 +83,7 @@ async function callGemini(
   messages: { role: string; content: string }[],
   requestId: string,
   cors: Record<string, string>,
+  onComplete?: (fullText: string) => string | null,
 ): Promise<Response> {
   if (GEMINI_KEYS.length === 0) {
     logError("callGemini", "No Gemini API keys configured (GEMINI_KEY_1..20)");
@@ -131,7 +133,10 @@ async function callGemini(
       }
 
       // D-1 fix (P3): one streaming decoder + line buffer across chunks.
-      const transformStream = createGeminiToOpenAiTransform();
+      // P3 (DL-P13 item 5): when the request carries lesson params, the full text is
+      // checked at the end and ONE extra event {"type":"validation",...} is sent.
+      // Clients that do not know the event ignore it (no `choices`).
+      const transformStream = createGeminiToOpenAiTransform(onComplete);
 
       return new Response(resp.body!.pipeThrough(transformStream), {
         headers: { ...cors, "Content-Type": "text/event-stream" },
@@ -214,7 +219,19 @@ Deno.serve(async (req) => {
     const aiMessages = buildMessages(parsed.data, "v81");
 
     // 5. Return (stream)
-    return await callGemini(aiMessages, requestId, cors);
+    const p = parsed.data.params;
+    const onComplete = p
+      ? (fullText: string): string | null => {
+        try {
+          const report = validatePlan(fullText, { language: p.language, duration_min: p.duration_min, tier: p.tier });
+          return JSON.stringify({ type: "validation", report });
+        } catch (e) {
+          logError("validatePlan", e); // never break the stream because of the check
+          return null;
+        }
+      }
+      : undefined;
+    return await callGemini(aiMessages, requestId, cors, onComplete);
 
   } catch (e) {
     logError("handler", e);

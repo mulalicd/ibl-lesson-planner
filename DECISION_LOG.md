@@ -389,6 +389,9 @@ questions 1–5)
    chat or repo.
 5. **Repair: option (a).** A validation badge plus a teacher-triggered
    "Popravi"; no automatic extra call.
+   **Implemented 2026-11-09.** The teacher-facing wording (check names, the
+   "Popravi" message, the badge labels in `src/lib/qualityChecks.ts` and
+   `src/components/QualityBadge.tsx`) was approved by the Director on 2026-11-09 ("tekst odobren").
 
 ---
 
@@ -427,6 +430,14 @@ made with this information.
 - Groq evaluation approved: ONE Groq account with Zero Data Retention enabled, used only by the
   eval workflow (repository secret `GROQ_EVAL_KEY`). This is a quality and limits test of PSI v9 on Groq models, with no
   production use. Any production use of Groq needs a separate decision after the results.
+- **Groq result (2026-11-09, findings §5e):** the free tier rejects every PSI v9 request (TPM 8,000 /
+  ITPM 7,000 < ~23,000 tokens per request). Groq free is not a viable fallback; the ACA recommends
+  dropping it.
+- **Live (2026-11-09):** the Edge Function reading `GEMINI_KEY_1..20` was deployed from `main` f6dbd1d (deploy run #10,
+  42603685134; all gates green). Independent check: an anonymous POST returns 401, CORS answers only the Vercel origin.
+  The Director confirms the names `GEMINI_KEY_9..12` (the ACA's token cannot read secret names).
+  Frontend: after the Director's Vercel deployment the live bundle (`assets/index-BD1vwugp.js`) contains the
+  exact notice text (verified 2026-11-09).
 
 ---
 

@@ -3,6 +3,8 @@ import type { ChatMessage, ChatMode, ConversationState, GenerateParams } from '@
 import { randomHex } from '@/lib/utils';
 import { getAccessToken, signalActivity } from '@/lib/auth';
 import { ERROR_MESSAGES } from '@/lib/constants';
+import { ValidationEventSchema, type ValidationReportInput } from '@/lib/validation/schemas';
+import { buildRepairMessage } from '@/lib/qualityChecks';
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ibl-chat`;
 
@@ -34,6 +36,8 @@ export function useChat() {
   });
 
   const abortRef = useRef<AbortController | null>(null);
+  // Params of the last generated plan: re-sent with "Popravi" so the server can re-check the corrected plan.
+  const lastParamsRef = useRef<GenerateParams | undefined>(undefined);
 
   const setMode = useCallback((mode: ChatMode) => {
     setState(prev => ({ ...prev, mode }));
@@ -68,6 +72,14 @@ export function useChat() {
     }));
 
     const mode = overrideMode || state.mode;
+    if (params) lastParamsRef.current = params;
+    let validation: ValidationReportInput | undefined;
+    // P3: one SSE line may be the server's quality report instead of text.
+    const readValidation = (parsed: unknown): boolean => {
+      const ev = ValidationEventSchema.safeParse(parsed);
+      if (ev.success) validation = ev.data.report;
+      return ev.success;
+    };
     const allMessages = [...state.messages.filter(m => m.id !== 'welcome'), userMsg].map(m => ({
       role: m.role,
       content: m.content,
@@ -132,6 +144,7 @@ export function useChat() {
 
           try {
             const parsed = JSON.parse(jsonStr);
+            if (readValidation(parsed)) continue;
             const tokenContent = parsed.choices?.[0]?.delta?.content as string | undefined;
             if (tokenContent) {
               assistantSoFar += tokenContent;
@@ -170,6 +183,7 @@ export function useChat() {
           if (jsonStr === '[DONE]') continue;
           try {
             const parsed = JSON.parse(jsonStr);
+            if (readValidation(parsed)) continue;
             const tokenContent = parsed.choices?.[0]?.delta?.content as string | undefined;
             if (tokenContent) assistantSoFar += tokenContent;
           } catch { /* ignore */ }
@@ -187,7 +201,7 @@ export function useChat() {
           const msgs = [...prev.messages];
           const lastMsg = msgs[msgs.length - 1];
           if (lastMsg?.role === 'model' && lastMsg.id !== 'welcome') {
-            msgs[msgs.length - 1] = { ...lastMsg, isPlan: true, content: assistantSoFar };
+            msgs[msgs.length - 1] = { ...lastMsg, isPlan: true, content: assistantSoFar, validation };
           }
           return {
             ...prev,
@@ -221,6 +235,12 @@ export function useChat() {
     });
   }, []);
 
+  /** "Popravi": a visible chat message naming the failed checks (DL-P13 item 5, teacher-triggered). */
+  const repairPlan = useCallback((failedIds: string[]) => {
+    if (!failedIds.length) return;
+    void sendMessage(buildRepairMessage(failedIds), 'chat', lastParamsRef.current);
+  }, [sendMessage]);
+
   const cancelStream = useCallback(() => {
     abortRef.current?.abort();
     setState(prev => ({ ...prev, isLoading: false }));
@@ -233,5 +253,6 @@ export function useChat() {
     setPlanContext,
     clearChat,
     cancelStream,
+    repairPlan,
   };
 }

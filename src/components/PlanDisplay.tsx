@@ -67,7 +67,7 @@ const SECTION_DEFS: {
     icon: <Palette className="w-4 h-4" />,
   },
   {
-    patterns: ['SOKRATOV', 'SOCRATIC', 'SCAFFOLD', 'SOKRATISCH'],
+    patterns: ['SOKRATOV', 'SOCRATIC', 'SCAFFOLD', 'SOKRATISCH', 'SKELA', 'GERÜST'],
     bgColor: 'bg-gradient-to-br from-indigo-50 to-violet-50/40',
     borderColor: 'border-indigo-200/50',
     iconBg: 'bg-indigo-100 text-indigo-700',
@@ -75,7 +75,7 @@ const SECTION_DEFS: {
     icon: <MessageCircle className="w-4 h-4" />,
   },
   {
-    patterns: ['DOKAZI O UČENJU', 'EVIDENCE OF LEARNING', 'LEARNING EVIDENCE', 'LERNNACHWEIS'],
+    patterns: ['DOKAZI O UČENJU', 'DOKAZ UČENJA', 'EVIDENCE OF LEARNING', 'LEARNING EVIDENCE', 'LERNNACHWEIS'],
     bgColor: 'bg-gradient-to-br from-teal-50 to-emerald-50/40',
     borderColor: 'border-teal-200/50',
     iconBg: 'bg-teal-100 text-teal-700',
@@ -83,7 +83,7 @@ const SECTION_DEFS: {
     icon: <ListChecks className="w-4 h-4" />,
   },
   {
-    patterns: ['SAMOEVALUACIJA', 'SELF-EVAL', 'SELBSTBEWERTUNG', 'NASTAVNIČKA SAMO'],
+    patterns: ['SAMOEVALUACIJA', 'SELF-EVAL', 'SELBSTBEWERTUNG', 'SELBSTREFLEXION', 'NASTAVNIČKA SAMO'],
     bgColor: 'bg-gradient-to-br from-orange-50 to-amber-50/40',
     borderColor: 'border-orange-200/50',
     iconBg: 'bg-orange-100 text-orange-700',
@@ -106,6 +106,31 @@ const SECTION_DEFS: {
     accentColor: 'text-sky-700',
     icon: <Timer className="w-4 h-4" />,
   },
+  // PSI v9 (A6, A12, A13) — Director requirements 2026-11-07
+  {
+    patterns: ['ISHODI UČENJA', 'LERNERGEBNISSE', 'LEARNING OUTCOMES'],
+    bgColor: 'bg-gradient-to-br from-emerald-50 to-teal-50/40',
+    borderColor: 'border-emerald-200/50',
+    iconBg: 'bg-emerald-100 text-emerald-700',
+    accentColor: 'text-emerald-700',
+    icon: <ListChecks className="w-4 h-4" />,
+  },
+  {
+    patterns: ['UPORIŠTE U STVARNOM', 'BEZUG ZUM ALLTAG', 'REAL-LIFE', 'REAL LIFE'],
+    bgColor: 'bg-gradient-to-br from-yellow-50 to-amber-50/40',
+    borderColor: 'border-yellow-200/50',
+    iconBg: 'bg-yellow-100 text-yellow-700',
+    accentColor: 'text-yellow-700',
+    icon: <Lightbulb className="w-4 h-4" />,
+  },
+  {
+    patterns: ['SAVJETI I TRIKOVI', 'TIPPS & TRICKS', 'TIPS & TRICKS', 'TIPS AND TRICKS'],
+    bgColor: 'bg-gradient-to-br from-violet-50 to-purple-50/40',
+    borderColor: 'border-violet-200/50',
+    iconBg: 'bg-violet-100 text-violet-700',
+    accentColor: 'text-violet-700',
+    icon: <Brain className="w-4 h-4" />,
+  },
   {
     patterns: ['FOOTER', 'POST-GENERATION', 'KONTAKT', 'CONTACT'],
     bgColor: 'bg-gradient-to-br from-gray-50 to-slate-50/40',
@@ -123,11 +148,17 @@ const FALLBACK_COLORS = [
   { bgColor: 'bg-gradient-to-br from-emerald-50 to-teal-50/40', borderColor: 'border-emerald-200/50', iconBg: 'bg-emerald-100 text-emerald-700', accentColor: 'text-emerald-700' },
 ];
 
+// Diacritic-insensitive match: "ISTRAZIVACKO" finds "ISTRAŽIVAČKO" (P3: some
+// models drop č ć š ž đ in headings). Đ → DJ as in PSI ASCII spelling.
+function foldUpper(s: string): string {
+  return s.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/Đ/g, 'DJ');
+}
+
 function matchSectionStyle(title: string) {
-  const upper = title.toUpperCase();
+  const upper = foldUpper(title);
   for (const def of SECTION_DEFS) {
     for (const pattern of def.patterns) {
-      if (upper.includes(pattern)) return def;
+      if (upper.includes(foldUpper(pattern))) return def;
     }
   }
   return null;
