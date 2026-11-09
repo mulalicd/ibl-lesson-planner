@@ -433,7 +433,8 @@ made with this information.
 - **Live (2026-11-09):** the Edge Function reading `GEMINI_KEY_1..20` was deployed from `main` f6dbd1d (deploy run #10,
   42603685134; all gates green). Independent check: an anonymous POST returns 401, CORS answers only the Vercel origin.
   The Director confirms the names `GEMINI_KEY_9..12` (the ACA's token cannot read secret names).
-  The frontend notice was not yet in the Vercel bundle at 10:48 UTC; this is being checked.
+  Frontend: after the Director's Vercel deployment the live bundle (`assets/index-BD1vwugp.js`) contains the
+  exact notice text (verified 2026-11-09).
 
 ---
 
