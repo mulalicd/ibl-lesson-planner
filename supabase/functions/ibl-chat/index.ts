@@ -64,6 +64,8 @@ function logError(where: string, err: unknown): void {
 // ─── GEMINI KEY ROTATION ─────────────────────────────────────────────────────
 // Free-tier keys from separate Google projects (DL-P14). Gaps are allowed.
 const MAX_GEMINI_KEYS = 20;
+// Max total wait across 503 retries in one request (the browser stream stays open meanwhile).
+const OVERLOAD_WAIT_BUDGET_MS = 10_000;
 const GEMINI_KEYS: string[] = [];
 for (let i = 1; i <= MAX_GEMINI_KEYS; i++) {
   const key = Deno.env.get(`GEMINI_KEY_${i}`);
@@ -99,9 +101,21 @@ async function callGemini(
       parts: [{ text: m.content }],
     }));
 
+  // P3 reliability (2026-11-09): "503 model overloaded" is Google-side for the whole
+  // model, so every key fails at the same moment. Rotating instantly burned all
+  // 12 keys in ~1 s. Now: wait with backoff on 503 (total ≤ OVERLOAD_WAIT_BUDGET_MS),
+  // rotate immediately on 429 (per-project quota), and log every key's status.
+  const statuses: Record<string, number | string> = {};
+  let overloadWaitedMs = 0;
+  let overloadStreak = 0;
   for (let i = 0; i < GEMINI_KEYS.length; i++) {
     const keyIndex = (startIndex + i) % GEMINI_KEYS.length;
     const apiKey = GEMINI_KEYS[keyIndex];
+    if (overloadStreak > 0 && overloadWaitedMs < OVERLOAD_WAIT_BUDGET_MS) {
+      const wait = Math.min(1000 * 2 ** (overloadStreak - 1), OVERLOAD_WAIT_BUDGET_MS - overloadWaitedMs);
+      await new Promise((r) => setTimeout(r, wait));
+      overloadWaitedMs += wait;
+    }
     // Key in a header, never in the URL (it would land in proxy/access logs).
     const geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse";
 
@@ -121,14 +135,26 @@ async function callGemini(
         }),
       });
 
-      if (resp.status === 429 || resp.status === 503) {
-        console.warn(`Gemini key ${keyIndex + 1} rate limited, trying next...`);
+      statuses[`key${keyIndex + 1}`] = resp.status;
+      if (resp.status === 503 || resp.status === 500) {
+        overloadStreak++;
+        await resp.body?.cancel();
+        console.warn(`Gemini key ${keyIndex + 1}: ${resp.status} (Google overloaded), backing off`);
+        continue;
+      }
+      overloadStreak = 0;
+      if (resp.status === 429) {
+        const errText = await resp.text();
+        const quotaId = errText.match(/"quotaId":\s*"([^"]+)"/)?.[1] ?? "?";
+        statuses[`key${keyIndex + 1}`] = `429:${quotaId}`;
+        console.warn(`Gemini key ${keyIndex + 1}: 429 quota ${quotaId}, trying next`);
         continue;
       }
 
       if (!resp.ok) {
         const errText = await resp.text();
-        console.error(`Gemini key ${keyIndex + 1} error ${resp.status}:`, errText);
+        // e.g. 403/404 when a NEW Google project has no access to gemini-2.5-flash
+        console.error(`Gemini key ${keyIndex + 1} error ${resp.status}:`, errText.slice(0, 500));
         continue;
       }
 
@@ -143,12 +169,20 @@ async function callGemini(
       });
 
     } catch (err) {
+      statuses[`key${keyIndex + 1}`] = "network";
       logError(`callGemini key ${keyIndex + 1}`, err);
       continue;
     }
   }
 
-  return fail(cors, "ALL_KEYS_EXHAUSTED");
+  // One structured line per failed request: which key got which answer (never the key itself).
+  console.error(JSON.stringify({ ts: new Date().toISOString(), where: "callGemini", requestId, outcome: "ALL_KEYS_FAILED", keys: GEMINI_KEYS.length, overloadWaitedMs, statuses }));
+  const summary: Record<string, number> = {};
+  for (const v of Object.values(statuses)) {
+    const k = String(v).split(":")[0];
+    summary[k] = (summary[k] ?? 0) + 1;
+  }
+  return fail(cors, "ALL_KEYS_EXHAUSTED", { upstream: summary });
 }
 
 // ─── MAIN HANDLER (E-6) ──────────────────────────────────────────────────────

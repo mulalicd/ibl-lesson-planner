@@ -112,3 +112,18 @@ Date: 2026-11-07
 - Commander improvement candidate: M-4 → "user-facing institutional
   wording (notices, warnings, legal text) is proposed to the owner and never
   shipped as ACA-authored text".
+
+## Rule-violation bug (2026-11-09) — key rotation does not help against a model-wide overload
+- The Director got "Svi API ključevi su privremeno preopterećeni" with
+  12 keys. Cause, from the code: on 503 the function rotated to the next
+  key with no pause, so a Google-side overload of gemini-2.5-flash (seen
+  several times that day on the eval key) failed all 12 keys within about a second.
+  The ACA added keys for capacity without asking which failure mode
+  more keys actually fix. They fix 429 (per-project quota), not 503 (model overload).
+- Fix: exponential backoff on 503 (≤ 10 s in total), immediate rotation on 429,
+  and one structured log line per failed request with every key's status.
+- The ACA cannot read the production logs (no Supabase log permission
+  in this session). That is why the response now carries a non-secret summary.
+- Commander improvement candidate: E-5 → "retry/rotation logic must be
+  matched to the failure scope (per-key, per-project, provider-wide), and
+  every exhausted retry must log per-attempt status".
