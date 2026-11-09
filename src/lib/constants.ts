@@ -54,7 +54,7 @@ export const ERROR_MESSAGES = {
   NETWORK_ERROR:      'Problem s internet vezom. Provjerite konekciju.',
   NOT_FOUND:          'Plan nije pronađen.',
   EXPORT_FAILED:      'Greška pri izvozu u Word. Pokušajte ponovo.',
-  ALL_KEYS_EXHAUSTED: 'Svi API ključevi su privremeno preopterećeni.',
+  ALL_KEYS_EXHAUSTED: 'Google AI je trenutno preopterećen. Pokušajte ponovo za 1–2 minute.', // approved by the Director 2026-11-09
 } as const;
 
 export const SESSION_DURATION_MS = 8 * 60 * 60 * 1000;
