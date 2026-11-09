@@ -389,6 +389,9 @@ questions 1–5)
    chat or repo.
 5. **Repair: option (a).** A validation badge plus a teacher-triggered
    "Popravi"; no automatic extra call.
+   **Implemented 2026-11-09.** The teacher-facing wording (check names, the
+   "Popravi" message, the badge labels in `src/lib/qualityChecks.ts` and
+   `src/components/QualityBadge.tsx`) was approved by the Director on 2026-11-09 ("tekst odobren").
 
 ---
 

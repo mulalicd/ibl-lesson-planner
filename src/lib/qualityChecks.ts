@@ -1,9 +1,8 @@
 /**
  * lib/qualityChecks.ts — teacher-facing names of the P3 quality checks
  * (ids come from supabase/functions/_shared/validate.ts).
- * Single source of this wording (M-7). PROPOSED wording, pending the
- * Director's approval before release (lesson 2026-11-09: institutional
- * text is the Director's).
+ * Single source of this wording (M-7). Wording APPROVED by the Director
+ * (2026-11-09, "tekst odobren"). Do not change it without his approval.
  */
 export const QUALITY_CHECK_LABELS: Record<string, string> = {
   section_iq: 'Istraživačko pitanje',
