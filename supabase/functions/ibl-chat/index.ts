@@ -40,7 +40,8 @@ const PUBLIC_ERRORS = {
   FORBIDDEN_ORIGIN: { status: 403, message: "Pristup nije dozvoljen." },
   INVALID_INPUT: { status: 400, message: "Zahtjev nije ispravan. Provjerite unesene podatke." },
   AI_QUOTA_EXCEEDED: { status: 429, message: "Dostigli ste ograničenje AI zahtjeva. Pokušajte ponovo kasnije." },
-  ALL_KEYS_EXHAUSTED: { status: 429, message: "Svi API ključevi su privremeno preopterećeni. Sačekajte 1 minutu." },
+  // Wording approved by the Director 2026-11-09 ("tekst greške odobren").
+  ALL_KEYS_EXHAUSTED: { status: 429, message: "Google AI je trenutno preopterećen. Pokušajte ponovo za 1–2 minute." },
   INTERNAL: { status: 500, message: "Greška na serveru. Pokušajte ponovo." },
 } as const;
 type PublicErrorCode = keyof typeof PUBLIC_ERRORS;
