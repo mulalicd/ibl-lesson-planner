@@ -87,3 +87,17 @@ Date: 2026-11-07
   Rule: an eval must log WHY a check failed, not only that it failed.
 - Commander improvement candidate: E-15 → "an AI quality gate logs the
   failing evidence (detail + excerpt) for each failed check".
+
+## Course correction (2026-11-09) — check the provider's terms before scaling a workaround
+- The Director chose to stay on the free tier (DL-P14, option B) and to
+  add more free keys (Gemini) and possibly Groq keys. Before giving any
+  "add key" instructions, the ACA read the official terms: the Google APIs
+  ToS forbid attempts to circumvent limits, Gemini limits are per project,
+  and Groq names rate-limit circumvention as abuse. The Director gets
+  these facts before acting; the decision stays his.
+- The code read only GEMINI_KEY_1..8, so keys 9–12 would have been
+  silently ignored. Now 1..20. Lesson: check what the code actually reads
+  before telling the owner to add configuration.
+- Commander improvement candidate: C-12 → "before instructing the owner
+  to add capacity or credentials, verify (a) the code consumes them and
+  (b) the provider's terms allow the pattern".
