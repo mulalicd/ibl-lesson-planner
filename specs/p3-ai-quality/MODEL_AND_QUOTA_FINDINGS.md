@@ -186,6 +186,33 @@ Options for the Director (no action taken):
   server-side redaction. This lowers the risk but does not remove it; the terms still apply.
 - C. Both: paid tier plus the warning (defence in depth).
 
+## 5c. Multiple keys/projects and Groq — official texts (probe-docs run 42598748824, 2026-11-09)
+
+[V] Google APIs Terms of Service (developers.google.com/terms): Google may set limits "(e.g. limiting
+the number of API requests that you may make or the number of users you may serve), in our sole
+discretion. You agree to, and will not attempt to circumvent, such limitations documented with each API.
+If you would like to use any API beyond these limits, you must obtain Google's express consent".
+[V] Gemini rate-limits page: "Rate limits are applied per project, not per API key."
+
+[I] Creating extra Google projects in order to multiply the free per-project quota for one application
+can reasonably be read as circumventing the documented limits. This is a judgement, not a verbatim
+prohibition of multiple projects. Risk: Google may suspend the projects or the account, which would be a full
+production outage. The existing 8-project setup already carries this risk; 4 more projects increase it.
+
+[V] Groq (console.groq.com/docs/your-data): "By default, Groq does not retain customer data for inference
+requests". Inputs/outputs may be logged for up to 30 days only for reliability/abuse investigation —
+"Investigating suspected abuse (e.g. rate-limit circumvention)". Zero Data Retention (ZDR) can be enabled
+by any customer in Data Controls. Data is stored in GCP buckets in the US; SCCs are available.
+[V] Groq privacy policy: the services are not directed to children under 18 (users here are teachers).
+[I] Groq with ZDR is markedly better for data protection than the Gemini free tier. But: (1) Groq itself names
+rate-limit circumvention as abuse, so 10 Groq keys to multiply limits carries the same risk; (2) Bosnian/German
+PSI v9 quality on Groq's open models is unmeasured; (3) [U] Groq free-tier token limits versus a 25k-token
+prompt are unverified. A Groq evaluation is a separate, approvable task (architecture change, DL-005).
+
+[V] Quota on the eval key today: the per-day 429 arrived after 3 successful plans + 4 × 503 attempts (+1 plan
+in a parallel run). [I] 503 attempts most likely count against RPD, so production retries across keys after a
+503 consume quota on every key they touch.
+
 ## 6. Next measurements
 
 1. 3.8 Flash mini-run (v81 vs v90, lessons g08/g12/g02): done, see 4a.

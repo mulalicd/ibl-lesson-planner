@@ -414,8 +414,11 @@ Processing Addendum.
    evaluation of PSI v9 quality in Bosnian and German, plus Groq's data terms, before
    any decision.
 
-**Open, to verify before step 3 goes live:** whether Google's API terms restrict using
-multiple projects to raise quota (probe-docs run, 2026-11-09).
+**Verified 2026-11-09 (findings §5c):** the Google APIs ToS forbid attempts to
+"circumvent" documented limits, and Gemini limits apply per project. Groq lists
+"rate-limit circumvention" as suspected abuse. The ACA advised the Director that more
+projects or keys used to multiply free quota risk suspension. Step 3 is the Director's call,
+made with this information.
 
 ---
 
