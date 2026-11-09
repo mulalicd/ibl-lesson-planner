@@ -127,3 +127,17 @@ Date: 2026-11-07
 - Commander improvement candidate: E-5 → "retry/rotation logic must be
   matched to the failure scope (per-key, per-project, provider-wide), and
   every exhausted retry must log per-attempt status".
+
+## Environment gotcha (2026-11-09) — a pipe hid a failed check, and a switch needs a guard test
+- The first production-bundle check printed "found" although the text was
+  absent: `grep … | head -1 && echo found` takes the exit status of `head`,
+  not of `grep`. It was caught by re-checking with `grep -c`. Rule: verify
+  presence with a count or `grep -q` alone, never through a pipe.
+- The PSI v9 switch (`PRODUCTION_PSI`) ships OFF, with a test that fails
+  if it is flipped without being updated in the same change. This prevents an
+  unapproved prompt change (CONSTITUTION rule 1) from slipping through a merge.
+- The v9 draft still had a sentence claiming "ASCII templates" after the
+  templates were diacritised. When an example is fixed, search the prompt
+  for every sentence that describes that example.
+- Commander improvement candidate: E-13 → "production switches for
+  AI prompts ship OFF and are pinned by a test that names the approval".
