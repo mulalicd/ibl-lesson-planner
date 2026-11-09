@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       variants:
-        description: 'Prompt variants, comma-separated (v81 = production today, v80 = full PSI v8.0, v90 = PSI v9.0 draft) — or "probe" for Gemini diagnostics only'
+        description: 'Prompt variants, comma-separated (v81 = production today, v80 = full PSI v8.0, v90 = PSI v9.0 draft) — or "probe" for Gemini diagnostics, or "probe-docs" for Google docs pages only (no quota)'
         required: true
         default: 'v81,v80'
       limit:
@@ -40,13 +40,14 @@ jobs:
       - name: PSI generated modules are in sync with the .md source
         run: node scripts/build-psi.mjs --check
       - name: Gemini diagnostics (models, quotas, deprecation notices)
-        if: inputs.variants == 'probe'
+        if: inputs.variants == 'probe' || inputs.variants == 'probe-docs'
         timeout-minutes: 20
         env:
           GEMINI_EVAL_KEY: ${{ secrets.GEMINI_EVAL_KEY }}
+          PROBE_DOCS_ONLY: ${{ inputs.variants == 'probe-docs' && '1' || '0' }}
         run: deno run --allow-net --allow-env --allow-read --config supabase/functions/deno.json scripts/eval/probe.ts
       - name: Run golden evaluation
-        if: inputs.variants != 'probe'
+        if: inputs.variants != 'probe' && inputs.variants != 'probe-docs'
         env:
           GEMINI_EVAL_KEY: ${{ secrets.GEMINI_EVAL_KEY }}
         run: |

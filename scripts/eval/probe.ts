@@ -22,6 +22,13 @@ await docLines("https://ai.google.dev/gemini-api/docs/changelog", /2\.5|flash-li
 await docLines("https://ai.google.dev/gemini-api/docs/rate-limits", /free tier|tokens per day|TPD|2\.5 flash|3\.8 flash|3\.5 flash/i, 40);
 await docLines("https://ai.google.dev/gemini-api/docs/pricing", /3\.8 flash|3\.5 flash|2\.5 flash|input price|output price|free of charge|per 1M/i, 40);
 
+// Data use + terms (school data, GDPR): what Google does with free-tier vs paid content.
+await docLines("https://ai.google.dev/gemini-api/docs/pricing", /improve our products|used to improve|data/i, 20);
+await docLines("https://ai.google.dev/gemini-api/terms", /improve|human review|unpaid|paid services|free|retain|minors|under 18|personal data|confidential/i, 40);
+await docLines("https://ai.google.dev/gemini-api/docs/pricing", /gemini 2\.5 flash|\$0\.\d+|\$\d\.\d+/i, 40);
+// "probe-docs": read the official pages only, spend no generation quota.
+if (Deno.env.get("PROBE_DOCS_ONLY") === "1") Deno.exit(0);
+
 console.log("\n=== Models visible to this key (generateContent-capable, 'flash' or 'pro')");
 const list = await (await fetch("https://generativelanguage.googleapis.com/v1beta/models?pageSize=200", { headers: H, signal: AbortSignal.timeout(20_000) })).json();
 const models: string[] = (list.models ?? []).filter((m: { supportedGenerationMethods?: string[] }) => m.supportedGenerationMethods?.includes("generateContent")).map((m: { name: string }) => m.name.replace("models/", ""));
