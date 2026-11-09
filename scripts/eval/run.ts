@@ -35,11 +35,28 @@ const only = arg("only", "");
 const out = arg("out", "eval-out");
 // Model under test (production today: gemini-2.5-flash). Quotas are per model AND per project.
 const model = arg("model", "gemini-2.5-flash");
-if (!/^gemini-[a-z0-9.\-]+$/.test(model)) { console.error(`invalid model ${model}`); Deno.exit(2); }
+// Provider: "gemini" (default) or "groq" (DL-P14 evaluation only; OpenAI-compatible API).
+const provider = model.startsWith("groq:") ? "groq" : "gemini";
+const modelId = provider === "groq" ? model.slice(5) : model;
+if (provider === "gemini" && !/^gemini-[a-z0-9.\-]+$/.test(modelId)) { console.error(`invalid model ${model}`); Deno.exit(2); }
+if (provider === "groq" && !/^[A-Za-z0-9._\-\/]+$/.test(modelId)) { console.error(`invalid model ${model}`); Deno.exit(2); }
+const keyName = provider === "groq" ? "GROQ_EVAL_KEY" : "GEMINI_EVAL_KEY";
+const key = Deno.env.get(keyName) ?? "";
+if (!key) { console.error(`${keyName} missing`); Deno.exit(2); }
+// "groq:list" prints the models this Groq key may use (no guessing of model ids, M-4) and exits.
+if (provider === "groq" && modelId === "list") {
+  const r = await fetch("https://api.groq.com/openai/v1/models", { headers: { Authorization: `Bearer ${key}` }, signal: AbortSignal.timeout(20_000) });
+  const j = await r.json();
+  console.log(`Groq models (HTTP ${r.status}):`);
+  for (const m of (j.data ?? []) as { id: string; context_window?: number; owned_by?: string; active?: boolean }[]) {
+    console.log(` • ${m.id}  ctx=${m.context_window ?? "?"}  by=${m.owned_by ?? "?"}  active=${m.active ?? "?"}`);
+  }
+  if (!r.ok) console.log(JSON.stringify(j).slice(0, 400));
+  Deno.exit(0);
+}
 // Set when Google reports an exhausted per-DAY quota: retrying is pointless until the reset.
 let dailyQuotaHit = "";
-const key = Deno.env.get("GEMINI_EVAL_KEY") ?? "";
-if (!key) { console.error("GEMINI_EVAL_KEY missing"); Deno.exit(2); }
+
 for (const v of variants) if (!VARIANTS[v]) { console.error(`unknown variant ${v}`); Deno.exit(2); }
 
 type Golden = { id: string; params: Record<string, unknown> };
@@ -57,12 +74,25 @@ async function generate(messages: AiMessage[]) {
     role: m.role === "assistant" ? "model" : "user",
     parts: [{ text: m.content }],
   }));
-  const body = JSON.stringify({
-    system_instruction: { parts: [{ text: system }] },
-    contents,
-    // identical to production (supabase/functions/ibl-chat/index.ts)
-    generationConfig: { temperature: 0.7, topK: 40, topP: 0.95, maxOutputTokens: 16384 },
-  });
+  const body = provider === "groq"
+    ? JSON.stringify({
+      model: modelId,
+      messages: messages.map((m) => ({ role: m.role, content: m.content })),
+      // closest equivalent of the production Gemini settings (Groq has no topK)
+      temperature: 0.7, top_p: 0.95, max_tokens: 16384,
+    })
+    : JSON.stringify({
+      system_instruction: { parts: [{ text: system }] },
+      contents,
+      // identical to production (supabase/functions/ibl-chat/index.ts)
+      generationConfig: { temperature: 0.7, topK: 40, topP: 0.95, maxOutputTokens: 16384 },
+    });
+  const url = provider === "groq"
+    ? "https://api.groq.com/openai/v1/chat/completions"
+    : `https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent`;
+  const headers: Record<string, string> = provider === "groq"
+    ? { "Content-Type": "application/json", Authorization: `Bearer ${key}` }
+    : { "Content-Type": "application/json", "x-goog-api-key": key };
   if (dailyQuotaHit) return { ok: false as const, ms: 0, error: `skipped: daily quota exhausted (${dailyQuotaHit})` };
   for (let attempt = 1; attempt <= 4; attempt++) {
     const wait = lastCall + MIN_INTERVAL_MS - Date.now();
@@ -71,9 +101,9 @@ async function generate(messages: AiMessage[]) {
     const t0 = performance.now();
     let resp: Response;
     try {
-      resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+      resp = await fetch(url, {
         method: "POST",
-        headers: { "Content-Type": "application/json", "x-goog-api-key": key },
+        headers,
         body,
         signal: AbortSignal.timeout(240_000), // one plan may never block the whole run
       });
@@ -91,12 +121,19 @@ async function generate(messages: AiMessage[]) {
         console.warn(`  HTTP 429 daily quota exhausted (${perDay[1]}) — stopping, no retries`);
         return { ok: false as const, ms, error: `daily quota exhausted (${perDay[1]})` };
       }
+      if (provider === "groq") console.warn(`  groq ${resp.status} retry-after=${resp.headers.get("retry-after")} ${errText.slice(0, 300)}`);
       console.warn(`  HTTP ${resp.status}, retry ${attempt}`);
       await sleep(20_000 * attempt);
       continue;
     }
     const json = await resp.json();
     if (!resp.ok) return { ok: false as const, ms, error: `HTTP ${resp.status}: ${JSON.stringify(json).slice(0, 300)}` };
+    if (provider === "groq") {
+      const ch = json.choices?.[0];
+      const u = json.usage ?? {};
+      const finish = ch?.finish_reason === "stop" ? "STOP" : (ch?.finish_reason ?? "?");
+      return { ok: true as const, ms, text: ch?.message?.content ?? "", finish, usage: { promptTokenCount: u.prompt_tokens, candidatesTokenCount: u.completion_tokens, totalTokenCount: u.total_tokens } };
+    }
     const cand = json.candidates?.[0];
     const text = (cand?.content?.parts ?? []).map((p: { text?: string }) => p.text ?? "").join("");
     return { ok: true as const, ms, text, finish: cand?.finishReason ?? "?", usage: json.usageMetadata ?? {} };
@@ -113,7 +150,7 @@ async function writeOutputs(): Promise<string> {
 
   // ---- report
   const median = (a: number[]) => { if (!a.length) return 0; const s = [...a].sort((x, y) => x - y); return s[Math.floor(s.length / 2)]; };
-  const lines: string[] = [`# P3 golden evaluation — ${new Date().toISOString().slice(0, 16)}Z`, "", `Inputs: ${inputs.length} lessons · model ${model} · production generation settings`, ""];
+  const lines: string[] = [`# P3 golden evaluation — ${new Date().toISOString().slice(0, 16)}Z`, "", `Inputs: ${inputs.length} lessons · ${provider} model ${modelId} · production generation settings`, ""];
   const allChecks = [...new Set(rows.flatMap((r) => r.report?.checks.map((c) => c.id) ?? []))];
   lines.push("| Variant | Plans OK | Avg score | Fully passing | Median latency | Median prompt tokens | Median output tokens | Not STOP |", "|---|---|---|---|---|---|---|---|");
   for (const v of variants) {

@@ -422,6 +422,12 @@ Processing Addendum.
 projects or keys used to multiply free quota risk suspension. Step 3 is the Director's call,
 made with this information.
 
+**Director decision after the risk was presented (2026-11-09): "Groq test da" + "dodajem ključeve".**
+- The Director accepts the suspension risk and adds `GEMINI_KEY_9..12` (4 new free projects).
+- Groq evaluation approved: ONE Groq account with Zero Data Retention enabled, used only by the
+  eval workflow (repository secret `GROQ_EVAL_KEY`). This is a quality and limits test of PSI v9 on Groq models, with no
+  production use. Any production use of Groq needs a separate decision after the results.
+
 ---
 
 *Project Decision Log — IBL Lesson Planner — under Commander v1.7.0*
