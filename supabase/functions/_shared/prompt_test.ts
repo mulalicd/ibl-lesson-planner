@@ -13,10 +13,17 @@ const chat = IblChatRequestSchema.parse({
   params,
 });
 
-Deno.test("production stays on v8.1 until the Director approves PSI v9 (non-regression)", () => {
-  if (PRODUCTION_PSI !== "v81") throw new Error(`PRODUCTION_PSI is ${PRODUCTION_PSI}; switching needs the Director's approval (DL-P13)`);
+Deno.test("production uses PSI v9 — approved by the Director on 2026-11-10 (DL-P13)", () => {
+  // Changing this value changes what every teacher gets; it needs the Director's approval.
+  if (PRODUCTION_PSI !== "v90") throw new Error(`PRODUCTION_PSI is ${PRODUCTION_PSI}; the approved production prompt is v90`);
   for (const req of [gen, chat]) {
-    if (JSON.stringify(buildProductionMessages(req)) !== JSON.stringify(buildMessages(req, "v81"))) throw new Error("default differs from v81");
+    if (JSON.stringify(buildProductionMessages(req)) !== JSON.stringify(buildProductionMessages(req, "v90"))) throw new Error("default differs from v90");
+  }
+});
+
+Deno.test("rollback path: v81 is still byte-identical to the pre-P3 prompt builder", () => {
+  for (const req of [gen, chat]) {
+    if (JSON.stringify(buildProductionMessages(req, "v81")) !== JSON.stringify(buildMessages(req, "v81"))) throw new Error("v81 rollback differs");
   }
 });
 

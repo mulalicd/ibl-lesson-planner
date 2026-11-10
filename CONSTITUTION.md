@@ -74,6 +74,14 @@ Detaljno objašnjenje i racionalno obrazloženje: `DECISION_LOG.md` DL-P01.
    metodologiji. Bilo kakva izmjena pedagoške logike, tona ili
    strukture ovog dokumenta zahtijeva eksplicitno odobrenje Direktora.
 
+   **Odluka Direktora 2026-11-10 ("PSI v9 odobren", DL-P13):** pedagoški
+   Source of Truth je od sada **`IDSS_IBL_PSI_v9.md` (PSI v9.0)**, tj. cijeli
+   PSI v8.0 plus obavezujuće dopune A1–A15 i šabloni 3.2A/3.2B/3.9A.
+   Produkcija ga koristi preko `PRODUCTION_PSI = "v90"`
+   (`supabase/functions/_shared/prompt.ts`). `IDSS_IBL_PSI_v8_final.md`
+   ostaje nepromijenjen kao istorijska osnova. Svaka dalja izmjena PSI v9
+   traži izričito odobrenje Direktora.
+
    **Utvrđeno auditom 2026-11-06 (stanje, ne odluka):** produkcija
    trenutno NE koristi ovaj dokument. `supabase/functions/ibl-chat`
    koristi skraćeni ugrađeni prompt ("v8.1"), a `src/lib/psi.ts` se

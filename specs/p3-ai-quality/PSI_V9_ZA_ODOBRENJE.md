@@ -8,7 +8,7 @@ Pedagoška logika v8.0 se **ne mijenja**. Dopuna od 10.11.: Ishodi, Uporište i 
 dobili su vlastite šablone (moduli 3.2A, 3.2B, 3.9A), jer model slijedi šablone, a ne samo pravila. Dopune ispravljaju greške izmjerene
 u stvarnim pripremama i dodaju ono što ste tražili 07.11.
 
-Puni tekst: `IDSS_IBL_PSI_v9_draft.md` · Spisak izmjena: `PSI_V9_CHANGELOG.md`
+Puni tekst: `IDSS_IBL_PSI_v9.md` · Spisak izmjena: `PSI_V9_CHANGELOG.md`
 
 ## Dopune koje ste Vi tražili (07.11.)
 

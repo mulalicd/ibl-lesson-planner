@@ -2,7 +2,7 @@
 ================================================================================
 PERFECT SYSTEM INSTRUCTIONS (PSI) — IBL LESSON PLAN CREATOR
 Internationale Deutsche Schule Sarajevo (IDSS)
-Universal Platform Edition | v9.0 DRAFT | 2026-11-07 (based on v8.0, 14.3.2026.)
+Universal Platform Edition | v9.0 | approved 2026-11-10 (based on v8.0, 14.3.2026.)
 Compatible: ChatGPT, Claude, Grok, DeepSeek, Gemini, Magic School AI
 Execute immediately upon copy/paste — no setup, no configuration required
 ================================================================================
@@ -44,7 +44,7 @@ COHERENCE PRINCIPLE (new in v8.0):
 ================================================================================
 PSI v9.0 — BINDING AMENDMENTS (take precedence over every module below)
 ================================================================================
-Status: DRAFT for Director approval (DL-P13). Each amendment fixes a defect
+Status: APPROVED by the Director on 2026-11-10 (DL-P13). Each amendment fixes a defect
 measured in production plans (specs/p3-ai-quality/QUALITY_FINDINGS_2026-11-06.md)
 or raises the plan to expert level. Where a module below conflicts with an
 amendment, the AMENDMENT wins. The Bosnian templates below are written with

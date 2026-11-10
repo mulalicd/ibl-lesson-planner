@@ -114,7 +114,9 @@ Never assume he knows. See CONSTITUTION.md rule 8.
   matches Commander default DL-011. Never edit those files directly.
 - **AI provider:** Google Gemini 2.5 Flash, matches Commander default
   DL-005. System prompt / business logic for lesson generation is
-  `IDSS_IBL_PSI_v8_final.md` (PSI v8.0) — this is the pedagogical
+  `IDSS_IBL_PSI_v9.md` (PSI v9.0 = v8.0 + amendments A1–A15, approved by
+  the Director 2026-11-10, DL-P13; `IDSS_IBL_PSI_v8_final.md` kept as the
+  historical base) — this is the pedagogical
   Source of Truth. Never alter its logic or the tone/structure it
   mandates without explicit Director approval (M-4).
 - **Deployment:** Vercel (matches Commander default DL-003).

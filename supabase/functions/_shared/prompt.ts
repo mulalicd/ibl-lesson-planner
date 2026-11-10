@@ -14,11 +14,11 @@ export type PromptVariant = "v81" | "psi";
  * minimal wrapper that adds no rules of its own: PSI owns every rule.
  */
 /**
- * THE switch for the production prompt (DL-P13 item 1). "v81" until the Director
- * approves the PSI v9.0 text; then set to "v90" in ONE reviewed change and deploy.
+ * THE switch for the production prompt (DL-P13 item 1).
+ * "v90" since 2026-11-10: the Director approved the PSI v9.0 text ("PSI v9 odobren").
  * Rollback = set back to "v81" and deploy.
  */
-export const PRODUCTION_PSI: "v81" | "v90" = "v81";
+export const PRODUCTION_PSI: "v81" | "v90" = "v90";
 
 /** What the Edge Function sends to Gemini. Tests cover both settings. */
 export function buildProductionMessages(req: IblChatRequest, psi: "v81" | "v90" = PRODUCTION_PSI): AiMessage[] {

@@ -17,7 +17,7 @@ to PSI v9.0 additionally needs Director approval of the v9.0 text.
       - `validatePlan()`
       - stream decoder fix (D-1)
       - unit tests for all of the above
-- [~] 6. Edge Function: DONE: validation SSE event (only when the request carries params; never breaks the stream); `src/lib/psi.ts` deleted (unused). PENDING (needs the Director's approval of the PSI v9 text): switch `buildMessages` to the generated v9 PSI and delete the inline v8.1 prompt.
+- [x] 6. Edge Function: DONE 2026-11-10: PRODUCTION_PSI = "v90" (generated v9 PSI); the v8.1 prompt is kept only as the rollback path. Earlier: validation SSE event (only when the request carries params; never breaks the stream); `src/lib/psi.ts` deleted (unused). PENDING (needs the Director's approval of the PSI v9 text): switch `buildMessages` to the generated v9 PSI and delete the inline v8.1 prompt.
 - [~] 7. UI: DONE: heading recognition (v9 sections, diacritic-insensitive, old patterns kept, display-regression test with the Director's plan); `QualityBadge` + "Popravi" (labels in `src/lib/qualityChecks.ts`, wording PENDING the Director's approval). PENDING: save metadata without invented defaults.
 - [x] 8. Integration: `useChat` handles the validation event (Zod-checked); `repairPlan` sends a visible chat message with the failed checks and the last params, so the corrected plan is re-checked.
 - [ ] 9. Self-review (FEATURE_LIFECYCLE Step 4).
@@ -27,7 +27,7 @@ to PSI v9.0 additionally needs Director approval of the v9.0 text.
       - display regression on old plans
       - golden evaluation old vs new → `eval/results/<date>/report.md`
       - the Director's blind rating
-- [~] 10b. PSI v9.0 draft (DRAFT written: amendments A1–A11 + 3.10 table + footer; `PSI_V9_CHANGELOG.md`; PENDING: evaluation + Director approval) (`IDSS_IBL_PSI_v9_draft.md`) + change log vs
+- [x] 10b. PSI v9.0 APPROVED by the Director 2026-11-10 → `IDSS_IBL_PSI_v9.md`. (History: DRAFT written: amendments A1–A11 + 3.10 table + footer; `PSI_V9_CHANGELOG.md`; PENDING: evaluation + Director approval) (`IDSS_IBL_PSI_v9_draft.md`) + change log vs
       v8.0 → Director review → approval → becomes the SSOT input of
       `build-psi.mjs` (DL-P13 item 1).
 - [ ] 11. Documentation: DECISION_LOG (Q1–Q5 answers), CHANGELOG,

@@ -4,7 +4,7 @@
 Production keeps the current prompt until (1) the Director approves
 this text and (2) the golden evaluation shows v9.0 ≥ v8.0 and ≥ today.
 
-**File:** `IDSS_IBL_PSI_v9_draft.md`. It is v8.0 unchanged, plus the
+**File:** `IDSS_IBL_PSI_v9.md` (was `IDSS_IBL_PSI_v9_draft.md` until the approval on 2026-11-10). It is v8.0 unchanged, plus the
 items below. The methodology, protocols, modules and IDSS template of
 v8.0 are **kept**.
 

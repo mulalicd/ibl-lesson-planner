@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 import type { Language } from '@/lib/types';
 import { PrivacyNotice } from '@/components/PrivacyNotice';
 import { QualityBadge } from '@/components/QualityBadge';
+import { extractInquiryQuestion } from '@/lib/planMeta';
 
 interface ChatInterfaceProps {
   initialPlan?: { id: string; text: string } | null;
@@ -96,7 +97,7 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
       const gradeMatch = planText.match(/Razred:\s*(\d+)/i);
       const topicMatch = planText.match(/Tema:\s*(.+)/i);
       const durationMatch = planText.match(/Trajanje:\s*(\d+)/i);
-      const iqMatch = planText.match(/(?:ISTRAŽIVAČKO PITANJE|INQUIRY QUESTION|FORSCHUNGSFRAGE)[^?]*\n\s*([^\n]+\?)/i);
+      const inquiryQuestion = extractInquiryQuestion(planText);
 
       const params = lastParamsRef.current;
 
@@ -110,7 +111,7 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
         tier: deriveTier(params?.duration_min || parseInt(durationMatch?.[1] || '45')),
         prior_knowledge: params?.prior_knowledge || null,
         notes: params?.notes || null,
-        inquiry_question: iqMatch?.[1]?.trim() || null,
+        inquiry_question: inquiryQuestion,
         is_favourite: false,
         is_deleted: false,
       };

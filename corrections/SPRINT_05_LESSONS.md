@@ -141,3 +141,17 @@ Date: 2026-11-07
   for every sentence that describes that example.
 - Commander improvement candidate: E-13 → "production switches for
   AI prompts ship OFF and are pinned by a test that names the approval".
+
+## Course correction (2026-11-10) — "zadovoljavajuće" is not an approval
+- After reading the plans the Director wrote "Zadovoljavajući sadržaj …
+  je na v90 / g08". He had read the run from BEFORE the template fix,
+  which still lacked Tips & Tricks. The ACA pointed him to the fixed plan
+  and asked for the explicit words that CONSTITUTION rule 1 requires. Result:
+  "mnogo bolje. Prihvatam. PSI v9 odobren".
+- Lesson: (1) a consequential switch needs the explicit approval phrase,
+  never an inference from praise; (2) the owner must review the exact version
+  that will ship. Do not leave a superseded version next to it in the same place.
+- Also: the save path read the inquiry question with a regex built for
+  the old format. PSI v9's boxed table would have stored "|   Kako …?".
+  Before switching any output format, list every consumer of that format
+  (display, save, export, detection). Fixed with `src/lib/planMeta.ts` and tests.

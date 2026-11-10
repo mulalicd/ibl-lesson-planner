@@ -90,3 +90,21 @@ describe('PlanDisplay recognises PSI v9 sections (display regression)', () => {
     expect(container.textContent?.length ?? 0).toBeGreaterThan(500);
   });
 });
+
+import { extractInquiryQuestion } from '@/lib/planMeta';
+
+describe('extractInquiryQuestion (saving a plan)', () => {
+  it('reads the question from the PSI v9 boxed table without the borders', () => {
+    const v9 = 'ISTRAŽIVAČKO PITANJE                (mora biti otvoreno)\n================\n|                       |\n|   Kako biljka koja ne jede može rasti i davati nam hranu?   |\n';
+    expect(extractInquiryQuestion(v9)).toBe('Kako biljka koja ne jede može rasti i davati nam hranu?');
+  });
+  it("still reads the Director's real pre-P3 plan", () => {
+    const q = extractInquiryQuestion(FIXTURE);
+    expect(q).toBeTruthy();
+    expect(q!.endsWith('?')).toBe(true);
+    expect(q!.startsWith('|')).toBe(false);
+  });
+  it('returns null when there is no question (never invents one)', () => {
+    expect(extractInquiryQuestion('UDICA\nNešto bez pitanja.')).toBeNull();
+  });
+});
