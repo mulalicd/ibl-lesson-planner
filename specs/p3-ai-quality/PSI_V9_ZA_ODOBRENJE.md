@@ -4,7 +4,8 @@
 **Osnova:** PSI v9.0 = **cijeli Vaš PSI v8.0** (metodologija, Protokoli 0–4,
 IBL rječnik nastavnika, 3 zlatna pravila skele, centralni princip da je
 istraživačko pitanje motor časa) **+ 15 obavezujućih dopuna (A1–A15)**.
-Pedagoška logika v8.0 se **ne mijenja**. Dopune ispravljaju greške izmjerene
+Pedagoška logika v8.0 se **ne mijenja**. Dopuna od 10.11.: Ishodi, Uporište i Savjeti i trikovi
+dobili su vlastite šablone (moduli 3.2A, 3.2B, 3.9A), jer model slijedi šablone, a ne samo pravila. Dopune ispravljaju greške izmjerene
 u stvarnim pripremama i dodaju ono što ste tražili 07.11.
 
 Puni tekst: `IDSS_IBL_PSI_v9_draft.md` · Spisak izmjena: `PSI_V9_CHANGELOG.md`
@@ -38,7 +39,7 @@ Puni tekst: `IDSS_IBL_PSI_v9_draft.md` · Spisak izmjena: `PSI_V9_CHANGELOG.md`
 
 | Priprema | Staro uputstvo (v8.1) | PSI v9 |
 |---|---|---|
-| Fotosinteza (bs, 45 min) | 14/21 | 18/21 prije popravki · **21/21** na modelu 3.8 |
+| Fotosinteza (bs, 45 min) | 13/21 | **21/21** (10.11., nakon dodanih šablona 3.2A/3.2B/3.9A) |
 | Da li je laž ikada opravdana? (bs) | 14/21 | **21/21** |
 | Märchenfiguren (de) | 14/20 | **20/20** |
 
