@@ -194,8 +194,8 @@ for (const g of inputs) {
     console.log(`   ${report.passed}/${report.total} in ${(r.ms / 1000).toFixed(1)}s, ${r.text.length} chars, finish=${r.finish}`);
     for (const c of report.checks.filter((x) => !x.ok)) console.log(`     ✗ ${c.id}: ${c.detail}`);
     if (report.failed.includes("timeline_matches_duration")) {
-      const tl = r.text.split("\n").filter((l) => /(ukupno|gesamt|total|\d+\s*[-–]\s*\d+\s*min|\d{1,2}:\d{2})/i.test(l)).slice(0, 25);
-      console.log(`     timeline lines:\n${tl.map((l) => "       " + l.trim()).join("\n")}`);
+      const tl = (r.text as string).split("\n").filter((l: string) => /(ukupno|gesamt|total|\d+\s*[-–]\s*\d+\s*min|\d{1,2}:\d{2})/i.test(l)).slice(0, 25);
+      console.log(`     timeline lines:\n${tl.map((l: string) => "       " + l.trim()).join("\n")}`);
     }
     if (report.failed.includes("sources_marked_to_verify")) {
       const d = report.checks.find((c) => c.id === "sources_marked_to_verify")?.detail;

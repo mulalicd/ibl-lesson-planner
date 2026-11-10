@@ -165,3 +165,12 @@ Date: 2026-11-07
   test, and (b) offer an automatic deploy on merge with the same gates.
 - Commander improvement candidate: C-12 → "never ask the owner to test a
   change before the ACA has verified it is actually deployed".
+
+## Rule-violation (2026-11-10) — committed despite a red type check
+- The ACA chained checks and the commit in one command and committed even though
+  `deno check` printed exit 1 (an implicit `any` in the eval script). CI would
+  have caught it. The fix followed within minutes.
+- Lesson: gate the commit on the checks (`&&`), not after them (`;`).
+- Also found this session: Gemini 2.5 counts "thinking" tokens inside
+  maxOutputTokens. A 16k limit truncated a PSI v9 plan before the footer.
+  Output limits must be sized for visible + thinking tokens.
