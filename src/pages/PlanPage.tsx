@@ -9,6 +9,10 @@ import DocxExportButton from '@/components/DocxExportButton';
 import { supabase } from '@/integrations/supabase/client';
 import { formatDate } from '@/lib/utils';
 import type { PlanRecord } from '@/lib/types';
+import { toast } from 'sonner';
+import { useAuth } from '@/hooks/useAuth';
+import { ERROR_MESSAGES } from '@/lib/constants';
+import { softDeletePlan, setPlanFavourite, fetchIsAdmin, canChangePlan } from '@/lib/planActions';
 
 export default function PlanPage() {
   const { id } = useParams<{ id: string }>();
@@ -16,6 +20,14 @@ export default function PlanPage() {
   const [plan, setPlan] = useState<PlanRecord | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { session } = useAuth();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    let alive = true;
+    void fetchIsAdmin().then((v) => { if (alive) setIsAdmin(v); });
+    return () => { alive = false; };
+  }, []);
 
   useEffect(() => {
     if (!id) return;
@@ -39,20 +51,20 @@ export default function PlanPage() {
     if (!plan) return;
     const next = !plan.is_favourite;
     setPlan(prev => prev ? { ...prev, is_favourite: next } : prev);
-    await supabase
-      .from('plans')
-      .update({ is_favourite: next } as any)
-      .eq('id', plan.id)
-      .then(({ error }) => {
-        if (error) setPlan(prev => prev ? { ...prev, is_favourite: !next } : prev);
-      });
+    const result = await setPlanFavourite(plan.id, next);
+    if (result !== 'ok') {
+      setPlan(prev => prev ? { ...prev, is_favourite: !next } : prev);
+      if (result === 'error') toast.error(ERROR_MESSAGES.NETWORK_ERROR);
+    }
   }
 
   async function deletePlan() {
     if (!plan) return;
     if (!confirm('Obrisati ovaj plan? Ova akcija se ne može poništiti.')) return;
-    await supabase.from('plans').update({ is_deleted: true } as any).eq('id', plan.id);
-    navigate('/dashboard');
+    const result = await softDeletePlan(plan.id);
+    if (result === 'ok') navigate('/dashboard');
+    else if (result === 'forbidden') toast.error(ERROR_MESSAGES.DELETE_FORBIDDEN);
+    else toast.error(ERROR_MESSAGES.NETWORK_ERROR);
   }
 
   if (loading) return (
@@ -83,6 +95,9 @@ export default function PlanPage() {
     </div>
   );
 
+  // UI only: the database decides (RLS). Author or admin may change the plan.
+  const canChange = canChangePlan(plan.owner_id, session?.user?.id, isAdmin);
+
   return (
     <div className="min-h-screen bg-background gradient-mesh">
       <AppHeader />
@@ -105,13 +120,13 @@ export default function PlanPage() {
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <motion.button
+            {canChange && (<motion.button
               whileTap={{ scale: 0.93 }}
               onClick={toggleFavourite}
               className="w-10 h-10 rounded-xl neu-btn flex items-center justify-center hover:text-idss-gold transition-colors"
             >
               <Star className={`w-4 h-4 ${plan.is_favourite ? 'text-amber-500 fill-amber-500' : 'text-muted-foreground'}`} />
-            </motion.button>
+            </motion.button>)}
             <DocxExportButton planId={plan.id} planText={plan.plan_text} />
             <motion.div whileTap={{ scale: 0.95 }}>
               <Link
@@ -121,13 +136,14 @@ export default function PlanPage() {
                 <Plus className="w-4 h-4" /> Novi
               </Link>
             </motion.div>
-            <motion.button
+            {canChange && (<motion.button
               whileTap={{ scale: 0.93 }}
               onClick={deletePlan}
+              aria-label="Obriši plan"
               className="w-10 h-10 rounded-xl neu-btn flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors"
             >
               <Trash2 className="w-4 h-4" />
-            </motion.button>
+            </motion.button>)}
           </div>
         </div>
 

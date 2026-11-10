@@ -54,6 +54,8 @@ export const ERROR_MESSAGES = {
   NETWORK_ERROR:      'Problem s internet vezom. Provjerite konekciju.',
   NOT_FOUND:          'Plan nije pronađen.',
   EXPORT_FAILED:      'Greška pri izvozu u Word. Pokušajte ponovo.',
+  // Approved by the Director 2026-11-10 (DL-P15, P2-2). Do not change without his approval.
+  DELETE_FORBIDDEN:   'Ovaj plan može obrisati samo njegov autor ili administrator.',
   ALL_KEYS_EXHAUSTED: 'Google AI je trenutno preopterećen. Pokušajte ponovo za 1–2 minute.', // approved by the Director 2026-11-09
 } as const;
 
