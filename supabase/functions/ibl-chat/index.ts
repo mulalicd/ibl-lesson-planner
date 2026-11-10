@@ -17,6 +17,7 @@ import { createGeminiToOpenAiTransform } from "../_shared/sse.ts";
 import { buildProductionMessages } from "../_shared/prompt.ts";
 import { PSI_V81_PROMPT } from "../_shared/psi_v81.ts";
 import { validatePlan } from "../_shared/validate.ts";
+import { GEMINI_GENERATION_CONFIG } from "../_shared/generation.ts";
 
 // ─── CORS (allow-list, never "*") ────────────────────────────────────────────
 const ALLOWED_ORIGINS = (Deno.env.get("ALLOWED_ORIGINS") ?? "")
@@ -128,12 +129,7 @@ async function callGemini(
         body: JSON.stringify({
           system_instruction: { parts: [{ text: systemInstruction }] },
           contents,
-          generationConfig: {
-            temperature: 0.7,
-            topK: 40,
-            topP: 0.95,
-            maxOutputTokens: 16384,
-          },
+          generationConfig: GEMINI_GENERATION_CONFIG,
         }),
       });
 

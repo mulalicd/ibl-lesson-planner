@@ -33,7 +33,7 @@ to PSI v9.0 additionally needs Director approval of the v9.0 text.
 - [ ] 11. Documentation: DECISION_LOG (Q1–Q5 answers), CHANGELOG,
       CONSTITUTION rule 1 note ("production uses PSI v8.0").
 - [~] 12. Rollout. PART 1 LIVE 2026-11-09: PR #10 merged (b0c46f9), Edge deploy run #11 green, live bundle
-      `index-Ni-hayEn.js` contains the badge/repair texts, anonymous POST → 401. PART 2 (PSI v9 switch) pending approval.
+      `index-Ni-hayEn.js` contains the badge/repair texts, anonymous POST → 401. PART 2 LIVE 2026-11-10: PSI v9 approved, PR #13 merged (a020cf6), Edge deploy run #14 green (42830991383), PRODUCTION_PSI = "v90" on main, anonymous POST → 401. Note: the Director's first plan after the merge was still v8.1, because the deploy step had not run yet (see lessons).
       Original plan: merge → Vercel; Edge deploy via the gated workflow;
       live check with one Director plan; rollback = redeploy the
       `p3-baseline` tag.

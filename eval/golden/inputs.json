@@ -278,5 +278,27 @@
    "prior_knowledge": "Forces and simple structures.",
    "notes": "Hands-on project week."
   }
+ },
+ {
+  "id": "g25",
+  "params": {
+   "language": "bosnian",
+   "subject": "B/H/S",
+   "grade": 6,
+   "topic": "Mula Mustafa Bašeskija Ljetopis",
+   "duration_min": 45,
+   "tier": "MICRO"
+  }
+ },
+ {
+  "id": "g26",
+  "params": {
+   "language": "english",
+   "subject": "B/H/S",
+   "grade": 6,
+   "topic": "Mula Mustafa Bašeskija Ljetopis",
+   "duration_min": 45,
+   "tier": "MICRO"
+  }
  }
 ]

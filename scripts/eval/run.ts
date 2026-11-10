@@ -14,6 +14,7 @@ import { buildMessages, type AiMessage } from "../../supabase/functions/_shared/
 import { validatePlan, type ValidationReport } from "../../supabase/functions/_shared/validate.ts";
 import { PSI_V80_PROMPT } from "../../supabase/functions/_shared/psi_v80.generated.ts";
 import { IblChatRequestSchema } from "../../src/lib/validation/schemas.ts";
+import { GEMINI_GENERATION_CONFIG } from "../../supabase/functions/_shared/generation.ts";
 
 const VARIANTS: Record<string, { kind: "v81" | "psi"; text?: string; label: string }> = {
   v81: { kind: "v81", label: "production today (compressed v8.1)" },
@@ -79,13 +80,13 @@ async function generate(messages: AiMessage[]) {
       model: modelId,
       messages: messages.map((m) => ({ role: m.role, content: m.content })),
       // closest equivalent of the production Gemini settings (Groq has no topK)
-      temperature: 0.7, top_p: 0.95, max_tokens: 16384,
+      temperature: GEMINI_GENERATION_CONFIG.temperature, top_p: GEMINI_GENERATION_CONFIG.topP, max_tokens: 16384,
     })
     : JSON.stringify({
       system_instruction: { parts: [{ text: system }] },
       contents,
-      // identical to production (supabase/functions/ibl-chat/index.ts)
-      generationConfig: { temperature: 0.7, topK: 40, topP: 0.95, maxOutputTokens: 16384 },
+      // identical to production: the same shared constant
+      generationConfig: GEMINI_GENERATION_CONFIG,
     });
   const url = provider === "groq"
     ? "https://api.groq.com/openai/v1/chat/completions"
@@ -192,6 +193,14 @@ for (const g of inputs) {
     await writeOutputs(); // results + report on disk after EVERY plan (survives a job timeout)
     console.log(`   ${report.passed}/${report.total} in ${(r.ms / 1000).toFixed(1)}s, ${r.text.length} chars, finish=${r.finish}`);
     for (const c of report.checks.filter((x) => !x.ok)) console.log(`     ✗ ${c.id}: ${c.detail}`);
+    if (report.failed.includes("timeline_matches_duration")) {
+      const tl = (r.text as string).split("\n").filter((l: string) => /(ukupno|gesamt|total|\d+\s*[-–]\s*\d+\s*min|\d{1,2}:\d{2})/i.test(l)).slice(0, 25);
+      console.log(`     timeline lines:\n${tl.map((l: string) => "       " + l.trim()).join("\n")}`);
+    }
+    if (report.failed.includes("sources_marked_to_verify")) {
+      const d = report.checks.find((c) => c.id === "sources_marked_to_verify")?.detail;
+      console.log(`     sources detail: ${d}`);
+    }
     console.log(`     usage: ${JSON.stringify(r.usage)}`);
     console.log(`     tail: ${JSON.stringify(r.text.slice(-400))}`);
   }
