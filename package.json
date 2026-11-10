@@ -12,7 +12,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "psi:build": "node scripts/build-psi.mjs",
-    "psi:check": "node scripts/build-psi.mjs --check"
+    "psi:check": "node scripts/build-psi.mjs --check",
+    "memorandum:build": "node scripts/build-memorandum.mjs",
+    "memorandum:check": "node scripts/build-memorandum.mjs --check"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
