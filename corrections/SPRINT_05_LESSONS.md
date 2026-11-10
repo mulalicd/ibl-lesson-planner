@@ -127,3 +127,31 @@ Date: 2026-11-07
 - Commander improvement candidate: E-5 → "retry/rotation logic must be
   matched to the failure scope (per-key, per-project, provider-wide), and
   every exhausted retry must log per-attempt status".
+
+## Environment gotcha (2026-11-09) — a pipe hid a failed check, and a switch needs a guard test
+- The first production-bundle check printed "found" although the text was
+  absent: `grep … | head -1 && echo found` takes the exit status of `head`,
+  not of `grep`. It was caught by re-checking with `grep -c`. Rule: verify
+  presence with a count or `grep -q` alone, never through a pipe.
+- The PSI v9 switch (`PRODUCTION_PSI`) ships OFF, with a test that fails
+  if it is flipped without being updated in the same change. This prevents an
+  unapproved prompt change (CONSTITUTION rule 1) from slipping through a merge.
+- The v9 draft still had a sentence claiming "ASCII templates" after the
+  templates were diacritised. When an example is fixed, search the prompt
+  for every sentence that describes that example.
+- Commander improvement candidate: E-13 → "production switches for
+  AI prompts ship OFF and are pinned by a test that names the approval".
+
+## Course correction (2026-11-10) — "zadovoljavajuće" is not an approval
+- After reading the plans the Director wrote "Zadovoljavajući sadržaj …
+  je na v90 / g08". He had read the run from BEFORE the template fix,
+  which still lacked Tips & Tricks. The ACA pointed him to the fixed plan
+  and asked for the explicit words that CONSTITUTION rule 1 requires. Result:
+  "mnogo bolje. Prihvatam. PSI v9 odobren".
+- Lesson: (1) a consequential switch needs the explicit approval phrase,
+  never an inference from praise; (2) the owner must review the exact version
+  that will ship. Do not leave a superseded version next to it in the same place.
+- Also: the save path read the inquiry question with a regex built for
+  the old format. PSI v9's boxed table would have stored "|   Kako …?".
+  Before switching any output format, list every consumer of that format
+  (display, save, export, detection). Fixed with `src/lib/planMeta.ts` and tests.

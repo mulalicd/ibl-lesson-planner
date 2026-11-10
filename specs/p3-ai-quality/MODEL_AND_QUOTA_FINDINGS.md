@@ -127,6 +127,18 @@ Recommendation [I]:
   errors hit both models.
 - [I] n = 2. Deterministic checks are necessary, not sufficient: the Director's reading is the gate.
 
+### 4f. Reading package for the Director (2026-11-10, 2.5 Flash)
+
+| Run | Plan | Score | Notes |
+|---|---|---|---|
+| 42781424077 | v81 / g08 Fotosinteza | 13/21 | invented date "2023-10-27", English labels (SECTION, INQUIRY QUESTION, Student Response…), unmarked YouTube source, no outcomes/real-life/tips, ASCII "DOKAZ UCENJA" |
+| 42781424077 | v90 / g08 | 19/21 | no SAVJETI I TRIKOVI (before the template fix) |
+| 42781428250 | v90 / g12 Laž | 21/21 | |
+| 42783116642 | v90 / g08 after Modules 3.2A/3.2B/3.9A (a6f42e2) | **21/21** | 72 s, 25,662 prompt / 9,610 output tokens |
+
+[V] All 3 PSI v9 plans from the current draft text pass 21/21 (Gemini 2.5 Flash, production model).
+[I] n = 3. The deterministic gate is passed; the pedagogical judgement is the Director's reading.
+
 ## 5. Price (official pricing page, captured 2026-11-07, paid tier, per 1M tokens, USD)
 
 - [V] **Gemini 3.8 Flash** (standard): input **$0.75**, output incl. thinking **$3.75**, through

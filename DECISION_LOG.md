@@ -387,6 +387,13 @@ questions 1–5)
 4. **Gemini test key: approved.** The Director adds it as an
    environment network secret (header `x-goog-api-key`), never in
    chat or repo.
+**APPROVED 2026-11-10.** After reading the plans (eval run 42783116642: v90 / g08
+Fotosinteza, 21/21), the Director wrote "v90 / g08 — mnogo bolje. Prihvatam.
+PSI v9 odobren". Consequences: `IDSS_IBL_PSI_v9_draft.md` → `IDSS_IBL_PSI_v9.md` (status
+APPROVED inside the text); `PRODUCTION_PSI = "v90"`; CONSTITUTION rule 1 updated.
+Rollback: `PRODUCTION_PSI = "v81"` + deploy. Not yet measured: the chat mode (Mode C)
+on v9, which is watched after the switch. Evidence: v81 13/21 vs v90 21/21 (g08), v90 21/21 (g12), v90 20/20 (g02).
+
 5. **Repair: option (a).** A validation badge plus a teacher-triggered
    "Popravi"; no automatic extra call.
    **Implemented 2026-11-09.** The teacher-facing wording (check names, the

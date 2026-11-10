@@ -2,8 +2,9 @@
 //
 // P1 (2026-11-06, Commander E-6): authenticate -> authorise (AI quota)
 // -> validate (Zod, shared with the browser) -> execute -> return.
-// Generation logic, the PSI prompt and the stream format are UNCHANGED
-// from the pre-P1 version (prompt/AI changes are P3). Stream decoding fixed in P3 (_shared/sse.ts).
+// P3 (2026-11-10): the system prompt is PSI v9.0 (IDSS_IBL_PSI_v9.md, approved by the
+// Director, DL-P13) via buildProductionMessages / PRODUCTION_PSI in _shared/prompt.ts.
+// Stream decoding fixed in P3 (_shared/sse.ts); quality report event (_shared/validate.ts).
 //
 // Required Edge Function secrets: GEMINI_KEY_1..GEMINI_KEY_20 (at least one),
 // ALLOWED_ORIGINS (comma-separated, e.g. https://ibl-lesson-planner.vercel.app).
@@ -13,7 +14,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { IblChatRequestSchema } from "../../../src/lib/validation/schemas.ts";
 import { createGeminiToOpenAiTransform } from "../_shared/sse.ts";
-import { buildMessages } from "../_shared/prompt.ts";
+import { buildProductionMessages } from "../_shared/prompt.ts";
 import { PSI_V81_PROMPT } from "../_shared/psi_v81.ts";
 import { validatePlan } from "../_shared/validate.ts";
 
@@ -251,7 +252,7 @@ Deno.serve(async (req) => {
     // 4. Execute — unchanged generation logic
     const requestId = crypto.randomUUID();
 
-    const aiMessages = buildMessages(parsed.data, "v81");
+    const aiMessages = buildProductionMessages(parsed.data); // PRODUCTION_PSI in _shared/prompt.ts
 
     // 5. Return (stream)
     const p = parsed.data.params;
