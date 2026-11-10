@@ -157,7 +157,9 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      // P2 (2026-11-10): added by hand like plans.owner_id (P1, see the note at the top).
+      // Defined in supabase/owner-scripts/2026-11-06_p1-a-roles-ownership/02_APPLY.sql.
+      is_admin: { Args: Record<PropertyKey, never>; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

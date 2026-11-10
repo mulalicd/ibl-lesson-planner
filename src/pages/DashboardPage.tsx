@@ -8,6 +8,10 @@ import PlanCard from '@/components/PlanCard';
 import { SUBJECTS } from '@/lib/constants';
 import { supabase } from '@/integrations/supabase/client';
 import type { PlanCardData, DashboardFilters } from '@/lib/types';
+import { softDeletePlan } from '@/lib/planActions';
+import { TierSchema } from '@/lib/validation/schemas';
+import { toast } from 'sonner';
+import { ERROR_MESSAGES } from '@/lib/constants';
 
 const INITIAL_FILTERS: DashboardFilters = {
   subject: '', grade: null, tier: null, isFavourite: false, searchQuery: '',
@@ -62,17 +66,15 @@ export default function DashboardPage() {
     e.preventDefault();
     e.stopPropagation();
     if (!confirm('Obrisati ovaj plan? Ova akcija se ne može poništiti.')) return;
-    try {
-      const { error } = await supabase
-        .from('plans')
-        .update({ is_deleted: true })
-        .eq('id', planId);
-      if (!error) {
-        setPlans(prev => prev.filter(p => p.id !== planId));
-        setTotal(prev => prev - 1);
-      }
-    } catch (e) {
-      console.error('Delete error:', e);
+    // P2-2: RLS refuses a non-author's delete WITHOUT an error (0 rows); never remove it from the list then.
+    const result = await softDeletePlan(planId);
+    if (result === 'ok') {
+      setPlans(prev => prev.filter(p => p.id !== planId));
+      setTotal(prev => prev - 1);
+    } else if (result === 'forbidden') {
+      toast.error(ERROR_MESSAGES.DELETE_FORBIDDEN);
+    } else {
+      toast.error(ERROR_MESSAGES.NETWORK_ERROR);
     }
   }
 
@@ -194,7 +196,7 @@ export default function DashboardPage() {
 
                   <select
                     value={filters.tier ?? ''}
-                    onChange={e => setFilter('tier', (e.target.value as any) || null)}
+                    onChange={e => { const t = TierSchema.safeParse(e.target.value); setFilter('tier', t.success ? t.data : null); }}
                     className="neu-inset px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25
                                appearance-none cursor-pointer font-medium min-w-[160px]"
                   >

@@ -19,7 +19,7 @@ export default function ConversationExportButton({ messages, className }: Conver
     try {
       const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, BorderStyle } = await import('docx');
 
-      const children: any[] = [];
+      const children: InstanceType<typeof Paragraph>[] = [];
 
       // Title
       children.push(

@@ -174,3 +174,24 @@ Date: 2026-11-07
 - Also found this session: Gemini 2.5 counts "thinking" tokens inside
   maxOutputTokens. A 16k limit truncated a PSI v9 plan before the footer.
   Output limits must be sized for visible + thinking tokens.
+
+## Observation (2026-11-10) — old audit findings can get worse after later phases
+- Re-checking audit D-9 for the P2 SPEC: "delete ignores errors" was
+  rated Low in the audit. After P1 (only the author or admin may update), it became a
+  misleading UI. A non-author's delete "succeeds" on screen while RLS refuses it.
+- Lesson: before a phase uses audit items, re-verify each one against
+  `main` and re-rate it in the light of what earlier phases changed.
+- Also: `tsc --strict` reported 0 errors, so the "big strict-mode task"
+  was a measurement away from being trivial. Measure before sizing work.
+- Commander improvement candidate: FEATURE_LIFECYCLE Step 1 → "SPEC
+  re-verifies inherited audit findings against the current code and
+  records the date".
+
+## Rule (2026-11-10) — render generated documents; passing tests are not enough
+- The memorandum export passed every structural test (headers byte-identical, content
+  type, body text), but the rendered PDF showed the plan text running into the logo
+  on page 2. The official template's top margin (0.95 cm) is smaller than the logo (~2.1 cm).
+- Lesson: for any generated document or visual output, render it and look at it
+  before reporting done.
+- Commander improvement candidate: DONE_CHECKLIST → "documents/exports:
+  rendered and visually checked (screenshot attached)".

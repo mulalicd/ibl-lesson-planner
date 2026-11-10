@@ -5,6 +5,7 @@ import { getAccessToken, signalActivity } from '@/lib/auth';
 import { ERROR_MESSAGES } from '@/lib/constants';
 import { ValidationEventSchema, type ValidationReportInput } from '@/lib/validation/schemas';
 import { buildRepairMessage } from '@/lib/qualityChecks';
+import { isPlanText } from '@/lib/planMeta';
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ibl-chat`;
 
@@ -191,10 +192,7 @@ export function useChat() {
       }
 
       // Check if response contains a plan
-      const isPlan = assistantSoFar.includes('ISTRAŽIVAČKO PITANJE') ||
-                     assistantSoFar.includes('FORSCHUNGSFRAGE') ||
-                     assistantSoFar.includes('INQUIRY QUESTION') ||
-                     (assistantSoFar.includes('====') && assistantSoFar.includes('PLANER'));
+      const isPlan = isPlanText(assistantSoFar); // P2-3: header near the top + inquiry question
 
       if (isPlan) {
         setState(prev => {
@@ -235,6 +233,15 @@ export function useChat() {
     });
   }, []);
 
+  /** P2-1 (audit D-2): after "Sačuvaj plan" the message knows its database id → Word export appears. */
+  const attachPlanId = useCallback((messageId: string, planId: string) => {
+    setState(prev => ({
+      ...prev,
+      activePlanId: planId,
+      messages: prev.messages.map(m => (m.id === messageId ? { ...m, plan_id: planId } : m)),
+    }));
+  }, []);
+
   /** "Popravi": a visible chat message naming the failed checks (DL-P13 item 5, teacher-triggered). */
   const repairPlan = useCallback((failedIds: string[]) => {
     if (!failedIds.length) return;
@@ -254,5 +261,6 @@ export function useChat() {
     clearChat,
     cancelStream,
     repairPlan,
+    attachPlanId,
   };
 }

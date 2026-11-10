@@ -116,10 +116,11 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
         is_deleted: false,
       };
 
-      const { error } = await supabase.from('plans').insert(record as any);
+      const { data: saved, error } = await supabase.from('plans').insert(record).select('id').single();
       if (error) throw error;
 
       setSavedPlanIds(prev => new Set(prev).add(msgId));
+      if (saved?.id) chat.attachPlanId(msgId, saved.id); // P2-1: Word export button appears
       toast.success('Plan je uspješno sačuvan!', {
         description: 'Pronađite ga u "Moji planovi" sekciji.',
       });

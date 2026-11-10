@@ -448,4 +448,34 @@ made with this information.
 
 ---
 
+## DL-P15 — P2 approved: correctness fixes + real tests (Director, 2026-11-10)
+
+**Decided by:** Director, answers to `specs/p2-correctness/SPEC.md`:
+1. "Odobravam P2": all items P2-1 … P2-10.
+2. Message for a refused delete (P2-2), approved verbatim:
+   "Ovaj plan može obrisati samo njegov autor ili administrator."
+3. Export counter (P2-7): answered "odobravam" to a keep-or-remove question.
+   The ACA asked which one is meant; until then P2-7 is not implemented.
+4. Owner SQL (P2-8 nullable metadata columns, P2-9 duplicate trigger; plus the key-index
+   CHECK for P2-6): "pokrenuti". The ACA prepares owner scripts with a rehearsal and a tested
+   rollback (E-19); the Director runs them.
+
+---
+
+## DL-P16 — Every exported lesson plan uses the official IDSS memorandum (Director, 2026-11-10)
+
+**Decided by:** Director: "U prilogu je zvanični memorandum koji koriste nastavnici. Molim te ugradi
+ovaj memorandum u svaki plan nastavnog časa tako da se uskladi sa školskim procedurama."
+
+**Implementation:** the original file is kept as the single source
+(`templates/MEMORANDUM_IDSS_OD_20042026_NASTAVNICI.dotx`). `scripts/build-memorandum.mjs` builds the app
+template; the plan is written into its body (`src/lib/memorandumDocx.ts`, docx `patchDocument`).
+Headers, footer, logo, background image, fonts and styles are byte-identical (test-guarded).
+Deliberate differences: the top margin is 2.5 cm instead of 0.95 cm (generated text ran into the logo),
+and personal metadata is removed from the file properties. The document title colour changed from indigo to IDSS Blue
+#035EA1 (CONSTITUTION rule 6). Scope: the plan's "Word dokument" export (chat and plan page). The
+conversation export is unchanged (not a lesson plan).
+
+---
+
 *Project Decision Log — IBL Lesson Planner — under Commander v1.7.0*

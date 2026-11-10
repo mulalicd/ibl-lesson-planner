@@ -24,6 +24,8 @@ jobs:
       - run: npm ci --no-audit --no-fund
       - name: PSI generated modules in sync with the .md source (M-7)
         run: npm run psi:check
+      - name: Memorandum template in sync with the official .dotx (DL-P16)
+        run: npm run memorandum:check
       - name: TypeScript
         run: npx tsc -p tsconfig.app.json --noEmit
       - name: App tests (Vitest)

@@ -93,3 +93,14 @@ export function extractPlanMeta(planText: string): PlanMeta {
   if (meta.duration_min !== undefined && (meta.duration_min < 10 || meta.duration_min > 240)) delete meta.duration_min;
   return meta;
 }
+
+// P2-3 (audit D-7): a response is a lesson PLAN only if a plan header appears near the
+// top (a revised plan may start with one sentence, e.g. "Evo ispravljenog plana:") AND it
+// has an inquiry-question heading. A chat answer that merely quotes "ISTRAŽIVAČKO
+// PITANJE" no longer replaces the active plan.
+const PLAN_HEADER = /(PLANER ZA IBL|IBL-UNTERRICHTSPLANER|IBL LESSON PLANNER|^\s*SECTION\s+1\s*[-—–]\s*HEADER)/im;
+
+export function isPlanText(text: string): boolean {
+  const top = text.split('\n').slice(0, 25).join('\n');
+  return PLAN_HEADER.test(top) && IQ_HEADINGS.test(text);
+}
