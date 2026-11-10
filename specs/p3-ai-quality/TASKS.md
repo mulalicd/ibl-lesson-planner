@@ -34,6 +34,9 @@ to PSI v9.0 additionally needs Director approval of the v9.0 text.
       CONSTITUTION rule 1 note ("production uses PSI v8.0").
 - [~] 12. Rollout. PART 1 LIVE 2026-11-09: PR #10 merged (b0c46f9), Edge deploy run #11 green, live bundle
       `index-Ni-hayEn.js` contains the badge/repair texts, anonymous POST → 401. PART 2 LIVE 2026-11-10: PSI v9 approved, PR #13 merged (a020cf6), Edge deploy run #14 green (42830991383), PRODUCTION_PSI = "v90" on main, anonymous POST → 401. Note: the Director's first plan after the merge was still v8.1, because the deploy step had not run yet (see lessons).
+      PART 3 LIVE 2026-11-10: automatic Edge deploy on merge (Director: "automatski deploy da"). Run #16 (42835497852,
+      PR #15 c0a954c) is verified in its log: Gate 0 (deno 25/25 + edge e2e 13/13) → deploy → CORS 204 for the
+      Vercel origin → anonymous POST 401. Live: maxOutputTokens 32768 and the validator fixes (padded Total, generic "textbook").
       Original plan: merge → Vercel; Edge deploy via the gated workflow;
       live check with one Director plan; rollback = redeploy the
       `p3-baseline` tag.
