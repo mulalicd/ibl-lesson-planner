@@ -29,7 +29,7 @@ function emit(controller: TransformStreamDefaultController<Uint8Array>, line: st
 }
 
 export function createGeminiToOpenAiTransform(
-  onComplete?: (fullText: string) => string | null,
+  onComplete?: (fullText: string) => string | (string | null)[] | null,
 ): TransformStream<Uint8Array, Uint8Array> {
   const decoder = new TextDecoder("utf-8");
   let buffer = "";
@@ -63,7 +63,9 @@ export function createGeminiToOpenAiTransform(
         capture(controller, line);
       }
       const extra = onComplete ? onComplete(full) : null;
-      if (extra) controller.enqueue(encoder.encode(`data: ${extra}\n\n`));
+      for (const e of Array.isArray(extra) ? extra : [extra]) {
+        if (e) controller.enqueue(encoder.encode(`data: ${e}\n\n`));
+      }
       controller.enqueue(encoder.encode("data: [DONE]\n\n"));
     },
   });

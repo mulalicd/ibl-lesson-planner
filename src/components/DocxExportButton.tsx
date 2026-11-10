@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Download, Loader2, CheckCircle2, XCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { buildPlanOnMemorandum } from '@/lib/memorandumDocx';
+import { supabase } from '@/integrations/supabase/client';
 import memorandumUrl from '@/assets/memorandum/IDSS_memorandum_nastavnici.docx?url';
 
 interface DocxExportButtonProps {
@@ -20,6 +20,8 @@ export default function DocxExportButton({ planId, planText, className }: DocxEx
 
     try {
       // P-memo (Director 2026-11-10): every exported plan uses the school's official memorandum.
+      // Loaded on click only: docx is large and not needed to open the app.
+      const { buildPlanOnMemorandum } = await import('@/lib/memorandumDocx');
       const template = await (await fetch(memorandumUrl)).arrayBuffer();
       const bytes = await buildPlanOnMemorandum(template, planText || '');
       const blob = new Blob([new Uint8Array(bytes)], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
@@ -31,6 +33,12 @@ export default function DocxExportButton({ planId, planText, className }: DocxEx
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+
+      // P2-7 (Director: "zadrži"): count the export. Any signed-in teacher may raise ONLY this
+      // counter (DB function increment_docx_export). A failure must not spoil the download.
+      void supabase.rpc('increment_docx_export', { p_plan_id: planId }).then(({ error }) => {
+        if (error) console.error('export counter not updated:', error.message);
+      });
 
       setStatus('success');
       setTimeout(() => setStatus('idle'), 2500);

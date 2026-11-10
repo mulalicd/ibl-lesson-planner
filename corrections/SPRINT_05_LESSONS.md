@@ -195,3 +195,13 @@ Date: 2026-11-07
   before reporting done.
 - Commander improvement candidate: DONE_CHECKLIST → "documents/exports:
   rendered and visually checked (screenshot attached)".
+
+## Risk caught (2026-11-10) — an open PR silently absorbs new commits on the same branch
+- The ACA works on one branch. While PR #17 was open, new commits that need an owner
+  SQL script FIRST (nullable columns, key index > 7) went onto the same branch, and an
+  open PR shows them automatically. Merging it before the SQL would have made plan saving fail.
+  It was luckily merged a minute before those commits.
+- Lesson: before pushing an order-dependent change, check whether a PR on the branch is still open.
+  If it is, tell the owner, or hold the push until it is merged. State the required order in the PR itself.
+- Also: the build warned that docx moved into the initial bundle (static import).
+  Read build warnings after every change.

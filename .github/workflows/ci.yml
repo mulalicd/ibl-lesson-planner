@@ -36,3 +36,7 @@ jobs:
         run: deno test --allow-read --config supabase/functions/deno.json supabase/functions/_shared/
       - name: Edge Function end-to-end (mock Supabase)
         run: deno run --allow-net --allow-env --allow-run --allow-read --config supabase/functions/deno.json supabase/tests/edge/ibl-chat.e2e.ts
+      - name: Browser smoke tests (Playwright, public pages)
+        run: |
+          npx playwright install --with-deps chromium
+          npm run e2e

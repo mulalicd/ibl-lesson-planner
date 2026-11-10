@@ -1,4 +1,4 @@
-// NOTE (P1, 2026-11-06): plans.owner_id was added by hand; the ACA could not
+// NOTE (P1, 2026-11-06; P2, 2026-11-10: nullable metadata, increment_docx_export): plans.owner_id was added by hand; the ACA could not
 // regenerate these types from production. Regenerate (supabase gen types) when access exists.
 export type Json =
   | string
@@ -90,10 +90,10 @@ export type Database = {
         Row: {
           created_at: string
           docx_export_count: number | null
-          duration_min: number
+          duration_min: number | null
           gemini_key_index: number | null
           generation_time_ms: number | null
-          grade: number
+          grade: number | null
           id: string
           inquiry_question: string | null
           is_deleted: boolean | null
@@ -103,18 +103,18 @@ export type Database = {
           owner_id: string | null
           plan_text: string
           prior_knowledge: string | null
-          subject: string
-          tier: string
-          topic: string
+          subject: string | null
+          tier: string | null
+          topic: string | null
           updated_at: string
         }
         Insert: {
           created_at?: string
           docx_export_count?: number | null
-          duration_min?: number
+          duration_min?: number | null
           gemini_key_index?: number | null
           generation_time_ms?: number | null
-          grade: number
+          grade?: number | null
           id?: string
           inquiry_question?: string | null
           is_deleted?: boolean | null
@@ -124,18 +124,18 @@ export type Database = {
           owner_id?: string | null
           plan_text: string
           prior_knowledge?: string | null
-          subject: string
-          tier?: string
-          topic: string
+          subject?: string | null
+          tier?: string | null
+          topic?: string | null
           updated_at?: string
         }
         Update: {
           created_at?: string
           docx_export_count?: number | null
-          duration_min?: number
+          duration_min?: number | null
           gemini_key_index?: number | null
           generation_time_ms?: number | null
-          grade?: number
+          grade?: number | null
           id?: string
           inquiry_question?: string | null
           is_deleted?: boolean | null
@@ -145,9 +145,9 @@ export type Database = {
           owner_id?: string | null
           plan_text?: string
           prior_knowledge?: string | null
-          subject?: string
-          tier?: string
-          topic?: string
+          subject?: string | null
+          tier?: string | null
+          topic?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -160,6 +160,8 @@ export type Database = {
       // P2 (2026-11-10): added by hand like plans.owner_id (P1, see the note at the top).
       // Defined in supabase/owner-scripts/2026-11-06_p1-a-roles-ownership/02_APPLY.sql.
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean }
+      // P2-7, supabase/owner-scripts/2026-11-10_p2-plans-metadata/02_APPLY.sql
+      increment_docx_export: { Args: { p_plan_id: string }; Returns: number }
     }
     Enums: {
       [_ in never]: never

@@ -4,7 +4,7 @@ import type { Tier, Language } from '@/lib/types';
 import { Timer, Cpu } from 'lucide-react';
 
 interface GeminiStatusBarProps {
-  tier: Tier;
+  tier: Tier | null;
   language: Language;
   durationMs?: number;
   keyIndex?: number;
@@ -15,12 +15,12 @@ export default function GeminiStatusBar({
   tier, language, durationMs, keyIndex, className,
 }: GeminiStatusBarProps) {
   const langKey = language === 'bosnian' ? 'bs' : language === 'german' ? 'de' : 'en';
-  const tierLabel = TIER_LABELS[tier][langKey];
+  const tierLabel = tier ? TIER_LABELS[tier][langKey] : '—';
   const seconds = durationMs ? (durationMs / 1000).toFixed(1) : null;
 
   return (
     <div className={cn('flex flex-wrap items-center gap-2', className)}>
-      <span className={cn('text-[10px] px-2.5 py-1 rounded-full border font-bold', TIER_COLORS[tier])}>
+      <span className={cn('text-[10px] px-2.5 py-1 rounded-full border font-bold', tier ? TIER_COLORS[tier] : '')}>
         {tierLabel}
       </span>
       {seconds && (

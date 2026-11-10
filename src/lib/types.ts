@@ -17,11 +17,12 @@ export interface PlanRecord {
   created_at: string;
   updated_at: string;
   language: Language;
-  subject: string;
-  grade: number;
-  topic: string;
-  duration_min: number;
-  tier: Tier;
+  /** P2-8: null = unknown (never invented). Shown as "—". */
+  subject: string | null;
+  grade: number | null;
+  topic: string | null;
+  duration_min: number | null;
+  tier: Tier | null;
   prior_knowledge?: string | null;
   notes?: string | null;
   plan_text: string;
@@ -72,6 +73,10 @@ export interface ChatMessage {
   plan_id?: string;
   /** P3 quality report from the Edge Function (generated plans only). */
   validation?: ValidationReportInput;
+  /** P2-6: measured in the browser, from sending to the end of the stream. */
+  generation_ms?: number;
+  /** P2-6: which Gemini key served it (from the Edge Function's meta event). */
+  key_index?: number;
 }
 
 export interface ConversationState {

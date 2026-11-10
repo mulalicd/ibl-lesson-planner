@@ -3,7 +3,7 @@ import type { ChatMessage, ChatMode, ConversationState, GenerateParams } from '@
 import { randomHex } from '@/lib/utils';
 import { getAccessToken, signalActivity } from '@/lib/auth';
 import { ERROR_MESSAGES } from '@/lib/constants';
-import { ValidationEventSchema, type ValidationReportInput } from '@/lib/validation/schemas';
+import { ValidationEventSchema, MetaEventSchema, type ValidationReportInput } from '@/lib/validation/schemas';
 import { buildRepairMessage } from '@/lib/qualityChecks';
 import { isPlanText } from '@/lib/planMeta';
 
@@ -75,11 +75,15 @@ export function useChat() {
     const mode = overrideMode || state.mode;
     if (params) lastParamsRef.current = params;
     let validation: ValidationReportInput | undefined;
-    // P3: one SSE line may be the server's quality report instead of text.
+    let keyIndex: number | undefined;
+    const startedAt = performance.now();
+    // P3/P2-6: an SSE line may be the server's quality report or its meta event instead of text.
     const readValidation = (parsed: unknown): boolean => {
       const ev = ValidationEventSchema.safeParse(parsed);
-      if (ev.success) validation = ev.data.report;
-      return ev.success;
+      if (ev.success) { validation = ev.data.report; return true; }
+      const meta = MetaEventSchema.safeParse(parsed);
+      if (meta.success) { keyIndex = meta.data.key_index; return true; }
+      return false;
     };
     const allMessages = [...state.messages.filter(m => m.id !== 'welcome'), userMsg].map(m => ({
       role: m.role,
@@ -199,7 +203,10 @@ export function useChat() {
           const msgs = [...prev.messages];
           const lastMsg = msgs[msgs.length - 1];
           if (lastMsg?.role === 'model' && lastMsg.id !== 'welcome') {
-            msgs[msgs.length - 1] = { ...lastMsg, isPlan: true, content: assistantSoFar, validation };
+            msgs[msgs.length - 1] = {
+              ...lastMsg, isPlan: true, content: assistantSoFar, validation,
+              generation_ms: Math.round(performance.now() - startedAt), key_index: keyIndex,
+            };
           }
           return {
             ...prev,

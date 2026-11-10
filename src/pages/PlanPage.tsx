@@ -7,7 +7,7 @@ import PlanDisplay from '@/components/PlanDisplay';
 import GeminiStatusBar from '@/components/GeminiStatusBar';
 import DocxExportButton from '@/components/DocxExportButton';
 import { supabase } from '@/integrations/supabase/client';
-import { formatDate } from '@/lib/utils';
+import { formatDate, showText, showGrade, showMinutes } from '@/lib/utils';
 import type { PlanRecord } from '@/lib/types';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
@@ -116,7 +116,7 @@ export default function PlanPage() {
             </Link>
             <span className="text-border/70">/</span>
             <span className="font-semibold text-foreground">
-              {plan.subject} · {plan.grade}. razred
+              {showText(plan.subject)} · {showGrade(plan.grade)}
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -151,7 +151,7 @@ export default function PlanPage() {
         <div className="neu-card p-6 mb-6">
           <div className="flex items-start justify-between gap-4 mb-4">
             <h1 className="text-2xl font-bold text-foreground leading-snug tracking-tight">
-              {plan.topic}
+              {showText(plan.topic)}
             </h1>
             <GeminiStatusBar
               tier={plan.tier}
@@ -162,9 +162,9 @@ export default function PlanPage() {
             />
           </div>
           <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-            <span className="pastel-tag">📚 {plan.subject}</span>
-            <span className="pastel-tag">🎓 {plan.grade}. razred</span>
-            <span className="pastel-tag">⏱ {plan.duration_min} min</span>
+            <span className="pastel-tag">📚 {showText(plan.subject)}</span>
+            <span className="pastel-tag">🎓 {showGrade(plan.grade)}</span>
+            <span className="pastel-tag">⏱ {showMinutes(plan.duration_min)}</span>
             <span className="pastel-tag">📅 {formatDate(plan.created_at)}</span>
             {plan.docx_export_count > 0 && <span className="pastel-tag">⬇ Izvezeno {plan.docx_export_count}×</span>}
           </div>
