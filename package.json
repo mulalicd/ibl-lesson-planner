@@ -14,7 +14,8 @@
     "psi:build": "node scripts/build-psi.mjs",
     "psi:check": "node scripts/build-psi.mjs --check",
     "memorandum:build": "node scripts/build-memorandum.mjs",
-    "memorandum:check": "node scripts/build-memorandum.mjs --check"
+    "memorandum:check": "node scripts/build-memorandum.mjs --check",
+    "e2e": "playwright test --trace off"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
