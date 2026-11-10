@@ -160,7 +160,9 @@ async function callGemini(
       // P3 (DL-P13 item 5): when the request carries lesson params, the full text is
       // checked at the end and ONE extra event {"type":"validation",...} is sent.
       // Clients that do not know the event ignore it (no `choices`).
-      const transformStream = createGeminiToOpenAiTransform(onComplete);
+      // P2-6: one more closing event tells the browser which key served the plan (0-based).
+      const meta = JSON.stringify({ type: "meta", key_index: keyIndex });
+      const transformStream = createGeminiToOpenAiTransform((full) => [onComplete ? onComplete(full) : null, meta]);
 
       return new Response(resp.body!.pipeThrough(transformStream), {
         headers: { ...cors, "Content-Type": "text/event-stream" },

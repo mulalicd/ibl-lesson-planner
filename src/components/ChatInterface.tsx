@@ -98,17 +98,21 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
       const inquiryQuestion = extractInquiryQuestion(planText);
 
       const params = lastParamsRef.current;
+      const duration = params?.duration_min || meta.duration_min;
+      const savedMsg = chat.messages.find(m => m.id === msgId);
 
       const record = {
         plan_text: planText,
-        // Last-resort values remain ONLY because these columns are NOT NULL in the database
-        // (live_schema_2026-11-06.sql). Making them nullable is a schema change, outside P3 (see TASKS).
-        subject: params?.subject || meta.subject || 'Nepoznat',
-        grade: params?.grade || meta.grade || 5,
-        topic: params?.topic || meta.topic || 'Bez teme',
-        duration_min: params?.duration_min || meta.duration_min || 45,
+        // P2-8: unknown = null (owner script 2026-11-10_p2-plans-metadata), never invented.
+        // Language stays required: Bosnian is the school's and PSI's default output language.
+        subject: params?.subject || meta.subject || null,
+        grade: params?.grade || meta.grade || null,
+        topic: params?.topic || meta.topic || null,
+        duration_min: duration ?? null,
         language: (params?.language || meta.language || 'bosnian') as string,
-        tier: deriveTier(params?.duration_min || meta.duration_min || 45),
+        tier: duration ? deriveTier(duration) : null,
+        generation_time_ms: savedMsg?.generation_ms ?? null,
+        gemini_key_index: savedMsg?.key_index ?? null,
         prior_knowledge: params?.prior_knowledge || null,
         notes: params?.notes || null,
         inquiry_question: inquiryQuestion,

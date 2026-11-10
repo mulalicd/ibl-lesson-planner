@@ -95,6 +95,12 @@ export const ValidationEventSchema = z.object({
 });
 export type ValidationReportInput = z.infer<typeof ValidationReportSchema>;
 
+/** P2-6: which Gemini key served the response (0-based; GEMINI_KEY_1..20 → 0..19). */
+export const MetaEventSchema = z.object({
+  type: z.literal('meta'),
+  key_index: z.number().int().min(0).max(19),
+});
+
 /** Sign-in e-mail: only @idss.ba (server enforces the same rule in auth.users). */
 export const IDSS_EMAIL_DOMAIN = 'idss.ba';
 export const SignInEmailSchema = z

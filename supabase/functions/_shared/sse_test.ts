@@ -5,7 +5,7 @@ function geminiEvent(text: string): string {
   return `data: ${JSON.stringify({ candidates: [{ content: { parts: [{ text }] } }] })}\n\n`;
 }
 
-async function run(bytes: Uint8Array, cuts: number[], onComplete?: (t: string) => string | null): Promise<{ text: string; raw: string }> {
+async function run(bytes: Uint8Array, cuts: number[], onComplete?: (t: string) => string | (string | null)[] | null): Promise<{ text: string; raw: string }> {
   const chunks: Uint8Array[] = [];
   let prev = 0;
   for (const c of [...cuts, bytes.length]) { chunks.push(bytes.slice(prev, c)); prev = c; }
@@ -73,4 +73,14 @@ Deno.test("the validation event the server emits is accepted by the browser sche
   if (last !== "data: [DONE]") throw new Error("stream must end with [DONE]");
   const ev = ValidationEventSchema.safeParse(JSON.parse(beforeLast.slice(6)));
   if (!ev.success) throw new Error("browser schema rejects the event: " + JSON.stringify(ev.error.issues));
+});
+
+Deno.test("several closing events (validation + meta) all arrive before [DONE], in order (P2-6)", async () => {
+  const { MetaEventSchema } = await import("../../../src/lib/validation/schemas.ts");
+  const meta = JSON.stringify({ type: "meta", key_index: 11 });
+  const { raw } = await run(BYTES, [5], () => [JSON.stringify({ type: "validation", report: { passed: 1, total: 1, failed: [], checks: [] } }), null, meta]);
+  const lines = raw.split("\n").filter((l) => l.startsWith("data: "));
+  if (lines[lines.length - 1] !== "data: [DONE]") throw new Error("must end with [DONE]");
+  if (!lines[lines.length - 3].includes('"validation"')) throw new Error("validation event missing or out of order");
+  if (!MetaEventSchema.safeParse(JSON.parse(lines[lines.length - 2].slice(6))).success) throw new Error("meta event rejected by the browser schema");
 });

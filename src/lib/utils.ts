@@ -32,3 +32,9 @@ export function randomHex(bytes: number = 16): string {
   }
   return Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
 }
+
+/** P2-8: how an unknown (null) plan field is shown. Never an invented value. */
+export const UNKNOWN = '—';
+export const showText = (v: string | null | undefined): string => (v && v.trim() ? v : UNKNOWN);
+export const showGrade = (g: number | null | undefined): string => (g ? `${g}. razred` : UNKNOWN);
+export const showMinutes = (m: number | null | undefined): string => (m ? `${m} min` : UNKNOWN);

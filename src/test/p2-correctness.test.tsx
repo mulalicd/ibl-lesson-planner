@@ -52,3 +52,26 @@ describe('P2-3 plan detection (audit D-7)', () => {
     expect(isPlanText(answer)).toBe(false);
   });
 });
+
+import { showText, showGrade, showMinutes, UNKNOWN } from '@/lib/utils';
+import { MetaEventSchema } from '@/lib/validation/schemas';
+
+describe('P2-8 unknown metadata is shown as "—", never invented', () => {
+  it('formats null and empty values as the unknown marker', () => {
+    expect(showText(null)).toBe(UNKNOWN);
+    expect(showText('  ')).toBe(UNKNOWN);
+    expect(showText('Biologie')).toBe('Biologie');
+    expect(showGrade(null)).toBe(UNKNOWN);
+    expect(showGrade(6)).toBe('6. razred');
+    expect(showMinutes(undefined)).toBe(UNKNOWN);
+    expect(showMinutes(45)).toBe('45 min');
+  });
+});
+
+describe('P2-6 meta event', () => {
+  it('accepts key indexes 0..19 (GEMINI_KEY_1..20) and nothing else', () => {
+    expect(MetaEventSchema.safeParse({ type: 'meta', key_index: 11 }).success).toBe(true);
+    expect(MetaEventSchema.safeParse({ type: 'meta', key_index: 20 }).success).toBe(false);
+    expect(MetaEventSchema.safeParse({ choices: [] }).success).toBe(false);
+  });
+});
