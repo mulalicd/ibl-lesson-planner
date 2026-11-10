@@ -18,7 +18,9 @@ to PSI v9.0 additionally needs Director approval of the v9.0 text.
       - stream decoder fix (D-1)
       - unit tests for all of the above
 - [x] 6. Edge Function: DONE 2026-11-10: PRODUCTION_PSI = "v90" (generated v9 PSI); the v8.1 prompt is kept only as the rollback path. Earlier: validation SSE event (only when the request carries params; never breaks the stream); `src/lib/psi.ts` deleted (unused). PENDING (needs the Director's approval of the PSI v9 text): switch `buildMessages` to the generated v9 PSI and delete the inline v8.1 prompt.
-- [~] 7. UI: DONE: heading recognition (v9 sections, diacritic-insensitive, old patterns kept, display-regression test with the Director's plan); `QualityBadge` + "Popravi" (labels in `src/lib/qualityChecks.ts`, wording PENDING the Director's approval). PENDING: save metadata without invented defaults.
+- [~] 7. UI: DONE: heading recognition (v9 sections, diacritic-insensitive, old patterns kept, display-regression test with the Director's plan); `QualityBadge` + "Popravi" (labels in `src/lib/qualityChecks.ts`, wording PENDING the Director's approval). DONE 2026-11-10: saving reads the plan header (extractPlanMeta: v9 bs/de/en + v8.1) instead of inventing values.
+      OPEN for a later phase (schema change): plans.subject/grade/topic/language/tier are NOT NULL, so a plan without a
+      readable header still gets last-resort values. Proposed for P2/P4: nullable columns or a "needs review" flag.
 - [x] 8. Integration: `useChat` handles the validation event (Zod-checked); `repairPlan` sends a visible chat message with the failed checks and the last params, so the corrected plan is re-checked.
 - [ ] 9. Self-review (FEATURE_LIFECYCLE Step 4).
 - [~] 10. Testing (DONE: unit + e2e + CI workflow; golden harness `scripts/eval/run.ts` + manual workflow; PENDING: runs and the Director's rating):

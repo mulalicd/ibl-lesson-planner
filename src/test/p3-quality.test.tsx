@@ -108,3 +108,24 @@ describe('extractInquiryQuestion (saving a plan)', () => {
     expect(extractInquiryQuestion('UDICA\nNešto bez pitanja.')).toBeNull();
   });
 });
+
+import { extractPlanMeta } from '@/lib/planMeta';
+
+describe('extractPlanMeta (saving a plan without wizard params)', () => {
+  it('reads the PSI v9 Bosnian header', () => {
+    const h = '| Predmet i razred:     Biologie, 5. razred                             |\n| Tema:                 Fotosinteza                                     |\n| Datum:                _______________   Trajanje: 45 min        |';
+    expect(extractPlanMeta(h)).toEqual({ subject: 'Biologie', grade: 5, topic: 'Fotosinteza', duration_min: 45, language: 'bosnian' });
+  });
+  it('reads the German and English headers', () => {
+    expect(extractPlanMeta('| Fach und Klasse: Deutsch, 2. Klasse |\n| Thema: Märchenfiguren |\n| Datum: ____   Dauer: 45 Min |'))
+      .toEqual({ subject: 'Deutsch', grade: 2, topic: 'Märchenfiguren', duration_min: 45, language: 'german' });
+    expect(extractPlanMeta('| Subject and grade: B/H/S, Grade 6 |\n| Topic: Bašeskija |\n| Date: ____   Duration: 45 min |'))
+      .toEqual({ subject: 'B/H/S', grade: 6, topic: 'Bašeskija', duration_min: 45, language: 'english' });
+  });
+  it('invents nothing when the header is absent', () => {
+    expect(extractPlanMeta('UDICA\nNešto bez zaglavlja.')).toEqual({});
+  });
+  it("reads the Director's real pre-P3 (v8.1) plan — the old code fell back to invented values here", () => {
+    expect(extractPlanMeta(FIXTURE)).toEqual({ subject: 'Biologie', grade: 5, topic: 'Fotosinteza', duration_min: 45 });
+  });
+});

@@ -15,7 +15,7 @@ import { toast } from 'sonner';
 import type { Language } from '@/lib/types';
 import { PrivacyNotice } from '@/components/PrivacyNotice';
 import { QualityBadge } from '@/components/QualityBadge';
-import { extractInquiryQuestion } from '@/lib/planMeta';
+import { extractInquiryQuestion, extractPlanMeta } from '@/lib/planMeta';
 
 interface ChatInterfaceProps {
   initialPlan?: { id: string; text: string } | null;
@@ -93,22 +93,22 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
 
     try {
       // Extract metadata from plan text
-      const subjectMatch = planText.match(/Predmet:\s*(.+)/i);
-      const gradeMatch = planText.match(/Razred:\s*(\d+)/i);
-      const topicMatch = planText.match(/Tema:\s*(.+)/i);
-      const durationMatch = planText.match(/Trajanje:\s*(\d+)/i);
+      // Wizard params first, then what the plan itself states (P3: never invent).
+      const meta = extractPlanMeta(planText);
       const inquiryQuestion = extractInquiryQuestion(planText);
 
       const params = lastParamsRef.current;
 
       const record = {
         plan_text: planText,
-        subject: params?.subject || subjectMatch?.[1]?.trim() || 'Nepoznat',
-        grade: params?.grade || parseInt(gradeMatch?.[1] || '5'),
-        topic: params?.topic || topicMatch?.[1]?.trim() || 'Bez teme',
-        duration_min: params?.duration_min || parseInt(durationMatch?.[1] || '45'),
-        language: (params?.language || 'bosnian') as string,
-        tier: deriveTier(params?.duration_min || parseInt(durationMatch?.[1] || '45')),
+        // Last-resort values remain ONLY because these columns are NOT NULL in the database
+        // (live_schema_2026-11-06.sql). Making them nullable is a schema change, outside P3 (see TASKS).
+        subject: params?.subject || meta.subject || 'Nepoznat',
+        grade: params?.grade || meta.grade || 5,
+        topic: params?.topic || meta.topic || 'Bez teme',
+        duration_min: params?.duration_min || meta.duration_min || 45,
+        language: (params?.language || meta.language || 'bosnian') as string,
+        tier: deriveTier(params?.duration_min || meta.duration_min || 45),
         prior_knowledge: params?.prior_knowledge || null,
         notes: params?.notes || null,
         inquiry_question: inquiryQuestion,
