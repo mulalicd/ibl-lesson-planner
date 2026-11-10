@@ -21,7 +21,7 @@ export default function DocxExportButton({ planId, planText, className }: DocxEx
 
       const text = planText || '';
       const lines = text.split('\n');
-      const paragraphs: any[] = [];
+      const paragraphs: InstanceType<typeof Paragraph>[] = [];
 
       paragraphs.push(
         new Paragraph({
