@@ -462,4 +462,20 @@ made with this information.
 
 ---
 
+## DL-P16 — Every exported lesson plan uses the official IDSS memorandum (Director, 2026-11-10)
+
+**Decided by:** Director: "U prilogu je zvanični memorandum koji koriste nastavnici. Molim te ugradi
+ovaj memorandum u svaki plan nastavnog časa tako da se uskladi sa školskim procedurama."
+
+**Implementation:** the original file is kept as the single source
+(`templates/MEMORANDUM_IDSS_OD_20042026_NASTAVNICI.dotx`). `scripts/build-memorandum.mjs` builds the app
+template; the plan is written into its body (`src/lib/memorandumDocx.ts`, docx `patchDocument`).
+Headers, footer, logo, background image, fonts and styles are byte-identical (test-guarded).
+Deliberate differences: the top margin is 2.5 cm instead of 0.95 cm (generated text ran into the logo),
+and personal metadata is removed from the file properties. The document title colour changed from indigo to IDSS Blue
+#035EA1 (CONSTITUTION rule 6). Scope: the plan's "Word dokument" export (chat and plan page). The
+conversation export is unchanged (not a lesson plan).
+
+---
+
 *Project Decision Log — IBL Lesson Planner — under Commander v1.7.0*

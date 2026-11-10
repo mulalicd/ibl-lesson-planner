@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Download, Loader2, CheckCircle2, XCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { buildPlanOnMemorandum } from '@/lib/memorandumDocx';
+import memorandumUrl from '@/assets/memorandum/IDSS_memorandum_nastavnici.docx?url';
 
 interface DocxExportButtonProps {
   planId: string;
@@ -17,35 +19,10 @@ export default function DocxExportButton({ planId, planText, className }: DocxEx
     setStatus('loading');
 
     try {
-      const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } = await import('docx');
-
-      const text = planText || '';
-      const lines = text.split('\n');
-      const paragraphs: InstanceType<typeof Paragraph>[] = [];
-
-      paragraphs.push(
-        new Paragraph({
-          children: [new TextRun({ text: 'IBL Plan časa — IDSS Sarajevo', bold: true, size: 32, color: '6366F1' })],
-          heading: HeadingLevel.HEADING_1,
-          alignment: AlignmentType.CENTER,
-          spacing: { after: 400 },
-        })
-      );
-
-      for (const line of lines) {
-        paragraphs.push(
-          new Paragraph({
-            children: [new TextRun({ text: line || ' ', font: 'Courier New', size: 20 })],
-            spacing: { after: 60 },
-          })
-        );
-      }
-
-      const doc = new Document({
-        sections: [{ properties: {}, children: paragraphs }],
-      });
-
-      const blob = await Packer.toBlob(doc);
+      // P-memo (Director 2026-11-10): every exported plan uses the school's official memorandum.
+      const template = await (await fetch(memorandumUrl)).arrayBuffer();
+      const bytes = await buildPlanOnMemorandum(template, planText || '');
+      const blob = new Blob([new Uint8Array(bytes)], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;

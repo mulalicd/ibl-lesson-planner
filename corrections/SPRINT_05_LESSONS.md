@@ -186,3 +186,12 @@ Date: 2026-11-07
 - Commander improvement candidate: FEATURE_LIFECYCLE Step 1 → "SPEC
   re-verifies inherited audit findings against the current code and
   records the date".
+
+## Rule (2026-11-10) — render generated documents; passing tests are not enough
+- The memorandum export passed every structural test (headers byte-identical, content
+  type, body text), but the rendered PDF showed the plan text running into the logo
+  on page 2. The official template's top margin (0.95 cm) is smaller than the logo (~2.1 cm).
+- Lesson: for any generated document or visual output, render it and look at it
+  before reporting done.
+- Commander improvement candidate: DONE_CHECKLIST → "documents/exports:
+  rendered and visually checked (screenshot attached)".
