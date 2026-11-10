@@ -155,3 +155,13 @@ Date: 2026-11-07
   the old format. PSI v9's boxed table would have stored "|   Kako …?".
   Before switching any output format, list every consumer of that format
   (display, save, export, detection). Fixed with `src/lib/planMeta.ts` and tests.
+
+## Process gap (2026-11-10) — merged is not deployed
+- After merging PR #13 the Director generated a plan and got the full v8.1
+  defect list. The Edge Function deploy (a separate manual step) had not run.
+  He reasonably asked why the plan was not right at once.
+- Lesson: for a non-coder, a two-step release (merge, then deploy) invites
+  a forgotten step. The ACA must (a) verify the deploy before telling the owner to
+  test, and (b) offer an automatic deploy on merge with the same gates.
+- Commander improvement candidate: C-12 → "never ask the owner to test a
+  change before the ACA has verified it is actually deployed".
