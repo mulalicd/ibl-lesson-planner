@@ -110,3 +110,13 @@ Deno.test("German total line 'Insgesamt: 45 Minuten' is recognised", () => {
   const de = GOOD_BS.replace("| Ukupno: 45 min |", "| Insgesamt: 45 Minuten |");
   if (failed(de).includes("timeline_matches_duration")) throw new Error("Insgesamt not recognised");
 });
+
+Deno.test("a boxed total line padded with many spaces is recognised (Director's 17/19)", () => {
+  const padded = GOOD_BS.replace("| Ukupno: 45 min |", "|  Total:                               45 min                                |");
+  if (failed(padded).includes("timeline_matches_duration")) throw new Error("padded Total not recognised");
+});
+
+Deno.test("a generic mention of a textbook is not an unmarked source; a page reference still is", () => {
+  if (failed(GOOD_BS + "\n| what a factual textbook might miss, AND |\n").includes("sources_marked_to_verify")) throw new Error("generic word flagged");
+  if (failed(GOOD_BS + "\n- Udžbenik Priroda 5, str. 34\n").includes("sources_marked_to_verify") === false) throw new Error("page reference not flagged");
+});

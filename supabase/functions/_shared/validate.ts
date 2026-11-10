@@ -61,7 +61,10 @@ const ASCII_FOLDED_BS = [/ISTRAZIVACKO PITANJE/, /DOKAZ UCENJA/, /\bSkola:/, /PR
 // Footer + the PSI 3.13 "next steps" block (~2,000 chars incl. box borders).
 const MAX_AFTER_FOOTER = 4000;
 
-const SOURCE_HINT = /(youtube|youtu\.be|https?:\/\/|www\.|\bverlag\b|\bstr\.\s*\d|\bs\.\s*\d|\bseite\s*\d|\bpage\s*\d|\bp\.\s*\d|\bkanal\b|\bchannel\b|\budzbenik\b|\budžbenik\b|\btextbook\b)/i;
+// A NAMED external source: a platform, a URL, a publisher or a page reference.
+// Generic words ("udžbenik", "textbook", "kanal") are not sources by themselves
+// (false positive on "…what a factual textbook might miss", eval run 42834108139).
+const SOURCE_HINT = /(youtube|youtu\.be|https?:\/\/|www\.|\bverlag\b|\bstr\.\s*\d|\bs\.\s*\d|\bseite\s*\d|\bpage\s*\d|\bp\.\s*\d)/i;
 const VERIFY_MARK = /(ZA PROVJERU|ZU PR(Ü|UE)FEN|TO VERIFY)/i;
 
 function hasSection(foldedUpper: string, key: string): boolean {
@@ -71,7 +74,9 @@ function hasSection(foldedUpper: string, key: string): boolean {
 function timelineCheck(text: string, duration: number): CheckResult {
   const folded = fold(text);
   // 1) explicit total line: "Ukupno: 45 min" / "Gesamt: 45 Min" / "Insgesamt: 45 Minuten" / "Total: 45 min"
-  const total = folded.match(/\b(UKUPNO|INSGESAMT|GESAMTDAUER|GESAMT|SUMME|TOTAL)\b[^\n\d]{0,30}(\d{1,3})\s*min/i);
+  // Up to 60 characters between the word and the number: boxed tables pad with spaces
+  // ("|  Total:                               45 min", eval run 42834108139).
+  const total = folded.match(/\b(UKUPNO|INSGESAMT|GESAMTDAUER|GESAMT|SUMME|TOTAL)\b[^\n\d]{0,60}(\d{1,3})\s*min/i);
   // 2) clock ranges "00:40-00:45" and minute ranges "40-45 min"
   let maxEnd = 0;
   let ranges = 0;
