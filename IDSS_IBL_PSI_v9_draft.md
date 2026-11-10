@@ -1154,6 +1154,9 @@ RULE 7  OUTPUT LENGTH: each section has a minimum:
           Section 5  (Socratic Qs): min 2 questions (MICRO) / 3 / 4
           Section 6  (Learning E.): min 2 checked items
           Section 9  (Recomm.):     min 30 lines of specific content
+          Ishodi učenja (3.2A):     min 3 outcomes + 3 "Mogu …" criteria
+          Uporište (3.2B):          min 2 real-life situations
+          Savjeti i trikovi (3.9A): min 6 ideas — section is MANDATORY
         Outputs shorter than these minimums are incomplete — regenerate.
 
 ------------------------------------------------------------------------
@@ -1204,12 +1207,47 @@ ISTRAŽIVAČKO PITANJE                (mora biti otvoreno)
 | ZPD:      [zpd_profile.level] — pitanje je iznad samostalne zone,           |
 |           dostižno uz istraživanje dokaza i Sokratovsku podršku             |
 |                                                                               |
-| Provjera kvalitete (za nastavnika):                                          |
-|   Otvoreno (više opravdanih zaključaka):   DA                               |
-|   Nije odgovorivo bez istraživanja:        DA                               |
-|   Kalibracija ZPD-a:                       DA                               |
-|   Vodi do novih pitanja:                   DA                               |
-|   Istraživo ovim dokazima u ovom vremenu:  DA                               |
+| Provjera kvalitete (za nastavnika) — najviše 4 kratka reda s KONKRETNIM     |
+| razlogom za OVO pitanje (Amandman A10), nikad niz golih "DA":               |
+|   Otvoreno: [zašto postoji više opravdanih zaključaka]                      |
+|   Traži istraživanje: [koji dokaz je potreban da se odgovori]               |
+|   ZPD: [zašto je izazovno, ali dostižno za ovaj razred]                     |
+|   Vodi dalje: [koje novo pitanje otvara]                                    |
+================================================================================
+
+------------------------------------------------------------------------
+MODULE 3.2A — LEARNING OUTCOMES (Amendment A6) — print directly after 3.2
+------------------------------------------------------------------------
+
+================================================================================
+ISHODI UČENJA
+================================================================================
+| CILJ UČENJA: [jedna rečenica vezana za istraživačko pitanje]               |
+|------------------------------------------------------------------------------|
+| I1  Učenik može [glagol iz Bloomove taksonomije] [sadržaj ove teme]        |
+|     [uslov: s čim / kako]. Dokaz: [aktivnost ili produkt iz ovog plana].    |
+|     Nivo: [Pamćenje/Razumijevanje/Primjena/Analiza/Vrednovanje/Stvaranje]   |
+| I2  …                                                                       |
+| I3  …  (najmanje jedan ishod na nivou Analiza, Vrednovanje ili Stvaranje)   |
+| I4  …  (opcionalno)                                                         |
+|------------------------------------------------------------------------------|
+| KRITERIJI USPJEHA (za učenike):                                              |
+|   [ ] Mogu … (za I1)                                                        |
+|   [ ] Mogu … (za I2)                                                        |
+|   [ ] Mogu … (za I3)                                                        |
+================================================================================
+
+------------------------------------------------------------------------
+MODULE 3.2B — REAL-LIFE CONNECTIONS (Amendment A12) — print directly after 3.2A
+------------------------------------------------------------------------
+
+================================================================================
+UPORIŠTE U STVARNOM ŽIVOTU
+================================================================================
+| 1. [Situacija iz života učenika: kuća, Sarajevo/BiH, priroda, sport,       |
+|    tehnologija, zanimanja.] Kako je čas koristi: [udica / dokaz / transfer] |
+| 2. [Situacija] Kako je čas koristi: [...]                                    |
+| 3. [Situacija — opcionalno] Kako je čas koristi: [...]                       |
 ================================================================================
 
 ------------------------------------------------------------------------
@@ -1561,6 +1599,28 @@ SAVJET ZA [duration_min] MINUTA ([tier])
 |            ZPD savjet: napredni učenici mogu izaći iz ZPD grupe i          |
 |            raditi samostalnu proširenu istragu.                             |
 ================================================================================
+
+------------------------------------------------------------------------
+MODULE 3.9A — TIPS & TRICKS FOR TEACHERS (Amendment A13) — ALWAYS print,
+directly after Module 3.9 and directly before the mandatory footer (3.12)
+------------------------------------------------------------------------
+
+================================================================================
+SAVJETI I TRIKOVI ZA NASTAVNIKE
+================================================================================
+| PRIPREMA (prije časa)                                                        |
+|   - [konkretan savjet za OVU temu: materijal, šta isprobati, raspored sale] |
+|   - [...]                                                                   |
+| IZVOĐENJE (tokom časa)                                                       |
+|   - [potez za vođenje razreda]                                              |
+|   - [kako uključiti tihe učenike]                                           |
+|   - [šta ako je razred brži / sporiji]                                      |
+|   - ["wow" trenutak koji čini čas nezaboravnim]                             |
+| NAKON ČASA                                                                   |
+|   - [follow-up od 2 minute]                                                 |
+|   - [veza sa sljedećim časom]                                               |
+================================================================================
+(6 do 8 savjeta ukupno, svaki specifičan za ovu temu, razred i trajanje.)
 
 ------------------------------------------------------------------------
 MODULE 3.10 — LANGUAGE TRANSLATION TABLE (v9.0: correct spelling)

@@ -61,3 +61,14 @@ v8.0 are **kept**.
   contradicted the diacritised templates of 2026-11-07. It now says the templates use correct
   orthography and must be copied exactly. Same class of defect as the template
   diacritics: an instruction that contradicts the examples.
+
+## 2026-11-10 — templates for the Director's new sections (eval runs 42781424077, 42781428250)
+- Evidence: on 2.5 Flash, v90 Fotosinteza scored 19/21 without SAVJETI I TRIKOVI, while g12 scored 21/21.
+  Root cause: Protocol 3 had output templates only for Modules 3.1–3.9. The new
+  sections (A6, A12, A13) existed only as rules, so the model, which follows the
+  templates, sometimes skipped them.
+- Added Module 3.2A (ISHODI UČENJA), 3.2B (UPORIŠTE U STVARNOM ŽIVOTU) and
+  3.9A (SAVJETI I TRIKOVI ZA NASTAVNIKE, mandatory, directly before the footer),
+  and their minimums in RULE 7.
+- The Module 3.2 quality check printed five bare "DA" ticks, which A10 forbids. Replaced
+  with at most 4 lines of concrete reasons.
