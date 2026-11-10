@@ -1,7 +1,9 @@
-name: Deploy Edge Function (manual)
+name: Deploy Edge Function
 
-# Director-run deploy of supabase/functions/ibl-chat to PRODUCTION
-# (pfwxbsucgjlnimvxbpyk). Manual only: never runs on push.
+# Deploy of supabase/functions/ibl-chat to PRODUCTION (pfwxbsucgjlnimvxbpyk).
+# AUTOMATIC on every push to main that touches the function or its shared code
+# (Director decision 2026-11-10, "automatski deploy da"), and only after the
+# function's tests pass (Gate 0). Manual run (type DEPLOY) stays as a fallback.
 # Requires the repository secret SUPABASE_ACCESS_TOKEN (Supabase account ->
 # Access Tokens). Edge Function secrets (GEMINI_KEY_*, ALLOWED_ORIGINS) are
 # set in the Supabase dashboard, never here.
@@ -14,6 +16,12 @@ name: Deploy Edge Function (manual)
 #   4. after deploy: CORS answers for the production origin
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/functions/**'
+      - 'src/lib/validation/schemas.ts'
+      - '.github/workflows/deploy-edge-function.yml'
   workflow_dispatch:
     inputs:
       confirm:
@@ -33,12 +41,30 @@ env:
   PUBLISHABLE_KEY: sb_publishable_R3bb3reMeXTkdizB16ae-w_iRqtyOvd
   PROD_ORIGIN: https://ibl-lesson-planner.vercel.app
 
+# Never two deploys at once; a newer push waits for the running one.
+concurrency:
+  group: deploy-edge-function
+  cancel-in-progress: false
+
 jobs:
   deploy:
-    if: github.ref == 'refs/heads/main' && inputs.confirm == 'DEPLOY'
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || inputs.confirm == 'DEPLOY')
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: "Gate 0 — the function's tests pass (nothing is deployed otherwise)"
+        run: |
+          node scripts/build-psi.mjs --check
+          deno check --config supabase/functions/deno.json supabase/functions/ibl-chat/index.ts
+          deno test --allow-read --config supabase/functions/deno.json supabase/functions/_shared/
+          deno run --allow-net --allow-env --allow-run --allow-read --config supabase/functions/deno.json supabase/tests/edge/ibl-chat.e2e.ts
       - uses: supabase/setup-cli@v1
         with:
           version: latest
@@ -108,5 +134,14 @@ jobs:
           echo "allow-origin: ${allow:-<none>}"
           if [ "$allow" != "$PROD_ORIGIN" ]; then
             echo "::error::The new function does not allow $PROD_ORIGIN — ALLOWED_ORIGINS is missing or wrong (Supabase -> Edge Functions -> Secrets). The AI planner will not work in the browser until it is fixed."
+            exit 1
+          fi
+
+      - name: "Check — an anonymous call is still refused (auth intact)"
+        run: |
+          code=$(curl -sS -o /dev/null -w "%{http_code}" -X POST "$SUPABASE_URL/functions/v1/ibl-chat" -H "Content-Type: application/json" --data '{}')
+          echo "anonymous POST HTTP $code"
+          if [ "$code" != "401" ]; then
+            echo "::error::The deployed function did not refuse an anonymous call (expected 401, got $code). Roll back: run this workflow manually on the previous good commit."
             exit 1
           fi
