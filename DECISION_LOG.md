@@ -463,6 +463,10 @@ made with this information.
    `rpc/increment_docx_export` returns 42501 "permission denied", so the function exists and anon is refused
    (it is created in the same transaction as the column, constraint and trigger changes).
 5. P2-7: the Director answered "zadrži": keep the counter (implemented with the RPC).
+6. **One-time exception to CONSTITUTION rule 7 (2026-11-10):** GitHub's new PR page did not show
+   the merge button to the Director, and he instructed "Spoji ti PR 18". The ACA merged PR #18
+   (merge commit 7c018f2, expected head 222ecfc, all checks green, no conflicts). This authorises
+   that merge only; future merges stay with the Director unless he instructs otherwise.
 
 ---
 
