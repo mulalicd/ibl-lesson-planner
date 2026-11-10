@@ -459,6 +459,10 @@ made with this information.
 4. Owner SQL (P2-8 nullable metadata columns, P2-9 duplicate trigger; plus the key-index
    CHECK for P2-6): "pokrenuti". The ACA prepares owner scripts with a rehearsal and a tested
    rollback (E-19); the Director runs them.
+   **Applied on production 2026-11-10** by the Director ("SQL gotov"). Independent check: an anonymous call to
+   `rpc/increment_docx_export` returns 42501 "permission denied", so the function exists and anon is refused
+   (it is created in the same transaction as the column, constraint and trigger changes).
+5. P2-7: the Director answered "zadrži": keep the counter (implemented with the RPC).
 
 ---
 
