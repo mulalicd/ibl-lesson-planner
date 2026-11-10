@@ -41,3 +41,12 @@ New features, PSI wording, design and colours (P6), and the pedagogy schema (P4)
 2. P2-2: the wording of the error message (proposal: "Ovaj plan može obrisati samo njegov autor ili administrator.").
 3. P2-7: keep the export counter (adds an RPC) or remove it from the UI.
 4. P2-8 and P2-9 SQL: run the owner scripts, or skip.
+
+## STATUS — LIVE 2026-11-10
+- Approved: DL-P15. All items P2-1 … P2-10 implemented (P2-7 kept with the RPC, per the Director).
+- Owner script `2026-11-10_p2-plans-metadata` applied by the Director; verified with an anonymous RPC probe (42501).
+- PR #17 (memorandum + P2-1…5) and PR #18 (P2-6…10) merged. PR #18 was merged by the ACA on the
+  Director's explicit instruction (one-time exception, DL-P15 item 6).
+- Edge deploy run #17 (42883092208) green: Gate 0 tests → deploy → CORS → anonymous 401. The live bundle contains
+  increment_docx_export and the meta event schema.
+- Open for close-out: sprint record and lessons consolidation, together with the P3 golden eval results.
