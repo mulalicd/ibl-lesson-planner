@@ -62,3 +62,4 @@ initial_instructions.md's "never `main`" rule, not to the unreleased
 - [2026-11-07 04:45] Write: specs/p3-ai-quality/MODEL_AND_QUOTA_FINDINGS.md
 - [2026-11-09 12:18] Write: specs/p3-ai-quality/PSI_V9_ZA_ODOBRENJE.md
 - [2026-11-10 15:17] Write: specs/p2-correctness/SPEC.md
+- [2026-11-13 21:06] Write: src/lib/language/bosnianStandard.ts

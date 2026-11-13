@@ -26,6 +26,8 @@ export const QUALITY_CHECK_LABELS: Record<string, string> = {
   no_english_labels: 'Bez engleskih naslova',
   bosnian_diacritics: 'Ispravna slova č, ć, š, ž, đ',
   sources_marked_to_verify: 'Izvori označeni „ZA PROVJERU“',
+  // DL-P19 (Director 2026-11-13): Bosnian plans in standard Bosnian, Latin script
+  bosnian_standard: 'Bosanski standardni jezik, latinica (bez hrvatizama i srbizama)',
 };
 
 export function qualityCheckLabel(id: string): string {
@@ -33,8 +35,12 @@ export function qualityCheckLabel(id: string): string {
 }
 
 /** The message the "Popravi" button sends (a normal, visible chat message). */
-export function buildRepairMessage(failedIds: string[]): string {
-  const items = failedIds.map((id) => `- ${qualityCheckLabel(id)}`).join('\n');
+export function buildRepairMessage(failedIds: string[], checks: { id: string; detail?: string }[] = []): string {
+  const items = failedIds.map((id) => {
+    const detail = checks.find((c) => c.id === id)?.detail;
+    // The language check names the exact words, so the AI replaces those and only those.
+    return id === 'bosnian_standard' && detail ? `- ${qualityCheckLabel(id)}: ${detail}` : `- ${qualityCheckLabel(id)}`;
+  }).join('\n');
   return [
     'Molim te ispravi ovaj plan i ponovo ga ispiši u cjelini, u istoj strukturi.',
     'Automatska provjera kvaliteta našla je da nedostaje ili nije ispravno:',

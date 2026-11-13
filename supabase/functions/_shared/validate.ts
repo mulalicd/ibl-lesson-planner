@@ -1,3 +1,4 @@
+import { findNonStandardBosnian, hasCyrillic, normalizeBosnian } from "../../../src/lib/language/bosnianStandard.ts";
 // validatePlan — deterministic quality checks for a generated IBL plan (P3).
 //
 // Pure function, no I/O. Used by the ibl-chat Edge Function (final SSE
@@ -158,6 +159,14 @@ export function validatePlan(text: string, params: ValidateParams): ValidationRe
     const ascii = ASCII_FOLDED_BS.filter((re) => re.test(text)).map((re) => re.source);
     const hasDiacritics = /[čćšžđČĆŠŽĐ]/.test(text);
     add("bosnian_diacritics", ascii.length === 0 && hasDiacritics, ascii.length ? `ASCII headings: ${ascii.join(", ")}` : hasDiacritics ? "ok" : "no diacritics at all");
+    // DL-P19: standard Bosnian, Latin script. Grammar-safe fixes are applied in the browser (normalizeBosnian);
+    // this check reports what needs a rewrite, as "found → standard", so "Popravi" can name the words.
+    const fixed = normalizeBosnian(text);
+    const flagged = findNonStandardBosnian(fixed);
+    const cyr = hasCyrillic(fixed);
+    const uniq = [...new Set(flagged.map((h) => `${h.found} → ${h.standard}`))];
+    add("bosnian_standard", flagged.length === 0 && !cyr,
+      cyr ? "Cyrillic letters found" : uniq.length ? uniq.slice(0, 12).join(", ") : "ok");
   }
 
   // External sources must be marked "to verify" (DL-P13 item 2)

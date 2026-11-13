@@ -120,3 +120,14 @@ Deno.test("a generic mention of a textbook is not an unmarked source; a page ref
   if (failed(GOOD_BS + "\n| what a factual textbook might miss, AND |\n").includes("sources_marked_to_verify")) throw new Error("generic word flagged");
   if (failed(GOOD_BS + "\n- Udžbenik Priroda 5, str. 34\n").includes("sources_marked_to_verify") === false) throw new Error("page reference not flagged");
 });
+
+Deno.test("DL-P19: a Croatism in a Bosnian plan fails bosnian_standard and names the word", () => {
+  const r = validatePlan(GOOD_BS.replace("Ukupno: 45 min", "Ukupno: 45 min\nDonesite rajčice."), { language: "bosnian", duration_min: 45 });
+  const c = r.checks.find((x) => x.id === "bosnian_standard");
+  if (!c || c.ok || !c.detail?.includes("rajčice → paradajz")) throw new Error(JSON.stringify(c));
+});
+
+Deno.test("DL-P19: grammar-safe forms do not fail the check (the browser fixes them)", () => {
+  const r = validatePlan(GOOD_BS.replace("Ukupno: 45 min", "Ukupno: 45 min\nDeca rade tačno."), { language: "bosnian", duration_min: 45 });
+  if (!r.checks.find((x) => x.id === "bosnian_standard")?.ok) throw new Error("should pass");
+});
