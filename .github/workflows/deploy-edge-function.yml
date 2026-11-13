@@ -95,9 +95,11 @@ jobs:
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: |
-          if ! out=$(supabase secrets list --project-ref "$PROJECT_REF" -o json 2>&1); then
-            echo "$out"
-            if echo "$out" | grep -q "edge_functions_secrets_read"; then
+          # JSON on stdout only: newer CLIs print "Warning: …" / "Target: project …" lines, which must never
+          # reach jq (deploy #22, 2026-11-13: "jq: parse error"). Those lines go to stderr (err.log).
+          if ! out=$(supabase secrets list --project-ref "$PROJECT_REF" -o json 2>err.log); then
+            cat err.log; echo "$out"
+            if grep -q "edge_functions_secrets_read" err.log || echo "$out" | grep -q "edge_functions_secrets_read"; then
               # Token may deploy but not read secrets. Existence of ALLOWED_ORIGINS and
               # GEMINI_KEY_1 was verified in run #3 (2026-11-06 23:03); the post-deploy
               # CORS check below detects a missing ALLOWED_ORIGINS.
@@ -107,7 +109,11 @@ jobs:
             echo "::error::Could not read Edge Function secrets — the SUPABASE_ACCESS_TOKEN is invalid or expired (see the line above). Nothing was deployed."
             exit 1
           fi
-          names=$(echo "$out" | jq -r '.[].name')
+          # Defensive: if a CLI ever prints text on stdout too, keep only the JSON array (from the first "[").
+          json=$(printf '%s\n' "$out" | sed -n '/^\s*\[/,$p')
+          if ! names=$(printf '%s' "$json" | jq -r '.[].name'); then
+            echo "::error::Could not parse the secrets list (CLI output below). Nothing was deployed."; cat err.log; echo "$out"; exit 1
+          fi
           missing=""
           for s in ALLOWED_ORIGINS GEMINI_KEY_1; do echo "$names" | grep -qx "$s" || missing="$missing $s"; done
           if [ -n "$missing" ]; then

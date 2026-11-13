@@ -312,6 +312,24 @@ Period: 2026-11-07 … 2026-11-13. Detailed entries follow below the summary; th
 - Rule: any fact shown to users that mirrors server state gets either a single source or a test that ties it
   to the server source.
 
+### 2026-11-13 — Environment gotcha: SUPABASE_ACCESS_TOKEN became invalid between two deploys
+- Deploy #20 (23:01 UTC) passed. Deploys #21 and #22 (23:19, 23:26) failed at Gate 3 with "Invalid access
+  token". The gates worked: nothing was deployed, and production stayed on the last good version.
+- The frontend (Vercel) deploys independently, so UI changes (the "PSI v9.1" label) went live while the Edge
+  changes (A17, "rubriku" in the prompt) waited.
+- Rule: after every merge, report BOTH deploy channels separately. A green Vercel deploy says nothing about
+  the Edge Function.
+- A17 eval (run 43526371209): 6/6, 99.4 %, bosnian_standard 4/4. Same score as without A17, so no regression.
+  The Director merged PR #24 before the result arrived; the result confirms it was safe.
+
+### 2026-11-13 — Environment gotcha: an unpinned CLI ("version: latest") changed its output
+- After the new token, deploy #22 failed with "jq: parse error". The newer Supabase CLI prints "Warning: …" /
+  "Target: project …" lines. The workflow merged stderr into stdout (`2>&1`) and fed the mixture to jq.
+- Fix: JSON from stdout only (stderr to err.log), keep only the JSON array, and print a clear error if parsing
+  still fails.
+- Rule: never parse the output of a command that writes `2>&1`. Consider pinning tool versions in deploy
+  workflows; `latest` changes behaviour without a commit.
+
 ### 2026-11-13 — Rule violation caught by tests: a `//` comment inserted mid-line disabled the rest of a list
 - When I added "generir" to the flagged list, I appended a `// …` comment on a line that also held
   tjedan/kruh/…, and the rest of that line was commented out. Two tests (rajčica example, A17 tie) failed at
