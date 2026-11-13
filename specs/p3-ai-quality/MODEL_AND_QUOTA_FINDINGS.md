@@ -269,3 +269,23 @@ of daily exhaustion. Likely consumers of the daily count:
 2. after a 503 the loop moves to the NEXT key, so one teacher request can spend one request on several projects;
 3. two keys from the SAME Google project share one quota.
 [U] Production usage per project: the ACA has no access to the production logs or to the 12 Google projects.
+
+## 5f. Key health check, all 12 production keys (run 43493303418, 2026-11-13 19:33 UTC) — ROOT CAUSE
+These are the GitHub copies of the keys, entered by the Director on 2026-11-13.
+[U] It is unverified whether the Supabase copies are identical.
+
+| Key | gemini-2.5-flash (production model) | gemini-3.5-flash |
+|---|---|---|
+| eval | = the SAME key as prod1 | |
+| prod1 | 429 per-day quota used up (limit=20) | OK |
+| prod2, prod5, prod6, prod8 | OK | OK |
+| prod3 | 402 prepaid credits depleted (billing set up on that project) | 402 |
+| prod4 | 400 key invalid | 400 |
+| prod7 | 403 free tier not available for this project | 403 |
+| prod9, prod10, prod11, prod12 | 404 model not available for this project (new projects) | OK |
+
+[V] Only **5 of the 12** keys can serve today's production model (2.5 Flash): prod1, prod2, prod5, prod6 and
+prod8. prod1 was also the "separate" eval key, so evaluations spent teachers' quota on it.
+[I] This explains the Director's observation that the 12 keys "run out fast": real capacity is about 5 × 20
+requests a day, not 12 × 20. Request size is not the cause.
+[V] On 3.5 Flash, 9 of the 12 keys work. Golden eval on 3.5 Flash (run 43491511345): 6/6 lessons, 21/21.

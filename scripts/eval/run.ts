@@ -53,7 +53,12 @@ if (evalKey) pool.push({ label: "eval", value: evalKey, used: 0, exhausted: "" }
 if (provider === "gemini") {
   for (let i = 1; i <= 20; i++) {
     const v = (Deno.env.get(`GEMINI_KEY_${i}`) ?? "").trim();
-    if (v) pool.push({ label: `prod${i}`, value: v, used: 0, exhausted: "" });
+    if (!v) continue;
+    // 2026-11-13 key check: GEMINI_EVAL_KEY was the SAME key as GEMINI_KEY_1, so the "eval" key spent a
+    // production quota without the cap. A duplicate is relabelled as the production key (capped).
+    const dup = pool.find((k) => k.value === v);
+    if (dup) { console.log(`note: ${dup.label} is the same key as prod${i} — capped as prod${i}`); dup.label = `prod${i}`; continue; }
+    pool.push({ label: `prod${i}`, value: v, used: 0, exhausted: "" });
   }
 }
 const PER_KEY_CAP = Math.max(1, Number(arg("per-key-cap", "4")) || 4);
