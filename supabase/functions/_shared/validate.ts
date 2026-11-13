@@ -58,7 +58,7 @@ const PEDAGOGY_SECTIONS: Record<string, string[]> = {
   studentReflection: ["REFLEKSIJA UCENIKA", "SCHULERREFLEXION", "STUDENT REFLECTION"],
 };
 // Forms of work, any inflection (Grupa/Grupe/u grupama, u paru/u parovima, Frontalno/frontalni rad …).
-const GROUPING = /(INDIVIDUAL|SAMOSTALN|U PAR|PAROVI|GRUP|FRONTAL|CIJELI RAZRED|EINZEL|PARTNER|GRUPPE|PLENUM|PAIRS?\b|GROUPS?\b|WHOLE CLASS)/;
+const GROUPING = /(INDIVID|SAMOSTALN|U PAR|PAROVI|GRUP|FRONTAL|CIJELI RAZRED|EINZEL|PARTNER|GRUPPE|PLENUM|PAIRS?\b|GROUPS?\b|WHOLE CLASS)/;
 const ALL_HEADINGS = [...Object.values(SECTIONS).flat(), ...Object.values(PEDAGOGY_SECTIONS).flat()];
 
 /** Lines of the section that starts at the first line containing one of `keys`, up to the next known heading. */
