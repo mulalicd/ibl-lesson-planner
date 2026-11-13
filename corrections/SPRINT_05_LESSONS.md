@@ -205,3 +205,11 @@ Date: 2026-11-07
   If it is, tell the owner, or hold the push until it is merged. State the required order in the PR itself.
 - Also: the build warned that docx moved into the initial bundle (static import).
   Read build warnings after every change.
+
+## Observation (2026-11-13) — pause automation when the owner's budget is low
+- The Director warned that only 4% of his Claude usage was left until Friday. The daily scheduled
+  eval task would have used it up on its own. The ACA disabled it, left a handoff file
+  (HANDOFF_2026-11-10.md), and re-enabled it on Friday. Lesson: scheduled tasks spend the owner's
+  budget without him asking. When budget is mentioned, list and pause them first.
+- P4 SPEC: half of the audit's P4 scope was already delivered by PSI v9. Lesson (again):
+  re-check inherited scope against what is live before specifying.
