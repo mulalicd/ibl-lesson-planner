@@ -27,7 +27,7 @@ export const QUALITY_CHECK_LABELS: Record<string, string> = {
   bosnian_diacritics: 'Ispravna slova č, ć, š, ž, đ',
   sources_marked_to_verify: 'Izvori označeni „ZA PROVJERU“',
   // DL-P19 (Director 2026-11-13): Bosnian plans in standard Bosnian, Latin script
-  bosnian_standard: 'Bosanski standardni jezik, latinica (bez hrvatizama i srbizama)',
+  bosnian_standard: 'Bosanski jezik', // wording approved by the Director 2026-11-13
 };
 
 export function qualityCheckLabel(id: string): string {

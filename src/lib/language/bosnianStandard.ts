@@ -60,10 +60,10 @@ export type FlaggedWord = { found: string; standard: string };
 // [regex body, prefix?, standard word]. Exact forms where a stem would also hit a correct Bosnian word
 // ("vlakno", "siječe", "kolovoz" = roadway, which is why August is not listed).
 const FLAGGED: [string, boolean, string][] = [
-  ["rajčic", true, "paradajz"], ["tjedn", true, "sedmica"], ["tjedan", false, "sedmica"], ["kruh", true, "hljeb"],
+  ["rajčic", true, "paradajz"], ["tjedn", true, "sedmica"], ["tjedan", false, "sedmica"], ["kruh", true, "hljeb"], // Director 2026-11-13: only "hljeb"
   ["sveučilišt", true, "univerzitet"], ["nogomet", true, "fudbal"], ["glazb", true, "muzika"],
   ["kazališt", true, "pozorište"], ["povijes", true, "historija"], ["znanost", true, "nauka"],
-  ["znanstven", true, "naučni"], ["obitelj", true, "porodica"], ["tvornic", true, "fabrika"],
+  ["znanstven", true, "naučni"], ["obitelj", true, "porodica"], ["tvornic", true, "fabrika"], // Director 2026-11-13: only "fabrika"
   ["vlak(?:a|u|om|ovi|ova|ovima)?", false, "voz"], ["bezbedn", true, "siguran / sigurnost"],
   ["siječ(?:anj|nja|nju)", false, "januar"], ["veljač", true, "februar"], ["ožuj", true, "mart"],
   ["trav(?:anj|nja|nju)", false, "april"], ["svib(?:anj|nja|nju)", false, "maj"], ["lip(?:anj|nja|nju)", false, "juni"],
