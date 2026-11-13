@@ -42,8 +42,33 @@ const modelId = provider === "groq" ? model.slice(5) : model;
 if (provider === "gemini" && !/^gemini-[a-z0-9.\-]+$/.test(modelId)) { console.error(`invalid model ${model}`); Deno.exit(2); }
 if (provider === "groq" && !/^[A-Za-z0-9._\-\/]+$/.test(modelId)) { console.error(`invalid model ${model}`); Deno.exit(2); }
 const keyName = provider === "groq" ? "GROQ_EVAL_KEY" : "GEMINI_EVAL_KEY";
-const key = Deno.env.get(keyName) ?? "";
-if (!key) { console.error(`${keyName} missing`); Deno.exit(2); }
+// Key pool (Director 2026-11-13): the eval key first, then the production keys GEMINI_KEY_1..20 when the
+// workflow passes them. Quotas are per Google project and model; each production key is used at most
+// PER_KEY_CAP times per run, so teachers keep the rest of that project's daily quota.
+// Logs name a key only by its label (eval, prod3), never by its value.
+type PoolKey = { label: string; value: string; used: number; exhausted: string };
+const pool: PoolKey[] = [];
+const evalKey = (Deno.env.get(keyName) ?? "").trim();
+if (evalKey) pool.push({ label: "eval", value: evalKey, used: 0, exhausted: "" });
+if (provider === "gemini") {
+  for (let i = 1; i <= 20; i++) {
+    const v = (Deno.env.get(`GEMINI_KEY_${i}`) ?? "").trim();
+    if (!v) continue;
+    // 2026-11-13 key check: GEMINI_EVAL_KEY was the SAME key as GEMINI_KEY_1, so the "eval" key spent a
+    // production quota without the cap. A duplicate is relabelled as the production key (capped).
+    const dup = pool.find((k) => k.value === v);
+    if (dup) { console.log(`note: ${dup.label} is the same key as prod${i} — capped as prod${i}`); dup.label = `prod${i}`; continue; }
+    pool.push({ label: `prod${i}`, value: v, used: 0, exhausted: "" });
+  }
+}
+const PER_KEY_CAP = Math.max(1, Number(arg("per-key-cap", "4")) || 4);
+if (pool.length === 0) { console.error(`${keyName} missing (and no GEMINI_KEY_n)`); Deno.exit(2); }
+console.log(`key pool: ${pool.map((k) => k.label).join(", ")} (production keys: max ${PER_KEY_CAP} requests each)`);
+const key = pool[0].value; // groq:list uses the single eval key
+/** Next usable key: not exhausted today; production keys under the per-run cap. */
+function pickKey(): PoolKey | undefined {
+  return pool.find((k) => !k.exhausted && (k.label === "eval" || k.used < PER_KEY_CAP));
+}
 // "groq:list" prints the models this Groq key may use (no guessing of model ids, M-4) and exits.
 if (provider === "groq" && modelId === "list") {
   const r = await fetch("https://api.groq.com/openai/v1/models", { headers: { Authorization: `Bearer ${key}` }, signal: AbortSignal.timeout(20_000) });
@@ -91,11 +116,19 @@ async function generate(messages: AiMessage[]) {
   const url = provider === "groq"
     ? "https://api.groq.com/openai/v1/chat/completions"
     : `https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent`;
-  const headers: Record<string, string> = provider === "groq"
-    ? { "Content-Type": "application/json", Authorization: `Bearer ${key}` }
-    : { "Content-Type": "application/json", "x-goog-api-key": key };
   if (dailyQuotaHit) return { ok: false as const, ms: 0, error: `skipped: daily quota exhausted (${dailyQuotaHit})` };
   for (let attempt = 1; attempt <= 4; attempt++) {
+    const pk = provider === "groq" ? pool[0] : pickKey();
+    if (!pk) {
+      dailyQuotaHit = `all ${pool.length} keys exhausted or at the per-key cap`;
+      console.warn(`  ${dailyQuotaHit} — stopping`);
+      return { ok: false as const, ms: 0, error: dailyQuotaHit };
+    }
+    pk.used++; // every attempt counts against the project's daily requests (503s most likely too)
+    const headers: Record<string, string> = provider === "groq"
+      ? { "Content-Type": "application/json", Authorization: `Bearer ${pk.value}` }
+      : { "Content-Type": "application/json", "x-goog-api-key": pk.value };
+    console.log(`  key ${pk.label} (request ${pk.used})`);
     const wait = lastCall + MIN_INTERVAL_MS - Date.now();
     if (wait > 0) await sleep(wait);
     lastCall = Date.now();
@@ -118,14 +151,27 @@ async function generate(messages: AiMessage[]) {
       const errText = await resp.text();
       const perDay = errText.match(/"quotaId":\s*"([^"]*PerDay[^"]*)"/);
       if (resp.status === 429 && perDay) {
-        dailyQuotaHit = perDay[1];
-        console.warn(`  HTTP 429 daily quota exhausted (${perDay[1]}) — stopping, no retries`);
-        return { ok: false as const, ms, error: `daily quota exhausted (${perDay[1]})` };
+        pk.exhausted = perDay[1];
+        console.warn(`  HTTP 429 key ${pk.label}: daily quota exhausted (${perDay[1]}) — next key`);
+        attempt--; // a dead key is not a retry of this plan
+        continue;
       }
       if (provider === "groq") console.warn(`  groq ${resp.status} retry-after=${resp.headers.get("retry-after")} ${errText.slice(0, 300)}`);
       console.warn(`  HTTP ${resp.status}, retry ${attempt}`);
       await sleep(20_000 * attempt);
       continue;
+    }
+    // A key that is invalid (400 API_KEY_INVALID), out of prepaid credit (402) or has no free tier (403)
+    // is dead for this run: skip it and try the same plan with the next key.
+    if (provider === "gemini" && [400, 402, 403].includes(resp.status)) {
+      const errText = await resp.text();
+      if (resp.status !== 400 || errText.includes("API_KEY_INVALID")) {
+        pk.exhausted = `HTTP ${resp.status} ${errText.match(/"message":\s*"([^"]{0,90})/)?.[1] ?? ""}`;
+        console.warn(`  key ${pk.label} unusable: ${pk.exhausted} — next key`);
+        attempt--;
+        continue;
+      }
+      return { ok: false as const, ms, error: `HTTP ${resp.status}: ${errText.slice(0, 300)}` };
     }
     const json = await resp.json();
     if (!resp.ok) return { ok: false as const, ms, error: `HTTP ${resp.status}: ${JSON.stringify(json).slice(0, 300)}` };
@@ -173,6 +219,7 @@ async function writeOutputs(): Promise<string> {
   }
   const errs = rows.filter((r) => !r.ok);
   if (errs.length) lines.push("", "## Errors", "", ...errs.map((e) => `- ${e.variant} ${e.id}: ${e.error}`));
+  lines.push("", "## Keys used (requests this run; label only)", "", ...pool.map((k) => `- ${k.label}: ${k.used}${k.exhausted ? ` — not usable: ${k.exhausted}` : ""}`));
   await Deno.writeTextFile(`${out}/report.md`, lines.join("\n") + "\n");
   return lines.join("\n");
 

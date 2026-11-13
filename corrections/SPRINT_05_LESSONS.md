@@ -205,3 +205,38 @@ Date: 2026-11-07
   If it is, tell the owner, or hold the push until it is merged. State the required order in the PR itself.
 - Also: the build warned that docx moved into the initial bundle (static import).
   Read build warnings after every change.
+
+## Observation (2026-11-13) — pause automation when the owner's budget is low
+- The Director warned that only 4% of his Claude usage was left until Friday. The daily scheduled
+  eval task would have used it up on its own. The ACA disabled it, left a handoff file
+  (HANDOFF_2026-11-10.md), and re-enabled it on Friday. Lesson: scheduled tasks spend the owner's
+  budget without him asking. When budget is mentioned, list and pause them first.
+- P4 SPEC: half of the audit's P4 scope was already delivered by PSI v9. Lesson (again):
+  re-check inherited scope against what is live before specifying.
+
+### 2026-11-13 — Course correction: eval may use the production keys (Director)
+- Context: the separate eval key gives ~1–20 plans/day; the Director refused to wait days for results.
+- Decision (Director): use all 12 production keys for probes/evaluations.
+- Implementation: eval key first, then GEMINI_KEY_1..12 (GitHub Repository secrets), at most `per_key_cap`
+  (default 4) requests per production key per run; a per-day 429 moves to the next key instead of stopping.
+  Logs show key labels only.
+- Lesson: a quota bottleneck on a test-only key should be raised with the owner as a choice early
+  (test key vs. capped production keys) instead of planning around it for days.
+
+### 2026-11-13 — Rule violation (M-4 / evidence): "the eval never touches production keys" was wrong
+- What happened: I told the Director several times that GEMINI_EVAL_KEY is a separate project. The first key
+  check showed it is the SAME key as GEMINI_KEY_1, so evals spent a production key's quota uncapped.
+- Root cause: I took a configuration claim (the workflow comment, plus an earlier statement) as fact without
+  a check that compares key identity.
+- Fix: run.ts deduplicates by value and caps a duplicate as the production key; keycheck.ts flags duplicate keys.
+- Rule: any claim about which credential is used where needs a measured check (an identity comparison
+  without printing values) before it is stated to the Director.
+- Also learned: 7 of 12 production keys were unusable for 2.5 Flash. A periodic one-request-per-key health
+  check would have found this weeks earlier.
+
+### 2026-11-13 — Course correction: one PR per approved change (Director: "Nova grana da")
+- The working branch also held the unapproved PSI v9.1 draft (inert, PRODUCTION_PSI = "v90").
+- With the Director's permission, I created a separate branch `claude/model-fallback` from main and cherry-picked
+  only the model fallback (DL-P18) and the eval and key-check tools.
+- Lesson: when a branch mixes an approved change with one that awaits approval, propose the split before
+  opening the PR, not after.

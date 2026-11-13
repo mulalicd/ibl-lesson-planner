@@ -17,7 +17,7 @@ import { createGeminiToOpenAiTransform } from "../_shared/sse.ts";
 import { buildProductionMessages } from "../_shared/prompt.ts";
 import { PSI_V81_PROMPT } from "../_shared/psi_v81.ts";
 import { validatePlan } from "../_shared/validate.ts";
-import { GEMINI_GENERATION_CONFIG } from "../_shared/generation.ts";
+import { classifyGeminiFailure, GEMINI_GENERATION_CONFIG, GEMINI_MODELS } from "../_shared/generation.ts";
 
 // ─── CORS (allow-list, never "*") ────────────────────────────────────────────
 const ALLOWED_ORIGINS = (Deno.env.get("ALLOWED_ORIGINS") ?? "")
@@ -111,67 +111,64 @@ async function callGemini(
   const statuses: Record<string, number | string> = {};
   let overloadWaitedMs = 0;
   let overloadStreak = 0;
+  // DL-P18 (2026-11-13): per key, the primary model first, then the fallback model on the SAME key
+  // (quotas are per project AND per model). A dead key (invalid / no free tier / billing) is skipped.
   for (let i = 0; i < GEMINI_KEYS.length; i++) {
     const keyIndex = (startIndex + i) % GEMINI_KEYS.length;
     const apiKey = GEMINI_KEYS[keyIndex];
-    if (overloadStreak > 0 && overloadWaitedMs < OVERLOAD_WAIT_BUDGET_MS) {
-      const wait = Math.min(1000 * 2 ** (overloadStreak - 1), OVERLOAD_WAIT_BUDGET_MS - overloadWaitedMs);
-      await new Promise((r) => setTimeout(r, wait));
-      overloadWaitedMs += wait;
-    }
-    // Key in a header, never in the URL (it would land in proxy/access logs).
-    const geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse";
+    for (const model of GEMINI_MODELS) {
+      const label = `key${keyIndex + 1}/${model === GEMINI_MODELS[0] ? "primary" : "fallback"}`;
+      if (overloadStreak > 0 && overloadWaitedMs < OVERLOAD_WAIT_BUDGET_MS) {
+        const wait = Math.min(1000 * 2 ** (overloadStreak - 1), OVERLOAD_WAIT_BUDGET_MS - overloadWaitedMs);
+        await new Promise((r) => setTimeout(r, wait));
+        overloadWaitedMs += wait;
+      }
+      // Key in a header, never in the URL (it would land in proxy/access logs).
+      const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse`;
 
-    try {
-      const resp = await fetch(geminiUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
-        body: JSON.stringify({
-          system_instruction: { parts: [{ text: systemInstruction }] },
-          contents,
-          generationConfig: GEMINI_GENERATION_CONFIG,
-        }),
-      });
+      try {
+        const resp = await fetch(geminiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
+          body: JSON.stringify({
+            system_instruction: { parts: [{ text: systemInstruction }] },
+            contents,
+            generationConfig: GEMINI_GENERATION_CONFIG,
+          }),
+        });
 
-      statuses[`key${keyIndex + 1}`] = resp.status;
-      if (resp.status === 503 || resp.status === 500) {
-        overloadStreak++;
-        await resp.body?.cancel();
-        console.warn(`Gemini key ${keyIndex + 1}: ${resp.status} (Google overloaded), backing off`);
+        if (!resp.ok) {
+          const errText = await resp.text();
+          const kind = classifyGeminiFailure(resp.status, errText);
+          const quotaId = errText.match(/"quotaId":\s*"([^"]+)"/)?.[1];
+          statuses[label] = quotaId ? `${resp.status}:${quotaId}` : resp.status;
+          console.warn(`Gemini ${label}: ${resp.status} -> ${kind}`);
+          if (kind === "overloaded") { overloadStreak++; continue; }
+          overloadStreak = 0;
+          if (kind === "dead-key") break;
+          continue; // next-model
+        }
+        statuses[label] = resp.status;
+        overloadStreak = 0;
+
+        // D-1 fix (P3): one streaming decoder + line buffer across chunks.
+        // P3 (DL-P13 item 5): when the request carries lesson params, the full text is
+        // checked at the end and ONE extra event {"type":"validation",...} is sent.
+        // Clients that do not know the event ignore it (no `choices`).
+        // P2-6: one more closing event tells the browser which key served the plan (0-based);
+        // DL-P18 adds which model served it (the browser schema ignores the extra field).
+        const meta = JSON.stringify({ type: "meta", key_index: keyIndex, model });
+        const transformStream = createGeminiToOpenAiTransform((full) => [onComplete ? onComplete(full) : null, meta]);
+
+        return new Response(resp.body!.pipeThrough(transformStream), {
+          headers: { ...cors, "Content-Type": "text/event-stream" },
+        });
+
+      } catch (err) {
+        statuses[label] = "network";
+        logError(`callGemini ${label}`, err);
         continue;
       }
-      overloadStreak = 0;
-      if (resp.status === 429) {
-        const errText = await resp.text();
-        const quotaId = errText.match(/"quotaId":\s*"([^"]+)"/)?.[1] ?? "?";
-        statuses[`key${keyIndex + 1}`] = `429:${quotaId}`;
-        console.warn(`Gemini key ${keyIndex + 1}: 429 quota ${quotaId}, trying next`);
-        continue;
-      }
-
-      if (!resp.ok) {
-        const errText = await resp.text();
-        // e.g. 403/404 when a NEW Google project has no access to gemini-2.5-flash
-        console.error(`Gemini key ${keyIndex + 1} error ${resp.status}:`, errText.slice(0, 500));
-        continue;
-      }
-
-      // D-1 fix (P3): one streaming decoder + line buffer across chunks.
-      // P3 (DL-P13 item 5): when the request carries lesson params, the full text is
-      // checked at the end and ONE extra event {"type":"validation",...} is sent.
-      // Clients that do not know the event ignore it (no `choices`).
-      // P2-6: one more closing event tells the browser which key served the plan (0-based).
-      const meta = JSON.stringify({ type: "meta", key_index: keyIndex });
-      const transformStream = createGeminiToOpenAiTransform((full) => [onComplete ? onComplete(full) : null, meta]);
-
-      return new Response(resp.body!.pipeThrough(transformStream), {
-        headers: { ...cors, "Content-Type": "text/event-stream" },
-      });
-
-    } catch (err) {
-      statuses[`key${keyIndex + 1}`] = "network";
-      logError(`callGemini key ${keyIndex + 1}`, err);
-      continue;
     }
   }
 
