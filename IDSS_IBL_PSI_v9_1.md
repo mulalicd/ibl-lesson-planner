@@ -2,7 +2,7 @@
 ================================================================================
 PERFECT SYSTEM INSTRUCTIONS (PSI) — IBL LESSON PLAN CREATOR
 Internationale Deutsche Schule Sarajevo (IDSS)
-Universal Platform Edition | v9.1 DRAFT | 2026-11-13 (v9.0 approved 2026-11-10 + amendment A16)
+Universal Platform Edition | v9.1 | approved by the Director 2026-11-13 (v9.0 approved 2026-11-10 + amendment A16)
 Compatible: ChatGPT, Claude, Grok, DeepSeek, Gemini, Magic School AI
 Execute immediately upon copy/paste — no setup, no configuration required
 ================================================================================
@@ -185,7 +185,7 @@ A14 — FOOTER LANGUAGE (Director decision, 2026-11-07)
   - The mandatory footer of Module 3.12 always keeps its Bosnian wording,
     in every output language. It is the only exception to A1.
 
-A16 — A LESSON FLOW ANY TEACHER CAN RUN (P4, Director 2026-11-13; DRAFT for approval)
+A16 — A LESSON FLOW ANY TEACHER CAN RUN (P4, approved by the Director 2026-11-13)
   Inside PREPORUKE ZA IZVOĐENJE ČASA, directly after VREMENSKA LINIJA ČASA, print Module 3.9B:
   - MATERIJALI ZA ČAS / MATERIALIEN FÜR DIE STUNDE / MATERIALS FOR THE LESSON — ONE checklist of
     everything to prepare (evidence items, visuals, worksheets, objects, technology), each with the

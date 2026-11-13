@@ -17,11 +17,12 @@ export type PromptVariant = "v81" | "psi";
 /**
  * THE switch for the production prompt (DL-P13 item 1).
  * "v90" since 2026-11-10: the Director approved the PSI v9.0 text ("PSI v9 odobren").
+ * "v91" since 2026-11-13: the Director approved the PSI v9.1 text and the 6 lesson-flow labels ("odobreno", DL-P20).
  * Rollback = set back to "v81" and deploy.
  */
 export type ProductionPsi = "v81" | "v90" | "v91";
-// v91 = PSI v9.1 DRAFT (P4, amendment A16): only for evaluation until the Director approves its text.
-export const PRODUCTION_PSI: ProductionPsi = "v90";
+// Rollback: "v90" (PSI v9.0) and one deploy.
+export const PRODUCTION_PSI: ProductionPsi = "v91";
 
 /** P4: the stricter pedagogy checks (A16) apply only to plans written under v9.1. */
 export const pedagogyChecksFor = (psi: ProductionPsi): boolean => psi === "v91";

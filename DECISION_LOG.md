@@ -525,3 +525,22 @@ kopirati naš sadržaj kao industrijski primjer."
 3. The `meta` event names the model that served the plan.
 4. Stays free tier (DL-P14). The Director will not pay. Key 3 (the "Tier 1" project, $0, no credits) is removed from use.
 5. Rollback: set `GEMINI_MODELS` to the primary model only, then one deploy.
+
+## DL-P20 — PSI v9.1 goes live (Director, 2026-11-13)
+
+**Decided by:** Director. The answer "odobreno dalj" was given to the approval package
+`specs/p4-pedagogy/PSI_V9_1_ZA_ODOBRENJE.md`. That package asked for "PSI v9.1 odobren" plus approval of
+the 6 labels.
+
+**Evidence presented** (run 43516098104):
+- 6/6 golden lessons, average 99.4 %, 5/6 fully passing.
+- The only remaining failure was the abbreviation "Individ.", which the validator now accepts.
+- New sections: Materijali 6/6, Tok časa 6/6, Predstavljanje nalaza 6/6, Refleksija učenika 6/6,
+  alignment 6/6.
+
+**Decision:**
+1. `PRODUCTION_PSI = "v91"`. The source is `IDSS_IBL_PSI_v9_1.md` (renamed from the draft; only the
+   status line changed).
+2. The A16 checks are on in production: `section_materials`, `section_flow`, `section_presentation`,
+   `section_studentReflection`, `phases_complete`, `outcomes_aligned`. The 6 labels are approved as proposed.
+3. Rollback: `PRODUCTION_PSI = "v90"`, then one deploy. v9.0 plans are not judged by the A16 rules.

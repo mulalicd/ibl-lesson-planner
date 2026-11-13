@@ -27,7 +27,7 @@ try {
 } catch { /* no v9 yet */ }
 try {
   const mod = await import("../../supabase/functions/_shared/psi_v91.generated.ts");
-  VARIANTS.v91 = { kind: "psi", text: (mod as Record<string, string>).PSI_V91_PROMPT, label: "PSI v9.1 draft (P4, A16)" };
+  VARIANTS.v91 = { kind: "psi", text: (mod as Record<string, string>).PSI_V91_PROMPT, label: "PSI v9.1 (P4, A16; production since DL-P20)" };
 } catch { /* no v9.1 */ }
 
 const arg = (name: string, def: string) => {

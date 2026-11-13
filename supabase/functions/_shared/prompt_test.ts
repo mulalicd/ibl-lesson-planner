@@ -13,11 +13,11 @@ const chat = IblChatRequestSchema.parse({
   params,
 });
 
-Deno.test("production uses PSI v9 — approved by the Director on 2026-11-10 (DL-P13)", () => {
+Deno.test("production uses PSI v9.1 — approved by the Director on 2026-11-13 (DL-P20)", () => {
   // Changing this value changes what every teacher gets; it needs the Director's approval.
-  if (PRODUCTION_PSI !== "v90") throw new Error(`PRODUCTION_PSI is ${PRODUCTION_PSI}; the approved production prompt is v90`);
+  if (PRODUCTION_PSI !== "v91") throw new Error(`PRODUCTION_PSI is ${PRODUCTION_PSI}; the approved production prompt is v91`);
   for (const req of [gen, chat]) {
-    if (JSON.stringify(buildProductionMessages(req)) !== JSON.stringify(buildProductionMessages(req, "v90"))) throw new Error("default differs from v90");
+    if (JSON.stringify(buildProductionMessages(req)) !== JSON.stringify(buildProductionMessages(req, "v91"))) throw new Error("default differs from v91");
   }
 });
 
@@ -41,10 +41,11 @@ Deno.test("switched to v90: chat sends the plan exactly once (audit D-6)", () =>
   if (m[m.length - 1].content !== "Popravi udicu.") throw new Error("last message must be the teacher's request");
 });
 
-Deno.test("PSI v9.1 is wired for evaluation but NOT in production until approved (P4)", async () => {
+Deno.test("PSI v9.1 is live with its lesson-flow checks (P4, DL-P20)", async () => {
   const { PSI_V91_PROMPT } = await import("./psi_v91.generated.ts");
   const { pedagogyChecksFor } = await import("./prompt.ts");
   if (buildProductionMessages(gen, "v91")[0].content !== PSI_V91_PROMPT) throw new Error("v91 not wired");
   if (!PSI_V91_PROMPT.includes("A16") || !PSI_V91_PROMPT.includes("TOK ČASA")) throw new Error("v91 lacks A16");
-  if (pedagogyChecksFor(PRODUCTION_PSI)) throw new Error("pedagogy checks must stay off while production is not v91");
+  if (!pedagogyChecksFor(PRODUCTION_PSI)) throw new Error("the A16 checks must be on in production with v91");
+  if (pedagogyChecksFor("v90")) throw new Error("v9.0 plans (rollback) must not be judged by A16 rules");
 });

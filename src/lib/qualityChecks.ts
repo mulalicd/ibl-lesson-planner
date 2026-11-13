@@ -26,7 +26,7 @@ export const QUALITY_CHECK_LABELS: Record<string, string> = {
   no_english_labels: 'Bez engleskih naslova',
   bosnian_diacritics: 'Ispravna slova č, ć, š, ž, đ',
   sources_marked_to_verify: 'Izvori označeni „ZA PROVJERU“',
-  // P4 (PSI v9.1) — PROPOSED wording, approved together with the v9.1 text; shown only when v9.1 is live.
+  // P4 (PSI v9.1) — wording approved by the Director together with the v9.1 text, 2026-11-13 (DL-P20).
   section_materials: 'Materijali za čas',
   section_flow: 'Tok časa (tabela faza)',
   section_presentation: 'Predstavljanje nalaza',

@@ -4,7 +4,7 @@
 **Osnova:** PSI v9.1 je **cijeli odobreni PSI v9.0 + jedna nova dopuna A16** i novi šablon (modul 3.9B).
 Ništa iz v9.0 se ne briše i ne mijenja.
 
-Puni tekst: `IDSS_IBL_PSI_v9_1_draft.md` (dopuna A16 i modul 3.9B).
+Puni tekst: `IDSS_IBL_PSI_v9_1.md` (dopuna A16 i modul 3.9B).
 
 ## Šta dopuna A16 dodaje svakoj pripremi
 Svi dijelovi se ispisuju unutar „Preporuke za izvođenje časa“, odmah poslije vremenske linije.
