@@ -28,6 +28,6 @@ describe('DL-P19 Bosnian standard layer', () => {
   });
   it('"Popravi" names the exact words to replace', () => {
     const msg = buildRepairMessage(['bosnian_standard'], [{ id: 'bosnian_standard', detail: 'rajčice → paradajz' }]);
-    expect(msg).toContain('bez hrvatizama i srbizama): rajčice → paradajz');
+    expect(msg).toContain('- Bosanski jezik: rajčice → paradajz');
   });
 });

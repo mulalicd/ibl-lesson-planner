@@ -534,7 +534,7 @@ His example: "rajčica". Live since PR #20 (deploy #19, 2026-11-13).
 
 **Open:**
 
-- The badge label wording awaits the Director's approval.
+- Badge label approved by the Director 2026-11-13: "Bosanski jezik" (no additions).
 - PSI amendment A17 (prevention at the source) needs approval of its wording.
 - German and English plans: a dictionary-based check is the candidate; not decided yet.
 - "Missing letters" needs an example before a cause is named.
