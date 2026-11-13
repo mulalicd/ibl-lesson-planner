@@ -57,7 +57,8 @@ const PEDAGOGY_SECTIONS: Record<string, string[]> = {
   presentation: ["PREDSTAVLJANJE NALAZA", "PRASENTATION DER ERGEBNISSE", "PRESENTING FINDINGS"],
   studentReflection: ["REFLEKSIJA UCENIKA", "SCHULERREFLEXION", "STUDENT REFLECTION"],
 };
-const GROUPING = /(INDIVIDUALNO|U PARU|GRUPA|FRONTALNO|EINZEL|PARTNER|GRUPPE|PLENUM|INDIVIDUAL|PAIRS?|GROUPS?|WHOLE CLASS)/;
+// Forms of work, any inflection (Grupa/Grupe/u grupama, u paru/u parovima, Frontalno/frontalni rad …).
+const GROUPING = /(INDIVIDUAL|SAMOSTALN|U PAR|PAROVI|GRUP|FRONTAL|CIJELI RAZRED|EINZEL|PARTNER|GRUPPE|PLENUM|PAIRS?\b|GROUPS?\b|WHOLE CLASS)/;
 const ALL_HEADINGS = [...Object.values(SECTIONS).flat(), ...Object.values(PEDAGOGY_SECTIONS).flat()];
 
 /** Lines of the section that starts at the first line containing one of `keys`, up to the next known heading. */
@@ -85,7 +86,8 @@ function pedagogyChecks(text: string, add: (id: string, ok: boolean, detail: str
   const rows = flow.filter((l) => (l.match(/\|/g) ?? []).length >= 4 && /\b\d{1,3}\s*[-–]\s*\d{1,3}\b|\b\d{1,3}\s*MIN/.test(l) && !/UKUPNO|GESAMT|TOTAL/.test(l));
   const withForm = rows.filter((l) => GROUPING.test(l)).length;
   add("phases_complete", rows.length >= 3 && withForm === rows.length,
-    rows.length < 3 ? `only ${rows.length} phase rows with minutes` : `${withForm}/${rows.length} rows state the form of work`);
+    rows.length < 3 ? `only ${rows.length} phase rows with minutes`
+      : `${withForm}/${rows.length} rows state the form of work${withForm < rows.length ? `; e.g. ${rows.find((l) => !GROUPING.test(l))!.replace(/\s+/g, " ").trim().slice(0, 160)}` : ""}`);
   // P4-6: every outcome I1–I4 is used again later in the plan, and there is one "Mogu …" per outcome
   const outcomeLines = sectionLines(foldedLines, SECTIONS.outcomes, 30).join("\n");
   const ids = [...new Set([...outcomeLines.matchAll(/\bI([1-4])\b/g)].map((m) => m[1]))];

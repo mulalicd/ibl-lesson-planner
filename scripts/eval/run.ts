@@ -267,6 +267,12 @@ for (const g of inputs) {
       const tl = (r.text as string).split("\n").filter((l: string) => /(ukupno|gesamt|total|\d+\s*[-–]\s*\d+\s*min|\d{1,2}:\d{2})/i.test(l)).slice(0, 25);
       console.log(`     timeline lines:\n${tl.map((l: string) => "       " + l.trim()).join("\n")}`);
     }
+    if (report.failed.some((id) => id.startsWith("section_"))) {
+      // which headings the model actually wrote (to tell a missing section from a renamed one)
+      const heads = (r.text as string).split("\n").map((l: string) => l.replace(/[|=]/g, "").trim())
+        .filter((l: string) => l.length > 4 && l.length < 70 && l === l.toUpperCase() && /\p{Lu}{4}/u.test(l));
+      console.log(`     headings:\n${heads.slice(0, 60).map((l: string) => "       " + l).join("\n")}`);
+    }
     if (report.failed.includes("sources_marked_to_verify")) {
       const d = report.checks.find((c) => c.id === "sources_marked_to_verify")?.detail;
       console.log(`     sources detail: ${d}`);
