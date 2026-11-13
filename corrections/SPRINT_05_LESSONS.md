@@ -245,3 +245,9 @@ Date: 2026-11-07
 - I tried `--force-with-lease` after restarting a merged branch from main. The safety classifier refused it.
 - It was not needed: the remote branch tip was already an ancestor of main (it had been merged).
 - Rule: run `git merge-base --is-ancestor origin/<branch> HEAD` first. If true, use a plain push.
+
+### 2026-11-13 — Environment gotcha: dispatching a workflow in parallel with the push
+- I sent "commit && push" and the workflow dispatch in the same parallel batch. The run started on the
+  previous commit. I caught it by comparing the run's head_sha with the local HEAD, cancelled the run, and
+  dispatched again. No quota was spent.
+- Rule: dispatch only after the push has returned, then check that the run's head_sha equals the local HEAD.
