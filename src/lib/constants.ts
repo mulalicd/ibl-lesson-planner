@@ -78,9 +78,13 @@ export const TIER_CONFIG = {
   EXTENDED: { label: 'Produženi čas',  range: '91+ min',   hookMin: '8-12', investigationMin: '60-75', conclusionMin: '20-30', evidenceMax: 5, socraticCount: 4, productComplexity: 'complex' },
 } as const;
 
+/** The PSI version shown in the UI (header, status bar, footer, exports). ONE place (M-7).
+ *  Must equal PRODUCTION_PSI in supabase/functions/_shared/prompt.ts; a test fails the build otherwise. */
+export const PSI_VERSION_LABEL = 'PSI v9.1';
+
 export const MODE_C_SUGGESTIONS = [
   'Predloži alternativnu udicu',
-  'Generiraj rubrik za ocjenjivanje dokaza učenja',
+  'Generiraj rubriku za ocjenjivanje dokaza učenja', // Director 2026-11-13: "rubriku"
   'Prilagodi plan za 45 minuta',
   'Predloži konkretan video za dokazni materijal',
   'Kako prilagoditi za učenike sa posebnim potrebama?',

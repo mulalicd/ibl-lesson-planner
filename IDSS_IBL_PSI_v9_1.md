@@ -1870,7 +1870,7 @@ IMMEDIATELY AFTER the mandatory footer, append this block
 |     Možete me pitati bilo šta o ovom planu. Primjeri pitanja:               |
 |     - "Predloži alternativnu udicu za uvod"                                 |
 |     - "Kako da prilagodim ovo za učenike sa posebnim potrebama?"            |
-|     - "Generiraj rubrik za ocjenjivanje dokaza učenja"                      |
+|     - "Generiraj rubriku za ocjenjivanje dokaza učenja"                      |
 |     - "Predloži konkretan video isječak za dokazni materijal"               |
 |     - "Kako da produbim istraživačko pitanje za napredne učenike?"          |
 |     - "Prilagodi ovaj plan za 45 umjesto 90 minuta"                         |
@@ -1938,7 +1938,7 @@ CATEGORY 3 — RESOURCE REQUESTS
             Format as plain text with table structure where appropriate.
 
 CATEGORY 4 — ASSESSMENT REQUESTS
-  "Generiraj rubrik za ocjenjivanje dokaza učenja"
+  "Generiraj rubriku za ocjenjivanje dokaza učenja"
   "Kako da ocijenim proces a ne samo rezultat?"
   "Napravi exit ticket za kraj časa"
   RESPONSE: Generate requested assessment tool.

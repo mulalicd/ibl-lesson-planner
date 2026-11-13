@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { PSI_VERSION_LABEL } from '@/lib/constants';
 import { motion } from 'framer-motion';
 import { FileDown, Loader2, CheckCircle2, XCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -114,7 +115,7 @@ export default function ConversationExportButton({ messages, className }: Conver
       // Footer
       children.push(
         new Paragraph({
-          children: [new TextRun({ text: 'IBL Planer v2.0 · PSI v8.0 · IDSS Sarajevo', size: 18, font: 'Arial', color: 'AAAAAA', italics: true })],
+          children: [new TextRun({ text: `IBL Planer v2.0 · ${PSI_VERSION_LABEL} · IDSS Sarajevo`, size: 18, font: 'Arial', color: 'AAAAAA', italics: true })],
           alignment: AlignmentType.CENTER,
           spacing: { before: 400 },
         })

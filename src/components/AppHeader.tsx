@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
+import { PSI_VERSION_LABEL } from '@/lib/constants';
 import { motion } from 'framer-motion';
 import { MessageSquare, LayoutGrid, Sparkles, LogOut } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
@@ -67,7 +68,7 @@ export default function AppHeader() {
         {/* Version badge */}
         <div className="flex items-center gap-2 flex-shrink-0">
           <span className="hidden md:flex items-center gap-1.5 text-[10px] text-muted-foreground/50 font-semibold bg-muted/30 px-3 py-1.5 rounded-full">
-            <Sparkles className="w-3 h-3" /> PSI v8.0
+            <Sparkles className="w-3 h-3" /> {PSI_VERSION_LABEL}
           </span>
           {session && (
             <button

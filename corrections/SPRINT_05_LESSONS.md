@@ -266,3 +266,12 @@ Date: 2026-11-07
 - If I had changed the PSI text instead, I would have "fixed" a model that was not at fault.
 - Rule: a new structural check prints its first failing sample, and the sample is read before the prompt or
   the check is changed. The validator test was proven to fail on the old code before the fix was kept.
+
+### 2026-11-13 — Rule violation (M-7): the PSI version label was hard-coded in 4 places
+- The Director saw "PSI v8.0" in the header while v9.0, and then v9.1, were live. The same literal also
+  appeared in the status bar, the chat footer and the Word export of a conversation. No one updated it in P3
+  or P4.
+- Fix: `PSI_VERSION_LABEL` lives in one place (`src/lib/constants.ts`). A vitest test compares it with
+  `PRODUCTION_PSI` in the Edge Function, so a mismatch fails CI.
+- Rule: any fact shown to users that mirrors server state gets either a single source or a test that ties it
+  to the server source.
