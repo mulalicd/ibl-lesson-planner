@@ -34,3 +34,23 @@ srbizama i kroatizama). Pojedinim riječima nedostaju slova. Kontrolni sloj prij
 ## Decisions needed
 1. Approve L-1 … L-4, or a subset.
 2. Send one example of a word with missing letters (a screenshot).
+
+## L-1 — Draft wording of PSI amendment A17 (for the Director's approval; not live)
+```
+A17 — LANGUAGE OF THE OUTPUT (Director 2026-11-13, DL-P19)
+  Every word of the plan, including headings, tables, examples, student prompts and the teacher's
+  sentences, is written ONLY in output_language, at the level of an excellent native writer.
+  The only exception is the Bosnian signature (A14).
+  - bosnian: standard Bosnian, Latin script, ijekavian, never Croatian or Serbian forms.
+    Use: paradajz, sedmica, hljeb, fabrika, historija, nauka, porodica, pozorište, muzika, fudbal, voz,
+    univerzitet, tačno, tačka, općina, uopće; months januar … decembar.
+    Never: rajčica, tjedan, kruh, tvornica, povijest, znanost, obitelj, kazalište, glazba, nogomet,
+    vlak, sveučilište, točno, točka, opština, uopšte, istorija, siječanj … prosinac, ekavian forms
+    (deca, vreme, gde, reka).
+  - german: Standarddeutsch (Hochsprache), correct capitalisation and ß/umlauts; no Bosnian or English
+    words except names and quoted sources.
+  - english: one variety throughout (British spelling), no Bosnian or German words except names and
+    quoted sources.
+  - Before printing, check every word for missing or swapped letters.
+```
+The list mirrors `src/lib/language/bosnianStandard.ts`, so the code and the prompt name the same words.
