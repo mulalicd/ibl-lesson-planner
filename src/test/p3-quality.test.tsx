@@ -67,7 +67,7 @@ describe('QualityBadge', () => {
     fireEvent.click(screen.getByText(/Prikaži/));
     expect(screen.getByText('Savjeti i trikovi za nastavnike')).toBeInTheDocument();
     fireEvent.click(screen.getByText('Popravi'));
-    expect(onRepair).toHaveBeenCalledWith(['section_tips', 'timeline_matches_duration']);
+    expect(onRepair).toHaveBeenCalledWith(['section_tips', 'timeline_matches_duration'], report.checks); // DL-P19: checks carry the word list
   });
 
   it('a fully passing plan has no "Popravi"', () => {

@@ -167,3 +167,14 @@ Deno.test("fewer 'Mogu …' criteria than outcomes fails outcomes_aligned", () =
   const f = validatePlan(GOOD_V91.replace("[ ] Mogu procijeniti tvrdnju.", ""), { language: "bosnian", duration_min: 45, pedagogy: true }).failed;
   if (!f.includes("outcomes_aligned")) throw new Error(f.join());
 });
+
+Deno.test("DL-P19: a Croatism in a Bosnian plan fails bosnian_standard and names the word", () => {
+  const r = validatePlan(GOOD_BS.replace("Ukupno: 45 min", "Ukupno: 45 min\nDonesite rajčice."), { language: "bosnian", duration_min: 45 });
+  const c = r.checks.find((x) => x.id === "bosnian_standard");
+  if (!c || c.ok || !c.detail?.includes("rajčice → paradajz")) throw new Error(JSON.stringify(c));
+});
+
+Deno.test("DL-P19: grammar-safe forms do not fail the check (the browser fixes them)", () => {
+  const r = validatePlan(GOOD_BS.replace("Ukupno: 45 min", "Ukupno: 45 min\nDeca rade tačno."), { language: "bosnian", duration_min: 45 });
+  if (!r.checks.find((x) => x.id === "bosnian_standard")?.ok) throw new Error("should pass");
+});

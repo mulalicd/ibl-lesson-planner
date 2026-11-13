@@ -200,7 +200,10 @@ A16 — A LESSON FLOW ANY TEACHER CAN RUN (P4, Director 2026-11-13; DRAFT for ap
       add up exactly to duration_min (A7).
       When a product shows an outcome, name it in the last column (e.g. "Mapa uzroka — dokaz za I2").
   - The phases always include PREDSTAVLJANJE NALAZA (presenting findings: who presents, to whom, in what
-    form, how long) and end with REFLEKSIJA UČENIKA (3–5 min): 2–3 age-appropriate prompts. One prompt
+    form, how long). Besides its row in TOK ČASA, print it as its OWN block with exactly this heading
+    (PREDSTAVLJANJE NALAZA / PRÄSENTATION DER ERGEBNISSE / PRESENTING FINDINGS), template in Module 3.9B.
+    Never rename it ("prezentacija", "dijeljenje" are not accepted). The phases end with REFLEKSIJA
+    UČENIKA (3–5 min): 2–3 age-appropriate prompts. One prompt
     returns to the inquiry question; in one, students check their "Mogu …" criteria themselves.
   - Alignment rule: every outcome I1–I4 appears in at least one row of TOK ČASA and in DOKAZ UČENJA,
     and there is one "Mogu …" criterion per outcome.
@@ -1641,6 +1644,16 @@ TOK ČASA
 | 35-40 | Sinteza         | Frontalno   | [...]             | [povratak na IP]  | [...]                  |
 | 40-45 | Refleksija učenika | Individualno | [odgovaraju na 2–3 pitanja; provjeravaju "Mogu …"] | [...] | [refleksija — dokaz za I3] |
 |       |                 |             |                   | Ukupno:           | [duration_min] min     |
+================================================================================
+
+PREDSTAVLJANJE NALAZA
+--------------------------------------------------------------------------------
+|  Ko predstavlja: [npr. jedan glasnogovornik po grupi]   Kome: [razredu]       |
+|  Oblik: [npr. plakat / galerija / 1 minuta po grupi]     Vrijeme: [N] min      |
+|  Zadatak za učenike koji slušaju: [npr. zapišu jednu razliku između grupa]   |
+|  Pitanja nastavnika nakon predstavljanja (bez potvrđivanja, A4):              |
+|    1. [traži dokaz]   2. [uvodi sumnju ili poređenje grupa]                  |
+|  Dokaz učenja: [produkt — dokaz za I…]                                       |
 ================================================================================
 
 REFLEKSIJA UČENIKA (pitanja za učenike)

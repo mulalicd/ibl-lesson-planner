@@ -14,7 +14,7 @@ export function QualityBadge({
   disabled,
 }: {
   report: ValidationReportInput;
-  onRepair: (failedIds: string[]) => void;
+  onRepair: (failedIds: string[], checks?: ValidationReportInput['checks']) => void;
   disabled?: boolean;
 }) {
   const [open, setOpen] = useState(false);
@@ -45,7 +45,7 @@ export function QualityBadge({
         {!allOk && (
           <button
             type="button"
-            onClick={() => onRepair(report.failed)}
+            onClick={() => onRepair(report.failed, report.checks)}
             disabled={disabled}
             className="ml-auto inline-flex items-center gap-2 px-3 py-2 rounded-xl neu-btn-primary text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
           >

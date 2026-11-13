@@ -33,6 +33,8 @@ export const QUALITY_CHECK_LABELS: Record<string, string> = {
   section_studentReflection: 'Refleksija učenika',
   phases_complete: 'Svaka faza ima oblik rada i minute',
   outcomes_aligned: 'Svaki ishod ima aktivnost, dokaz i kriterij „Mogu …“',
+  // DL-P19 (Director 2026-11-13): Bosnian plans in standard Bosnian, Latin script
+  bosnian_standard: 'Bosanski jezik', // wording approved by the Director 2026-11-13
 };
 
 export function qualityCheckLabel(id: string): string {
@@ -40,8 +42,12 @@ export function qualityCheckLabel(id: string): string {
 }
 
 /** The message the "Popravi" button sends (a normal, visible chat message). */
-export function buildRepairMessage(failedIds: string[]): string {
-  const items = failedIds.map((id) => `- ${qualityCheckLabel(id)}`).join('\n');
+export function buildRepairMessage(failedIds: string[], checks: { id: string; detail?: string }[] = []): string {
+  const items = failedIds.map((id) => {
+    const detail = checks.find((c) => c.id === id)?.detail;
+    // The language check names the exact words, so the AI replaces those and only those.
+    return id === 'bosnian_standard' && detail ? `- ${qualityCheckLabel(id)}: ${detail}` : `- ${qualityCheckLabel(id)}`;
+  }).join('\n');
   return [
     'Molim te ispravi ovaj plan i ponovo ga ispiši u cjelini, u istoj strukturi.',
     'Automatska provjera kvaliteta našla je da nedostaje ili nije ispravno:',

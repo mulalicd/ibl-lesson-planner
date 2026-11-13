@@ -5,6 +5,7 @@ import { getAccessToken, signalActivity } from '@/lib/auth';
 import { ERROR_MESSAGES } from '@/lib/constants';
 import { ValidationEventSchema, MetaEventSchema, type ValidationReportInput } from '@/lib/validation/schemas';
 import { buildRepairMessage } from '@/lib/qualityChecks';
+import { normalizeBosnian } from '@/lib/language/bosnianStandard';
 import { isPlanText } from '@/lib/planMeta';
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ibl-chat`;
@@ -129,6 +130,10 @@ export function useChat() {
       let textBuffer = '';
       let assistantSoFar = '';
       let streamDone = false;
+      // DL-P19: a Bosnian answer is shown, kept and saved in standard Bosnian. Grammar-safe word fixes run on
+      // the text received so far (milliseconds, no extra AI call); the raw text is never displayed.
+      const language = (params ?? lastParamsRef.current)?.language;
+      const shown = (raw: string) => (language === 'bosnian' ? normalizeBosnian(raw) : raw);
 
       while (!streamDone) {
         const { done, value } = await reader.read();
@@ -158,12 +163,12 @@ export function useChat() {
                 const msgs = [...prev.messages];
                 const lastMsg = msgs[msgs.length - 1];
                 if (lastMsg?.role === 'model' && lastMsg.id !== 'welcome') {
-                  msgs[msgs.length - 1] = { ...lastMsg, content: assistantSoFar };
+                  msgs[msgs.length - 1] = { ...lastMsg, content: shown(assistantSoFar) };
                 } else {
                   msgs.push({
                     id: randomHex(8),
                     role: 'model',
-                    content: assistantSoFar,
+                    content: shown(assistantSoFar),
                     timestamp: new Date().toISOString(),
                   });
                 }
@@ -195,6 +200,7 @@ export function useChat() {
         }
       }
 
+      assistantSoFar = shown(assistantSoFar);
       // Check if response contains a plan
       const isPlan = isPlanText(assistantSoFar); // P2-3: header near the top + inquiry question
 
@@ -250,9 +256,9 @@ export function useChat() {
   }, []);
 
   /** "Popravi": a visible chat message naming the failed checks (DL-P13 item 5, teacher-triggered). */
-  const repairPlan = useCallback((failedIds: string[]) => {
+  const repairPlan = useCallback((failedIds: string[], checks?: { id: string; detail?: string }[]) => {
     if (!failedIds.length) return;
-    void sendMessage(buildRepairMessage(failedIds), 'chat', lastParamsRef.current);
+    void sendMessage(buildRepairMessage(failedIds, checks), 'chat', lastParamsRef.current);
   }, [sendMessage]);
 
   const cancelStream = useCallback(() => {
