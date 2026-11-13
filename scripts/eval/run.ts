@@ -160,6 +160,18 @@ async function generate(messages: AiMessage[]) {
       await sleep(20_000 * attempt);
       continue;
     }
+    // A key that is invalid (400 API_KEY_INVALID), out of prepaid credit (402) or has no free tier (403)
+    // is dead for this run: skip it and try the same plan with the next key.
+    if (provider === "gemini" && [400, 402, 403].includes(resp.status)) {
+      const errText = await resp.text();
+      if (resp.status !== 400 || errText.includes("API_KEY_INVALID")) {
+        pk.exhausted = `HTTP ${resp.status} ${errText.match(/"message":\s*"([^"]{0,90})/)?.[1] ?? ""}`;
+        console.warn(`  key ${pk.label} unusable: ${pk.exhausted} — next key`);
+        attempt--;
+        continue;
+      }
+      return { ok: false as const, ms, error: `HTTP ${resp.status}: ${errText.slice(0, 300)}` };
+    }
     const json = await resp.json();
     if (!resp.ok) return { ok: false as const, ms, error: `HTTP ${resp.status}: ${JSON.stringify(json).slice(0, 300)}` };
     if (provider === "groq") {
@@ -206,7 +218,7 @@ async function writeOutputs(): Promise<string> {
   }
   const errs = rows.filter((r) => !r.ok);
   if (errs.length) lines.push("", "## Errors", "", ...errs.map((e) => `- ${e.variant} ${e.id}: ${e.error}`));
-  lines.push("", "## Keys used (requests this run; label only)", "", ...pool.map((k) => `- ${k.label}: ${k.used}${k.exhausted ? ` — daily quota exhausted (${k.exhausted})` : ""}`));
+  lines.push("", "## Keys used (requests this run; label only)", "", ...pool.map((k) => `- ${k.label}: ${k.used}${k.exhausted ? ` — not usable: ${k.exhausted}` : ""}`));
   await Deno.writeTextFile(`${out}/report.md`, lines.join("\n") + "\n");
   return lines.join("\n");
 
