@@ -240,3 +240,8 @@ Date: 2026-11-07
   only the model fallback (DL-P18) and the eval and key-check tools.
 - Lesson: when a branch mixes an approved change with one that awaits approval, propose the split before
   opening the PR, not after.
+
+### 2026-11-13 — Environment gotcha: no force-push when the history is a fast-forward
+- I tried `--force-with-lease` after restarting a merged branch from main. The safety classifier refused it.
+- It was not needed: the remote branch tip was already an ancestor of main (it had been merged).
+- Rule: run `git merge-base --is-ancestor origin/<branch> HEAD` first. If true, use a plain push.
