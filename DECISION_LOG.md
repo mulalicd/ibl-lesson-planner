@@ -503,3 +503,25 @@ kopirati naš sadržaj kao industrijski primjer."
 ---
 
 *Project Decision Log — IBL Lesson Planner — under Commander v1.7.0*
+
+## DL-P18 — Model fallback 2.5 Flash → 3.5 Flash on the same key (Director, 2026-11-13)
+
+**Decided by:** Director, "Rezervni model da".
+
+**Facts presented** (key check run 43493303418; `specs/p3-ai-quality/MODEL_AND_QUOTA_FINDINGS.md` §5f):
+- Only 5 of the 12 production keys can serve gemini-2.5-flash.
+  - Keys 9–12: 404, model not available for newer projects.
+  - Key 3: 402, prepaid billing project.
+  - Key 4: invalid.
+  - Key 7: no free tier.
+- gemini-3.5-flash works on 9 keys.
+- Quotas count per project AND per model.
+- 3.5 Flash golden eval: 6/6 lessons, 21/21.
+
+**Decision:**
+1. Every key first tries gemini-2.5-flash. If that model is used up or unavailable (429/404), the same key
+   tries gemini-3.5-flash. A dead key (400 invalid, 402, 403) is skipped without trying the second model.
+2. On 503, the request backs off and then tries the next model or key (existing 10 s budget).
+3. The `meta` event names the model that served the plan.
+4. Stays free tier (DL-P14). The Director will not pay. Key 3 (the "Tier 1" project, $0, no credits) is removed from use.
+5. Rollback: set `GEMINI_MODELS` to the primary model only, then one deploy.
