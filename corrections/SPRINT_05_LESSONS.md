@@ -246,6 +246,13 @@ Date: 2026-11-07
 - It was not needed: the remote branch tip was already an ancestor of main (it had been merged).
 - Rule: run `git merge-base --is-ancestor origin/<branch> HEAD` first. If true, use a plain push.
 
+### 2026-11-13 — Rule violation: a denied command silently dropped a decision record
+- The DL-P19 entry was part of a shell command that also tried a force push. The classifier denied the whole
+  command. The retry re-ran only commit and push, so the decision record never reached main.
+- Found later, when an edit to it matched nothing.
+- Rule: after a denied command, re-run each of its steps, or check with `git show --stat` that every
+  intended file is in the commit.
+
 ### 2026-11-13 — Environment gotcha: dispatching a workflow in parallel with the push
 - I sent "commit && push" and the workflow dispatch in the same parallel batch. The run started on the
   previous commit. I caught it by comparing the run's head_sha with the local HEAD, cancelled the run, and
