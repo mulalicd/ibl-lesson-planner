@@ -321,3 +321,11 @@ Period: 2026-11-07 … 2026-11-13. Detailed entries follow below the summary; th
   the Edge Function.
 - A17 eval (run 43526371209): 6/6, 99.4 %, bosnian_standard 4/4. Same score as without A17, so no regression.
   The Director merged PR #24 before the result arrived; the result confirms it was safe.
+
+### 2026-11-13 — Environment gotcha: an unpinned CLI ("version: latest") changed its output
+- After the new token, deploy #22 failed with "jq: parse error". The newer Supabase CLI prints "Warning: …" /
+  "Target: project …" lines. The workflow merged stderr into stdout (`2>&1`) and fed the mixture to jq.
+- Fix: JSON from stdout only (stderr to err.log), keep only the JSON array, and print a clear error if parsing
+  still fails.
+- Rule: never parse the output of a command that writes `2>&1`. Consider pinning tool versions in deploy
+  workflows; `latest` changes behaviour without a commit.
