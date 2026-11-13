@@ -178,3 +178,14 @@ Deno.test("DL-P19: grammar-safe forms do not fail the check (the browser fixes t
   const r = validatePlan(GOOD_BS.replace("Ukupno: 45 min", "Ukupno: 45 min\nDeca rade tačno."), { language: "bosnian", duration_min: 45 });
   if (!r.checks.find((x) => x.id === "bosnian_standard")?.ok) throw new Error("should pass");
 });
+
+Deno.test("P4 phases_complete: a wrapped table row is one phase ('INDIVIDU-' + 'ALNO', continuation lines)", () => {
+  const row = '| 35-45 | Refleksija učenika | Individualno | provjeravaju "Mogu …" | sluša | listić — dokaz za I3 |';
+  if (!GOOD_V91.includes(row)) throw new Error("fixture row not found — test would be vacuous");
+  const wrapped = GOOD_V91.replace(row,
+    "| 35-45 | Refleksija učenika | Individu- | provjeravaju | sluša | listić — dokaz za I3 |\n" +
+    '|       |                    | alno      | "Mogu …" (10 min) |  |                      |');
+  const r = validatePlan(wrapped, { language: "bosnian", duration_min: 45, pedagogy: true });
+  const c = r.checks.find((x) => x.id === "phases_complete");
+  if (!c?.ok || !c.detail.startsWith("4/4")) throw new Error(JSON.stringify(c));
+});

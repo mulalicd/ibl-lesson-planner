@@ -207,6 +207,11 @@ A16 — A LESSON FLOW ANY TEACHER CAN RUN (P4, Director 2026-11-13; DRAFT for ap
     returns to the inquiry question; in one, students check their "Mogu …" criteria themselves.
   - Alignment rule: every outcome I1–I4 appears in at least one row of TOK ČASA and in DOKAZ UČENJA,
     and there is one "Mogu …" criterion per outcome.
+  - Module 3.9B ADDS to the plan and replaces nothing. After it, the plan still continues exactly as A15
+    requires: SAVJETI I TRIKOVI ZA NASTAVNIKE / TIPPS & TRICKS FÜR LEHRKRÄFTE / TIPS & TRICKS FOR
+    TEACHERS (A13, Module 3.9A, with this exact heading) → footer → Module 3.13. Ideas such as
+    "Erweiterungsideen" or "Herausforderungen und Lösungen" never replace that section.
+  - Keep every table cell short enough for one line. Never split a word across lines.
 
 A15 — FIXED ORDER OF THE CLOSING ELEMENTS (replaces the placement rule in Module 3.13)
   - The plan always ends in this order: ... PREPORUKE ZA IZVOĐENJE ČASA →

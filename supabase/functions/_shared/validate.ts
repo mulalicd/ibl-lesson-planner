@@ -83,7 +83,23 @@ function pedagogyChecks(text: string, add: (id: string, ok: boolean, detail: str
   }
   // P4-7: every phase row says who (form) and for how long (minutes)
   const flow = sectionLines(foldedLines, PEDAGOGY_SECTIONS.flow);
-  const rows = flow.filter((l) => (l.match(/\|/g) ?? []).length >= 4 && /\b\d{1,3}\s*[-–]\s*\d{1,3}\b|\b\d{1,3}\s*MIN/.test(l) && !/UKUPNO|GESAMT|TOTAL/.test(l));
+  // A table row may wrap over several lines: a line whose first cell is empty continues the row above it.
+  // Cells are joined column by column; a piece ending in "-" joins the next piece without a space
+  // ("INDIVIDU-" + "ALNO" = "INDIVIDUALNO"). A phase row is one whose FIRST cell holds the minutes.
+  const merged: string[][] = [];
+  for (const l of flow) {
+    if ((l.match(/\|/g) ?? []).length < 4) continue;
+    const cells = l.split("|").slice(1, -1).map((c) => c.trim());
+    if (cells[0] === "" && merged.length) {
+      const row = merged[merged.length - 1];
+      cells.forEach((c, i) => {
+        if (!c) return;
+        row[i] = row[i] ? (row[i].endsWith("-") ? row[i].slice(0, -1) + c : `${row[i]} ${c}`) : c;
+      });
+    } else merged.push(cells);
+  }
+  const rows = merged.filter((c) => /^\d{1,3}\s*([-–]\s*\d{1,3})?\s*(MIN)?$/.test(c[0] ?? "") && !/UKUPNO|GESAMT|TOTAL/.test(c.join(" ")))
+    .map((c) => `| ${c.join(" | ")} |`);
   const withForm = rows.filter((l) => GROUPING.test(l)).length;
   add("phases_complete", rows.length >= 3 && withForm === rows.length,
     rows.length < 3 ? `only ${rows.length} phase rows with minutes`
