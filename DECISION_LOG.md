@@ -589,3 +589,15 @@ It is not shipped in the browser bundle; the app exports through `docx`, which i
 **Omission:** the addition was not recorded when it was made. It was found by the sprint-close DONE_CHECKLIST.
 
 **Decision:** keep it. It is small, maintained and build/test-only. No new runtime dependency this sprint.
+
+## DL-P22 — PSI amendment A17 "Language of the output" (Director, 2026-11-13)
+
+**Decided by:** Director, "A17 odobren". The wording is the L-1 draft in `specs/language-quality/SPEC.md`.
+
+**Decision:**
+1. A17 is inserted verbatim into `IDSS_IBL_PSI_v9_1.md`, after A16. The production prompt stays v91
+   (v9.1 + A17).
+2. It prevents the problem at the source, together with the language layer of DL-P19, which detects and fixes it.
+3. A vitest test ties every "Never" word in A17 to the code: each word is fixed or flagged. The prompt and the
+   code cannot drift apart.
+4. Rollback: remove the A17 block and regenerate (or `PRODUCTION_PSI = "v90"`).

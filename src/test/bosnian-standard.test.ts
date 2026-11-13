@@ -31,3 +31,19 @@ describe('DL-P19 Bosnian standard layer', () => {
     expect(msg).toContain('- Bosanski jezik: rajčice → paradajz');
   });
 });
+
+describe('DL-P22: PSI A17 and the code name the same forbidden words', () => {
+  it('every "Never" word in A17 is fixed or flagged by the language layer', async () => {
+    const { readFileSync } = await import('node:fs');
+    const psi = readFileSync('IDSS_IBL_PSI_v9_1.md', 'utf8');
+    const block = psi.slice(psi.indexOf('A17 — LANGUAGE OF THE OUTPUT'), psi.indexOf('A15 — FIXED ORDER'));
+    const never = block.slice(block.indexOf('Never:') + 6, block.indexOf('- german:'))
+      .replace(/ekavian forms|\(|\)|…/g, ' ')
+      .split(/[\s,]+/).map((w) => w.trim()).filter((w) => /^\p{L}+$/u.test(w));
+    expect(never.length).toBeGreaterThan(20);
+    for (const w of never) {
+      const caught = normalizeBosnian(w) !== w || findNonStandardBosnian(w).length > 0;
+      expect(caught, `A17 forbids "${w}" but the language layer does not catch it`).toBe(true);
+    }
+  });
+});
