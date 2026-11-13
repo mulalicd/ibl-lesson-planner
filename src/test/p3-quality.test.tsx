@@ -129,3 +129,16 @@ describe('extractPlanMeta (saving a plan without wizard params)', () => {
     expect(extractPlanMeta(FIXTURE)).toEqual({ subject: 'Biologie', grade: 5, topic: 'Fotosinteza', duration_min: 45 });
   });
 });
+
+describe('P4 labels', () => {
+  it('every P4 check id has a teacher-facing label', () => {
+    for (const id of ['section_materials', 'section_flow', 'section_presentation', 'section_studentReflection', 'phases_complete', 'outcomes_aligned']) {
+      expect(QUALITY_CHECK_LABELS[id], id).toBeTruthy();
+    }
+  });
+  it('shows MATERIJALI ZA ČAS, TOK ČASA and REFLEKSIJA UČENIKA as sections', () => {
+    render(<PlanDisplay planText={V9_PLAN.replace('SAVJETI I TRIKOVI', 'MATERIJALI ZA ČAS\n[ ] papir\nTOK ČASA\n| 0-5 | Udica | Frontalno |\nREFLEKSIJA UČENIKA\n1. Šta misliš?\nSAVJETI I TRIKOVI')} />);
+    const headings = screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent ?? '');
+    expect(headings).toEqual(expect.arrayContaining(['MATERIJALI ZA ČAS', 'TOK ČASA', 'REFLEKSIJA UČENIKA']));
+  });
+});

@@ -26,6 +26,13 @@ export const QUALITY_CHECK_LABELS: Record<string, string> = {
   no_english_labels: 'Bez engleskih naslova',
   bosnian_diacritics: 'Ispravna slova č, ć, š, ž, đ',
   sources_marked_to_verify: 'Izvori označeni „ZA PROVJERU“',
+  // P4 (PSI v9.1) — wording approved by the Director together with the v9.1 text, 2026-11-13 (DL-P20).
+  section_materials: 'Materijali za čas',
+  section_flow: 'Tok časa (tabela faza)',
+  section_presentation: 'Predstavljanje nalaza',
+  section_studentReflection: 'Refleksija učenika',
+  phases_complete: 'Svaka faza ima oblik rada i minute',
+  outcomes_aligned: 'Svaki ishod ima aktivnost, dokaz i kriterij „Mogu …“',
   // DL-P19 (Director 2026-11-13): Bosnian plans in standard Bosnian, Latin script
   bosnian_standard: 'Bosanski jezik', // wording approved by the Director 2026-11-13
 };

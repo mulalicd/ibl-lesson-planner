@@ -463,6 +463,10 @@ made with this information.
    `rpc/increment_docx_export` returns 42501 "permission denied", so the function exists and anon is refused
    (it is created in the same transaction as the column, constraint and trigger changes).
 5. P2-7: the Director answered "zadrži": keep the counter (implemented with the RPC).
+6. **One-time exception to CONSTITUTION rule 7 (2026-11-10):** GitHub's new PR page did not show
+   the merge button to the Director, and he instructed "Spoji ti PR 18". The ACA merged PR #18
+   (merge commit 7c018f2, expected head 222ecfc, all checks green, no conflicts). This authorises
+   that merge only; future merges stay with the Director unless he instructs otherwise.
 
 ---
 
@@ -479,6 +483,22 @@ Deliberate differences: the top margin is 2.5 cm instead of 0.95 cm (generated t
 and personal metadata is removed from the file properties. The document title colour changed from indigo to IDSS Blue
 #035EA1 (CONSTITUTION rule 6). Scope: the plan's "Word dokument" export (chat and plan page). The
 conversation export is unchanged (not a lesson plan).
+
+---
+
+## DL-P17 — P4 approved; no official content format exists (Director, 2026-11-13)
+
+**Decided by:** Director: "1. odobravam P4. 2. nema zvaničnog obrasca. Naša pisana priprema nastavnog časa je
+najbolja na svijetu i ne postoji obrazac koji bi se mogao kopirati. Na protiv. Po završetku ovog projekta drugi će
+kopirati naš sadržaj kao industrijski primjer."
+
+**Consequences:**
+1. P4 items P4-1 … P4-7 (`specs/p4-pedagogy/SPEC.md`) approved.
+2. No external format to follow. The IDSS plan (PSI) is the reference standard itself; P4 is designed as the benchmark.
+3. The PSI wording change (amendment A16 + template) is drafted as **PSI v9.1** in a separate file. Production stays on the
+   approved v9 (`PRODUCTION_PSI = "v90"`) until the Director approves the v9.1 text after reading generated plans
+   (CONSTITUTION rule 1). The new validator checks are switched on together with v9.1, never before, so that
+   v9 plans are not judged against rules they were never given.
 
 ---
 
@@ -538,3 +558,22 @@ His example: "rajčica". Live since PR #20 (deploy #19, 2026-11-13).
 - PSI amendment A17 (prevention at the source) needs approval of its wording.
 - German and English plans: a dictionary-based check is the candidate; not decided yet.
 - "Missing letters" needs an example before a cause is named.
+
+## DL-P20 — PSI v9.1 goes live (Director, 2026-11-13)
+
+**Decided by:** Director. The answer "odobreno dalj" was given to the approval package
+`specs/p4-pedagogy/PSI_V9_1_ZA_ODOBRENJE.md`. That package asked for "PSI v9.1 odobren" plus approval of
+the 6 labels.
+
+**Evidence presented** (run 43516098104):
+- 6/6 golden lessons, average 99.4 %, 5/6 fully passing.
+- The only remaining failure was the abbreviation "Individ.", which the validator now accepts.
+- New sections: Materijali 6/6, Tok časa 6/6, Predstavljanje nalaza 6/6, Refleksija učenika 6/6,
+  alignment 6/6.
+
+**Decision:**
+1. `PRODUCTION_PSI = "v91"`. The source is `IDSS_IBL_PSI_v9_1.md` (renamed from the draft; only the
+   status line changed).
+2. The A16 checks are on in production: `section_materials`, `section_flow`, `section_presentation`,
+   `section_studentReflection`, `phases_complete`, `outcomes_aligned`. The 6 labels are approved as proposed.
+3. Rollback: `PRODUCTION_PSI = "v90"`, then one deploy. v9.0 plans are not judged by the A16 rules.

@@ -14,7 +14,7 @@ import { buildMessages, type AiMessage } from "../../supabase/functions/_shared/
 import { validatePlan, type ValidationReport } from "../../supabase/functions/_shared/validate.ts";
 import { PSI_V80_PROMPT } from "../../supabase/functions/_shared/psi_v80.generated.ts";
 import { IblChatRequestSchema } from "../../src/lib/validation/schemas.ts";
-import { GEMINI_GENERATION_CONFIG } from "../../supabase/functions/_shared/generation.ts";
+import { GEMINI_GENERATION_CONFIG, GEMINI_MODELS } from "../../supabase/functions/_shared/generation.ts";
 
 const VARIANTS: Record<string, { kind: "v81" | "psi"; text?: string; label: string }> = {
   v81: { kind: "v81", label: "production today (compressed v8.1)" },
@@ -25,6 +25,10 @@ try {
   const mod = await import("../../supabase/functions/_shared/psi_v90.generated.ts");
   VARIANTS.v90 = { kind: "psi", text: (mod as Record<string, string>).PSI_V90_PROMPT, label: "PSI v9.0 draft" };
 } catch { /* no v9 yet */ }
+try {
+  const mod = await import("../../supabase/functions/_shared/psi_v91.generated.ts");
+  VARIANTS.v91 = { kind: "psi", text: (mod as Record<string, string>).PSI_V91_PROMPT, label: "PSI v9.1 (P4, A16; production since DL-P20)" };
+} catch { /* no v9.1 */ }
 
 const arg = (name: string, def: string) => {
   const i = Deno.args.indexOf(`--${name}`);
@@ -39,17 +43,19 @@ const model = arg("model", "gemini-2.5-flash");
 // Provider: "gemini" (default) or "groq" (DL-P14 evaluation only; OpenAI-compatible API).
 const provider = model.startsWith("groq:") ? "groq" : "gemini";
 const modelId = provider === "groq" ? model.slice(5) : model;
-if (provider === "gemini" && !/^gemini-[a-z0-9.\-]+$/.test(modelId)) { console.error(`invalid model ${model}`); Deno.exit(2); }
+// "production" = exactly what ibl-chat does (DL-P18): per key the primary model, then the fallback model.
+const PRODUCTION_CHAIN = model === "production";
+if (provider === "gemini" && !PRODUCTION_CHAIN && !/^gemini-[a-z0-9.\-]+$/.test(modelId)) { console.error(`invalid model ${model}`); Deno.exit(2); }
 if (provider === "groq" && !/^[A-Za-z0-9._\-\/]+$/.test(modelId)) { console.error(`invalid model ${model}`); Deno.exit(2); }
 const keyName = provider === "groq" ? "GROQ_EVAL_KEY" : "GEMINI_EVAL_KEY";
 // Key pool (Director 2026-11-13): the eval key first, then the production keys GEMINI_KEY_1..20 when the
 // workflow passes them. Quotas are per Google project and model; each production key is used at most
 // PER_KEY_CAP times per run, so teachers keep the rest of that project's daily quota.
 // Logs name a key only by its label (eval, prod3), never by its value.
-type PoolKey = { label: string; value: string; used: number; exhausted: string };
+type PoolKey = { label: string; value: string; used: number; exhausted: string; model: string };
 const pool: PoolKey[] = [];
 const evalKey = (Deno.env.get(keyName) ?? "").trim();
-if (evalKey) pool.push({ label: "eval", value: evalKey, used: 0, exhausted: "" });
+if (evalKey) pool.push({ label: "eval", value: evalKey, used: 0, exhausted: "", model: modelId });
 if (provider === "gemini") {
   for (let i = 1; i <= 20; i++) {
     const v = (Deno.env.get(`GEMINI_KEY_${i}`) ?? "").trim();
@@ -58,8 +64,13 @@ if (provider === "gemini") {
     // production quota without the cap. A duplicate is relabelled as the production key (capped).
     const dup = pool.find((k) => k.value === v);
     if (dup) { console.log(`note: ${dup.label} is the same key as prod${i} — capped as prod${i}`); dup.label = `prod${i}`; continue; }
-    pool.push({ label: `prod${i}`, value: v, used: 0, exhausted: "" });
+    pool.push({ label: `prod${i}`, value: v, used: 0, exhausted: "", model: modelId });
   }
+}
+if (PRODUCTION_CHAIN) {
+  // one entry per key AND model, key-major, so the order matches production; quotas are per model.
+  const base = pool.splice(0);
+  for (const k of base) for (const m of GEMINI_MODELS) pool.push({ ...k, label: `${k.label}/${m.replace("gemini-", "")}`, model: m });
 }
 const PER_KEY_CAP = Math.max(1, Number(arg("per-key-cap", "4")) || 4);
 if (pool.length === 0) { console.error(`${keyName} missing (and no GEMINI_KEY_n)`); Deno.exit(2); }
@@ -113,9 +124,6 @@ async function generate(messages: AiMessage[]) {
       // identical to production: the same shared constant
       generationConfig: GEMINI_GENERATION_CONFIG,
     });
-  const url = provider === "groq"
-    ? "https://api.groq.com/openai/v1/chat/completions"
-    : `https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent`;
   if (dailyQuotaHit) return { ok: false as const, ms: 0, error: `skipped: daily quota exhausted (${dailyQuotaHit})` };
   for (let attempt = 1; attempt <= 4; attempt++) {
     const pk = provider === "groq" ? pool[0] : pickKey();
@@ -129,6 +137,9 @@ async function generate(messages: AiMessage[]) {
       ? { "Content-Type": "application/json", Authorization: `Bearer ${pk.value}` }
       : { "Content-Type": "application/json", "x-goog-api-key": pk.value };
     console.log(`  key ${pk.label} (request ${pk.used})`);
+    const url = provider === "groq"
+      ? "https://api.groq.com/openai/v1/chat/completions"
+      : `https://generativelanguage.googleapis.com/v1beta/models/${pk.model}:generateContent`;
     const wait = lastCall + MIN_INTERVAL_MS - Date.now();
     if (wait > 0) await sleep(wait);
     lastCall = Date.now();
@@ -163,10 +174,19 @@ async function generate(messages: AiMessage[]) {
     }
     // A key that is invalid (400 API_KEY_INVALID), out of prepaid credit (402) or has no free tier (403)
     // is dead for this run: skip it and try the same plan with the next key.
+    if (provider === "gemini" && resp.status === 404) {
+      const errText = await resp.text();
+      pk.exhausted = `HTTP 404 model not available for this project`;
+      console.warn(`  key ${pk.label}: ${pk.exhausted} — next${PRODUCTION_CHAIN ? " model/key" : " key"} (${errText.slice(0, 60)})`);
+      attempt--;
+      continue;
+    }
     if (provider === "gemini" && [400, 402, 403].includes(resp.status)) {
       const errText = await resp.text();
       if (resp.status !== 400 || errText.includes("API_KEY_INVALID")) {
         pk.exhausted = `HTTP ${resp.status} ${errText.match(/"message":\s*"([^"]{0,90})/)?.[1] ?? ""}`;
+        // a dead key is dead for every model
+        for (const other of pool) if (other.value === pk.value && !other.exhausted) other.exhausted = pk.exhausted;
         console.warn(`  key ${pk.label} unusable: ${pk.exhausted} — next key`);
         attempt--;
         continue;
@@ -183,12 +203,12 @@ async function generate(messages: AiMessage[]) {
     }
     const cand = json.candidates?.[0];
     const text = (cand?.content?.parts ?? []).map((p: { text?: string }) => p.text ?? "").join("");
-    return { ok: true as const, ms, text, finish: cand?.finishReason ?? "?", usage: json.usageMetadata ?? {} };
+    return { ok: true as const, ms, text, finish: cand?.finishReason ?? "?", usage: json.usageMetadata ?? {}, served: pk.model };
   }
   return { ok: false as const, ms: 0, error: "gave up after retries (rate limit/server)" };
 }
 
-type Row = { variant: string; id: string; ok: boolean; ms: number; finish?: string; usage?: Record<string, number>; error?: string; report?: ValidationReport; chars?: number };
+type Row = { variant: string; id: string; served?: string; ok: boolean; ms: number; finish?: string; usage?: Record<string, number>; error?: string; report?: ValidationReport; chars?: number };
 const rows: Row[] = [];
 await Deno.mkdir(`${out}/plans`, { recursive: true });
 
@@ -219,6 +239,9 @@ async function writeOutputs(): Promise<string> {
   }
   const errs = rows.filter((r) => !r.ok);
   if (errs.length) lines.push("", "## Errors", "", ...errs.map((e) => `- ${e.variant} ${e.id}: ${e.error}`));
+  const served = new Map<string, number>();
+  for (const r of rows) if (r.ok && r.served) served.set(r.served, (served.get(r.served) ?? 0) + 1);
+  lines.push("", "## Plans served by model", "", ...[...served].map(([m, n]) => `- ${m}: ${n}`));
   lines.push("", "## Keys used (requests this run; label only)", "", ...pool.map((k) => `- ${k.label}: ${k.used}${k.exhausted ? ` — not usable: ${k.exhausted}` : ""}`));
   await Deno.writeTextFile(`${out}/report.md`, lines.join("\n") + "\n");
   return lines.join("\n");
@@ -233,16 +256,22 @@ for (const g of inputs) {
     console.log(`[${v}] ${g.id} ${req.params!.subject} ${req.params!.grade} "${req.params!.topic}" ${req.params!.duration_min}min`);
     const r = await generate(msgs);
     if (!r.ok) { rows.push({ variant: v, id: g.id, ok: false, ms: r.ms, error: r.error }); console.log(`   ERROR ${r.error}`); await writeOutputs(); continue; }
-    const report = validatePlan(r.text, { language: req.params!.language, duration_min: req.params!.duration_min, tier: req.params!.tier });
+    const report = validatePlan(r.text, { language: req.params!.language, duration_min: req.params!.duration_min, tier: req.params!.tier, pedagogy: v === "v91" });
     await Deno.mkdir(`${out}/plans/${v}`, { recursive: true });
     await Deno.writeTextFile(`${out}/plans/${v}/${g.id}.txt`, r.text);
-    rows.push({ variant: v, id: g.id, ok: true, ms: r.ms, finish: r.finish, usage: r.usage, report, chars: r.text.length });
+    rows.push({ variant: v, id: g.id, served: "served" in r ? r.served : modelId, ok: true, ms: r.ms, finish: r.finish, usage: r.usage, report, chars: r.text.length });
     await writeOutputs(); // results + report on disk after EVERY plan (survives a job timeout)
     console.log(`   ${report.passed}/${report.total} in ${(r.ms / 1000).toFixed(1)}s, ${r.text.length} chars, finish=${r.finish}`);
     for (const c of report.checks.filter((x) => !x.ok)) console.log(`     ✗ ${c.id}: ${c.detail}`);
     if (report.failed.includes("timeline_matches_duration")) {
       const tl = (r.text as string).split("\n").filter((l: string) => /(ukupno|gesamt|total|\d+\s*[-–]\s*\d+\s*min|\d{1,2}:\d{2})/i.test(l)).slice(0, 25);
       console.log(`     timeline lines:\n${tl.map((l: string) => "       " + l.trim()).join("\n")}`);
+    }
+    if (report.failed.some((id) => id.startsWith("section_"))) {
+      // which headings the model actually wrote (to tell a missing section from a renamed one)
+      const heads = (r.text as string).split("\n").map((l: string) => l.replace(/[|=]/g, "").trim())
+        .filter((l: string) => l.length > 4 && l.length < 70 && l === l.toUpperCase() && /\p{Lu}{4}/u.test(l));
+      console.log(`     headings:\n${heads.slice(0, 60).map((l: string) => "       " + l).join("\n")}`);
     }
     if (report.failed.includes("sources_marked_to_verify")) {
       const d = report.checks.find((c) => c.id === "sources_marked_to_verify")?.detail;

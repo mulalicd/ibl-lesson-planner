@@ -14,6 +14,8 @@ export interface ValidateParams {
   language: Language;
   duration_min: number;
   tier?: Tier;
+  /** P4 (PSI v9.1, A16): add the lesson-flow checks. Only for plans written under v9.1. */
+  pedagogy?: boolean;
 }
 
 export interface CheckResult {
@@ -47,6 +49,70 @@ const SECTIONS: Record<string, string[]> = {
   realLife: ["UPORISTE U STVARNOM ZIVOTU", "BEZUG ZUM ALLTAG", "REAL-LIFE CONNECTION", "REAL LIFE CONNECTION"],
   tips: ["SAVJETI I TRIKOVI", "TIPPS & TRICKS", "TIPS & TRICKS", "TIPS AND TRICKS"],
 };
+
+// P4 (A16) sections, matched like SECTIONS (diacritic-folded, upper-cased).
+const PEDAGOGY_SECTIONS: Record<string, string[]> = {
+  materials: ["MATERIJALI ZA CAS", "MATERIALIEN FUR DIE STUNDE", "MATERIALS FOR THE LESSON"],
+  flow: ["TOK CASA", "STUNDENVERLAUF", "LESSON FLOW"],
+  presentation: ["PREDSTAVLJANJE NALAZA", "PRASENTATION DER ERGEBNISSE", "PRESENTING FINDINGS"],
+  studentReflection: ["REFLEKSIJA UCENIKA", "SCHULERREFLEXION", "STUDENT REFLECTION"],
+};
+// Forms of work, any inflection (Grupa/Grupe/u grupama, u paru/u parovima, Frontalno/frontalni rad …).
+const GROUPING = /(INDIVID|SAMOSTALN|U PAR|PAROVI|GRUP|FRONTAL|CIJELI RAZRED|EINZEL|PARTNER|GRUPPE|PLENUM|PAIRS?\b|GROUPS?\b|WHOLE CLASS)/;
+const ALL_HEADINGS = [...Object.values(SECTIONS).flat(), ...Object.values(PEDAGOGY_SECTIONS).flat()];
+
+/** Lines of the section that starts at the first line containing one of `keys`, up to the next known heading. */
+function sectionLines(foldedLines: string[], keys: string[], maxLines = 40): string[] {
+  const start = foldedLines.findIndex((l) => keys.some((k) => l.includes(k)));
+  if (start < 0) return [];
+  const out: string[] = [];
+  for (let i = start + 1; i < Math.min(foldedLines.length, start + 1 + maxLines); i++) {
+    const l = foldedLines[i];
+    if (ALL_HEADINGS.some((h) => l.includes(h) && !keys.includes(h)) && !l.includes("|")) break;
+    out.push(l);
+  }
+  return out;
+}
+
+function pedagogyChecks(text: string, add: (id: string, ok: boolean, detail: string) => void): void {
+  const upper = fold(text).toUpperCase();
+  const foldedLines = upper.split("\n");
+  for (const key of Object.keys(PEDAGOGY_SECTIONS)) {
+    const ok = PEDAGOGY_SECTIONS[key].some((k) => upper.includes(k));
+    add(`section_${key}`, ok, ok ? "present" : "missing");
+  }
+  // P4-7: every phase row says who (form) and for how long (minutes)
+  const flow = sectionLines(foldedLines, PEDAGOGY_SECTIONS.flow);
+  // A table row may wrap over several lines: a line whose first cell is empty continues the row above it.
+  // Cells are joined column by column; a piece ending in "-" joins the next piece without a space
+  // ("INDIVIDU-" + "ALNO" = "INDIVIDUALNO"). A phase row is one whose FIRST cell holds the minutes.
+  const merged: string[][] = [];
+  for (const l of flow) {
+    if ((l.match(/\|/g) ?? []).length < 4) continue;
+    const cells = l.split("|").slice(1, -1).map((c) => c.trim());
+    if (cells[0] === "" && merged.length) {
+      const row = merged[merged.length - 1];
+      cells.forEach((c, i) => {
+        if (!c) return;
+        row[i] = row[i] ? (row[i].endsWith("-") ? row[i].slice(0, -1) + c : `${row[i]} ${c}`) : c;
+      });
+    } else merged.push(cells);
+  }
+  const rows = merged.filter((c) => /^\d{1,3}\s*([-–]\s*\d{1,3})?\s*(MIN)?$/.test(c[0] ?? "") && !/UKUPNO|GESAMT|TOTAL/.test(c.join(" ")))
+    .map((c) => `| ${c.join(" | ")} |`);
+  const withForm = rows.filter((l) => GROUPING.test(l)).length;
+  add("phases_complete", rows.length >= 3 && withForm === rows.length,
+    rows.length < 3 ? `only ${rows.length} phase rows with minutes`
+      : `${withForm}/${rows.length} rows state the form of work${withForm < rows.length ? `; e.g. ${rows.find((l) => !GROUPING.test(l))!.replace(/\s+/g, " ").trim().slice(0, 160)}` : ""}`);
+  // P4-6: every outcome I1–I4 is used again later in the plan, and there is one "Mogu …" per outcome
+  const outcomeLines = sectionLines(foldedLines, SECTIONS.outcomes, 30).join("\n");
+  const ids = [...new Set([...outcomeLines.matchAll(/\bI([1-4])\b/g)].map((m) => m[1]))];
+  const afterOutcomes = upper.slice(upper.indexOf(outcomeLines) + outcomeLines.length);
+  const unreferenced = ids.filter((d) => !new RegExp(`\\bI${d}\\b`).test(afterOutcomes));
+  const criteria = (text.match(/^\s*\|?\s*(\[[ xX]\]\s*)?(Mogu|Ich kann|I can)\b/gim) ?? []).length;
+  add("outcomes_aligned", ids.length >= 3 && unreferenced.length === 0 && criteria >= ids.length,
+    ids.length < 3 ? `${ids.length} outcomes found` : unreferenced.length ? `not used later: I${unreferenced.join(", I")}` : `${criteria} criteria for ${ids.length} outcomes`);
+}
 
 // English template labels that must not appear in a Bosnian or German plan.
 const ENGLISH_LABELS = [
@@ -172,6 +238,8 @@ export function validatePlan(text: string, params: ValidateParams): ValidationRe
   // External sources must be marked "to verify" (DL-P13 item 2)
   const unmarked = lines.filter((l) => SOURCE_HINT.test(l) && !VERIFY_MARK.test(l));
   add("sources_marked_to_verify", unmarked.length === 0, unmarked.length ? `${unmarked.length} unmarked: ${unmarked[0].trim().slice(0, 90)}` : "ok");
+
+  if (params.pedagogy) pedagogyChecks(text, add);
 
   const failed = checks.filter((c) => !c.ok).map((c) => c.id);
   return { passed: checks.length - failed.length, total: checks.length, failed, checks };
