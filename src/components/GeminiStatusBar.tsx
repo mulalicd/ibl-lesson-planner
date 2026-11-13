@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { TIER_COLORS, TIER_LABELS } from '@/lib/constants';
+import { PSI_VERSION_LABEL, TIER_COLORS, TIER_LABELS } from '@/lib/constants';
 import type { Tier, Language } from '@/lib/types';
 import { Timer, Cpu } from 'lucide-react';
 
@@ -33,7 +33,7 @@ export default function GeminiStatusBar({
           <Cpu className="w-3 h-3" /> AI #{keyIndex + 1}
         </span>
       )}
-      <span className="text-[10px] text-muted-foreground/40 font-semibold">PSI v8.0</span>
+      <span className="text-[10px] text-muted-foreground/40 font-semibold">{PSI_VERSION_LABEL}</span>
     </div>
   );
 }

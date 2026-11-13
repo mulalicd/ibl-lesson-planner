@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Send, StopCircle, RotateCcw, Lightbulb, ChevronRight, Save, CheckCircle2 } from 'lucide-react';
 import { useChat } from '@/hooks/useChat';
 import { cn } from '@/lib/utils';
-import { MODE_C_SUGGESTIONS, deriveTier } from '@/lib/constants';
+import { MODE_C_SUGGESTIONS, PSI_VERSION_LABEL, deriveTier } from '@/lib/constants';
 import PlanDisplay from './PlanDisplay';
 import DocxExportButton from './DocxExportButton';
 import ConversationExportButton from './ConversationExportButton';
@@ -359,7 +359,7 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
         </div>
         <PrivacyNotice className="justify-center text-center mt-3 max-w-2xl mx-auto" />
         <p className="text-center text-[11px] text-muted-foreground/40 mt-2 font-medium tracking-wide">
-          IBL Planer v2.0 · PSI v8.0 · IDSS Sarajevo
+          IBL Planer v2.0 · {PSI_VERSION_LABEL} · IDSS Sarajevo
         </p>
       </div>
     </div>
