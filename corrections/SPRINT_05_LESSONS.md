@@ -251,3 +251,11 @@ Date: 2026-11-07
   previous commit. I caught it by comparing the run's head_sha with the local HEAD, cancelled the run, and
   dispatched again. No quota was spent.
 - Rule: dispatch only after the push has returned, then check that the run's head_sha equals the local HEAD.
+
+### 2026-11-13 — Course correction: read the failing row before changing the prompt
+- v9.1 `phases_complete` failed 0/4. The failing rows were printed in the detail, and every one was a
+  validator false positive: a table cell wrapped across lines ("INDIVIDU-" + "ALNO"), continuation lines
+  counted as phases, and the abbreviation "Individ.".
+- If I had changed the PSI text instead, I would have "fixed" a model that was not at fault.
+- Rule: a new structural check prints its first failing sample, and the sample is read before the prompt or
+  the check is changed. The validator test was proven to fail on the old code before the fix was kept.
