@@ -63,3 +63,5 @@ One line per feature, per Commander E-10.
   nalaza and Refleksija učenika, with 6 new checks (DL-P17, DL-P20).
 - [2026-11-13] [FIX] UI shows the live PSI version from one constant (was "PSI v8.0"); "Generiraj
   rubriku" (PR #23).
+- [2026-11-13] [LANGUAGE] PSI amendment A17: the plan is written only in the chosen language at native
+  level; Bosnian standard (Latin, ijekavian, no Croatisms or Serbisms) is named in the prompt itself (DL-P22).
