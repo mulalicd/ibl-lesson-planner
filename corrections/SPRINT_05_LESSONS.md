@@ -233,3 +233,10 @@ Date: 2026-11-07
   without printing values) before it is stated to the Director.
 - Also learned: 7 of 12 production keys were unusable for 2.5 Flash. A periodic one-request-per-key health
   check would have found this weeks earlier.
+
+### 2026-11-13 — Course correction: one PR per approved change (Director: "Nova grana da")
+- The working branch also held the unapproved PSI v9.1 draft (inert, PRODUCTION_PSI = "v90").
+- With the Director's permission, I created a separate branch `claude/model-fallback` from main and cherry-picked
+  only the model fallback (DL-P18) and the eval and key-check tools.
+- Lesson: when a branch mixes an approved change with one that awaits approval, propose the split before
+  opening the PR, not after.
