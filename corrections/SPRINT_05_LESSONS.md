@@ -222,3 +222,14 @@ Date: 2026-11-07
   Logs show key labels only.
 - Lesson: a quota bottleneck on a test-only key should be raised with the owner as a choice early
   (test key vs. capped production keys) instead of planning around it for days.
+
+### 2026-11-13 — Rule violation (M-4 / evidence): "the eval never touches production keys" was wrong
+- What happened: I told the Director several times that GEMINI_EVAL_KEY is a separate project. The first key
+  check showed it is the SAME key as GEMINI_KEY_1, so evals spent a production key's quota uncapped.
+- Root cause: I took a configuration claim (the workflow comment, plus an earlier statement) as fact without
+  a check that compares key identity.
+- Fix: run.ts deduplicates by value and caps a duplicate as the production key; keycheck.ts flags duplicate keys.
+- Rule: any claim about which credential is used where needs a measured check (an identity comparison
+  without printing values) before it is stated to the Director.
+- Also learned: 7 of 12 production keys were unusable for 2.5 Flash. A periodic one-request-per-key health
+  check would have found this weeks earlier.
