@@ -505,3 +505,36 @@ conversation export is unchanged (not a lesson plan).
 3. The `meta` event names the model that served the plan.
 4. Stays free tier (DL-P14). The Director will not pay. Key 3 (the "Tier 1" project, $0, no credits) is removed from use.
 5. Rollback: set `GEMINI_MODELS` to the primary model only, then one deploy.
+
+## DL-P19 — Bosnian plans in standard Bosnian, Latin script (Director, 2026-11-13)
+
+**Decided by:** Director.
+
+> "Svi prikazani sadržaji moraju biti strogo na jeziku koji je korisnik izabrao … bosanski (latinično
+> pismo i bez srbizama i kroatizama) … osiguraj kontrolni sloj prije ispisa ali da ne usporavaš AI odgovor."
+
+His example: "rajčica". Live since PR #20 (deploy #19, 2026-11-13).
+
+**Implementation (no extra AI call, no added wait):**
+
+1. **One word list**, `src/lib/language/bosnianStandard.ts` (M-7), used by the browser and by the validator.
+2. **Automatic, grammar-safe fixes** (only the stem changes, the endings stay).
+   - Examples: točno→tačno, istorija→historija, opština→općina, uopšte→uopće, and ekavian
+     deca/vreme/gde/reka → djeca/vrijeme/gdje/rijeka.
+   - Applied in `useChat` to the text received so far, so the raw text is never shown.
+   - What is shown is what is kept, saved and exported.
+3. **Flagged words** that decline differently, e.g. rajčica→paradajz, tjedan→sedmica, kazalište→pozorište,
+   and the Croatian month names.
+   - Validator check `bosnian_standard`; Cyrillic letters also fail it.
+   - The detail names "found → standard", and "Popravi" sends exactly those words.
+4. **Not touched:** correct Bosnian look-alikes (točak, decembar, vlakno, kolovoz, siječe) and hyphenated
+   English terms. Each is covered by a test.
+5. **Decided by the Director 2026-11-13 ("samo hljeb i samo fabrika"):** "kruh" and "tvornica" are
+   Croatisms in IDSS plans; the standard forms are "hljeb" and "fabrika".
+
+**Open:**
+
+- The badge label wording awaits the Director's approval.
+- PSI amendment A17 (prevention at the source) needs approval of its wording.
+- German and English plans: a dictionary-based check is the candidate; not decided yet.
+- "Missing letters" needs an example before a cause is named.
