@@ -19,7 +19,7 @@ on:
         required: true
         default: '24'
       model:
-        description: 'Model (production today: gemini-2.5-flash; candidates: gemini-3.8-flash; Groq: groq:<model id>, or groq:list to list them)'
+        description: 'Model: production = exactly the live chain (2.5 Flash, then 3.5 Flash per key; DL-P18), or one model id, e.g. gemini-3.5-flash; Groq: groq:<model id> or groq:list'
         required: true
         default: 'gemini-2.5-flash'
       only:
