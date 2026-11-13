@@ -84,7 +84,7 @@ export const PSI_VERSION_LABEL = 'PSI v9.1';
 
 export const MODE_C_SUGGESTIONS = [
   'Predloži alternativnu udicu',
-  'Generiraj rubriku za ocjenjivanje dokaza učenja', // Director 2026-11-13: "rubriku"
+  'Generiši rubriku za ocjenjivanje dokaza učenja', // Director 2026-11-13: "rubriku", "Generiši"
   'Prilagodi plan za 45 minuta',
   'Predloži konkretan video za dokazni materijal',
   'Kako prilagoditi za učenike sa posebnim potrebama?',

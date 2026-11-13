@@ -47,3 +47,10 @@ describe('DL-P22: PSI A17 and the code name the same forbidden words', () => {
     }
   });
 });
+
+describe('Director 2026-11-13: "Generiši", not "Generiraj"', () => {
+  it('flags the Croatian -irati form of generisati', () => {
+    expect(findNonStandardBosnian('Generiraj rubriku').map((h) => h.found)).toEqual(['Generiraj']);
+    expect(findNonStandardBosnian('Generiši rubriku. Generisanje u toku.')).toEqual([]);
+  });
+});

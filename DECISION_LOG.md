@@ -601,3 +601,14 @@ It is not shipped in the browser bundle; the app exports through `docx`, which i
 3. A vitest test ties every "Never" word in A17 to the code: each word is fixed or flagged. The prompt and the
    code cannot drift apart.
 4. Rollback: remove the A17 block and regenerate (or `PRODUCTION_PSI = "v90"`).
+
+## DL-P23 — "Generiši", not "Generiraj" (Director, 2026-11-13)
+
+**Decided by:** Director ("Generiši").
+
+**Decision:**
+1. All 6 "Generiraj …" in `IDSS_IBL_PSI_v9_1.md` become "Generiši …".
+2. The chat suggestion becomes "Generiši rubriku za ocjenjivanje dokaza učenja".
+3. "generir…" (Croatian -irati form) is added to the flagged words of the language layer, with the standard
+   form "generisati".
+4. The rest of the app already used "Generiši".

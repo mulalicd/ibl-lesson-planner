@@ -311,3 +311,10 @@ Period: 2026-11-07 … 2026-11-13. Detailed entries follow below the summary; th
   `PRODUCTION_PSI` in the Edge Function, so a mismatch fails CI.
 - Rule: any fact shown to users that mirrors server state gets either a single source or a test that ties it
   to the server source.
+
+### 2026-11-13 — Rule violation caught by tests: a `//` comment inserted mid-line disabled the rest of a list
+- When I added "generir" to the flagged list, I appended a `// …` comment on a line that also held
+  tjedan/kruh/…, and the rest of that line was commented out. Two tests (rajčica example, A17 tie) failed at
+  once.
+- Rule: inside multi-item lines use `/* … */` or put the comment on its own line. The A17↔code tie test proved
+  its value on its first day.
