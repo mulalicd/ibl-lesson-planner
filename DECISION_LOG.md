@@ -577,3 +577,15 @@ the 6 labels.
 2. The A16 checks are on in production: `section_materials`, `section_flow`, `section_presentation`,
    `section_studentReflection`, `phases_complete`, `outcomes_aligned`. The 6 labels are approved as proposed.
 3. Rollback: `PRODUCTION_PSI = "v90"`, then one deploy. v9.0 plans are not judged by the A16 rules.
+
+## DL-P21 — Dev dependency `jszip` for the memorandum check (recorded at sprint close, 2026-11-13)
+
+**Context:** `jszip` (^3.10.1, MIT) was added in P2 (DL-P16) as a **devDependency** only. It is used by:
+- `scripts/build-memorandum.mjs`, which builds and checks the template from the official .dotx in CI;
+- `src/test/memorandum.test.ts`.
+
+It is not shipped in the browser bundle; the app exports through `docx`, which is lazy-loaded.
+
+**Omission:** the addition was not recorded when it was made. It was found by the sprint-close DONE_CHECKLIST.
+
+**Decision:** keep it. It is small, maintained and build/test-only. No new runtime dependency this sprint.

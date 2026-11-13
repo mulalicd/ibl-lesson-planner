@@ -1,26 +1,62 @@
-# Sprint 05 — Lessons Learned
-Date: 2026-11-07
+# Sprint 05 — Lessons Learned (P2, P3, P4; consolidated 2026-11-13)
+Period: 2026-11-07 … 2026-11-13. Detailed entries follow below the summary; the summary is authoritative.
 
 ## Corrections Applied
-- The pre-P3 SSE transform decoded each network chunk on its own and
-  ignored lines that didn't parse. A proof run shows **303 of 314
-  possible split points lost or corrupted text**, and diacritics broke
-  across chunk boundaries. Gemini events with several text parts also
-  kept only `parts[0]` → `_shared/sse.ts` uses one streaming decoder +
-  a line buffer + flush, and joins all parts; tests cover every
-  single split point and byte-by-byte delivery → audit D-1. Likely a
-  contributor to the Director's "veoma loš kvalitet" (missing
-  fragments).
+1. Streaming decoder (audit D-1). Text and diacritics were lost at chunk boundaries: 303 of 314 split
+   points were corrupted. Now one decoder plus a line buffer, tested at every byte offset.
+2. Instructions to a non-coder (Director). Name the look-alike option he must NOT use (Secrets vs.
+   Variables) and describe the expected screen. This is CONSTITUTION rule 8.
+3. User-facing wording belongs to the Director: the privacy notice, the error text, and the badge
+   label "Bosanski jezik". "Zadovoljavajuće" is not an approval.
+4. The prompt's own templates contradicted its rules: ASCII spelling and "DA" ticks. The fix is templates
+   for every mandated section (3.2A, 3.2B, 3.9A, 3.9B), because the model follows templates.
+5. Key rotation does not help against a model-wide 503. The fix is a backoff budget, and since 2026-11-13
+   a fallback to the second model on the same key (DL-P18).
+6. Root cause of the "12 keys run out fast": only 5 of 12 keys serve 2.5 Flash.
+   - 4 newer projects answer 404.
+   - 1 key is invalid.
+   - 1 project has no free tier.
+   - 1 project is on prepaid billing.
+   - The "separate" eval key was identical to key 1.
+   I had stated the opposite without checking key identity.
+7. Committed despite a red type check (`;` instead of `&&`). Gate every commit on `&&`.
+8. A denied shell command silently dropped the DL-P19 record. After a denial, re-run each step and check
+   `git show --stat`.
+9. The PSI version label was hard-coded as "PSI v8.0" in 4 places (Director). It now comes from one
+   constant, with a test tied to PRODUCTION_PSI.
+10. P4 validator false positives (wrapped table rows, "Grupe", "Individ."). The failing sample was read
+    before touching the prompt, and the fix was proven by a test that fails on the old code.
 
 ## Gotchas Discovered
-- `request_credential` cannot store a key for a custom header
-  (`x-goog-api-key`); Gemini doesn't accept API keys as Bearer → the
-  Director adds it as an environment network secret in settings.
+- Free-tier quota is per day, per project AND per model. It resets at midnight Pacific (09:00 Sarajevo).
+  Thinking tokens count toward maxOutputTokens (plans were truncated at 16,384).
+- Merged is not deployed: the Edge deploy is a separate workflow (auto on push to main since P3).
+- An open PR silently absorbs new commits on the same branch. Mixed approved and unapproved work → split
+  the branch first (Director: "Nova grana da").
+- A `| head && echo found` pipe hid a failed grep: use `grep -c`.
+- Dispatching a workflow in the same batch as the push started it on the old commit. Dispatch after the
+  push and compare head_sha.
+- A force push is unnecessary when the remote tip is an ancestor; the safety classifier refuses it anyway.
+- The egress proxy blocks GitHub artifact downloads (blob.core.windows.net). Read results from job logs
+  or the step summary.
+- JavaScript `\b` is ASCII-only, so č/ć/š/ž/đ are not word characters. Use Unicode lookarounds.
+- Folding Đ→D broke heading matching. PSI ASCII uses "DJ".
 
 ## Commander Improvement Candidates
-- A-5 (AI provider) → "streaming adapters must be tested by splitting
-  the byte stream at EVERY offset (cheap, exhaustive)". Why: random
-  or happy-path tests miss chunk-boundary bugs.
+- A-5: test streaming adapters by splitting the byte stream at every offset.
+- E-15: an AI quality gate starts with a real failing production sample as its first fixture.
+- C-12: name the look-alike option the owner must NOT use, and describe the screen after each step.
+- New: a cheap key-health check (one tiny request per credential, labels only, duplicate detection)
+  before any quota diagnosis or claim about which credential is used where.
+- New: a fact shown in the UI that mirrors server state (version, model) gets a single source or a test
+  that ties it to the server.
+- New: a structural validator check prints its first failing sample, and the sample is read before the
+  prompt or the check changes.
+- New: pause scheduled automation when the owner's usage budget is low.
+
+---
+
+## Detailed entries
 
 ## Addendum — P3 infrastructure (2026-11-07)
 

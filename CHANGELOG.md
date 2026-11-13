@@ -41,3 +41,25 @@ One line per feature, per Commander E-10.
   or admin edits), AI generator authenticated + quota, no public
   access to any table. Footer contact maja.ljubovic@idss.ba. Official
   IDSS logo in header/login. Vercel Git deployment restored.
+- [2026-11-10] [AI] P3 live: PSI v9.0 (A1–A15) is the production prompt (DL-P13), generated from one .md
+  source. Streaming decoder fixed (no lost text or diacritics). Automatic quality check with the
+  "Popravi" button; output limit raised to 32,768 tokens.
+- [2026-11-10] [FEATURE] Every exported plan is written on the official IDSS memorandum (DL-P16).
+- [2026-11-10] [FIX] P2 live (DL-P15):
+  - Word export appears right after "Sačuvaj plan".
+  - Delete and favourite report RLS refusals.
+  - Plan detection works by header.
+  - TypeScript strict.
+  - The export counter is kept via an RPC.
+  - Generation time is saved.
+  - Playwright smoke tests run in CI.
+- [2026-11-13] [AI] Model fallback 2.5 Flash → 3.5 Flash on the same key; dead keys are skipped (DL-P18).
+  Key health check tool for the evaluation workflow.
+- [2026-11-13] [LANGUAGE] Bosnian plans in standard Bosnian, Latin script (DL-P19):
+  - grammar-safe fixes while streaming;
+  - the "Bosanski jezik" check names Croatisms and Serbisms;
+  - "Popravi" sends the exact words.
+- [2026-11-13] [PEDAGOGY] P4 live: PSI v9.1 (A16) adds Materijali za čas, Tok časa, Predstavljanje
+  nalaza and Refleksija učenika, with 6 new checks (DL-P17, DL-P20).
+- [2026-11-13] [FIX] UI shows the live PSI version from one constant (was "PSI v8.0"); "Generiraj
+  rubriku" (PR #23).
