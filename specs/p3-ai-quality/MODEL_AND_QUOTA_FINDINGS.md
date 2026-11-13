@@ -253,3 +253,19 @@ Evaluated first: gpt-oss-120b and qwen3.8-27b on g08 and g12 (PSI v9). Results g
 2. After 08:00 UTC reset: the same 3 lessons on 2.5 Flash (6 calls, within the 20/day limit) for a like-for-like comparison.
 3. A full 24-lesson eval fits the free tier only at ≤ 20 calls per model per day. A paid eval
    key (Director decision) makes it a single run of a few dollars.
+
+## 5e. Quota check on the Director's request (probe run 43488457545, 2026-11-13 19:03 UTC)
+[V] Eval key (separate project, NOT one of the 12 production keys): tiny calls 200 on gemini-2.5-flash and
+gemini-3.5-flash; gemini-3.8-flash timeout / 503 "high demand".
+[V] Full PSI v9 request (g08 Fotosinteza 45 min): prompt 25,646 tokens.
+- 2.5-flash: 62.9 s, 8,993 output + 4,489 thinking tokens, 21/21.
+- 3.5-flash: 40.0 s, 8,077 output + 1,716 thinking tokens, 21/21.
+[V] Rate-limits page: "Rate limits are applied per project, not per API key." RPD resets at midnight Pacific.
+[V] The morning 429 (`GenerateRequestsPerDayPerProjectPerModel`) counts requests, not tokens. Two full plans
+went through the same key in the evening, so the morning "~1/day" was not a permanent limit.
+[I] Request size counts toward tokens-per-minute (TPM), not the daily request count. It is not the likely cause
+of daily exhaustion. Likely consumers of the daily count:
+1. every chat message and every "Popravi" is one full request (it resends the PSI and the history);
+2. after a 503 the loop moves to the NEXT key, so one teacher request can spend one request on several projects;
+3. two keys from the SAME Google project share one quota.
+[U] Production usage per project: the ACA has no access to the production logs or to the 12 Google projects.
