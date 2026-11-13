@@ -26,6 +26,13 @@ export const QUALITY_CHECK_LABELS: Record<string, string> = {
   no_english_labels: 'Bez engleskih naslova',
   bosnian_diacritics: 'Ispravna slova č, ć, š, ž, đ',
   sources_marked_to_verify: 'Izvori označeni „ZA PROVJERU“',
+  // P4 (PSI v9.1) — PROPOSED wording, approved together with the v9.1 text; shown only when v9.1 is live.
+  section_materials: 'Materijali za čas',
+  section_flow: 'Tok časa (tabela faza)',
+  section_presentation: 'Predstavljanje nalaza',
+  section_studentReflection: 'Refleksija učenika',
+  phases_complete: 'Svaka faza ima oblik rada i minute',
+  outcomes_aligned: 'Svaki ishod ima aktivnost, dokaz i kriterij „Mogu …“',
 };
 
 export function qualityCheckLabel(id: string): string {

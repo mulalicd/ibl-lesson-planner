@@ -131,6 +131,23 @@ const SECTION_DEFS: {
     accentColor: 'text-violet-700',
     icon: <Brain className="w-4 h-4" />,
   },
+  // PSI v9.1 (P4, A16)
+  {
+    patterns: ['MATERIJALI ZA ČAS', 'MATERIALIEN FÜR DIE STUNDE', 'MATERIALS FOR THE LESSON', 'TOK ČASA', 'STUNDENVERLAUF', 'LESSON FLOW'],
+    bgColor: 'bg-gradient-to-br from-sky-50 to-blue-50/40',
+    borderColor: 'border-sky-200/50',
+    iconBg: 'bg-sky-100 text-sky-700',
+    accentColor: 'text-sky-700',
+    icon: <Timer className="w-4 h-4" />,
+  },
+  {
+    patterns: ['REFLEKSIJA UČENIKA', 'SCHÜLERREFLEXION', 'STUDENT REFLECTION'],
+    bgColor: 'bg-gradient-to-br from-teal-50 to-emerald-50/40',
+    borderColor: 'border-teal-200/50',
+    iconBg: 'bg-teal-100 text-teal-700',
+    accentColor: 'text-teal-700',
+    icon: <MessageCircle className="w-4 h-4" />,
+  },
   {
     patterns: ['FOOTER', 'POST-GENERATION', 'KONTAKT', 'CONTACT'],
     bgColor: 'bg-gradient-to-br from-gray-50 to-slate-50/40',

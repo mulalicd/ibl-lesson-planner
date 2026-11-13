@@ -3,6 +3,7 @@
 
 import { PSI_V81_PROMPT } from "./psi_v81.ts";
 import { PSI_V90_PROMPT } from "./psi_v90.generated.ts";
+import { PSI_V91_PROMPT } from "./psi_v91.generated.ts";
 import type { IblChatRequest } from "../../../src/lib/validation/schemas.ts";
 
 export type AiMessage = { role: string; content: string };
@@ -18,10 +19,16 @@ export type PromptVariant = "v81" | "psi";
  * "v90" since 2026-11-10: the Director approved the PSI v9.0 text ("PSI v9 odobren").
  * Rollback = set back to "v81" and deploy.
  */
-export const PRODUCTION_PSI: "v81" | "v90" = "v90";
+export type ProductionPsi = "v81" | "v90" | "v91";
+// v91 = PSI v9.1 DRAFT (P4, amendment A16): only for evaluation until the Director approves its text.
+export const PRODUCTION_PSI: ProductionPsi = "v90";
 
-/** What the Edge Function sends to Gemini. Tests cover both settings. */
-export function buildProductionMessages(req: IblChatRequest, psi: "v81" | "v90" = PRODUCTION_PSI): AiMessage[] {
+/** P4: the stricter pedagogy checks (A16) apply only to plans written under v9.1. */
+export const pedagogyChecksFor = (psi: ProductionPsi): boolean => psi === "v91";
+
+/** What the Edge Function sends to Gemini. Tests cover every setting. */
+export function buildProductionMessages(req: IblChatRequest, psi: ProductionPsi = PRODUCTION_PSI): AiMessage[] {
+  if (psi === "v91") return buildMessages(req, "psi", PSI_V91_PROMPT);
   return psi === "v90" ? buildMessages(req, "psi", PSI_V90_PROMPT) : buildMessages(req, "v81");
 }
 

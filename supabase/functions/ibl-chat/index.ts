@@ -14,7 +14,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { IblChatRequestSchema } from "../../../src/lib/validation/schemas.ts";
 import { createGeminiToOpenAiTransform } from "../_shared/sse.ts";
-import { buildProductionMessages } from "../_shared/prompt.ts";
+import { buildProductionMessages, PRODUCTION_PSI, pedagogyChecksFor } from "../_shared/prompt.ts";
 import { PSI_V81_PROMPT } from "../_shared/psi_v81.ts";
 import { validatePlan } from "../_shared/validate.ts";
 import { GEMINI_GENERATION_CONFIG } from "../_shared/generation.ts";
@@ -257,7 +257,10 @@ Deno.serve(async (req) => {
     const onComplete = p
       ? (fullText: string): string | null => {
         try {
-          const report = validatePlan(fullText, { language: p.language, duration_min: p.duration_min, tier: p.tier });
+          const report = validatePlan(fullText, {
+            language: p.language, duration_min: p.duration_min, tier: p.tier,
+            pedagogy: pedagogyChecksFor(PRODUCTION_PSI), // P4: A16 checks only with PSI v9.1
+          });
           return JSON.stringify({ type: "validation", report });
         } catch (e) {
           logError("validatePlan", e); // never break the stream because of the check

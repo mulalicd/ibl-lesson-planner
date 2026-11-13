@@ -486,4 +486,20 @@ conversation export is unchanged (not a lesson plan).
 
 ---
 
+## DL-P17 — P4 approved; no official content format exists (Director, 2026-11-13)
+
+**Decided by:** Director: "1. odobravam P4. 2. nema zvaničnog obrasca. Naša pisana priprema nastavnog časa je
+najbolja na svijetu i ne postoji obrazac koji bi se mogao kopirati. Na protiv. Po završetku ovog projekta drugi će
+kopirati naš sadržaj kao industrijski primjer."
+
+**Consequences:**
+1. P4 items P4-1 … P4-7 (`specs/p4-pedagogy/SPEC.md`) approved.
+2. No external format to follow. The IDSS plan (PSI) is the reference standard itself; P4 is designed as the benchmark.
+3. The PSI wording change (amendment A16 + template) is drafted as **PSI v9.1** in a separate file. Production stays on the
+   approved v9 (`PRODUCTION_PSI = "v90"`) until the Director approves the v9.1 text after reading generated plans
+   (CONSTITUTION rule 1). The new validator checks are switched on together with v9.1, never before, so that
+   v9 plans are not judged against rules they were never given.
+
+---
+
 *Project Decision Log — IBL Lesson Planner — under Commander v1.7.0*

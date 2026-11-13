@@ -120,3 +120,50 @@ Deno.test("a generic mention of a textbook is not an unmarked source; a page ref
   if (failed(GOOD_BS + "\n| what a factual textbook might miss, AND |\n").includes("sources_marked_to_verify")) throw new Error("generic word flagged");
   if (failed(GOOD_BS + "\n- Udžbenik Priroda 5, str. 34\n").includes("sources_marked_to_verify") === false) throw new Error("page reference not flagged");
 });
+
+// P4 (PSI v9.1, A16) — lesson flow checks
+const GOOD_V91 = GOOD_BS.replace("I1 Učenik može uporediti …", `I1 Učenik može uporediti dva izvora.
+I2 Učenik može objasniti ulogu svjetlosti.
+I3 Učenik može procijeniti tvrdnju.
+KRITERIJI USPJEHA
+[ ] Mogu uporediti dva izvora.
+[ ] Mogu objasniti ulogu svjetlosti.
+[ ] Mogu procijeniti tvrdnju.`).replace("| Ukupno: 45 min |", `| Ukupno: 45 min |
+MATERIJALI ZA ČAS
+| [ ] 5 kopija teksta A — po jedna za svaku grupu |
+TOK ČASA
+| Min   | Faza          | Oblik rada  | Učenici rade        | Nastavnik radi | Produkt / dokaz       |
+| 0-5   | Udica         | Frontalno   | posmatraju biljku   | pita           | pitanja               |
+| 5-25  | Istraživanje  | Grupa (4)   | upoređuju tekstove  | skela          | tabela — dokaz za I1  |
+| 25-35 | Predstavljanje nalaza | Grupa → frontalno | predstavljaju | vodi | mapa — dokaz za I2 |
+| 35-45 | Refleksija učenika | Individualno | provjeravaju "Mogu …" | sluša | listić — dokaz za I3 |
+REFLEKSIJA UČENIKA (pitanja za učenike)
+| 1. Šta sada misliš o istraživačkom pitanju? |`);
+
+Deno.test("v9 plans are NOT judged by the v9.1 rules (pedagogy off by default)", () => {
+  const off = validatePlan(GOOD_BS, { language: "bosnian", duration_min: 45 });
+  if (off.checks.some((c) => c.id === "phases_complete" || c.id === "outcomes_aligned")) throw new Error("pedagogy checks ran without the flag");
+});
+
+Deno.test("a complete v9.1 plan passes every check including the lesson-flow checks", () => {
+  const r = validatePlan(GOOD_V91, { language: "bosnian", duration_min: 45, pedagogy: true });
+  if (r.failed.length) throw new Error(JSON.stringify(r.checks.filter((c) => !c.ok)));
+  for (const id of ["section_materials", "section_flow", "section_presentation", "section_studentReflection", "phases_complete", "outcomes_aligned"]) {
+    if (!r.checks.some((c) => c.id === id && c.ok)) throw new Error(`missing or failed: ${id}`);
+  }
+});
+
+Deno.test("a phase row without the form of work fails phases_complete", () => {
+  const f = validatePlan(GOOD_V91.replace("| Grupa (4)   |", "| —           |"), { language: "bosnian", duration_min: 45, pedagogy: true }).failed;
+  if (!f.includes("phases_complete")) throw new Error(f.join());
+});
+
+Deno.test("an outcome that is never used in the lesson fails outcomes_aligned", () => {
+  const f = validatePlan(GOOD_V91.replace("listić — dokaz za I3", "listić"), { language: "bosnian", duration_min: 45, pedagogy: true }).failed;
+  if (!f.includes("outcomes_aligned")) throw new Error(f.join());
+});
+
+Deno.test("fewer 'Mogu …' criteria than outcomes fails outcomes_aligned", () => {
+  const f = validatePlan(GOOD_V91.replace("[ ] Mogu procijeniti tvrdnju.", ""), { language: "bosnian", duration_min: 45, pedagogy: true }).failed;
+  if (!f.includes("outcomes_aligned")) throw new Error(f.join());
+});

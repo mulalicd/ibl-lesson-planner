@@ -13,6 +13,8 @@ export interface ValidateParams {
   language: Language;
   duration_min: number;
   tier?: Tier;
+  /** P4 (PSI v9.1, A16): add the lesson-flow checks. Only for plans written under v9.1. */
+  pedagogy?: boolean;
 }
 
 export interface CheckResult {
@@ -46,6 +48,52 @@ const SECTIONS: Record<string, string[]> = {
   realLife: ["UPORISTE U STVARNOM ZIVOTU", "BEZUG ZUM ALLTAG", "REAL-LIFE CONNECTION", "REAL LIFE CONNECTION"],
   tips: ["SAVJETI I TRIKOVI", "TIPPS & TRICKS", "TIPS & TRICKS", "TIPS AND TRICKS"],
 };
+
+// P4 (A16) sections, matched like SECTIONS (diacritic-folded, upper-cased).
+const PEDAGOGY_SECTIONS: Record<string, string[]> = {
+  materials: ["MATERIJALI ZA CAS", "MATERIALIEN FUR DIE STUNDE", "MATERIALS FOR THE LESSON"],
+  flow: ["TOK CASA", "STUNDENVERLAUF", "LESSON FLOW"],
+  presentation: ["PREDSTAVLJANJE NALAZA", "PRASENTATION DER ERGEBNISSE", "PRESENTING FINDINGS"],
+  studentReflection: ["REFLEKSIJA UCENIKA", "SCHULERREFLEXION", "STUDENT REFLECTION"],
+};
+const GROUPING = /(INDIVIDUALNO|U PARU|GRUPA|FRONTALNO|EINZEL|PARTNER|GRUPPE|PLENUM|INDIVIDUAL|PAIRS?|GROUPS?|WHOLE CLASS)/;
+const ALL_HEADINGS = [...Object.values(SECTIONS).flat(), ...Object.values(PEDAGOGY_SECTIONS).flat()];
+
+/** Lines of the section that starts at the first line containing one of `keys`, up to the next known heading. */
+function sectionLines(foldedLines: string[], keys: string[], maxLines = 40): string[] {
+  const start = foldedLines.findIndex((l) => keys.some((k) => l.includes(k)));
+  if (start < 0) return [];
+  const out: string[] = [];
+  for (let i = start + 1; i < Math.min(foldedLines.length, start + 1 + maxLines); i++) {
+    const l = foldedLines[i];
+    if (ALL_HEADINGS.some((h) => l.includes(h) && !keys.includes(h)) && !l.includes("|")) break;
+    out.push(l);
+  }
+  return out;
+}
+
+function pedagogyChecks(text: string, add: (id: string, ok: boolean, detail: string) => void): void {
+  const upper = fold(text).toUpperCase();
+  const foldedLines = upper.split("\n");
+  for (const key of Object.keys(PEDAGOGY_SECTIONS)) {
+    const ok = PEDAGOGY_SECTIONS[key].some((k) => upper.includes(k));
+    add(`section_${key}`, ok, ok ? "present" : "missing");
+  }
+  // P4-7: every phase row says who (form) and for how long (minutes)
+  const flow = sectionLines(foldedLines, PEDAGOGY_SECTIONS.flow);
+  const rows = flow.filter((l) => (l.match(/\|/g) ?? []).length >= 4 && /\b\d{1,3}\s*[-–]\s*\d{1,3}\b|\b\d{1,3}\s*MIN/.test(l) && !/UKUPNO|GESAMT|TOTAL/.test(l));
+  const withForm = rows.filter((l) => GROUPING.test(l)).length;
+  add("phases_complete", rows.length >= 3 && withForm === rows.length,
+    rows.length < 3 ? `only ${rows.length} phase rows with minutes` : `${withForm}/${rows.length} rows state the form of work`);
+  // P4-6: every outcome I1–I4 is used again later in the plan, and there is one "Mogu …" per outcome
+  const outcomeLines = sectionLines(foldedLines, SECTIONS.outcomes, 30).join("\n");
+  const ids = [...new Set([...outcomeLines.matchAll(/\bI([1-4])\b/g)].map((m) => m[1]))];
+  const afterOutcomes = upper.slice(upper.indexOf(outcomeLines) + outcomeLines.length);
+  const unreferenced = ids.filter((d) => !new RegExp(`\\bI${d}\\b`).test(afterOutcomes));
+  const criteria = (text.match(/^\s*\|?\s*(\[[ xX]\]\s*)?(Mogu|Ich kann|I can)\b/gim) ?? []).length;
+  add("outcomes_aligned", ids.length >= 3 && unreferenced.length === 0 && criteria >= ids.length,
+    ids.length < 3 ? `${ids.length} outcomes found` : unreferenced.length ? `not used later: I${unreferenced.join(", I")}` : `${criteria} criteria for ${ids.length} outcomes`);
+}
 
 // English template labels that must not appear in a Bosnian or German plan.
 const ENGLISH_LABELS = [
@@ -163,6 +211,8 @@ export function validatePlan(text: string, params: ValidateParams): ValidationRe
   // External sources must be marked "to verify" (DL-P13 item 2)
   const unmarked = lines.filter((l) => SOURCE_HINT.test(l) && !VERIFY_MARK.test(l));
   add("sources_marked_to_verify", unmarked.length === 0, unmarked.length ? `${unmarked.length} unmarked: ${unmarked[0].trim().slice(0, 90)}` : "ok");
+
+  if (params.pedagogy) pedagogyChecks(text, add);
 
   const failed = checks.filter((c) => !c.ok).map((c) => c.id);
   return { passed: checks.length - failed.length, total: checks.length, failed, checks };

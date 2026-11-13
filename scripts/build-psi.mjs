@@ -13,6 +13,7 @@ const SOURCES = [
   // v9.0 DRAFT (DL-P13): used by the golden evaluation only. It goes to
   // production only after the Director approves its text.
   { id: 'v90', md: 'IDSS_IBL_PSI_v9.md', exportName: 'PSI_V90_PROMPT' },
+  { id: 'v91', md: 'IDSS_IBL_PSI_v9_1_draft.md', exportName: 'PSI_V91_PROMPT' },
 ];
 const check = process.argv.includes('--check');
 let stale = 0;

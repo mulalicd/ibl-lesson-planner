@@ -40,3 +40,11 @@ Deno.test("switched to v90: chat sends the plan exactly once (audit D-6)", () =>
   if (count !== 1) throw new Error(`plan sent ${count} times`);
   if (m[m.length - 1].content !== "Popravi udicu.") throw new Error("last message must be the teacher's request");
 });
+
+Deno.test("PSI v9.1 is wired for evaluation but NOT in production until approved (P4)", async () => {
+  const { PSI_V91_PROMPT } = await import("./psi_v91.generated.ts");
+  const { pedagogyChecksFor } = await import("./prompt.ts");
+  if (buildProductionMessages(gen, "v91")[0].content !== PSI_V91_PROMPT) throw new Error("v91 not wired");
+  if (!PSI_V91_PROMPT.includes("A16") || !PSI_V91_PROMPT.includes("TOK ČASA")) throw new Error("v91 lacks A16");
+  if (pedagogyChecksFor(PRODUCTION_PSI)) throw new Error("pedagogy checks must stay off while production is not v91");
+});
