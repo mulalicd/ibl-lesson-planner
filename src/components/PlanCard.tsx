@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Star, Clock, GraduationCap } from 'lucide-react';
+import { Star, Clock, GraduationCap, User } from 'lucide-react';
 import { cn, formatDate, truncate, UNKNOWN, showText, showGrade, showMinutes } from '@/lib/utils';
 import { TIER_COLORS, TIER_LABELS } from '@/lib/constants';
 import type { PlanCardData } from '@/lib/types';
@@ -38,7 +38,7 @@ export default function PlanCard({ plan, className }: PlanCardProps) {
           <span className={cn('text-[10px] px-2.5 py-0.5 rounded-full border font-semibold', plan.tier ? TIER_COLORS[plan.tier] : '')}>
             {tierLabel}
           </span>
-          {plan.is_favourite && <Star className="w-4 h-4 text-idss-gold fill-idss-gold" />}
+          {plan.favourite && <Star className="w-4 h-4 text-idss-gold fill-idss-gold" />}
         </div>
       </div>
 
@@ -59,6 +59,11 @@ export default function PlanCard({ plan, className }: PlanCardProps) {
           <Clock className="w-3 h-3" /> {showMinutes(plan.duration_min)}
         </span>
         <span>{formatDate(plan.created_at)}</span>
+        {plan.author && (
+          <span className="flex items-center gap-1 ml-auto truncate" title={plan.author}>
+            <User className="w-3 h-3 flex-shrink-0" /> <span className="truncate">{plan.author}</span>
+          </span>
+        )}
       </div>
     </Link>
   );
