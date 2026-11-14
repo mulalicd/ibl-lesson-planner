@@ -1,5 +1,5 @@
-# Sprint 05 — Lessons Learned (P2, P3, P4; consolidated 2026-11-13)
-Period: 2026-11-07 … 2026-11-13. Detailed entries follow below the summary; the summary is authoritative.
+# Sprint 05 — Lessons Learned (P2, P3, P4, P5, language layers; consolidated 2026-11-14)
+Period: 2026-11-07 … 2026-11-14. Detailed entries follow below the summary; the summary is authoritative.
 
 ## Corrections Applied
 1. Streaming decoder (audit D-1). Text and diacritics were lost at chunk boundaries: 303 of 314 split
@@ -26,6 +26,14 @@ Period: 2026-11-07 … 2026-11-13. Detailed entries follow below the summary; th
    constant, with a test tied to PRODUCTION_PSI.
 10. P4 validator false positives (wrapped table rows, "Grupe", "Individ."). The failing sample was read
     before touching the prompt, and the fix was proven by a test that fails on the old code.
+11. German plans copied Bosnian template lines (and once Cyrillic letters). The prompt fixes (A17 addition,
+    DE/EN template lines) reduced copying from 3/13 to 1/7 plans, but never to zero. Zero needs a
+    deterministic layer after generation (DL-P30), measured on what the teacher sees.
+12. "Prepravi ovaj dio" reported success on an empty group card and duplicated sections (Director, live).
+    I had also given him test steps from a fixture (UDICA card) instead of a real v9.1 plan. Fix: no button
+    on cards without own text, the answer is cut at other headings, and "success" requires a visible change.
+13. The AI language names were written in two places (prompt.ts, sectionRevision.ts); found at sprint close
+    and moved to one module (M-7).
 
 ## Gotchas Discovered
 - Free-tier quota is per day, per project AND per model. It resets at midnight Pacific (09:00 Sarajevo).
@@ -41,6 +49,14 @@ Period: 2026-11-07 … 2026-11-13. Detailed entries follow below the summary; th
   or the step summary.
 - JavaScript `\b` is ASCII-only, so č/ć/š/ž/đ are not word characters. Use Unicode lookarounds.
 - Folding Đ→D broke heading matching. PSI ASCII uses "DJ".
+- The npm package dictionary-bs@1.0.2 is broken (its .aff is an HTML page, the .dic is ISO-8859-2), and
+  nspell does not support German compounds. Measure a dependency on real data before proposing it.
+- A cloud worker restart removed deno, and the deno.land installer is blocked (403). A small Deno.test
+  shim run with tsx executes the deno test files; CI stays the authority.
+- A static render of framer-motion cards shows an empty page (opacity 0 start). Override it in the check
+  page only.
+- German legitimately writes three equal letters ("Schifffahrt"), so a triple-letter typo rule must skip
+  German.
 
 ## Commander Improvement Candidates
 - A-5: test streaming adapters by splitting the byte stream at every offset.
@@ -53,6 +69,10 @@ Period: 2026-11-07 … 2026-11-13. Detailed entries follow below the summary; th
 - New: a structural validator check prints its first failing sample, and the sample is read before the
   prompt or the check changes.
 - New: pause scheduled automation when the owner's usage budget is low.
+- New: an instruction to the model reduces a failure; only a deterministic post-processing layer can
+  guarantee zero. Measure both on the text the user actually sees.
+- New: live-test steps for the owner come from a real production output, never from a test fixture.
+- New: a "success" message is shown only after checking the visible result, not after the code ran.
 
 ---
 
@@ -345,9 +365,6 @@ Period: 2026-11-07 … 2026-11-13. Detailed entries follow below the summary; th
 - Rule: never claim a fix from n=2. Log the offending lines, measure on a larger sample (after the 09:00
   quota reset), then decide. The check stays out of the teacher's badge until it is stable and the Director
   approves a label.
-
-### 2026-11-14 — No lessons this session (routine changes only)
-- "Ako jeste" (DL-P26) and the P5 SPEC draft: routine changes, no new gotcha or correction.
 
 ### 2026-11-14 — Observation: the A17 addition helps, but the model still copies sample text verbatim
 - Eval run 43540520949 (6 German lessons, A17 addition): language_purity 5/6, no Cyrillic. Remaining hits in

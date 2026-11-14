@@ -5,6 +5,7 @@ import { PSI_V81_PROMPT } from "./psi_v81.ts";
 import { PSI_V90_PROMPT } from "./psi_v90.generated.ts";
 import { PSI_V91_PROMPT } from "./psi_v91.generated.ts";
 import type { IblChatRequest } from "../../../src/lib/validation/schemas.ts";
+import { AI_LANGUAGE_NAMES as LANGUAGE_NAMES } from "../../../src/lib/language/languageNames.ts";
 
 export type AiMessage = { role: string; content: string };
 export type PromptVariant = "v81" | "psi";
@@ -137,7 +138,6 @@ function buildV81Messages(req: IblChatRequest): AiMessage[] {
   return aiMessages;
 }
 
-const LANGUAGE_NAMES = { bosnian: "Bosnian (bosanski)", german: "German (Deutsch)", english: "English" } as const;
 
 function buildPsiMessages(req: IblChatRequest, psiText: string): AiMessage[] {
   const { mode, messages, plan_context, params } = req;

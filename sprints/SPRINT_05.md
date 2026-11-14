@@ -88,3 +88,71 @@ New rules suggested by this sprint:     see "Commander Improvement Candidates" i
 ```
 
 Lessons captured: 23 entries in corrections/SPRINT_05_LESSONS.md (plus the consolidated summary)
+
+---
+
+## HANDOFF NOTE — Sprint 05 continuation (2026-11-13 → 2026-11-14, closed 2026-11-14)
+
+### Completed (all live in production, Supabase deploy green and Vercel bundle checked after each merge)
+| What | Decision | PR |
+|---|---|---|
+| Bosnian label, "Generiši", "Ako jeste", de/en labels, PSI label from one constant | DL-P22 … DL-P26 | #23 … #30 |
+| A17 language rule + addition (translate templates, Latin script only) | DL-P28 | #31 |
+| P5-3 structured Word export (real headings and tables, all text kept; rendered and checked) | DL-P27 | #31 |
+| P5-1 "Moji / Svi", P5-5 language fixes on stored plans | DL-P27 | #28/#29 |
+| P5-2 own favourites + P5-1b author names (owner SQL applied by the Director, APPLIED.md) | DL-P27 | #32 |
+| PSI template lines in German and English; validator "Paararbeit" | DL-P29 | #33 |
+| DE/EN template-line layer; "sistematičan"; L-2 measured proposal | DL-P30 | #34 |
+| P5-4 "Prepravi ovaj dio" (wording approved) + fix after the Director's live report | DL-P31 | #35, #36 |
+| L-2 step 1: heading guard + "Moguća greška u pisanju" | DL-P32 | #37 |
+
+The Director confirmed "Prepravi ovaj dio" live after the fix (2026-11-14). P5 (P5-1 … P5-5) is complete.
+
+### Not completed / open
+- L-2 step 2 (dictionary spell check, eval only): proposed in `specs/language-quality/L2_PRIJEDLOG.md`, not
+  approved. German dictionary is GPL; nspell has no compounds.
+- Free Bosnian prose in German/English plans (not a known template line) is still possible; measured by the
+  eval-only `language_purity` (6/7 → expected better with DL-P30, not yet re-measured on a large sample).
+- `outcomes_aligned` "0 outcomes found" once in a German plan (g06, run 43540520949): not yet analysed.
+- Keys 3, 4 and 7 unusable; GEMINI_KEY_3 still in GitHub secrets (Director).
+
+### Risks
+- Free-tier quota (unchanged). Each "Prepravi ovaj dio" costs one AI request from the teacher's quota.
+- Gemini 2.5 Flash retirement for new projects (unchanged).
+- The prompt grew by about 2,200 tokens (DE/EN template lines).
+
+### Technical debt
+- `setPlanFavourite` (shared star) kept but deprecated; the column `plans.is_favourite` is no longer used.
+- PlanDisplay entrance animations start at opacity 0 (pre-existing; E-12 v1.7 says move, not fade). For P6.
+- 9 pre-existing `no-useless-escape` lint errors in PlanDisplay/ChatInterface (not introduced this sprint).
+- DashboardPage queries Supabase directly (pre-existing pattern under RLS).
+
+### Next (each needs the Director's approval)
+P6 five-colour visual system (SPEC first) → L-2 step 2 (optional) → KRAJ.
+
+### DONE_CHECKLIST (Commander v1.7.0), run 2026-11-14 on the continuation
+| Area | Result |
+|---|---|
+| Code quality | PASS: tsc 0 errors; no `any` / `@ts-ignore` / TODO / `console.log` in changed files. FIXED at close: AI language names duplicated (M-7) → `src/lib/language/languageNames.ts`. |
+| Browser console | PASS: production `/`, `/login`, `/dashboard` (redirects to login), 0 errors (Playwright). Authenticated screens verified by the Director's live use (favourites, authors, "Prepravi ovaj dio"). |
+| Architecture | PASS within DL-P01: favourites and authors behind `lib/planFavourites.ts`; language layers are pure modules shared by Vite and Deno. |
+| Security | PASS: `plan_favorites` RLS own rows, anon revoked, post-checks in the owner SQL; `plan_authors` SECURITY DEFINER requires a signed-in user and returns only the e-mail part before "@" (approved, P5-1b); the client never sends `user_id`. Revisions use the existing authenticated, quota-limited endpoint. |
+| Error handling | PASS: every new async call in try/catch, logged, friendly approved messages; a failed revision leaves the plan unchanged. |
+| UX | PASS: loading state "Prepravljam…", error toasts, no button on empty cards, form usable on mobile (column layout), input has an aria-label. Entrance-animation rule: pre-existing debt, see above. |
+| Documentation | PASS: CHANGELOG and DECISION_LOG (DL-P27 … DL-P32) updated; JSDoc on new exports; APPLIED.md for the owner SQL. |
+| Build / deploy | PASS: build 0 errors; no new dependency; owner SQL per E-18 (preview, apply in one transaction with post-checks, rollback, rehearsed 10/10); no test rows left in production by the ACA (eval does not write to the database). |
+| Post-deploy | PASS: deploys #27 … #31 green (tests → deploy → CORS → anon 401); bundle checked for each frontend change. |
+| Learning (M-18) | PASS: lessons consolidated, summary sections updated (corrections 11–13, new gotchas, 3 new candidates). |
+
+### COMMANDER COMPLIANCE — Sprint 05 continuation
+```
+Rules followed without reminder:        about 22 of 25 rules exercised (estimate, not an exact count)
+Rules violated, caught by ACA:          3  (M-7 duplicated language names, found at close; test fixture
+                                            wrong in P5-3 first run; a force-push attempt, refused and
+                                            redone as a fast-forward)
+Rules violated, caught by Director:     1  (P5-4: false "success" and test steps from a fixture)
+Rules that slowed work or felt wrong:   none
+New rules suggested by this sprint:     3 (see "Commander Improvement Candidates" in the lessons file)
+```
+
+Lessons captured: 33 entries in corrections/SPRINT_05_LESSONS.md (plus the consolidated summary)
