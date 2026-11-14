@@ -54,3 +54,12 @@ describe('Director 2026-11-13: "Generiši", not "Generiraj"', () => {
     expect(findNonStandardBosnian('Generiši rubriku. Generisanje u toku.')).toEqual([]);
   });
 });
+
+describe('P5-5: stored plans are shown and exported with the language fixes', () => {
+  it('fixes old Bosnian plans, leaves German/English untouched', async () => {
+    const { displayPlanText } = await import('@/lib/language/bosnianStandard');
+    expect(displayPlanText('Deca rade tačno, točno.', 'bosnian')).toBe('Djeca rade tačno, tačno.');
+    expect(displayPlanText('Die Deca-Gruppe', 'german')).toBe('Die Deca-Gruppe');
+    expect(displayPlanText('deca', null)).toBe('deca');
+  });
+});

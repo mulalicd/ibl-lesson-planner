@@ -1,3 +1,4 @@
+import { displayPlanText } from '@/lib/language/bosnianStandard';
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -41,7 +42,9 @@ export default function PlanPage() {
         if (err || !data) {
           setError('Plan nije pronađen.');
         } else {
-          setPlan(data as unknown as PlanRecord);
+          // P5-5: older Bosnian plans are shown and exported with the DL-P19 fixes (stored text unchanged)
+          const record = data as unknown as PlanRecord;
+          setPlan({ ...record, plan_text: displayPlanText(record.plan_text, record.language) });
         }
         setLoading(false);
       });

@@ -12,6 +12,8 @@ import { softDeletePlan } from '@/lib/planActions';
 import { TierSchema } from '@/lib/validation/schemas';
 import { toast } from 'sonner';
 import { ERROR_MESSAGES } from '@/lib/constants';
+import { useAuth } from '@/hooks/useAuth';
+import { DEFAULT_PLAN_SCOPE, PLAN_SCOPE_LABELS, planScopeQuery, planScopeTitle, type PlanScope } from '@/lib/planScope';
 
 const INITIAL_FILTERS: DashboardFilters = {
   subject: '', grade: null, tier: null, isFavourite: false, searchQuery: '',
@@ -25,12 +27,18 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<DashboardFilters>(INITIAL_FILTERS);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  // P5-1: "Moji" (default, Director) / "Svi". Kept outside the filters so "Resetuj" does not change it.
+  const [scope, setScope] = useState<PlanScope>(DEFAULT_PLAN_SCOPE);
+  const { session } = useAuth();
+  const userId = session?.user?.id ?? null;
   const limit = 12;
 
-  useEffect(() => { fetchPlans(); }, [page, filters]);
+  useEffect(() => { fetchPlans(); }, [page, filters, scope, userId]);
 
   async function fetchPlans() {
     setLoading(true);
+    const scoped = planScopeQuery(scope, userId);
+    if (scoped.kind === 'none') { setPlans([]); setTotal(0); setLoading(false); return; }
     try {
       let query = supabase
         .from('plans')
@@ -39,6 +47,7 @@ export default function DashboardPage() {
         .order('created_at', { ascending: false })
         .range((page - 1) * limit, page * limit - 1);
 
+      if (scoped.kind === 'owner') query = query.eq('owner_id', scoped.ownerId);
       if (filters.subject) query = query.eq('subject', filters.subject);
       if (filters.grade) query = query.eq('grade', filters.grade);
       if (filters.tier) query = query.eq('tier', filters.tier);
@@ -94,7 +103,23 @@ export default function DashboardPage() {
           className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4"
         >
           <div>
-            <h2 className="text-2xl font-bold text-foreground tracking-tight">Moji IBL planovi</h2>
+            <h2 className="text-2xl font-bold text-foreground tracking-tight">{planScopeTitle(scope)}</h2>
+            <div role="group" aria-label="Prikaz planova" className="mt-2 inline-flex gap-1 neu-inset p-1 rounded-xl">
+              {(['mine', 'all'] as const).map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  aria-pressed={scope === s}
+                  onClick={() => { setScope(s); setPage(1); }}
+                  className={cn(
+                    'px-3 py-1 text-xs font-semibold rounded-lg transition-colors',
+                    scope === s ? 'neu-btn-primary' : 'text-muted-foreground hover:text-foreground',
+                  )}
+                >
+                  {PLAN_SCOPE_LABELS[s]}
+                </button>
+              ))}
+            </div>
             <p className="text-sm text-muted-foreground mt-1">
               {total} {total === 1 ? 'plan' : 'planova'} ukupno
             </p>

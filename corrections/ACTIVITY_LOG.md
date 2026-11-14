@@ -66,3 +66,4 @@ initial_instructions.md's "never `main`" rule, not to the unreleased
 - [2026-11-13 21:06] Write: src/lib/language/bosnianStandard.ts
 - [2026-11-13 21:52] Write: specs/language-quality/SPEC.md
 - [2026-11-13 22:13] Write: specs/p4-pedagogy/PSI_V9_1_ZA_ODOBRENJE.md
+- [2026-11-14 01:07] Write: specs/p5-ux-workflow/SPEC.md

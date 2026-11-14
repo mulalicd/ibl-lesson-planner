@@ -1,3 +1,4 @@
+import { displayPlanText } from '@/lib/language/bosnianStandard';
 import AppHeader from '@/components/AppHeader';
 import ChatInterface from '@/components/ChatInterface';
 import { useSearchParams } from 'react-router-dom';
@@ -13,12 +14,12 @@ export default function ChatPage() {
     if (planId) {
       supabase
         .from('plans')
-        .select('id, plan_text, subject, grade, topic')
+        .select('id, plan_text, subject, grade, topic, language')
         .eq('id', planId)
         .single()
         .then(({ data }) => {
           if (data) {
-            setInitialPlan({ id: data.id, text: data.plan_text });
+            setInitialPlan({ id: data.id, text: displayPlanText(data.plan_text, data.language) }); // P5-5
           }
         });
     }
