@@ -735,3 +735,24 @@ it no longer describes the changed plan. Saved plans are not revised (no silent 
 - The dictionary spell check (L-2 step 2) is not part of this decision.
 
 **Rollback:** revert the PR.
+
+## DL-P33 — P6 decisions on the SPEC's open questions (Director, 2026-11-14)
+
+**Decided by:** Director, answers to `specs/p6-workspace-redesign/SPEC.md` open questions 1–6.
+
+1. **CONSTITUTION rule 6 amended (1a):** white and neutral greys (no hue) are allowed for backgrounds,
+   surfaces, borders and secondary text. The five IDSS colours remain the only colours: accents, actions,
+   states, illustrations and 3D. Green and every other colour stay forbidden.
+2. **Motion:** the recommendation is accepted. Rich motion and 3D are used where something happens (sign-in,
+   creating a plan, the generation journey), and the reading workspace stays calm. The Director adds: "UX mora
+   biti dinamičan" (the UX must feel dynamic).
+3. **Typeface:** the Director leaves the choice to the ACA; a combination of typefaces is allowed. Free
+   licences only. The choice and its reason go into the PLAN.
+4. **Interface language:** Bosnian only, as today.
+5. **Scope:** the whole web app (library, sign-in, creation, plan) gets the redesign, consistently. The goal is
+   "the best industry standard".
+6. **Verification:** "na svim — golden standard". All listed browsers and platforms are verified. Emulation
+   is done by the ACA; checks on real iOS and Android devices need the Director's (or colleagues') devices and
+   are part of each stage's acceptance.
+
+**Consequence:** CONSTITUTION rule 6 text updated. The SPEC records these as decisions; the PLAN follows.

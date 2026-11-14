@@ -131,9 +131,14 @@ Detaljno objašnjenje i racionalno obrazloženje: `DECISION_LOG.md` DL-P01.
 
    Važi za svaki vizuelni element: pozadine, tekst, ivice, ikone,
    sjene, gradijente, ilustracije, 3D, grafikone, stanja greške i
-   uspjeha, DOCX/PDF izvoz. Zabranjene su bijela, siva, zelena i svaka
-   druga boja. Providnost je dozvoljena samo izvedena iz jedne od pet
-   boja. Sve vrijednosti dolaze iz jednog centralnog sistema tokena.
+   uspjeha, DOCX/PDF izvoz. Jedini izuzetak (Direktor 2026-11-14,
+   DL-P33): **bijela i neutralne sive** (bez ikakve nijanse boje) za
+   pozadine, površine, ivice i sporedni tekst, radi mirnog akademskog
+   izgleda. Pet IDSS boja ostaju JEDINE boje (akcenti, akcije, stanja,
+   ilustracije, 3D). Zabranjene su zelena i svaka druga boja.
+   Providnost je dozvoljena samo izvedena iz pet boja, bijele ili
+   neutralne sive. Sve vrijednosti dolaze iz jednog centralnog sistema
+   tokena.
    Čitljivost se rješava kombinacijama koje imaju dovoljan kontrast
    (npr. crna/žuta 13,8:1, crna/svijetloplava 8,0:1), tipografijom i
    rasporedom — nikad novom bojom. Smjer dizajna: AAA cinematic 3D.

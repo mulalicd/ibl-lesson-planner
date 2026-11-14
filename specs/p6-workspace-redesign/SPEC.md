@@ -1,6 +1,7 @@
 # SPEC — P6 Professional Teacher Workspace (visual system and workspace redesign)
 
-Status: DRAFT, awaiting the Director's approval. No code or visual change before approval (CONSTITUTION rule 7).
+Status: DRAFT; open questions answered by the Director 2026-11-14 (DL-P33), awaiting "P6 SPEC odobren". No code or visual
+change before approval (CONSTITUTION rule 7).
 Sources:
 - Director, 2026-11-14 ("P6 SPEC"): "trenutni UI dizajn je izuzetno loš … očekujem revoluciju u dizajnu sa
   primjenom 3D AAA visoko kvalitetnih sadržaja. Nastavnik mora biti animiran kroz proces kreiranja pisane
@@ -74,10 +75,10 @@ Workspace:
       supports orientation and never delays content.
 
 Visual system:
-- [ ] Only the five IDSS colours (CONSTITUTION rule 6) on every element, from one central set of tokens.
-      This is verified automatically: no other colour value in the built styles.
+- [ ] Only the five IDSS colours plus white and neutral greys (CONSTITUTION rule 6 as amended, DL-P33), from one
+      central set of tokens. This is verified automatically: no other colour value in the built styles.
 - [ ] Text contrast at least WCAG AA (4.5:1 body, 3:1 large text) for every colour pair used, measured.
-- [ ] One typeface family with a clear hierarchy. A free licence is confirmed before use.
+- [ ] Typefaces (a combination is allowed, DL-P33) with a clear hierarchy. A free licence is confirmed before use.
 - [ ] Motion: purposeful entrance and state transitions (moving, never fading from invisible), all turned off
       under "reduce motion" (E-12).
 - [ ] 3D content (the "AAA cinematic 3D" direction): original IDSS-coloured visuals with no third-party brand or
@@ -108,24 +109,18 @@ Release:
 - Paid services, paid fonts, paid 3D assets or stock libraries with unclear licences (Director: free only).
 - Renaming or reorganising the existing source folders (CLAUDE.md: a separate refactor).
 
-## Open Questions (the Director decides; nothing is assumed)
-1. **White and grey vs. CONSTITUTION rule 6.** The brief asks for "bijela ili vrlo svijetla neutralna pozadina"
-   and "diskretne sive površine". Rule 6 forbids white and grey ("Zabranjene su bijela, siva … i svaka druga
-   boja"). Either:
-   a. amend rule 6 to allow white and neutral greys for surfaces (the brief's minimalist academic style); or
-   b. keep rule 6: the five colours only, with light surfaces made from transparent IDSS Light Blue or
-      Yellow, and dark surfaces from Black.
-2. **Motion and 3D vs. "bez nepotrebnih animacija".** The brief asks for minimalism without unnecessary
-   animation. The Director's message asks for an animated, AAA 3D experience. The proposed resolution needs
-   approval:
-   - rich, cinematic motion and 3D at the start (sign-in, creating a plan, the generation journey);
-   - a calm, minimal reading workspace once the plan is there.
-3. **What "3D AAA" means in practice.** Real-time 3D in the browser costs performance and battery on phones.
-   Pre-rendered 3D visuals are lighter but static. A recommendation with measured options comes in the PLAN.
-4. **Typeface:** Inter or Manrope (both free licences). Which one?
-5. **Languages of the interface.** The interface is in Bosnian today, while plans are in BS, DE or EN. Does
-   the workspace stay Bosnian only (as today)?
-6. **Old screens.** Do the plan library and the sign-in page get the same redesign in P6? This SPEC assumes
-   yes, for consistency.
-7. **Test devices.** Which real devices may be used for the Safari/iOS and Android checks (the Director's or
-   colleagues' phones)? The cloud environment can only emulate them.
+## Decisions (Director, 2026-11-14, DL-P33)
+1. White and neutral greys are allowed for surfaces, borders and secondary text; CONSTITUTION rule 6 is amended.
+   The five IDSS colours stay the only colours.
+2. Rich motion and 3D where something happens (sign-in, creating a plan, generation); a calm reading workspace.
+   "UX mora biti dinamičan."
+3. Typefaces: the ACA chooses (a combination is allowed), free licences only, with the reason given in the PLAN.
+4. Interface language: Bosnian only.
+5. The whole app gets the redesign consistently (library, sign-in, creation, plan). Goal: the best industry
+   standard.
+6. All browsers and platforms are verified. Real-device checks (iOS, Android) need the Director's or
+   colleagues' devices and are part of each stage's acceptance.
+
+## Open Questions
+- What "3D AAA" means in practice (real-time 3D vs. pre-rendered visuals) is decided in the PLAN, with measured
+  options, and is shown to the Director as visual proposals before implementation.
