@@ -488,3 +488,7 @@ Period: 2026-11-07 … 2026-11-14. Detailed entries follow below the summary; th
   was shown as a page with only its "Physik | 8. razred | …" line.
 - Rule: check every segment of a real plan for (a) characters that are not content (rules, frames, Markdown) and
   (b) pages with fewer than two lines of content, before showing a rendering to the owner.
+
+### 2026-11-14 — Director wording: the welcome text
+- The Director replaced the welcome text. The "..." at the end of his sentence was kept as a full stop (no words
+  added); he can extend the text. User-facing wording comes from the owner, word for word.

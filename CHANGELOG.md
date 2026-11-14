@@ -83,3 +83,4 @@ One line per feature, per Commander E-10.
 - [2026-11-14] [DESIGN] P6: full-width pages; planner in two zones (conversation as 3D sheets left, growing creation block and plan centre); centred large "IBL Planer" in the main bar; workspace layout follows its own width (DL-P36).
 - [2026-11-14] [DESIGN] P6: "Prepravi ovaj dio" at the top of each segment page, quality check in the creation block, page to the right edge, wizard tabs clear of "Dalje", calmer transitions without jumps (DL-P36).
 - [2026-11-14] [DESIGN] P6: no Markdown/box leftovers on screen, group headings as labels (no empty sections), saved plan shown as one continuous document (DL-P36).
+- [2026-11-14] [UX] Welcome text replaced by the Director's wording: "Na ovom mjestu kreiramo pisane pripreme nastavnog časa zasnovane na istraživačkom učenju."

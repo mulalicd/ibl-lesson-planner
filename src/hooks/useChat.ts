@@ -18,15 +18,7 @@ const WELCOME_MESSAGE: ChatMessage = {
   role: 'model',
   content: `Dobrodošli u IBL Planer! 🎓
 
-Ja sam vaš AI asistent za kreiranje planova časa zasnovanih na istraživačkom učenju (IBL) za Internationale Deutsche Schule Sarajevo.
-
-Kako mogu pomoći?
-
-  1. Kreirajte novi IBL plan časa
-  2. Unesite direktno: naziv predmeta, razred, temu i trajanje
-     Primjer: "Matematika, 5. razred, Razlomci, 90 minuta"
-
-Za početak — recite mi za koji predmet i razred trebate plan.`,
+Na ovom mjestu kreiramo pisane pripreme nastavnog časa zasnovane na istraživačkom učenju.`,
   timestamp: new Date().toISOString(),
 };
 
