@@ -34,9 +34,10 @@ export const TIER_LABELS = {
 } as const;
 
 export const TIER_COLORS = {
-  MICRO:    'bg-emerald-100 text-emerald-800 border-emerald-200',
-  STANDARD: 'bg-blue-100 text-blue-800 border-blue-200',
-  EXTENDED: 'bg-amber-100 text-amber-800 border-amber-200',
+  // P6 S1: IDSS colours only (CONSTITUTION rule 6, DL-P33); text pairs per the measured contrast table
+  MICRO:    'bg-brand-yellow text-black border-brand-yellow',
+  STANDARD: 'bg-brand-blue text-white border-brand-blue',
+  EXTENDED: 'bg-black text-white border-black',
 } as const;
 
 export const LANGUAGE_LABELS = {

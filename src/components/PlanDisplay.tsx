@@ -1,310 +1,89 @@
-import { useState, useMemo } from 'react';
-import { Loader2, PencilLine } from 'lucide-react';
-import { SECTION_REVISION_TEXT } from '@/lib/constants';
-import type { SectionRef } from '@/lib/sectionRevision';
-import { motion } from 'framer-motion';
-import {
-  Copy, Check, BookOpen, Target, Lightbulb, Clock, Users, FlaskConical,
-  Award, ChevronDown, ChevronUp, Sparkles, FileText, Brain, Palette,
-  MessageCircle, ListChecks, Eye, Code2, GraduationCap, ClipboardCheck,
-  BookMarked, Timer
-} from 'lucide-react';
+/**
+ * PlanDisplay — P6 S2 "Nastavnički radni sto" (direction C, DL-P34; total redesign, Director 2026-11-14).
+ *
+ * The generated plan as a professional workspace: a table of contents of all segments (left), the open segment
+ * as a page of paper on a desk (centre) with binder tabs Sve / Nastavnik / Učenik, and sticky notes (right).
+ * Segments come from lib/planSegments.ts (the plan's own headings, names and order unchanged); a segment's text is
+ * shown through lib/planDocxStructure.ts (the same structure as the Word export, tested to keep every character).
+ * Nothing in the plan text is changed or left out: "Sve" lists every segment, and "Izvorni tekst" shows the plan
+ * exactly as generated.
+ */
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { Copy, Check, Code2, BookOpen, ChevronLeft, ChevronRight, ListTree, PencilLine, Loader2, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { SECTION_REVISION_TEXT, PSI_VERSION_LABEL } from '@/lib/constants';
+import { parseSegments, type Audience, type PlanSegment } from '@/lib/planSegments';
+import { structurePlan, type PlanBlock } from '@/lib/planDocxStructure';
+import type { SectionRef } from '@/lib/sectionRevision';
 
 interface PlanDisplayProps {
   planText: string;
-  /** P5-4: when given, every section card gets a "Prepravi ovaj dio" button. Resolves when the revision ends. */
+  planId?: string;
+  className?: string;
+  /** Kept for existing call sites; the workspace adapts to the space it gets. */
+  compact?: boolean;
+  /** P5-4: when given, a segment with its own text can be revised ("Prepravi ovaj dio"). */
   onReviseSection?: (ref: SectionRef, teacherRequest: string) => Promise<void>;
   /** P5-4: no new revision while the AI is busy. */
   reviseDisabled?: boolean;
-  planId?: string;
-  className?: string;
-  compact?: boolean;
+  /** Optional sticky note with the quality check (the existing QualityBadge). */
+  quality?: ReactNode;
+  /** P6 S3: the AI is still writing — the last segment is marked as being written, revisions wait. */
+  streaming?: boolean;
 }
 
-interface PlanSection {
-  title: string;
-  content: string;
-  icon: React.ReactNode;
-  bgColor: string;
-  borderColor: string;
-  iconBg: string;
-  accentColor: string;
-}
+type View = 'all' | 'n' | 'u';
 
-// Known section patterns with unique pastel colors
-const SECTION_DEFS: {
-  patterns: string[];
-  bgColor: string;
-  borderColor: string;
-  iconBg: string;
-  accentColor: string;
-  icon: React.ReactNode;
-}[] = [
-  {
-    patterns: ['IBL NASTAVNI PLAN', 'INTERNATIONALE DEUTSCHE', 'HEADER', 'ZAGLAVLJE'],
-    bgColor: 'bg-gradient-to-br from-slate-50 to-blue-50/40',
-    borderColor: 'border-blue-200/50',
-    iconBg: 'bg-blue-100 text-blue-700',
-    accentColor: 'text-blue-700',
-    icon: <GraduationCap className="w-4 h-4" />,
-  },
-  {
-    patterns: ['HOOK', 'UDICA', 'EINSTIEG', 'ISTRAŽIVAČKO PITANJE'],
-    bgColor: 'bg-gradient-to-br from-amber-50 to-orange-50/40',
-    borderColor: 'border-amber-200/50',
-    iconBg: 'bg-amber-100 text-amber-700',
-    accentColor: 'text-amber-700',
-    icon: <Lightbulb className="w-4 h-4" />,
-  },
-  {
-    patterns: ['DOKAZNI MATERIJAL', 'EVIDENCE MATERIAL', 'BEWEISMATERIAL'],
-    bgColor: 'bg-gradient-to-br from-rose-50 to-pink-50/40',
-    borderColor: 'border-rose-200/50',
-    iconBg: 'bg-rose-100 text-rose-700',
-    accentColor: 'text-rose-700',
-    icon: <BookOpen className="w-4 h-4" />,
-  },
-  {
-    patterns: ['VIZUALNI ELEMENT', 'VISUAL ELEMENT', 'VISUELLE'],
-    bgColor: 'bg-gradient-to-br from-fuchsia-50 to-purple-50/40',
-    borderColor: 'border-fuchsia-200/50',
-    iconBg: 'bg-fuchsia-100 text-fuchsia-700',
-    accentColor: 'text-fuchsia-700',
-    icon: <Palette className="w-4 h-4" />,
-  },
-  {
-    patterns: ['SOKRATOV', 'SOCRATIC', 'SCAFFOLD', 'SOKRATISCH', 'SKELA', 'GERÜST'],
-    bgColor: 'bg-gradient-to-br from-indigo-50 to-violet-50/40',
-    borderColor: 'border-indigo-200/50',
-    iconBg: 'bg-indigo-100 text-indigo-700',
-    accentColor: 'text-indigo-700',
-    icon: <MessageCircle className="w-4 h-4" />,
-  },
-  {
-    patterns: ['DOKAZI O UČENJU', 'DOKAZ UČENJA', 'EVIDENCE OF LEARNING', 'LEARNING EVIDENCE', 'LERNNACHWEIS'],
-    bgColor: 'bg-gradient-to-br from-teal-50 to-emerald-50/40',
-    borderColor: 'border-teal-200/50',
-    iconBg: 'bg-teal-100 text-teal-700',
-    accentColor: 'text-teal-700',
-    icon: <ListChecks className="w-4 h-4" />,
-  },
-  {
-    patterns: ['SAMOEVALUACIJA', 'SELF-EVAL', 'SELBSTBEWERTUNG', 'SELBSTREFLEXION', 'NASTAVNIČKA SAMO'],
-    bgColor: 'bg-gradient-to-br from-orange-50 to-amber-50/40',
-    borderColor: 'border-orange-200/50',
-    iconBg: 'bg-orange-100 text-orange-700',
-    accentColor: 'text-orange-700',
-    icon: <Brain className="w-4 h-4" />,
-  },
-  {
-    patterns: ['DODATNI RESURSI', 'ADDITIONAL RESOURCE', 'ZUSÄTZLICHE', 'DIFERENCIJACIJA', 'DIFFERENTIATION'],
-    bgColor: 'bg-gradient-to-br from-cyan-50 to-sky-50/40',
-    borderColor: 'border-cyan-200/50',
-    iconBg: 'bg-cyan-100 text-cyan-700',
-    accentColor: 'text-cyan-700',
-    icon: <BookMarked className="w-4 h-4" />,
-  },
-  {
-    patterns: ['PREPORUKE ZA IZVOĐENJE', 'DELIVERY RECOMMEND', 'LESSON DELIVERY', 'EMPFEHLUNG'],
-    bgColor: 'bg-gradient-to-br from-sky-50 to-blue-50/40',
-    borderColor: 'border-sky-200/50',
-    iconBg: 'bg-sky-100 text-sky-700',
-    accentColor: 'text-sky-700',
-    icon: <Timer className="w-4 h-4" />,
-  },
-  // PSI v9 (A6, A12, A13) — Director requirements 2026-11-07
-  {
-    patterns: ['ISHODI UČENJA', 'LERNERGEBNISSE', 'LEARNING OUTCOMES'],
-    bgColor: 'bg-gradient-to-br from-emerald-50 to-teal-50/40',
-    borderColor: 'border-emerald-200/50',
-    iconBg: 'bg-emerald-100 text-emerald-700',
-    accentColor: 'text-emerald-700',
-    icon: <ListChecks className="w-4 h-4" />,
-  },
-  {
-    patterns: ['UPORIŠTE U STVARNOM', 'BEZUG ZUM ALLTAG', 'REAL-LIFE', 'REAL LIFE'],
-    bgColor: 'bg-gradient-to-br from-yellow-50 to-amber-50/40',
-    borderColor: 'border-yellow-200/50',
-    iconBg: 'bg-yellow-100 text-yellow-700',
-    accentColor: 'text-yellow-700',
-    icon: <Lightbulb className="w-4 h-4" />,
-  },
-  {
-    patterns: ['SAVJETI I TRIKOVI', 'TIPPS & TRICKS', 'TIPS & TRICKS', 'TIPS AND TRICKS'],
-    bgColor: 'bg-gradient-to-br from-violet-50 to-purple-50/40',
-    borderColor: 'border-violet-200/50',
-    iconBg: 'bg-violet-100 text-violet-700',
-    accentColor: 'text-violet-700',
-    icon: <Brain className="w-4 h-4" />,
-  },
-  // PSI v9.1 (P4, A16)
-  {
-    patterns: ['MATERIJALI ZA ČAS', 'MATERIALIEN FÜR DIE STUNDE', 'MATERIALS FOR THE LESSON', 'TOK ČASA', 'STUNDENVERLAUF', 'LESSON FLOW'],
-    bgColor: 'bg-gradient-to-br from-sky-50 to-blue-50/40',
-    borderColor: 'border-sky-200/50',
-    iconBg: 'bg-sky-100 text-sky-700',
-    accentColor: 'text-sky-700',
-    icon: <Timer className="w-4 h-4" />,
-  },
-  {
-    patterns: ['REFLEKSIJA UČENIKA', 'SCHÜLERREFLEXION', 'STUDENT REFLECTION'],
-    bgColor: 'bg-gradient-to-br from-teal-50 to-emerald-50/40',
-    borderColor: 'border-teal-200/50',
-    iconBg: 'bg-teal-100 text-teal-700',
-    accentColor: 'text-teal-700',
-    icon: <MessageCircle className="w-4 h-4" />,
-  },
-  {
-    patterns: ['FOOTER', 'POST-GENERATION', 'KONTAKT', 'CONTACT'],
-    bgColor: 'bg-gradient-to-br from-gray-50 to-slate-50/40',
-    borderColor: 'border-gray-200/50',
-    iconBg: 'bg-gray-100 text-gray-600',
-    accentColor: 'text-gray-600',
-    icon: <FileText className="w-4 h-4" />,
-  },
+/** Binder tabs (DL-P34): label and colours (IDSS only, contrast per PLAN.md). */
+const VIEWS: { id: View; label: string; tab: string }[] = [
+  { id: 'all', label: 'Sve', tab: 'bg-black text-white' },
+  { id: 'n', label: 'Nastavnik', tab: 'bg-brand-blue text-white' },
+  { id: 'u', label: 'Učenik', tab: 'bg-brand-yellow text-black' },
 ];
 
-const FALLBACK_COLORS = [
-  { bgColor: 'bg-gradient-to-br from-violet-50 to-purple-50/40', borderColor: 'border-violet-200/50', iconBg: 'bg-violet-100 text-violet-700', accentColor: 'text-violet-700' },
-  { bgColor: 'bg-gradient-to-br from-lime-50 to-green-50/40', borderColor: 'border-lime-200/50', iconBg: 'bg-lime-100 text-lime-700', accentColor: 'text-lime-700' },
-  { bgColor: 'bg-gradient-to-br from-yellow-50 to-amber-50/40', borderColor: 'border-yellow-200/50', iconBg: 'bg-yellow-100 text-yellow-700', accentColor: 'text-yellow-700' },
-  { bgColor: 'bg-gradient-to-br from-emerald-50 to-teal-50/40', borderColor: 'border-emerald-200/50', iconBg: 'bg-emerald-100 text-emerald-700', accentColor: 'text-emerald-700' },
-];
+const AUDIENCE_BADGE: Record<Audience, { short: string; label: string; cls: string; rail: string }> = {
+  n: { short: 'N', label: 'Za nastavnika', cls: 'bg-brand-blue text-white', rail: 'shadow-[inset_4px_0_0_rgb(var(--brand-blue))]' },
+  u: { short: 'U', label: 'Za učenike', cls: 'bg-brand-yellow text-black', rail: 'shadow-[inset_4px_0_0_rgb(var(--brand-yellow))]' },
+  nu: { short: 'N·U', label: 'Za nastavnika i učenike', cls: 'bg-black text-white', rail: 'shadow-[inset_4px_0_0_rgb(var(--brand-black))]' },
+};
 
-// Diacritic-insensitive match: "ISTRAZIVACKO" finds "ISTRAŽIVAČKO" (P3: some
-// models drop č ć š ž đ in headings). Đ → DJ as in PSI ASCII spelling.
-function foldUpper(s: string): string {
-  return s.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/Đ/g, 'DJ');
-}
+const VIEW_NOTE: Record<View, string> = {
+  all: 'Cijela priprema',
+  n: 'Za nastavnika: vođenje časa',
+  u: 'Za učenike: ono što učenici vide, čuju i rade',
+};
 
-function matchSectionStyle(title: string) {
-  const upper = foldUpper(title);
-  for (const def of SECTION_DEFS) {
-    for (const pattern of def.patterns) {
-      if (upper.includes(foldUpper(pattern))) return def;
-    }
-  }
-  return null;
-}
+const hasText = (s: PlanSegment) => s.body.split('\n').some((l) => /[\p{L}\p{N}]/u.test(l.replace(/[|│=─-]/g, '')));
+const inView = (s: PlanSegment, v: View) => v === 'all' || s.audience === v || s.audience === 'nu';
 
-function isDecorationLine(line: string): boolean {
-  const t = line.trim();
-  if (t.length < 3) return false;
-  return /^[═=─\-~*╔║╚╗╝╟╠╣╬┌┐└┘├┤┬┴┼│|_\s]+$/.test(t);
-}
-
-function isSectionHeader(line: string): boolean {
-  const cleaned = line.replace(/[═=─╔║╚╗╝│|*#\-]/g, '').trim();
-  if (cleaned.length < 3 || cleaned.length > 100) return false;
-  
-  // STRICT: Only match SECTION N patterns
-  if (/^SECTION\s+\d+/i.test(cleaned)) return true;
-  
-  // STRICT: Only match numbered section headers like "1. HEADER"
-  if (/^\d+[\.]\s+(HEADER|HOOK|EVIDENCE|VISUAL|SCAFFOLD|LEARNING|TEACHER|ADDITIONAL|DELIVERY|FOOTER)/i.test(cleaned)) return true;
-  
-  // All caps with letters — but only if it's a known section pattern
-  if (cleaned === cleaned.toUpperCase() && /[A-ZČĆŽŠĐÄÖÜ]/.test(cleaned) && cleaned.length >= 4) {
-    return !!matchSectionStyle(cleaned);
-  }
-  
-  return false;
-}
-
-interface ParsedPlan {
-  headerLines: string[];
-  inquiryQuestion: string;
-  sections: PlanSection[];
-}
-
-function parsePlan(text: string): ParsedPlan {
-  const lines = text.split('\n');
-  const headerLines: string[] = [];
-  let inquiryQuestion = '';
-  const sections: PlanSection[] = [];
-  let currentTitle = '';
-  let currentContent: string[] = [];
-  let inHeader = true;
-  let fallbackIdx = 0;
-
-  function flushSection() {
-    if (!currentTitle) return;
-    const content = currentContent.join('\n').trim();
-    if (!content && !currentTitle) return;
-
-    const cleanTitle = currentTitle.replace(/[═=─\-*#╔║╚╗╝│|]/g, '').replace(/^\d+[\.\)]\s*/, '').trim();
-    const style = matchSectionStyle(cleanTitle);
-    const fb = FALLBACK_COLORS[fallbackIdx % FALLBACK_COLORS.length];
-
-    sections.push({
-      title: cleanTitle,
-      content,
-      icon: style?.icon || <BookOpen className="w-4 h-4" />,
-      bgColor: style?.bgColor || fb.bgColor,
-      borderColor: style?.borderColor || fb.borderColor,
-      iconBg: style?.iconBg || fb.iconBg,
-      accentColor: style?.accentColor || fb.accentColor,
-    });
-    if (!style) fallbackIdx++;
-    currentTitle = '';
-    currentContent = [];
-  }
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    const trimmed = line.trim();
-
-    if (isDecorationLine(trimmed)) continue;
-
-    // Extract inquiry question
-    if (!inquiryQuestion) {
-      const iqMatch = trimmed.match(/^(?:ISTRAŽIVAČKO PITANJE|FORSCHUNGSFRAGE|INQUIRY QUESTION)\s*(?:\(IQ\))?:?\s*$/i);
-      if (iqMatch || (trimmed.includes('ISTRAŽIVAČKO PITANJE') && trimmed.includes('(IQ)'))) {
-        // Look for the actual question in next non-empty lines
-        for (let j = i + 1; j < lines.length; j++) {
-          const next = lines[j].trim().replace(/^[│|>\s]+/, '').replace(/[│|]+$/, '').trim();
-          if (isDecorationLine(next) || !next) continue;
-          if (next.length > 10 && next.endsWith('?')) {
-            inquiryQuestion = next;
-            break;
-          }
-          if (next.length > 15) {
-            inquiryQuestion = next;
-            break;
-          }
-        }
-      }
-    }
-
-    // Detect section headers
-    if (isSectionHeader(trimmed)) {
-      if (inHeader) inHeader = false;
-      flushSection();
-      currentTitle = trimmed;
-      continue;
-    }
-
-    // Accumulate header or section content
-    if (inHeader && !currentTitle) {
-      if (trimmed) headerLines.push(trimmed);
-    } else if (currentTitle) {
-      currentContent.push(line);
-    }
-  }
-  flushSection();
-
-  return { headerLines, inquiryQuestion, sections };
-}
-
-export default function PlanDisplay({ planText, planId, className, compact, onReviseSection, reviseDisabled }: PlanDisplayProps) {
+export default function PlanDisplay({ planText, planId, className, onReviseSection, reviseDisabled, quality, streaming }: PlanDisplayProps) {
+  const segments = useMemo(() => parseSegments(planText), [planText]);
+  const [view, setView] = useState<View>('all');
+  const [active, setActive] = useState(() => Math.max(0, segments.findIndex(hasText)));
+  const [raw, setRaw] = useState(false);
   const [copied, setCopied] = useState(false);
-  // P5-4: which section card has its revision form open / is being revised
-  const [reviseIdx, setReviseIdx] = useState<number | null>(null);
+  const [tocOpen, setTocOpen] = useState(false);
+  const [reviseOpen, setReviseOpen] = useState(false);
   const [reviseText, setReviseText] = useState('');
-  const [revisingIdx, setRevisingIdx] = useState<number | null>(null);
-  const [showRaw, setShowRaw] = useState(false);
-  const parsed = useMemo(() => parsePlan(planText), [planText]);
+  const [revising, setRevising] = useState(false);
+  const reduce = useReducedMotion();
+
+  // Segments that can be opened as a page in the current view (a group heading without own text is only a label)
+  const pages = useMemo(() => segments.map((s, i) => ({ s, i })).filter(({ s }) => hasText(s) && inView(s, view)).map(({ i }) => i), [segments, view]);
+  const cur = Math.min(active, segments.length - 1);
+  useEffect(() => { if (!pages.includes(cur) && pages.length) setActive(pages[0]); }, [pages, cur]);
+  const seg = segments[cur];
+  const pos = pages.indexOf(cur);
+  const prevIdx = pos > 0 ? pages[pos - 1] : null;
+  const nextIdx = pos >= 0 && pos < pages.length - 1 ? pages[pos + 1] : null;
+  const blocks = useMemo(() => (seg ? structurePlan(seg.body) : []), [seg]);
+
+  function open(i: number) {
+    setActive(i);
+    setTocOpen(false);
+    setReviseOpen(false);
+  }
 
   async function handleCopy() {
     await navigator.clipboard.writeText(planText).catch(() => {});
@@ -312,186 +91,180 @@ export default function PlanDisplay({ planText, planId, className, compact, onRe
     setTimeout(() => setCopied(false), 2000);
   }
 
-  const hasStructured = parsed.sections.length >= 2;
-
-  function sectionRef(idx: number): SectionRef {
-    const title = parsed.sections[idx].title;
-    const occurrence = parsed.sections.slice(0, idx).filter((s) => s.title === title).length;
-    const stopTitles = parsed.sections.map((s) => s.title).filter((t) => t !== title);
-    return { title, nextTitle: parsed.sections[idx + 1]?.title ?? null, occurrence, stopTitles };
-  }
-
-  async function submitRevision(idx: number) {
-    if (!onReviseSection) return;
-    setRevisingIdx(idx);
-    setReviseIdx(null);
+  async function submitRevision() {
+    if (!onReviseSection || !seg) return;
+    setRevising(true);
+    setReviseOpen(false);
     try {
-      await onReviseSection(sectionRef(idx), reviseText);
+      await onReviseSection({ index: cur, head: seg.head, title: seg.title, stopHeads: segments.filter((_, k) => k !== cur).map((s) => s.head) }, reviseText);
     } finally {
-      setRevisingIdx(null);
+      setRevising(false);
       setReviseText('');
     }
   }
 
-  return (
-    <div className={cn('relative group', className)}>
-      {/* Toolbar */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
-          <span className="text-[11px] font-bold uppercase tracking-[0.15em] text-muted-foreground/60">
-            IBL Plan časa
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          {hasStructured && (
-            <motion.button
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setShowRaw(!showRaw)}
-              className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg neu-btn text-muted-foreground hover:text-primary font-medium"
-            >
-              {showRaw ? <Eye className="w-3.5 h-3.5" /> : <Code2 className="w-3.5 h-3.5" />}
-              {showRaw ? 'Kartice' : 'Izvorni tekst'}
-            </motion.button>
-          )}
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            onClick={handleCopy}
-            className="flex items-center gap-1.5 text-xs px-3.5 py-1.5 rounded-lg neu-btn text-muted-foreground hover:text-primary font-medium"
-          >
-            {copied ? <Check className="w-3.5 h-3.5 text-secondary" /> : <Copy className="w-3.5 h-3.5" />}
-            {copied ? 'Kopirano' : 'Kopiraj'}
-          </motion.button>
-        </div>
+  if (!seg) return null;
+  const badge = AUDIENCE_BADGE[seg.audience];
+  const hasNotes = !!quality || !!onReviseSection;
+
+  const toolbar = (
+    // Workspace toolbar: in the centre column, above the page (no extra row over the table of contents)
+      <div className="mb-3 flex flex-wrap items-center gap-2">
+        <button type="button" onClick={() => setTocOpen(true)} className="flex h-10 items-center gap-2 rounded-lg border border-border bg-white px-3 text-sm font-semibold lg:hidden">
+          <ListTree className="h-4 w-4" /> Sadržaj
+        </button>
+        <div className="flex-1" />
+        <button type="button" onClick={() => setRaw(!raw)} className="flex h-10 items-center gap-1.5 rounded-lg border border-border bg-white px-3 text-xs font-semibold text-neutral-700 hover:text-primary">
+          {raw ? <BookOpen className="h-4 w-4" /> : <Code2 className="h-4 w-4" />}
+          {raw ? 'Radni sto' : 'Izvorni tekst'}
+        </button>
+        <button type="button" onClick={handleCopy} className="flex h-10 items-center gap-1.5 rounded-lg border border-border bg-white px-3 text-xs font-semibold text-neutral-700 hover:text-primary">
+          {copied ? <Check className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
+          {copied ? 'Kopirano' : 'Kopiraj'}
+        </button>
       </div>
+  );
 
-      {hasStructured && !showRaw ? (
-        <div className="space-y-4">
-          {/* Header card */}
-          {parsed.headerLines.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="rounded-2xl p-6 border bg-gradient-to-r from-primary/5 to-secondary/5 border-primary/15"
-            >
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <GraduationCap className="w-4 h-4 text-primary" />
-                </div>
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary/60">Zaglavlje</span>
-              </div>
-              <div className="space-y-1">
-                {parsed.headerLines.map((l, i) => {
-                  // Render key-value pairs as a mini table
-                  const kvMatch = l.match(/^([A-ZČĆŽŠĐÄÖÜa-zčćžšđäöü/\s]+):\s+(.+)$/);
-                  if (kvMatch) {
-                    return (
-                      <div key={i} className="flex items-baseline gap-3 text-sm py-0.5">
-                        <span className="font-semibold text-foreground/70 min-w-[130px] flex-shrink-0">{kvMatch[1].trim()}</span>
-                        <span className="text-foreground">{kvMatch[2].trim()}</span>
-                      </div>
-                    );
-                  }
-                  return <p key={i} className="text-sm font-bold text-foreground">{l}</p>;
-                })}
-              </div>
-            </motion.div>
-          )}
+  const toc = (
+    <nav aria-label="Sadržaj pripreme" className="flex flex-col gap-0.5">
+      <div className="px-2.5 pb-0.5 font-display text-sm font-extrabold">Sadržaj</div>
+      <div className="px-2.5 pb-2 text-xs text-muted-foreground">{VIEW_NOTE[view]} · {pages.length}</div>
+      {segments.map((s, i) => {
+        if (!inView(s, view)) return null;
+        const b = AUDIENCE_BADGE[s.audience];
+        if (!hasText(s)) {
+          return <div key={i} className="px-2.5 pb-0.5 pt-2 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">{s.title}</div>;
+        }
+        const on = i === cur;
+        return (
+          <motion.button
+            key={i}
+            initial={streaming && !reduce ? { x: -24 } : false}
+            animate={{ x: 0 }}
+            transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
+            type="button"
+            onClick={() => open(i)}
+            aria-current={on ? 'page' : undefined}
+            className={cn(
+              'flex min-h-[30px] w-full items-center gap-2 rounded-md px-2.5 text-left text-[13px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+              on ? cn('bg-white font-bold text-black shadow-sm', b.rail) : 'font-medium text-neutral-800 hover:bg-white/70',
+            )}
+          >
+            <span className="min-w-0 flex-1 truncate">{s.title}</span>
+            {streaming && i === segments.length - 1 && <span className="flex-none animate-pulse rounded bg-brand-yellow px-1.5 py-0.5 text-[10px] font-bold text-black">piše se…</span>}
+            <span aria-label={b.label} className={cn('flex-none rounded px-1.5 py-0.5 text-[10px] font-bold', b.cls)}>{b.short}</span>
+          </motion.button>
+        );
+      })}
+    </nav>
+  );
 
-          {/* Inquiry Question */}
-          {parsed.inquiryQuestion && (
-            <motion.div
-              initial={{ opacity: 0, x: -8 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1 }}
-              className="rounded-2xl p-5 border-2 bg-gradient-to-br from-amber-50 to-orange-50/50 border-amber-300/50 shadow-sm"
-            >
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0 shadow-inner">
-                  <Lightbulb className="w-5 h-5 text-amber-600" />
-                </div>
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-amber-700/70 mb-1">
-                    Istraživačko pitanje (IQ)
-                  </p>
-                  <p className="text-base font-semibold text-foreground leading-relaxed italic">
-                    "{parsed.inquiryQuestion}"
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          )}
+  return (
+    <div className={cn('w-full', className)} id={planId ? `plan-${planId}` : undefined}>
+      {raw ? (
+        <>{toolbar}<div className="overflow-x-auto rounded-md bg-white p-6 shadow-[0_18px_40px_rgba(0,0,0,0.12)]">
+          <pre className="whitespace-pre font-mono text-xs leading-relaxed text-neutral-800">{planText}</pre>
+        </div></>
+      ) : (
+        <div className={cn('grid gap-4 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-x-14', hasNotes && 'xl:grid-cols-[240px_minmax(0,1fr)_250px]')}>
+          {/* Table of contents */}
+          <aside className="hidden lg:block">
+            <div className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-auto pr-1">{toc}</div>
+          </aside>
 
-          {/* Section Cards — full width, one per row */}
-          <div className="space-y-4">
-            {parsed.sections.map((section, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.04 * idx, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                className={cn(
-                  'rounded-2xl border overflow-hidden transition-all duration-200 hover:shadow-md',
-                  section.bgColor,
-                  section.borderColor,
-                )}
+          {/* Paper on the desk */}
+          <div className="min-w-0">
+            {toolbar}
+            {/* Binder tabs: on a phone along the top edge, on a desktop down the right edge of the page */}
+            <div role="tablist" aria-label="Prikaz po usmjerenju" className="mb-[-1px] flex gap-1.5 pl-4 lg:hidden">
+              {VIEWS.map((v) => (
+                <button key={v.id} type="button" role="tab" aria-selected={view === v.id} onClick={() => setView(v.id)}
+                  className={cn('h-11 rounded-t-lg px-4 text-xs font-bold transition-transform', v.tab, view === v.id ? 'translate-y-0' : 'translate-y-1')}>
+                  {v.label}
+                </button>
+              ))}
+            </div>
+            <div className="relative mx-auto max-w-[1040px]">
+              <div role="tablist" aria-label="Prikaz po usmjerenju" className="absolute -right-11 top-10 z-10 hidden flex-col gap-1.5 lg:flex">
+                {VIEWS.map((v) => (
+                  <button key={v.id} type="button" role="tab" aria-selected={view === v.id} onClick={() => setView(v.id)}
+                    className={cn('w-11 rounded-r-lg py-4 text-xs font-bold tracking-wide shadow-md transition-transform [writing-mode:vertical-rl]', v.tab, view === v.id ? 'translate-x-2' : 'translate-x-0')}>
+                    {v.label}
+                  </button>
+                ))}
+              </div>
+              <motion.article
+                key={`${cur}-${view}`}
+                initial={reduce ? false : { x: 28, rotateY: -6 }}
+                animate={{ x: 0, rotateY: 0 }}
+                transition={{ duration: 0.45, ease: [0.2, 0.8, 0.2, 1] }}
+                style={{ transformPerspective: 1600, transformOrigin: '0% 50%' }}
+                className="relative rounded-md bg-white px-5 pb-12 pt-6 shadow-[0_1px_0_rgb(221_221_221),0_18px_40px_rgba(0,0,0,0.12)] sm:px-8 sm:pt-7 lg:px-10"
               >
-                {/* Section header bar */}
-                <div className={cn('px-5 py-3 border-b flex items-center gap-2.5', section.borderColor)}>
-                  <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center shadow-inner', section.iconBg)}>
-                    {section.icon}
-                  </div>
-                  <h2 className={cn('font-bold text-sm tracking-tight', section.accentColor)}>
-                    {section.title}
-                  </h2>
-                  {/* a group heading without own text (e.g. DODATNI RESURSI ZA NASTAVNIKE) has nothing to revise */}
-                  {onReviseSection && section.content.trim() !== '' && (
-                    <button
-                      type="button"
-                      onClick={() => { setReviseIdx(reviseIdx === idx ? null : idx); setReviseText(''); }}
-                      disabled={reviseDisabled || revisingIdx !== null}
-                      className="ml-auto flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-lg neu-btn text-muted-foreground hover:text-primary font-medium disabled:opacity-50"
-                    >
-                      {revisingIdx === idx ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <PencilLine className="w-3.5 h-3.5" />}
-                      {revisingIdx === idx ? SECTION_REVISION_TEXT.WORKING : SECTION_REVISION_TEXT.BUTTON}
-                    </button>
-                  )}
+                <div className="mb-4 flex flex-wrap justify-between gap-2 border-b border-neutral-200 pb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  <span>Internationale Deutsche Schule Sarajevo</span>
+                  <span>{badge.label}</span>
                 </div>
-                {onReviseSection && reviseIdx === idx && (
-                  <form
-                    className="px-5 pt-3 flex flex-col sm:flex-row gap-2"
-                    onSubmit={(e) => { e.preventDefault(); void submitRevision(idx); }}
-                  >
-                    <input
-                      autoFocus
-                      value={reviseText}
-                      onChange={(e) => setReviseText(e.target.value)}
-                      maxLength={500}
-                      placeholder={SECTION_REVISION_TEXT.PLACEHOLDER}
-                      aria-label={SECTION_REVISION_TEXT.PLACEHOLDER}
-                      className="flex-1 text-sm px-3 py-2 rounded-lg neu-inset bg-transparent outline-none"
-                    />
+                <h2 className="mb-1.5 font-display text-[24px] font-extrabold leading-tight tracking-tight sm:text-[28px]">{seg.title}</h2>
+                <div className="mb-4 flex flex-wrap items-center gap-2">
+                  <span className={cn('rounded px-2 py-0.5 text-[11px] font-bold', badge.cls)}>{badge.short}</span>
+                  {seg.minutes && <span className="rounded bg-brand-yellow px-2 py-0.5 text-xs font-bold text-black">{seg.minutes}</span>}
+                </div>
+                <SegmentBlocks blocks={blocks} />
+                <div className="absolute bottom-4 left-5 right-5 flex justify-between text-xs text-muted-foreground sm:left-8 sm:right-8 lg:left-10 lg:right-10">
+                  <span>{PSI_VERSION_LABEL}</span>
+                  <span>{pos + 1} / {pages.length}</span>
+                </div>
+              </motion.article>
+              <div className="mt-3 flex flex-wrap justify-between gap-3">
+                <button type="button" disabled={prevIdx === null} onClick={() => prevIdx !== null && open(prevIdx)}
+                  className="flex h-11 max-w-[48%] items-center gap-2 rounded-lg border border-neutral-300 bg-white px-4 text-sm font-semibold disabled:opacity-40">
+                  <ChevronLeft className="h-4 w-4 flex-none" /><span className="truncate">{prevIdx !== null ? segments[prevIdx].title : 'Početak'}</span>
+                </button>
+                <button type="button" disabled={nextIdx === null} onClick={() => nextIdx !== null && open(nextIdx)}
+                  className="flex h-11 max-w-[48%] items-center gap-2 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground disabled:opacity-40">
+                  <span className="truncate">{nextIdx !== null ? segments[nextIdx].title : 'Kraj'}</span><ChevronRight className="h-4 w-4 flex-none" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Sticky notes */}
+          {hasNotes && <aside className="flex flex-col gap-4 xl:sticky xl:top-4 xl:self-start">
+            {quality && <div className="-rotate-1 rounded bg-brand-yellow p-4 text-black shadow-[0_10px_20px_rgba(0,0,0,0.12)]">{quality}</div>}
+            {onReviseSection && (
+              <div className="rotate-[0.6deg] rounded bg-white p-4 shadow-[0_10px_20px_rgba(0,0,0,0.08)]">
+                <button type="button" disabled={reviseDisabled || revising || streaming} onClick={() => setReviseOpen(!reviseOpen)}
+                  className="flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-primary bg-white text-sm font-semibold text-primary disabled:opacity-50">
+                  {revising ? <Loader2 className="h-4 w-4 animate-spin" /> : <PencilLine className="h-4 w-4" />}
+                  {revising ? SECTION_REVISION_TEXT.WORKING : SECTION_REVISION_TEXT.BUTTON}
+                </button>
+                {reviseOpen && (
+                  <form className="mt-3 flex flex-col gap-2" onSubmit={(e) => { e.preventDefault(); void submitRevision(); }}>
+                    <input autoFocus value={reviseText} onChange={(e) => setReviseText(e.target.value)} maxLength={500}
+                      placeholder={SECTION_REVISION_TEXT.PLACEHOLDER} aria-label={SECTION_REVISION_TEXT.PLACEHOLDER}
+                      className="h-11 rounded-lg border border-input bg-white px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring" />
                     <div className="flex gap-2">
-                      <button type="submit" className="text-xs px-3 py-2 rounded-lg neu-btn-primary font-semibold">{SECTION_REVISION_TEXT.SUBMIT}</button>
-                      <button type="button" onClick={() => setReviseIdx(null)} className="text-xs px-3 py-2 rounded-lg neu-btn text-muted-foreground">{SECTION_REVISION_TEXT.CANCEL}</button>
+                      <button type="submit" className="h-10 flex-1 rounded-lg bg-primary text-sm font-semibold text-primary-foreground">{SECTION_REVISION_TEXT.SUBMIT}</button>
+                      <button type="button" onClick={() => setReviseOpen(false)} className="h-10 flex-1 rounded-lg bg-muted text-sm font-semibold">{SECTION_REVISION_TEXT.CANCEL}</button>
                     </div>
                   </form>
                 )}
-                {/* Section body — render full content */}
-                <div className="px-5 py-4 text-sm text-foreground/85 leading-relaxed">
-                  <SectionContent content={section.content} />
-                </div>
-              </motion.div>
-            ))}
-          </div>
+              </div>
+            )}
+          </aside>}
         </div>
-      ) : (
-        <div
-          id={planId ? `plan-${planId}` : undefined}
-          className="w-full neu-card p-6 overflow-x-auto rounded-2xl"
-        >
-          <div className="text-sm leading-relaxed whitespace-pre-wrap font-mono text-foreground/85">
-            {planText}
+      )}
+
+      {/* Table of contents as a sheet on phones and tablets */}
+      {tocOpen && !raw && (
+        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-label="Sadržaj pripreme">
+          <button type="button" aria-label="Zatvori sadržaj" className="absolute inset-0 bg-black/40" onClick={() => setTocOpen(false)} />
+          <div className="absolute bottom-0 left-0 right-0 max-h-[80vh] overflow-auto rounded-t-2xl bg-background p-3 pb-6">
+            <div className="mb-2 flex justify-end">
+              <button type="button" onClick={() => setTocOpen(false)} className="flex h-11 items-center gap-1 rounded-lg bg-white px-3 text-sm font-semibold"><X className="h-4 w-4" /> Zatvori</button>
+            </div>
+            {toc}
           </div>
         </div>
       )}
@@ -499,177 +272,62 @@ export default function PlanDisplay({ planText, planId, className, compact, onRe
   );
 }
 
-/** Renders section content with tables, lists, checkboxes, time phases, etc. */
-function SectionContent({ content }: { content: string }) {
-  const lines = content.split('\n');
-  const elements: React.ReactNode[] = [];
-  let i = 0;
-
-  // Detect ASCII art lines
-  function isAsciiArt(line: string): boolean {
-    return /[+\-|\/\\*=#_]{3,}/.test(line) || 
-           /^\s*[|+\/\\]/.test(line) ||
-           /ASCII|PREVIEW|ascii art/i.test(line);
-  }
-
-  while (i < lines.length) {
-    const line = lines[i];
-    const trimmed = line.trim();
-
-    // Skip decoration
-    if (isDecorationLine(trimmed)) { i++; continue; }
-
-    // Detect ASCII art block
-    if (isAsciiArt(trimmed) || (i > 0 && isAsciiArt(lines[i-1]?.trim() || ''))) {
-      const asciiLines: string[] = [line];
-      let j = i + 1;
-      while (j < lines.length) {
-        const nextLine = lines[j];
-        const nextTrimmed = nextLine.trim();
-        if (!nextTrimmed || isAsciiArt(nextTrimmed) || nextTrimmed.startsWith(' ')) {
-          asciiLines.push(nextLine);
-          j++;
-        } else {
-          break;
-        }
+/** Lines of the plan are wrapped at about 78 characters inside its boxes. For reading, a line that continues the
+ *  sentence of the line before (no closing punctuation before, a lower-case start, or a hyphen break) joins it into
+ *  one paragraph. Only line breaks change (and a hyphen that split a word at a line break). */
+function joinWrapped(blocks: PlanBlock[]): PlanBlock[] {
+  const out: PlanBlock[] = [];
+  for (const b of blocks) {
+    const prev = out[out.length - 1];
+    if (b.type === 'para' && prev?.type === 'para' && !/^(\[[ xX✓✔]\]|[-•–]\s|\d+[.)]\s)/.test(b.text)) {
+      const p = prev.text.trimEnd();
+      const continues = /-$/.test(p) || (!/[.:?!“”"]$/.test(p) && /^[\p{Ll}(„"']/u.test(b.text.trimStart()));
+      if (continues) {
+        out[out.length - 1] = { type: 'para', text: /-$/.test(p) ? p.slice(0, -1) + b.text.trimStart() : `${p} ${b.text.trimStart()}` };
+        continue;
       }
-      elements.push(
-        <pre key={i} className="font-mono text-xs bg-slate-900 text-green-300 border border-slate-700
-                           rounded-xl p-4 overflow-x-auto my-3 leading-relaxed shadow-inner
-                           whitespace-pre select-all">
-          {asciiLines.join('\n')}
-        </pre>
-      );
-      i = j;
-      continue;
     }
-
-    // Empty line → spacer
-    if (!trimmed) {
-      elements.push(<div key={i} className="h-2" />);
-      i++;
-      continue;
-    }
-
-    // Clean pipe borders
-    const cleaned = trimmed.replace(/^[│|]\s*/, '').replace(/\s*[│|]$/, '').trim();
-    if (!cleaned) { i++; continue; }
-
-    // Time phase markers like (0-5 min) FAZA HOOK
-    const timePhase = cleaned.match(/^\((\d+\s*-\s*\d+\s*min)\)\s*(.+)$/i);
-    if (timePhase) {
-      elements.push(
-        <div key={i} className="flex items-center gap-3 mt-4 mb-2 pb-2 border-b border-current/10">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/80 text-xs font-bold text-primary border border-primary/20 shadow-sm">
-            <Clock className="w-3 h-3" />
-            {timePhase[1]}
-          </span>
-          <span className="font-bold text-foreground text-sm">{timePhase[2]}</span>
-        </div>
-      );
-      i++;
-      continue;
-    }
-
-    // Time markers like [15 min]
-    const timeMarker = cleaned.match(/^\[?\s*(\d+\s*min)\s*\]?$/i);
-    if (timeMarker) {
-      elements.push(
-        <span key={i} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/60 text-xs font-semibold text-muted-foreground my-1 border border-border/20">
-          <Clock className="w-3 h-3" /> {timeMarker[1]}
-        </span>
-      );
-      i++;
-      continue;
-    }
-
-    // Checkbox items [X] or [ ]
-    if (cleaned.match(/^\[[ xX✓✔]\]/)) {
-      const checked = !cleaned.startsWith('[ ]');
-      const text = cleaned.replace(/^\[[ xX✓✔]\]\s*/, '');
-      elements.push(
-        <div key={i} className="flex items-start gap-2.5 py-1">
-          <span className={cn(
-            'mt-0.5 flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center text-xs',
-            checked
-              ? 'bg-emerald-100 border-emerald-400 text-emerald-700'
-              : 'bg-white border-gray-300 text-transparent'
-          )}>
-            {checked ? '✓' : ''}
-          </span>
-          <span className="flex-1">{text}</span>
-        </div>
-      );
-      i++;
-      continue;
-    }
-
-    // Numbered items like 1. or 1)
-    const numMatch = cleaned.match(/^(\d+)[\.\)]\s+(.+)$/);
-    if (numMatch) {
-      elements.push(
-        <div key={i} className="flex items-start gap-2.5 py-0.5">
-          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 border border-primary/20
-                         flex items-center justify-center text-xs font-bold text-primary mt-0.5 shadow-sm">
-            {numMatch[1]}
-          </span>
-          <span className="flex-1">{numMatch[2]}</span>
-        </div>
-      );
-      i++;
-      continue;
-    }
-
-    // Bullet points
-    if (cleaned.match(/^[•·▸▹►→➤✓✔☑\-–]\s/)) {
-      elements.push(
-        <div key={i} className="flex items-start gap-2 py-0.5 pl-2">
-          <span className="text-primary/50 mt-1 flex-shrink-0 text-[8px]">●</span>
-          <span>{cleaned.replace(/^[•·▸▹►→➤✓✔☑\-–]\s*/, '')}</span>
-        </div>
-      );
-      i++;
-      continue;
-    }
-
-    // Key-value pair (like "Naslov elementa:   Dijagram...")
-    const kvMatch = cleaned.match(/^([A-ZČĆŽŠĐÄÖÜa-zčćžšđäöü\s/()]+):\s{2,}(.+)$/);
-    if (kvMatch) {
-      elements.push(
-        <div key={i} className="flex items-baseline gap-3 py-1.5 px-3 rounded-lg bg-white/60
-                           border border-current/5 my-0.5 hover:bg-white/80 transition-colors">
-          <span className="font-semibold text-foreground/70 min-w-[140px] flex-shrink-0 text-xs uppercase tracking-wide">{kvMatch[1].trim()}</span>
-          <span className="text-foreground">{kvMatch[2].trim()}</span>
-        </div>
-      );
-      i++;
-      continue;
-    }
-
-    // Sub-headers (all caps, shorter)
-    if (cleaned === cleaned.toUpperCase() && /[A-ZČĆŽŠĐ]/.test(cleaned) && cleaned.length > 3 && cleaned.length < 60) {
-      elements.push(
-        <p key={i} className="font-bold text-foreground/90 mt-3 mb-1 text-sm tracking-wide">{cleaned}</p>
-      );
-      i++;
-      continue;
-    }
-
-    // Indented content (sub-items)
-    if (line.startsWith('    ') || line.startsWith('\t')) {
-      elements.push(
-        <div key={i} className="pl-6 py-0.5 text-foreground/75 border-l-2 border-current/10 ml-3">
-          {cleaned}
-        </div>
-      );
-      i++;
-      continue;
-    }
-
-    // Normal paragraph
-    elements.push(<p key={i} className="py-0.5">{cleaned}</p>);
-    i++;
+    out.push(b);
   }
+  return out;
+}
 
-  return <>{elements}</>;
+/** The text of one segment: headings, paragraphs (with checkboxes and lists), real tables and drawings. */
+function SegmentBlocks({ blocks: raw }: { blocks: PlanBlock[] }) {
+  const blocks = joinWrapped(raw);
+  return (
+    <div className="flex flex-col gap-1.5 text-[15px] leading-[1.55] text-neutral-900">
+      {blocks.map((b, i) => {
+        if (b.type === 'blank') return <div key={i} className="h-0.5" />;
+        if (b.type === 'heading') return <h3 key={i} className="mt-2 font-display text-base font-bold text-black">{b.text}</h3>;
+        if (b.type === 'mono') return <pre key={i} className="overflow-x-auto whitespace-pre rounded bg-neutral-50 px-3 py-1 font-mono text-[12px] leading-relaxed text-neutral-800">{b.text}</pre>;
+        if (b.type === 'table') {
+          const [head, ...rows] = b.rows;
+          return (
+            <div key={i} className="overflow-x-auto">
+              <table className="w-full border-collapse text-[13.5px] leading-snug">
+                <thead><tr>{head.map((c, k) => <th key={k} className="border-b-2 border-black px-2 py-1.5 text-left align-bottom text-xs font-bold">{c}</th>)}</tr></thead>
+                <tbody>{rows.map((r, k) => <tr key={k}>{r.map((c, m) => <td key={m} className="border-b border-neutral-200 px-2 py-1.5 align-top">{c}</td>)}</tr>)}</tbody>
+              </table>
+            </div>
+          );
+        }
+        const t = b.text;
+        const box = t.match(/^\[([ xX✓✔])\]\s*(.*)$/);
+        if (box) {
+          const on = box[1] !== ' ';
+          return (
+            <div key={i} className="flex items-start gap-2.5">
+              <span aria-hidden="true" className={cn('mt-0.5 flex h-[18px] w-[18px] flex-none items-center justify-center rounded border-2 text-[11px]', on ? 'border-primary bg-primary text-white' : 'border-neutral-300 bg-white')}>{on ? '✓' : ''}</span>
+              <span className="sr-only">{on ? 'označeno: ' : 'nije označeno: '}</span>
+              <span>{box[2]}</span>
+            </div>
+          );
+        }
+        const bullet = t.match(/^[-•–]\s+(.*)$/);
+        if (bullet) return <div key={i} className="flex gap-3"><span aria-hidden="true" className="mt-[9px] h-1.5 w-1.5 flex-none rotate-45 bg-primary" /><span>{bullet[1]}</span></div>;
+        return <p key={i} className="m-0 whitespace-pre-line">{t}</p>;
+      })}
+    </div>
+  );
 }

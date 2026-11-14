@@ -329,7 +329,7 @@ export function useChat() {
 
       // the same language layer as a new plan (DL-P19, DL-P30)
       const shownAnswer = fixHeadingTypos(language === 'bosnian' ? normalizeBosnian(answer) : normalizeTemplateLines(answer, language), language);
-      const revised = extractRevisedSection(shownAnswer, ref.title, ref.stopTitles);
+      const revised = extractRevisedSection(shownAnswer, ref.head, ref.stopHeads);
       const newPlan = revised ? replaceSection(msg.content, ref, revised) : null;
       // nothing usable, or no change at all: report it honestly, the plan stays as it was
       if (!newPlan || newPlan === msg.content) return 'failed';

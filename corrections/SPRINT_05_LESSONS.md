@@ -417,3 +417,40 @@ Period: 2026-11-07 … 2026-11-14. Detailed entries follow below the summary; th
   code and pass on the new.
 - Rule: "success" must be verified against the visible result (the card that was clicked has new text), not
   against "the code ran".
+
+### 2026-11-14 — Observation: the Director's brief conflicts with the Constitution (P6 SPEC)
+- The brief asks for white/grey surfaces and "no unnecessary animation"; CONSTITUTION rule 6 forbids white and
+  grey, and the Director's message asks for "3D AAA" and animation. Both conflicts are listed as open questions
+  in specs/p6-workspace-redesign/SPEC.md instead of being resolved silently (M-4, M-10).
+- Rule: before writing a SPEC from an owner's brief, check it against the Constitution and earlier decisions,
+  and surface each conflict as a decision with a recommendation.
+
+### 2026-11-14 — Observation: design proposals built on a real production plan (P6 S0)
+- A small eval run (one lesson, `only=g08`) printed a full real PSI v9.1 plan in the job log. The plan came
+  out of the log through `get_job_logs` (saved to a file because of its size); artifacts stay blocked by
+  the proxy.
+- The plan showed details a fixture does not have: 25 segments, a group heading with no text, and inline
+  "Uvodni/Središnji/Završni dio" blocks. All three proposals use the real structure.
+- Rule: design and test steps start from a real production output (same rule as the P5-4 correction).
+
+### 2026-11-14 — Gotcha: Tailwind's base styles bring their own colours (P6 S1)
+- After the palette was restricted, the colour guard still found #9CA3AF (placeholder text from `colors.gray`)
+  and #3B82F680 (default focus ring). Tailwind's preflight reads `colors.gray` and a built-in ring colour.
+- Fix: a neutral `gray` alias and `ringColor.DEFAULT` from the IDSS ring token. A guard on the built CSS finds
+  what a search in the source cannot.
+- Also: a component gallery that imports only `index.css` (not `main.tsx`) shows fallback fonts. Load the fonts
+  the same way the app does, or the screenshots lie.
+
+### 2026-11-14 — Director correction: an intermediate stage is not a result ("Ama nipošto … hoću tačno C")
+- I showed S1 (new colours on the OLD layout) as before/after screenshots and asked for a merge. The Director
+  read it as the redesign and rejected it: he had approved the look of proposal C, not a colour swap.
+- Fix: PR #39 back to draft; S1 and S2 ship together, and only when the app matches the approved proposal.
+- Rule: never ask the owner to approve a stage whose screenshots do not yet show what he approved. Staging is an
+  engineering detail; the owner sees the approved result or nothing.
+
+### 2026-11-14 — Director correction: too much empty space ("C odobren. Korekcija: manje praznog prostora")
+- The first build of direction C copied the proposal's generous spacing. On a real 25-segment plan with long
+  texts, that wastes the screen. The plan's lines are wrapped at about 78 characters, so every wrapped line was
+  shown as its own paragraph.
+- Fix: denser type and spacing, a wider page, and wrapped lines joined into paragraphs for reading (display only).
+- Rule: judge density on a real, long production output, not on the short texts of a mock-up.

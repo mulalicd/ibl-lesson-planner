@@ -30,6 +30,8 @@ jobs:
         run: npx tsc -p tsconfig.app.json --noEmit
       - name: App tests (Vitest)
         run: npm test
+      - name: Only IDSS colours in the built app (CONSTITUTION rule 6, DL-P33)
+        run: npm run build && npm run colours:check
       - name: Edge Function type check
         run: deno check --config supabase/functions/deno.json supabase/functions/ibl-chat/index.ts scripts/eval/run.ts
       - name: Edge shared module tests (SSE stream, plan validator)

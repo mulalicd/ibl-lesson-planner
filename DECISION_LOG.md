@@ -735,3 +735,80 @@ it no longer describes the changed plan. Saved plans are not revised (no silent 
 - The dictionary spell check (L-2 step 2) is not part of this decision.
 
 **Rollback:** revert the PR.
+
+## DL-P33 — P6 decisions on the SPEC's open questions (Director, 2026-11-14)
+
+**Decided by:** Director, answers to `specs/p6-workspace-redesign/SPEC.md` open questions 1–6.
+
+1. **CONSTITUTION rule 6 amended (1a):** white and neutral greys (no hue) are allowed for backgrounds,
+   surfaces, borders and secondary text. The five IDSS colours remain the only colours: accents, actions,
+   states, illustrations and 3D. Green and every other colour stay forbidden.
+2. **Motion:** the recommendation is accepted. Rich motion and 3D are used where something happens (sign-in,
+   creating a plan, the generation journey), and the reading workspace stays calm. The Director adds: "UX mora
+   biti dinamičan" (the UX must feel dynamic).
+3. **Typeface:** the Director leaves the choice to the ACA; a combination of typefaces is allowed. Free
+   licences only. The choice and its reason go into the PLAN.
+4. **Interface language:** Bosnian only, as today.
+5. **Scope:** the whole web app (library, sign-in, creation, plan) gets the redesign, consistently. The goal is
+   "the best industry standard".
+6. **Verification:** "na svim — golden standard". All listed browsers and platforms are verified. Emulation
+   is done by the ACA; checks on real iOS and Android devices need the Director's (or colleagues') devices and
+   are part of each stage's acceptance.
+
+**Consequence:** CONSTITUTION rule 6 text updated. The SPEC records these as decisions; the PLAN follows.
+
+## DL-P34 — P6 direction C "Nastavnički radni sto"; audience view Nastavnik / Učenik (Director, 2026-11-14)
+
+**Decided by:** Director, after S0: "Najviše mi se sviđa C. Nastavnički radni stol. Jezičci u boji po grupama
+daće nam mogućnost da prikažemo sadržaje po logici usmjerenja: Nastavnik vs. Učenik."
+
+**Decision:**
+- Visual direction for P6 is C: the plan as a paper page on a light desk, coloured binder tabs, sticky-note
+  side panel, pages dropping onto the desk during generation.
+- The binder tabs filter the segments by **audience**: Sve / Nastavnik / Učenik. This is a view only: segment
+  names, order and text never change, and every segment stays reachable under "Sve".
+- The audience of each segment is a pedagogical classification. Its mapping
+  (`specs/p6-workspace-redesign/AUDIENCE_MAP.md`) was approved by the Director the same day ("raspored N/U odobren").
+
+## DL-P35 — P6 S1 foundations: colour tokens, typefaces, colour guard (2026-11-14)
+
+**Under:** P6 approval ("P6 odobren, kreni sa S0"), SPEC/PLAN, DL-P33, DL-P34.
+
+**Decision:**
+- Semantic colour tokens are RGB channels built only from the five IDSS colours, white and neutral greys.
+  Primary = IDSS Blue (white text), secondary = IDSS Yellow (black text), destructive = IDSS Red, focus ring =
+  IDSS Light Blue, background = neutral 96 % ("desk"), cards = white ("paper").
+- Tailwind's default palette is REPLACED by that set (plus a neutral grey scale), so any other colour class is not
+  generated at all. Section cards use one style per plan group (yellow, blue, light blue, black, red).
+- `npm run colours:check` (CI, after the build) fails on any colour value outside the palette in the built CSS.
+- **New dependencies:** `@fontsource-variable/inter` 5.3.0 and `@fontsource-variable/manrope` 5.3.0 (OFL-1.1),
+  self-hosted. The Google Fonts import (Inter, Plus Jakarta Sans, IBM Plex Mono) is removed; monospace text uses
+  the system monospace font.
+- **Deviation from PLAN.md:** the shared segment parser (`planSegments.ts`) moves from S1 to S2, where the
+  workspace first needs it. S1 stays a pure visual foundation.
+
+**Rollback:** revert the PR.
+
+## DL-P36 — P6 total redesign in direction C, all screens (Director, 2026-11-14)
+
+**Decided by:** Director: "Hoću tačno kako si dao u prijedlogu C" and "TOTALNI UI/UX REDIZAJN … smjer C".
+
+**Decision (one release, PR #39, merged only when the Director approves the result):**
+- Plan page and the plan in the planner: the workspace "Nastavnički radni sto" (`PlanDisplay`): table of contents
+  of all segments, one segment as a sheet of paper, binder tabs Sve / Nastavnik / Učenik (DL-P34 map), sticky notes
+  (quality check, "Prepravi ovaj dio"), "Izvorni tekst" unchanged.
+- Segments come from ONE parser (`src/lib/planSegments.ts`), also used by "Prepravi ovaj dio" (M-7). Segment text is
+  shown through the Word-export structure (`planDocxStructure.ts`), so tables are real tables.
+- Creation: real steps Parametri → AI piše pripremu → Provjera kvaliteta → Sačuvano (`CreationSteps`); while the AI
+  writes, the workspace builds itself segment by segment and arrived segments can be read.
+- Library: plans as sheets on the desk, Moji / Svi binder tabs, filter bar. Sign-in: a sheet on the desk with the
+  five-colour binder tabs. Header: white bar, five-colour mark, underlined active navigation.
+- Small red text (4.43:1) is never used for text; the privacy notice and the sign-in error use black text with a red
+  marker.
+
+**Rollback:** revert PR #39.
+
+**Update 2026-11-14 (DL-P36):** the Director approved the result ("C odobren") with one correction: "manje praznog
+prostora između tekstova; prostor mora biti bolje iskorišten". Applied: a wider page (up to 1040 px), denser type
+and spacing, wrapped plan lines joined into paragraphs for reading (display only; the stored text and the Word
+export are unchanged), tighter tables, cards and title bars, and the workspace toolbar moved above the page.

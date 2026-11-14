@@ -25,10 +25,10 @@ export default function ChatPage() {
     }
   }, [planId]);
   return (
-    <div className="flex flex-col h-screen bg-background gradient-mesh">
+    <div className="flex flex-col h-screen bg-background">
       <AppHeader />
       <main className="flex-1 overflow-hidden">
-        <div className="h-full max-w-4xl mx-auto">
+        <div className="h-full max-w-[1680px] mx-auto">
           <ChatInterface initialPlan={initialPlan} />
         </div>
       </main>

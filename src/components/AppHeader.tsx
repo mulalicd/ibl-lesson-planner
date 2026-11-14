@@ -15,60 +15,46 @@ export default function AppHeader() {
   ];
 
   return (
-    <header className="flex-shrink-0 h-16 bg-card border-b border-border/30 shadow-depth-2 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 md:px-8 h-full flex items-center justify-between gap-4">
-        {/* Official IDSS logo (Director-supplied, 2026-11-06), served locally
-            from /public/brand (no hot-link). Colours snapped to the exact
-            five IDSS hex values (CONSTITUTION rule 6); original kept as
-            public/brand/idss-logo-original.png. */}
-        <Link to="/chat" className="flex items-center gap-3 group flex-shrink-0" aria-label="IBL Planer — početna">
-          <img
-            src="/brand/idss-logo.png"
-            alt="Internationale Deutsche Schule Sarajevo"
-            width={1460}
-            height={443}
-            className="h-8 sm:h-9 w-auto"
-          />
-          <span className="hidden md:block border-l border-border/60 pl-3 text-sm font-bold text-foreground tracking-tight">
-            IBL Planer
+    // P6 S2 (direction C): a calm white bar above the desk; the five IDSS colours appear only in the mark.
+    <header className="sticky top-0 z-50 h-16 flex-shrink-0 border-b border-neutral-200 bg-white">
+      <div className="mx-auto flex h-full max-w-[1680px] items-center justify-between gap-4 px-3 md:px-6">
+        {/* Official IDSS logo (Director-supplied, 2026-11-06), served locally from /public/brand. */}
+        <Link to="/chat" className="flex flex-shrink-0 items-center gap-3" aria-label="IBL Planer — početna">
+          <img src="/brand/idss-logo.png" alt="Internationale Deutsche Schule Sarajevo" width={1460} height={443} className="h-8 w-auto sm:h-9" />
+          <span className="hidden items-center gap-2 border-l border-neutral-200 pl-3 md:flex">
+            <span aria-hidden="true" className="flex gap-0.5">
+              <span className="h-5 w-1.5 rounded-sm bg-brand-blue" /><span className="h-5 w-1.5 rounded-sm bg-brand-lightblue" />
+              <span className="h-5 w-1.5 rounded-sm bg-brand-yellow" /><span className="h-5 w-1.5 rounded-sm bg-brand-red" />
+              <span className="h-5 w-1.5 rounded-sm bg-black" />
+            </span>
+            <span className="font-display text-[15px] font-extrabold tracking-tight">IBL Planer</span>
           </span>
         </Link>
 
-        {/* Center Nav */}
-        <nav className="flex items-center gap-1 p-1 rounded-2xl bg-muted/40">
+        <nav aria-label="Glavna navigacija" className="flex h-full items-stretch gap-1">
           {navItems.map(item => {
             const active = location.pathname === item.path;
             return (
               <Link
                 key={item.path}
                 to={item.path}
+                aria-current={active ? 'page' : undefined}
                 className={cn(
-                  'relative flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-medium transition-all duration-200',
-                  active
-                    ? 'text-primary-foreground'
-                    : 'text-muted-foreground hover:text-foreground'
+                  'relative flex items-center gap-2 px-4 text-sm font-semibold transition-colors',
+                  active ? 'text-primary' : 'text-neutral-600 hover:text-black',
                 )}
               >
-                {active && (
-                  <motion.div
-                    layoutId="active-tab"
-                    className="absolute inset-0 rounded-xl bg-primary shadow-depth-2"
-                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                  />
-                )}
-                <span className="relative z-10 flex items-center gap-2">
-                  <item.icon className="w-4 h-4" />
-                  <span className="hidden sm:inline">{item.label}</span>
-                </span>
+                <item.icon className="h-4 w-4" />
+                <span className="hidden sm:inline">{item.label}</span>
+                {active && <motion.span layoutId="active-tab" className="absolute inset-x-3 bottom-0 h-[3px] rounded-t bg-primary" />}
               </Link>
             );
           })}
         </nav>
 
-        {/* Version badge */}
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <span className="hidden md:flex items-center gap-1.5 text-[10px] text-muted-foreground/50 font-semibold bg-muted/30 px-3 py-1.5 rounded-full">
-            <Sparkles className="w-3 h-3" /> {PSI_VERSION_LABEL}
+        <div className="flex flex-shrink-0 items-center gap-3">
+          <span className="hidden items-center gap-1.5 text-[11px] font-semibold text-neutral-500 md:flex">
+            <Sparkles className="h-3 w-3" /> {PSI_VERSION_LABEL}
           </span>
           {session && (
             <button
@@ -76,9 +62,9 @@ export default function AppHeader() {
               onClick={() => { void signOut().then(() => window.location.assign('/login')); }}
               title={`Odjava (${session.user.email ?? ''})`}
               aria-label="Odjava"
-              className="w-10 h-10 rounded-xl neu-btn flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors"
+              className="flex h-10 w-10 items-center justify-center rounded-lg border border-neutral-200 bg-white text-neutral-600 transition-colors hover:text-destructive"
             >
-              <LogOut className="w-4 h-4" />
+              <LogOut className="h-4 w-4" />
             </button>
           )}
         </div>

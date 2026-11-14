@@ -66,80 +66,91 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-brand-black text-brand-yellow flex items-center justify-center px-4 py-10">
+    // P6 (direction C "Nastavnički radni sto"): the sign-in is a sheet of paper on the desk, with the binder tabs of
+    // the five IDSS colours behind it. Texts unchanged.
+    <main className="flex min-h-screen items-center justify-center bg-background px-4 py-10 text-black">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          {/* Dark-surface variant of the official logo: the black wordmark and
-              square are rendered in IDSS yellow so they stay visible on black
-              (five-colour rule). Pending Director approval of this variant. */}
-          <img
-            src="/brand/idss-logo-on-dark.png"
-            alt="Internationale Deutsche Schule Sarajevo"
-            width={1460}
-            height={443}
-            className="mx-auto h-16 sm:h-20 w-auto"
-          />
-          <h1 className="text-brand-lightblue text-lg font-bold mt-6">IBL Planer</h1>
-        </div>
+        <div className="relative" style={{ perspective: 1400 }}>
+          {/* pages and binder tabs behind the sheet (decoration only) */}
+          <div aria-hidden="true" className="absolute inset-0 translate-x-3 translate-y-3 rotate-[2.5deg] rounded-md bg-white shadow-[0_18px_40px_rgba(0,0,0,0.10)]" />
+          <div aria-hidden="true" className="absolute inset-0 -translate-x-2 translate-y-2 rotate-[-2deg] rounded-md bg-white shadow-[0_18px_40px_rgba(0,0,0,0.08)]" />
+          <div aria-hidden="true" className="absolute -right-3 top-10 flex flex-col gap-1.5">
+            <span className="h-12 w-3 rounded-r bg-brand-blue" /><span className="h-12 w-3 rounded-r bg-brand-lightblue" />
+            <span className="h-12 w-3 rounded-r bg-brand-yellow" /><span className="h-12 w-3 rounded-r bg-brand-red" />
+            <span className="h-12 w-3 rounded-r bg-black" />
+          </div>
 
-        <div className="rounded-2xl border-2 border-brand-blue p-6 sm:p-8">
-          {params.get('razlog') === 'neaktivnost' && status === 'idle' && (
-            <p role="status" className="text-brand-yellow text-sm mb-5 border-l-4 border-brand-yellow pl-3">
-              {LOGIN_MESSAGES.idle}
-            </p>
-          )}
-
-          {status === 'sent' ? (
-            <div role="status" aria-live="polite">
-              <h2 className="text-brand-yellow text-xl font-bold mb-3">Provjerite e-mail</h2>
-              <p className="text-brand-lightblue text-sm leading-relaxed">
-                Poslali smo link za prijavu na <strong className="text-brand-yellow">{email.trim().toLowerCase()}</strong>.
-                Otvorite ga na ovom uređaju. Link važi ograničeno vrijeme.
-              </p>
-              <button
-                type="button"
-                onClick={() => { setStatus('idle'); setMessage(''); }}
-                className="mt-6 text-brand-lightblue text-sm underline underline-offset-4 focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-lightblue rounded"
-              >
-                Pošalji ponovo ili promijeni adresu
-              </button>
+          <div className="relative rounded-md bg-white px-6 py-8 shadow-[0_1px_0_rgb(221_221_221),0_24px_50px_rgba(0,0,0,0.14)] sm:px-10">
+            <div className="mb-8 text-center">
+              <img src="/brand/idss-logo.png" alt="Internationale Deutsche Schule Sarajevo" width={1460} height={443} className="mx-auto h-14 w-auto sm:h-16" />
+              <div className="mt-5 flex items-center justify-center gap-2">
+                <span aria-hidden="true" className="flex gap-0.5">
+                  <span className="h-5 w-1.5 rounded-sm bg-brand-blue" /><span className="h-5 w-1.5 rounded-sm bg-brand-lightblue" />
+                  <span className="h-5 w-1.5 rounded-sm bg-brand-yellow" /><span className="h-5 w-1.5 rounded-sm bg-brand-red" />
+                  <span className="h-5 w-1.5 rounded-sm bg-black" />
+                </span>
+                <h1 className="font-display text-lg font-extrabold">IBL Planer</h1>
+              </div>
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} noValidate>
-              <h2 className="text-brand-yellow text-xl font-bold mb-2">Prijava</h2>
-              <p className="text-brand-lightblue text-sm mb-6">
-                Unesite školsku e-mail adresu. Poslaćemo vam link za prijavu — bez lozinke.
+
+            {params.get('razlog') === 'neaktivnost' && status === 'idle' && (
+              <p role="status" className="mb-5 rounded bg-brand-yellow/30 px-3 py-2 text-sm text-black">
+                {LOGIN_MESSAGES.idle}
               </p>
-              <label htmlFor="login-email" className="block text-brand-yellow text-xs font-bold uppercase tracking-widest mb-2">
-                E-mail adresa
-              </label>
-              <input
-                id="login-email"
-                type="email"
-                inputMode="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="ime.prezime@idss.ba"
-                aria-invalid={status === 'error'}
-                aria-describedby={message ? 'login-message' : undefined}
-                className="w-full rounded-xl bg-brand-black border-2 border-brand-lightblue text-brand-yellow placeholder:text-brand-lightblue/60 px-4 py-3 text-base focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-lightblue/50"
-              />
-              {message && (
-                <p id="login-message" role="alert" className="text-brand-red text-sm mt-3 font-semibold">
-                  {message}
+            )}
+
+            {status === 'sent' ? (
+              <div role="status" aria-live="polite">
+                <h2 className="mb-3 font-display text-xl font-extrabold">Provjerite e-mail</h2>
+                <p className="text-sm leading-relaxed text-neutral-700">
+                  Poslali smo link za prijavu na <strong className="text-black">{email.trim().toLowerCase()}</strong>.
+                  Otvorite ga na ovom uređaju. Link važi ograničeno vrijeme.
                 </p>
-              )}
-              <button
-                type="submit"
-                disabled={status === 'sending'}
-                className="mt-6 w-full rounded-xl bg-brand-yellow text-brand-black font-bold py-3 text-base disabled:opacity-60 focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-lightblue"
-              >
-                {status === 'sending' ? 'Šaljem link…' : 'Pošalji link za prijavu'}
-              </button>
-            </form>
-          )}
+                <button
+                  type="button"
+                  onClick={() => { setStatus('idle'); setMessage(''); }}
+                  className="mt-6 rounded text-sm font-semibold text-primary underline underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  Pošalji ponovo ili promijeni adresu
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} noValidate>
+                <h2 className="mb-2 font-display text-xl font-extrabold">Prijava</h2>
+                <p className="mb-6 text-sm text-neutral-700">
+                  Unesite školsku e-mail adresu. Poslaćemo vam link za prijavu — bez lozinke.
+                </p>
+                <label htmlFor="login-email" className="mb-2 block text-xs font-bold uppercase tracking-widest text-neutral-700">
+                  E-mail adresa
+                </label>
+                <input
+                  id="login-email"
+                  type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="ime.prezime@idss.ba"
+                  aria-invalid={status === 'error'}
+                  aria-describedby={message ? 'login-message' : undefined}
+                  className="h-12 w-full rounded-lg border border-input bg-white px-4 text-base text-black placeholder:text-neutral-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                />
+                {message && (
+                  <p id="login-message" role="alert" className="mt-3 rounded border-l-4 border-brand-red bg-brand-red/10 px-3 py-2 text-sm font-semibold text-black">
+                    {message}
+                  </p>
+                )}
+                <button
+                  type="submit"
+                  disabled={status === 'sending'}
+                  className="mt-6 h-12 w-full rounded-lg bg-primary text-base font-bold text-primary-foreground disabled:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  {status === 'sending' ? 'Šaljem link…' : 'Pošalji link za prijavu'}
+                </button>
+              </form>
+            )}
+          </div>
         </div>
       </div>
     </main>
