@@ -284,6 +284,9 @@ for (const g of inputs) {
       const d = report.checks.find((c) => c.id === "sources_marked_to_verify")?.detail;
       console.log(`     sources detail: ${d}`);
     }
+    // Small runs (1–2 lessons) print the whole plan so real outputs can be used as test fixtures
+    // (job logs are readable; artifacts are not, from the ACA's network).
+    if (inputs.length <= 2) console.log(`<<<PLAN ${v} ${g.id}\n${r.text}\nPLAN>>>`);
     console.log(`     usage: ${JSON.stringify(r.usage)}`);
     console.log(`     tail: ${JSON.stringify(r.text.slice(-400))}`);
   }
