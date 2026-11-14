@@ -28,6 +28,7 @@ export function softDeletePlan(planId: string): Promise<ChangeResult> {
   return updatePlan(planId, { is_deleted: true });
 }
 
+/** @deprecated P5-2: the shared star. Use setFavourite from lib/planFavourites (own favourites). */
 export function setPlanFavourite(planId: string, value: boolean): Promise<ChangeResult> {
   return updatePlan(planId, { is_favourite: value });
 }

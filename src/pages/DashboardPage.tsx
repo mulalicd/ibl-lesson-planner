@@ -9,6 +9,7 @@ import { SUBJECTS } from '@/lib/constants';
 import { supabase } from '@/integrations/supabase/client';
 import type { PlanCardData, DashboardFilters } from '@/lib/types';
 import { softDeletePlan } from '@/lib/planActions';
+import { fetchFavouriteIds, fetchPlanAuthors } from '@/lib/planFavourites';
 import { TierSchema } from '@/lib/validation/schemas';
 import { toast } from 'sonner';
 import { ERROR_MESSAGES } from '@/lib/constants';
@@ -40,9 +41,12 @@ export default function DashboardPage() {
     const scoped = planScopeQuery(scope, userId);
     if (scoped.kind === 'none') { setPlans([]); setTotal(0); setLoading(false); return; }
     try {
+      // P5-2: the teacher's own stars; the "favourites" filter shows only those plans
+      const favourites = await fetchFavouriteIds();
+      if (filters.isFavourite && favourites.size === 0) { setPlans([]); setTotal(0); return; }
       let query = supabase
         .from('plans')
-        .select('id, created_at, subject, grade, topic, duration_min, tier, language, inquiry_question, is_favourite', { count: 'exact' })
+        .select('id, created_at, subject, grade, topic, duration_min, tier, language, inquiry_question', { count: 'exact' })
         .eq('is_deleted', false)
         .order('created_at', { ascending: false })
         .range((page - 1) * limit, page * limit - 1);
@@ -51,12 +55,18 @@ export default function DashboardPage() {
       if (filters.subject) query = query.eq('subject', filters.subject);
       if (filters.grade) query = query.eq('grade', filters.grade);
       if (filters.tier) query = query.eq('tier', filters.tier);
-      if (filters.isFavourite) query = query.eq('is_favourite', true);
+      if (filters.isFavourite) query = query.in('id', [...favourites]);
       if (filters.searchQuery) query = query.ilike('topic', `%${filters.searchQuery}%`);
 
       const { data, error, count } = await query;
       if (error) throw error;
-      setPlans((data as unknown as PlanCardData[]) ?? []);
+      const rows = data ?? [];
+      const authors = await fetchPlanAuthors(rows.map((r) => r.id));
+      setPlans(rows.map((r) => ({
+        ...(r as unknown as Omit<PlanCardData, 'favourite' | 'author'>),
+        favourite: favourites.has(r.id),
+        author: authors.get(r.id) ?? null,
+      })));
       setTotal(count ?? 0);
     } catch (e) {
       console.error('Dashboard fetch error:', e);

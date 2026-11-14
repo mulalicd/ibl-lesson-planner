@@ -13,7 +13,8 @@ import type { PlanRecord } from '@/lib/types';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { ERROR_MESSAGES } from '@/lib/constants';
-import { softDeletePlan, setPlanFavourite, fetchIsAdmin, canChangePlan } from '@/lib/planActions';
+import { softDeletePlan, fetchIsAdmin, canChangePlan } from '@/lib/planActions';
+import { isFavourite, setFavourite } from '@/lib/planFavourites';
 
 export default function PlanPage() {
   const { id } = useParams<{ id: string }>();
@@ -23,6 +24,8 @@ export default function PlanPage() {
   const [error, setError] = useState('');
   const { session } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
+  // P5-2: the signed-in teacher's own star
+  const [favourite, setFavouriteState] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -50,14 +53,21 @@ export default function PlanPage() {
       });
   }, [id]);
 
+  useEffect(() => {
+    if (!id) return;
+    let alive = true;
+    void isFavourite(id).then((v) => { if (alive) setFavouriteState(v); });
+    return () => { alive = false; };
+  }, [id]);
+
   async function toggleFavourite() {
     if (!plan) return;
-    const next = !plan.is_favourite;
-    setPlan(prev => prev ? { ...prev, is_favourite: next } : prev);
-    const result = await setPlanFavourite(plan.id, next);
+    const next = !favourite;
+    setFavouriteState(next);
+    const result = await setFavourite(plan.id, next);
     if (result !== 'ok') {
-      setPlan(prev => prev ? { ...prev, is_favourite: !next } : prev);
-      if (result === 'error') toast.error(ERROR_MESSAGES.NETWORK_ERROR);
+      setFavouriteState(!next);
+      toast.error(ERROR_MESSAGES.NETWORK_ERROR);
     }
   }
 
@@ -123,13 +133,14 @@ export default function PlanPage() {
             </span>
           </div>
           <div className="flex items-center gap-2">
-            {canChange && (<motion.button
+            {/* P5-2: every teacher may star any plan they can read (own favourites) */}
+            <motion.button
               whileTap={{ scale: 0.93 }}
               onClick={toggleFavourite}
               className="w-10 h-10 rounded-xl neu-btn flex items-center justify-center hover:text-idss-gold transition-colors"
             >
-              <Star className={`w-4 h-4 ${plan.is_favourite ? 'text-amber-500 fill-amber-500' : 'text-muted-foreground'}`} />
-            </motion.button>)}
+              <Star className={`w-4 h-4 ${favourite ? 'text-amber-500 fill-amber-500' : 'text-muted-foreground'}`} />
+            </motion.button>
             <DocxExportButton planId={plan.id} planText={plan.plan_text} />
             <motion.div whileTap={{ scale: 0.95 }}>
               <Link
