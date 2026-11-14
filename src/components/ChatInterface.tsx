@@ -39,8 +39,9 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
   const [shownPlanId, setShownPlanId] = useState<string | null>(null);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [chat.messages, chat.isLoading]);
+    // only when a message is added, not on every streamed word (that made the screen jump), and only as far as needed
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, [chat.messages.length]);
 
   // a new answer (a new plan, a repair) brings the newest plan back onto the desk
   useEffect(() => {
@@ -215,9 +216,10 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
         planText={deskText}
         writing={!shownPlan}
         actions={planActions || undefined}
+        quality={shownPlan?.validation ? <QualityBadge report={shownPlan.validation} onRepair={chat.repairPlan} disabled={chat.isLoading} /> : undefined}
       />
       {streamingMsg ? (
-        <PlanDisplay planText={streamingMsg.content} streaming />
+        <PlanDisplay key={streamingMsg.id} planText={streamingMsg.content} streaming />
       ) : shownPlan ? (
         <PlanDisplay
           key={shownPlan.id}
@@ -230,7 +232,6 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
             else toast.error(SECTION_REVISION_TEXT.FAILED);
           }}
           reviseDisabled={chat.isLoading}
-          quality={shownPlan.validation ? <QualityBadge report={shownPlan.validation} onRepair={chat.repairPlan} disabled={chat.isLoading} /> : undefined}
         />
       ) : null}
     </div>

@@ -470,3 +470,13 @@ Period: 2026-11-07 … 2026-11-14. Detailed entries follow below the summary; th
 - Fix: `PlanDisplay` measures its own width (ResizeObserver) and picks the layout from that.
 - Rule: a component that can be placed beside other zones decides its layout from its container, not the
   viewport. Screenshot every new zone layout at 1440, 1024, 768 and 390 px before reporting.
+
+### 2026-11-14 — Director correction: overlap on his screen and jumping transitions
+- On the Director's 1920 px laptop the wizard's "Dalje" button met the vertical "Generiši" tab: the sheet of a
+  short step was lower than the five tabs beside it. My screenshots were at 1440 px with a taller step.
+- The screen also "shook": large slide-ins, pages changing height, the scrollbar appearing, the plan rebuilt when
+  the AI finished, and auto-scroll on every streamed word.
+- Fix: sheet minimum height, calmer transitions, reserved scrollbar space, a stable key, scroll only on new
+  messages.
+- Rule: include the owner's own screen size (here 1920 px) in every screenshot set, and check every step of a
+  multi-step screen, including the shortest one.

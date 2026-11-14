@@ -81,3 +81,4 @@ One line per feature, per Commander E-10.
 - [2026-11-14] [DESIGN] P6: denser workspace after the Director's review — wider page, wrapped lines joined into paragraphs, tighter spacing (DL-P36).
 - [2026-11-14] [DESIGN] P6: creation form redesigned in direction C (missed in the first release) — step binder tabs on a sheet, live "Zaglavlje pripreme" card (DL-P36).
 - [2026-11-14] [DESIGN] P6: full-width pages; planner in two zones (conversation as 3D sheets left, growing creation block and plan centre); centred large "IBL Planer" in the main bar; workspace layout follows its own width (DL-P36).
+- [2026-11-14] [DESIGN] P6: "Prepravi ovaj dio" at the top of each segment page, quality check in the creation block, page to the right edge, wizard tabs clear of "Dalje", calmer transitions without jumps (DL-P36).
