@@ -16,11 +16,17 @@ export type PlanBlock =
 const RULE = /^\s*\+?[=\-_─━·*~]{6,}\+?\s*$/;
 /** A table separator row inside a table: |-----|:---:|  */
 const TABLE_RULE = /^[\s|:+\-=─]+$/;
+/** "Label: value" at the start of a line. */
+const KEY_VALUE = /^([^:|]{1,40}:\s*\S|\d+\.\s)/;
+/** Drawing characters and arrows: such lines keep their exact spacing. */
+const DRAWING = /[┌┐└┘├┤│─┼]|-->|<--|==>|<==|\/\\|\\\//;
 /** Aligned text or ASCII drawings keep their spacing (board drawings, A8). */
 const ALIGNED = /\S {3,}\S|[┌┐└┘├┤│─┼]/;
 
 function isHeading(text: string): boolean {
-  const letters = text.replace(/[^\p{L}]/gu, '');
+  // "REFLEKSIJA UČENIKA (pitanja za učenike)" — the part before a trailing (…) decides
+  const base = text.replace(/\s*\([^)]*\)\s*:?$/, '');
+  const letters = base.replace(/[^\p{L}]/gu, '');
   return letters.length >= 4 && text.length <= 80 && letters === letters.toUpperCase() && /\p{Lu}/u.test(letters);
 }
 
@@ -45,19 +51,28 @@ function joinCell(a: string, b: string): string {
 export function structurePlan(planText: string): PlanBlock[] {
   const blocks: PlanBlock[] = [];
   let table: string[][] | null = null;
+  let tableRaw: string[] = [];
   const closeTable = () => {
     if (!table) return;
-    const width = Math.max(...table.map((r) => r.length));
-    blocks.push({ type: 'table', rows: table.map((r) => [...r, ...Array(width - r.length).fill('')]) });
+    if (table.length < 2) {
+      // one "row" with pipes is an ASCII drawing (e.g. "BILJKA |--- CO2"), not a table: keep it as drawn
+      for (const l of tableRaw) blocks.push({ type: 'mono', text: l });
+    } else {
+      const width = Math.max(...table.map((r) => r.length));
+      blocks.push({ type: 'table', rows: table.map((r) => [...r, ...Array(width - r.length).fill('')]) });
+    }
     table = null;
+    tableRaw = [];
   };
 
   for (const raw of planText.replace(/\r/g, '').split('\n')) {
     const line = raw.replace(/\s+$/, '');
     const cells = rowCells(line);
     if (cells) {
+      tableRaw.push(line);
       if (TABLE_RULE.test(line)) continue; // |----|----| inside a table
-      if (table && cells[0] === '' && table.length) {
+      const totalRow = cells.some((c) => /^(Ukupno|Gesamt|Total)\b/i.test(c));
+      if (table && cells[0] === '' && table.length && !totalRow) {
         // continuation of the previous row (wrapped cells)
         const prev = table[table.length - 1];
         cells.forEach((c, i) => { prev[i] = joinCell(prev[i] ?? '', c); });
@@ -78,7 +93,10 @@ export function structurePlan(planText: string): PlanBlock[] {
     }
     const trimmed = text.trim();
     if (isHeading(trimmed) && !ALIGNED.test(trimmed)) blocks.push({ type: 'heading', text: trimmed });
-    else if (ALIGNED.test(trimmed)) blocks.push({ type: 'mono', text: text.replace(/^ {2}/, '') });
+    else if (ALIGNED.test(trimmed) && KEY_VALUE.test(trimmed) && !DRAWING.test(trimmed)) {
+      // "Ko predstavlja: …   Kome: …" — label/value pairs, not a drawing: one readable line
+      blocks.push({ type: 'para', text: trimmed.replace(/: {2,}/g, ': ').replace(/ {3,}/g, '  ·  ') });
+    } else if (ALIGNED.test(trimmed)) blocks.push({ type: 'mono', text: text.replace(/^ {2}/, '') });
     else blocks.push({ type: 'para', text: trimmed });
   }
   closeTable();
