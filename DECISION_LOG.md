@@ -612,3 +612,14 @@ It is not shipped in the browser bundle; the app exports through `docx`, which i
 3. "generir…" (Croatian -irati form) is added to the flagged words of the language layer, with the standard
    form "generisati".
 4. The rest of the app already used "Generiši".
+
+## DL-P24 — Pin the Supabase CLI in the deploy workflow (ACA, 2026-11-14)
+
+**Context:** two consecutive deploy failures came from `version: latest`.
+- The output format changed, so jq failed.
+- The version lookup hit GitHub's rate limit.
+
+**Decision:** `supabase/setup-cli` is pinned to `3.1.0`, which has been npm "latest" since 2026-11-09 and was
+used by the green deploys #23 and #24. A step prints `supabase --version`. Upgrades are deliberate: change the
+number, then watch one deploy. This is a reversible engineering-hygiene change within the approved deploy
+pipeline.

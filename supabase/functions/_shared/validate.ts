@@ -16,6 +16,8 @@ export interface ValidateParams {
   tier?: Tier;
   /** P4 (PSI v9.1, A16): add the lesson-flow checks. Only for plans written under v9.1. */
   pedagogy?: boolean;
+  /** L-3: Bosnian words in German/English plans. Eval only until the Director approves a badge label. */
+  languagePurity?: boolean;
 }
 
 export interface CheckResult {
@@ -58,6 +60,8 @@ const PEDAGOGY_SECTIONS: Record<string, string[]> = {
   studentReflection: ["REFLEKSIJA UCENIKA", "SCHULERREFLEXION", "STUDENT REFLECTION"],
 };
 // Forms of work, any inflection (Grupa/Grupe/u grupama, u paru/u parovima, Frontalno/frontalni rad …).
+// Bosnian words that never occur in correct German or English text ("da", "je", "i" excluded: they do).
+const BOSNIAN_FUNCTION_WORDS = /(?<![\p{L}-])(su|na|za|se|od|kako|koji|koja|koje|nije|ili|šta|što|učenici|učenik|učenika|nastavnik|nastavnica|časa|čas|odgovor|pitanje)(?![\p{L}-])/gu;
 const GROUPING = /(INDIVID|SAMOSTALN|U PAR|PAROVI|GRUP|FRONTAL|CIJELI RAZRED|EINZEL|PARTNER|GRUPPE|PLENUM|PAIRS?\b|GROUPS?\b|WHOLE CLASS)/;
 const ALL_HEADINGS = [...Object.values(SECTIONS).flat(), ...Object.values(PEDAGOGY_SECTIONS).flat()];
 
@@ -240,6 +244,16 @@ export function validatePlan(text: string, params: ValidateParams): ValidationRe
   add("sources_marked_to_verify", unmarked.length === 0, unmarked.length ? `${unmarked.length} unmarked: ${unmarked[0].trim().slice(0, 90)}` : "ok");
 
   if (params.pedagogy) pedagogyChecks(text, add);
+  if (params.languagePurity && (params.language === "german" || params.language === "english")) {
+    // L-3 (specs/language-quality): Bosnian function words inside a German/English plan. Names with č/ć/š/ž/đ
+    // (Bašeskija, Ljubović) are fine, so letters are not counted. The Bosnian footer (A14) is excluded.
+    const footerStart = text.search(/Za savjete, pitanja|Maj[ai] Ljubovi[cć]/);
+    const body = footerStart > 0 ? text.slice(0, footerStart) : text;
+    const found = [...body.matchAll(BOSNIAN_FUNCTION_WORDS)].map((m) => m[0]);
+    const uniq = [...new Set(found)];
+    add("language_purity", uniq.length < 2,
+      uniq.length < 2 ? "ok" : `Bosnian words: ${uniq.slice(0, 10).join(", ")} (${found.length}×)`);
+  }
 
   const failed = checks.filter((c) => !c.ok).map((c) => c.id);
   return { passed: checks.length - failed.length, total: checks.length, failed, checks };

@@ -189,3 +189,15 @@ Deno.test("P4 phases_complete: a wrapped table row is one phase ('INDIVIDU-' + '
   const c = r.checks.find((x) => x.id === "phases_complete");
   if (!c?.ok || !c.detail.startsWith("4/4")) throw new Error(JSON.stringify(c));
 });
+
+Deno.test("L-3 language_purity (eval only): Bosnian words in an English plan are found; names and the A14 footer are not", () => {
+  const en = "INQUIRY QUESTION\nWhy did Mula Mustafa Bašeskija write a chronicle?\nStudents compare sources.\n" +
+    "Za savjete, pitanja i ideje budite slobodni da se obratite gospođi Maji Ljubović na: maja.ljubovic@idss.ba";
+  const ok = validatePlan(en, { language: "english", duration_min: 45, languagePurity: true }).checks.find((c) => c.id === "language_purity");
+  if (!ok?.ok) throw new Error("false positive: " + JSON.stringify(ok));
+  const bad = validatePlan(en.replace("Students compare sources.", "Učenici compare sources i odgovor na pitanje."),
+    { language: "english", duration_min: 45, languagePurity: true }).checks.find((c) => c.id === "language_purity");
+  if (bad?.ok !== false) throw new Error("missed: " + JSON.stringify(bad));
+  const off = validatePlan(en, { language: "english", duration_min: 45 }).checks.find((c) => c.id === "language_purity");
+  if (off) throw new Error("must be off in production until a label is approved");
+});

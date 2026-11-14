@@ -65,9 +65,14 @@ jobs:
           deno check --config supabase/functions/deno.json supabase/functions/ibl-chat/index.ts
           deno test --allow-read --config supabase/functions/deno.json supabase/functions/_shared/
           deno run --allow-net --allow-env --allow-run --allow-read --config supabase/functions/deno.json supabase/tests/edge/ibl-chat.e2e.ts
+      # Pinned (2026-11-14): "latest" changed its output format overnight and its version lookup hit a GitHub
+      # rate limit (deploys #22, #23). 3.1.0 = npm "latest" since 2026-11-09, used by the green deploys #23/#24.
+      # Upgrade deliberately: change the number, then watch one deploy.
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: 3.1.0
+      - name: Supabase CLI version
+        run: supabase --version
 
       - name: "Gate 1 — access token present"
         env:
