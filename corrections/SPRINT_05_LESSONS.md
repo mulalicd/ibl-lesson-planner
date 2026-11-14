@@ -417,3 +417,10 @@ Period: 2026-11-07 … 2026-11-14. Detailed entries follow below the summary; th
   code and pass on the new.
 - Rule: "success" must be verified against the visible result (the card that was clicked has new text), not
   against "the code ran".
+
+### 2026-11-14 — Observation: the Director's brief conflicts with the Constitution (P6 SPEC)
+- The brief asks for white/grey surfaces and "no unnecessary animation"; CONSTITUTION rule 6 forbids white and
+  grey, and the Director's message asks for "3D AAA" and animation. Both conflicts are listed as open questions
+  in specs/p6-workspace-redesign/SPEC.md instead of being resolved silently (M-4, M-10).
+- Rule: before writing a SPEC from an owner's brief, check it against the Constitution and earlier decisions,
+  and surface each conflict as a decision with a recommendation.
