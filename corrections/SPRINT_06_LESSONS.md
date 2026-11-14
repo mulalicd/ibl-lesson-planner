@@ -219,3 +219,10 @@ Lessons captured: 24 entries (detailed below), moved here from SPRINT_05_LESSONS
 - Fixed; the live check is an owner-run script that rolls itself back. Its first local run "failed" because the
   "other teacher" picked was the admin (allowed to delete by design) — the check now picks a non-admin.
 - Rule: run `tsc --noUnusedLocals` and ESLint on every file a phase touched before the close, not only `tsc`.
+
+### 2026-11-14 — Gotcha (KRAJ): the project session cannot push to the Commander repository
+- At M-22 step 5 the session's GitHub account (the project owner's) had no push access to IDSS123a/commander.
+  Commander is public, so it was cloned read-only; the approved update was applied there, committed and exported as
+  a patch that applies cleanly to `main` (`commander-update/v1.8.0/`).
+- Rule (Commander improvement candidate for the next KRAJ): at project start, check that the session can push to the
+  Commander repository (or plan a second session for KRAJ), so step 5 does not wait.
