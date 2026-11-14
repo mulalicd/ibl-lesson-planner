@@ -1804,6 +1804,153 @@ Priprema / Izvođenje / Nakon časa     Vorbereitung / Durchführung / Danach   
 IDEJE ZA PRODUŽETAK                   ERWEITERUNGSIDEEN               EXTENSION IDEAS
 MOGUĆI IZAZOVI I RJEŠENJA             HERAUSFORDERUNGEN UND LÖSUNGEN  CHALLENGES AND SOLUTIONS
 
+TEMPLATE LINES IN GERMAN AND ENGLISH (A17 addition 2, Director 2026-11-14, DL-P29)
+The template lines below are printed in Modules 3.3–3.9B in Bosnian. In a German or English plan, use
+EXACTLY the DE or EN line. Never print the Bosnian line in a German or English plan.
+
+
+-- Template lines of Module 3.3 (evidence materials) --
+BS: Koji materijal dajete učenicima?
+  DE: Welches Material erhalten die Schüler:innen?
+  EN: Which materials do you give the students?
+BS: Isječci iz udžbenika / književnih djela / članaka
+  DE: Auszüge aus Schulbüchern / literarischen Werken / Artikeln
+  EN: Excerpts from textbooks / literary works / articles
+BS: Stare mape ili fotografije
+  DE: Alte Karten oder Fotografien
+  EN: Old maps or photographs
+BS: Audio snimci / intervjui
+  DE: Tonaufnahmen / Interviews
+  EN: Audio recordings / interviews
+BS: Set predmeta za posmatranje
+  DE: Gegenstände zum Beobachten
+  EN: A set of objects to observe
+BS: Video / digitalni isječak (maks. 5 min)
+  DE: Video / digitaler Ausschnitt (max. 5 Min.)
+  EN: Video / digital clip (max. 5 min)
+BS: Podaci / grafikoni / tabele
+  DE: Daten / Diagramme / Tabellen
+  EN: Data / charts / tables
+BS: Drugo
+  DE: Sonstiges
+  EN: Other
+BS: Preporuka za [duration_min] min: učenici istražuju približno [inv_min] min
+  DE: Empfehlung für [duration_min] Min.: Die Schüler:innen recherchieren etwa [inv_min] Min.
+  EN: Recommendation for [duration_min] min: students investigate for about [inv_min] min
+BS: Broj izvora ([tier]): max [evidence_max]
+  DE: Anzahl der Quellen ([tier]): max. [evidence_max]
+  EN: Number of sources ([tier]): max [evidence_max]
+
+-- Template lines of Module 3.5 (scaffolding) --
+BS: Gdje učenici mogu "zapeti" — postavite pitanje umjesto davanja odgovora
+  DE: Wo Schüler:innen „hängen bleiben“ können – stellen Sie eine Frage, statt die Antwort zu geben
+  EN: Where students may get stuck — ask a question instead of giving the answer
+BS: Sinteza i povratak na Istr. pitanje
+  DE: Synthese und Rückkehr zur FF
+  EN: Synthesis and return to the IQ
+BS: Na kraju, kad učenici dijele zaključke
+  DE: Am Ende, wenn die Schüler:innen ihre Schlussfolgerungen teilen
+  EN: At the end, when students share their conclusions
+BS: "Na osnovu svega što ste pronašli danas — kako biste odgovorili na naše pitanje: [IQ]?"
+  DE: „Wie würdet ihr nach allem, was ihr heute herausgefunden habt, unsere Frage beantworten: [FF]?“
+  EN: "Based on everything you found today, how would you answer our question: [IQ]?"
+BS: Brojite do 10 prije odgovora.
+  DE: Zählen Sie bis 10, bevor Sie antworten.
+  EN: Count to 10 before you answer.
+BS: "Odlično pitanje — gdje misliš da bismo našli odgovor?"
+  DE: „Gute Frage – wo könnten wir die Antwort finden?“
+  EN: "Great question — where do you think we could find the answer?"
+BS: "A šta ako je [X] zapravo pogrešno? Postoji li ijedan dokaz za to?"
+  DE: „Und was, wenn [X] eigentlich falsch ist? Gibt es dafür einen Beleg?“
+  EN: "And what if [X] is actually wrong? Is there any evidence for that?"
+
+-- Template lines of Module 3.6 (evidence of learning) --
+BS: Mapa uma / Infografika
+  DE: Mindmap / Infografik
+  EN: Mind map / infographic
+BS: Dramatizacija / Podcast
+  DE: Rollenspiel / Podcast
+  EN: Role play / podcast
+BS: Pismo liku ili historijskoj ličnosti
+  DE: Brief an eine Figur oder historische Persönlichkeit
+  EN: Letter to a character or historical figure
+BS: Model / Eksperimentalni izvještaj
+  DE: Modell / Versuchsprotokoll
+  EN: Model / experiment report
+BS: Vizuelni produkt (dijagram, plakat, strip)
+  DE: Visuelles Produkt (Diagramm, Plakat, Comic)
+  EN: Visual product (diagram, poster, comic strip)
+BS: Digitalna prezentacija / Video
+  DE: Digitale Präsentation / Video
+  EN: Digital presentation / video
+BS: Brzi izlazni produkt (exit ticket)
+  DE: Kurzes Abschlussprodukt (Exit-Ticket)
+  EN: Quick exit product (exit ticket)
+BS: Procijenjeno vrijeme
+  DE: Geschätzte Zeit
+  EN: Estimated time
+BS: Odaberite jedan brzi produkt (5-8 min)
+  DE: Wählen Sie ein kurzes Produkt (5–8 Min.)
+  EN: Choose one quick product (5–8 min)
+BS: Odaberite jedan sustavan produkt (15-20 min)
+  DE: Wählen Sie ein ausführliches Produkt (15–20 Min.)
+  EN: Choose one substantial product (15–20 min)
+BS: Možete kombinovati brzi + složeniji produkt
+  DE: Sie können ein kurzes und ein anspruchsvolleres Produkt kombinieren
+  EN: You can combine a quick and a more complex product
+
+-- Template lines of Module 3.7 (teacher self-evaluation) --
+BS: Da li učenici pričaju više od mene?
+  DE: Sprechen die Schüler:innen mehr als ich?
+  EN: Do the students talk more than I do?
+BS: (Trebalo bi da jeste — tiho praćenje i postavljanje pitanja.)
+  DE: (Das sollten sie – leise begleiten und Fragen stellen.)
+  EN: (They should — quiet observation and asking questions.)
+BS: Da li izvor informacija nije samo moj glas / predavanje?
+  DE: Ist meine Stimme / mein Vortrag nicht die einzige Informationsquelle?
+  EN: Is my voice / my lecture not the only source of information?
+BS: (Dokazni materijali i vizuali govore umjesto mene.)
+  DE: (Beweismaterial und Visualisierungen sprechen statt meiner.)
+  EN: (The evidence and the visuals speak instead of me.)
+BS: Da li postoji mogućnost da učenici dođu do različitih, ali opravdanih zaključaka?
+  DE: Können die Schüler:innen zu unterschiedlichen, aber begründeten Schlussfolgerungen kommen?
+  EN: Can the students reach different but justified conclusions?
+BS: (Ovo je suštinska provjera — ako nije, to nije IBL.)
+  DE: (Das ist die Kernprüfung – wenn nicht, ist es kein IBL.)
+  EN: (This is the core check — if not, it is not IBL.)
+BS: Da li je greška dozvoljena kao dio procesa istraživanja?
+  DE: Sind Fehler als Teil des Forschungsprozesses erlaubt?
+  EN: Are mistakes allowed as part of the inquiry process?
+BS: (Greška = novi trag. "Zanimljivo — kako se to uklapa sa onim što smo vidjeli u drugom izvoru?")
+  DE: (Fehler = neue Spur. „Interessant – wie passt das zu dem, was wir in der anderen Quelle gesehen haben?“)
+  EN: (A mistake = a new lead. "Interesting — how does that fit with what we saw in the other source?")
+BS: Koristite ova pitanja za refleksiju NAKON časa.
+  DE: Nutzen Sie diese Fragen zur Reflexion NACH der Stunde.
+  EN: Use these questions for reflection AFTER the lesson.
+BS: Svako "ne" je vrijedna informacija za sljedeći IBL čas — ne neuspjeh.
+  DE: Jedes „Nein“ ist eine wertvolle Information für die nächste IBL-Stunde – kein Misserfolg.
+  EN: Every "no" is valuable information for the next IBL lesson — not a failure.
+
+-- Template lines of Module 3.9B (lesson flow, presenting findings) --
+BS: Udica / Istraživanje / Predstavljanje nalaza / Sinteza / Refleksija učenika
+  DE: Einstieg / Recherche / Präsentation der Ergebnisse / Synthese / Schülerreflexion
+  EN: Hook / Investigation / Presenting findings / Synthesis / Student reflection
+BS: Frontalno / Grupa / U paru / Individualno
+  DE: Plenum / Gruppe / Partnerarbeit / Einzelarbeit
+  EN: Whole class / Group / Pairs / Individual
+BS: povratak na IP
+  DE: Rückkehr zur FF
+  EN: return to the IQ
+BS: Ko predstavlja / Kome / Oblik / Vrijeme
+  DE: Wer präsentiert / Für wen / Form / Zeit
+  EN: Who presents / To whom / Format / Time
+BS: Zadatak za učenike koji slušaju
+  DE: Aufgabe für die zuhörenden Schüler:innen
+  EN: Task for the listening students
+BS: Pitanja nastavnika nakon predstavljanja (bez potvrđivanja, A4)
+  DE: Fragen der Lehrkraft nach der Präsentation (ohne Bestätigung, A4)
+  EN: Teacher questions after the presentation (no confirming, A4)
+
 ------------------------------------------------------------------------
 MODULE 3.11 — PRE-OUTPUT QUALITY GATE
 ------------------------------------------------------------------------
