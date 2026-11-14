@@ -454,3 +454,11 @@ Period: 2026-11-07 … 2026-11-14. Detailed entries follow below the summary; th
   shown as its own paragraph.
 - Fix: denser type and spacing, a wider page, and wrapped lines joined into paragraphs for reading (display only).
 - Rule: judge density on a real, long production output, not on the short texts of a mock-up.
+
+### 2026-11-14 — Director correction: a screen was left out of the "total" redesign ("Stari izgled?")
+- After PR #39 went live, the Director opened the planner and saw the creation form (`InputWizard`) in the old
+  look. It is the first screen a teacher sees. I redesigned the plan, the library, the sign-in and the header, and
+  had even taken a screenshot of `/chat`, but did not check that screen against proposal C.
+- Fix: the form redesigned in direction C (step binder tabs on a sheet, live "Zaglavlje pripreme" card).
+- Rule: for a "whole app" change, list EVERY screen and state of every route (empty, form, chat, loading, plan)
+  in the PR, and tick each one off with a screenshot against the approved proposal before asking for a merge.

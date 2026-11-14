@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Send, StopCircle, RotateCcw, Lightbulb, ChevronRight, Save, CheckCircle2 } from 'lucide-react';
 import { useChat } from '@/hooks/useChat';
 import { cn } from '@/lib/utils';
@@ -33,6 +33,7 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   // Store last generate params for saving
   const lastParamsRef = useRef<{ subject: string; grade: number; topic: string; duration_min: number; language: Language; prior_knowledge?: string; notes?: string } | null>(null);
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -145,36 +146,12 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
   const isStreamingPlan = (msg: { role: string; isPlan?: boolean; content: string }, idx: number) =>
     chat.isLoading && !msg.isPlan && msg.role === 'model' && idx === chat.messages.length - 1 && parseSegments(msg.content).length >= 3;
 
-  // Wizard view
+  // Wizard view (P6, direction C: the wizard draws its own heading beside the sheet)
   if (showWizard && chat.mode === 'onboarding' && !hasMessages) {
     return (
       <div className="flex flex-col h-full">
-        <div className="flex-1 overflow-y-auto px-4 md:px-8 py-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-8"
-          >
-            <div className="inline-flex items-center gap-3 mb-4">
-              <div className="w-14 h-14 rounded-2xl overflow-hidden neu-card shadow-lg">
-                <img src={aiAvatarImg} alt="AI" className="w-full h-full object-cover" />
-              </div>
-            </div>
-            <h2 className="text-2xl font-bold text-foreground tracking-tight">
-              Kreirajte IBL Plan časa
-            </h2>
-            <p className="text-sm text-muted-foreground mt-2 max-w-md mx-auto">
-              Popunite obrazac korak po korak ili
-              <button
-                onClick={() => setShowWizard(false)}
-                className="text-primary font-semibold hover:underline ml-1 inline-flex items-center gap-1"
-              >
-                razgovarajte s AI-om <ChevronRight className="w-3 h-3" />
-              </button>
-            </p>
-          </motion.div>
-          <InputWizard onGenerate={handleWizardGenerate} isLoading={chat.isLoading} />
+        <div className="flex-1 overflow-y-auto px-4 py-6 md:px-8 md:py-8">
+          <InputWizard onGenerate={handleWizardGenerate} isLoading={chat.isLoading} onSwitchToChat={() => setShowWizard(false)} />
         </div>
       </div>
     );
@@ -280,20 +257,42 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
           ))}
         </AnimatePresence>
 
-        {/* Loading */}
-        {chat.isLoading && (
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex gap-3"
-          >
-            <div className="w-10 h-10 rounded-2xl overflow-hidden neu-card flex-shrink-0">
-              <img src={aiAvatarImg} alt="AI" className="w-full h-full object-cover animate-pulse" />
+        {/* Loading. A plan being created (onboarding mode) waits on the desk with the real creation steps (P6, direction
+            C); a chat answer keeps the small bubble. Once three segments have arrived the workspace takes over above. */}
+        {chat.isLoading && !chat.messages.some((m, i) => isStreamingPlan(m, i)) && (
+          chat.mode === 'onboarding' ? (
+            <div className="mx-auto w-full max-w-4xl space-y-3">
+              <CreationSteps step="writing" />
+              <div className="rounded-md bg-white px-5 py-5 shadow-[0_1px_0_rgb(221_221_221),0_14px_30px_rgba(0,0,0,0.10)]">
+                {lastParamsRef.current && (
+                  <>
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-neutral-600">
+                      {lastParamsRef.current.subject} · {lastParamsRef.current.grade}. razred · {lastParamsRef.current.duration_min} min
+                    </p>
+                    <h2 className="mt-1 font-display text-2xl font-extrabold tracking-tight text-black">{lastParamsRef.current.topic}</h2>
+                  </>
+                )}
+                <div className="mt-3 flex items-center gap-3 text-sm font-semibold text-black">
+                  <motion.span aria-hidden="true" className="inline-block h-3 w-3 rotate-45 rounded-[3px] bg-brand-red"
+                    animate={reduceMotion ? undefined : { y: [0, -4, 0] }} transition={{ duration: 0.6, repeat: Infinity, ease: 'easeInOut' }} />
+                  AI analizira i gradi plan časa...
+                </div>
+                <div aria-hidden="true" className="mt-3 h-2 overflow-hidden rounded-sm bg-neutral-100">
+                  <motion.div className="h-full bg-black" animate={reduceMotion ? { width: '35%' } : { width: ['0%', '100%'] }}
+                    transition={{ duration: 2.6, repeat: Infinity, ease: 'linear' }} />
+                </div>
+              </div>
             </div>
-            <div className="neu-bubble-ai rounded-2xl rounded-tl-lg px-5 py-4 max-w-md">
-              <LoadingIndicator />
+          ) : (
+            <div className="mx-auto flex w-full max-w-4xl gap-3">
+              <div className="w-10 h-10 rounded-2xl overflow-hidden neu-card flex-shrink-0">
+                <img src={aiAvatarImg} alt="AI" className="w-full h-full object-cover animate-pulse" />
+              </div>
+              <div className="neu-bubble-ai rounded-2xl rounded-tl-lg px-5 py-4 max-w-md">
+                <LoadingIndicator />
+              </div>
             </div>
-          </motion.div>
+          )
         )}
 
         {chat.error && (

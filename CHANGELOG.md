@@ -79,3 +79,4 @@ One line per feature, per Commander E-10.
 - [2026-11-14] [DESIGN] P6 S1: IDSS-only colour tokens (five colours, white, neutral greys), Tailwind palette restricted to them, CI colour guard, self-hosted Manrope + Inter (DL-P35).
 - [2026-11-14] [DESIGN] P6 total redesign, direction C "Nastavnički radni sto": plan workspace with Sve/Nastavnik/Učenik tabs, creation steps and live build-up, library, sign-in, header (DL-P36).
 - [2026-11-14] [DESIGN] P6: denser workspace after the Director's review — wider page, wrapped lines joined into paragraphs, tighter spacing (DL-P36).
+- [2026-11-14] [DESIGN] P6: creation form redesigned in direction C (missed in the first release) — step binder tabs on a sheet, live "Zaglavlje pripreme" card (DL-P36).

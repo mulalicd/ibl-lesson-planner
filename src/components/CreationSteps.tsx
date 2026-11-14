@@ -6,7 +6,7 @@ import { Check } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
-export type CreationStep = 'writing' | 'check' | 'saved';
+export type CreationStep = 'params' | 'writing' | 'check' | 'saved';
 
 const STEPS: { id: string; label: string }[] = [
   { id: 'params', label: 'Parametri' },
