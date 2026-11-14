@@ -440,3 +440,10 @@ Period: 2026-11-07 … 2026-11-14. Detailed entries follow below the summary; th
   what a search in the source cannot.
 - Also: a component gallery that imports only `index.css` (not `main.tsx`) shows fallback fonts. Load the fonts
   the same way the app does, or the screenshots lie.
+
+### 2026-11-14 — Director correction: an intermediate stage is not a result ("Ama nipošto … hoću tačno C")
+- I showed S1 (new colours on the OLD layout) as before/after screenshots and asked for a merge. The Director
+  read it as the redesign and rejected it: he had approved the look of proposal C, not a colour swap.
+- Fix: PR #39 back to draft; S1 and S2 ship together, and only when the app matches the approved proposal.
+- Rule: never ask the owner to approve a stage whose screenshots do not yet show what he approved. Staging is an
+  engineering detail; the owner sees the approved result or nothing.

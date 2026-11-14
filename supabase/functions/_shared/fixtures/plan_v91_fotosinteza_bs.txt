@@ -1,0 +1,628 @@
+================================================================================
+PLANER ZA IBL LEKCIJU (Inquiry-Based Learning)
+================================================================================
+Škola: Internationale Deutsche Schule Sarajevo
+--------------------------------------------------------------------------------
+| Nastavnik/Nastavnica: ______________________________                          |
+| Predmet i razred:     Biologie, 5. razred                                    |
+| Tema:                 Fotosinteza                                            |
+| Datum:                _______________   Trajanje: 45 min                    |
+| ZPD nivo:             Srednji | Kategorija: Mikro                           |
+================================================================================
+ZPD NOTE: Nije navedeno prethodno znanje — kalibriranje prema razvojnim normama 5. razreda.
+================================================================================
+
+================================================================================
+UDICA                                              5 minuta
+================================================================================
+| Nastavnik/ca pokazuje dvije biljke: jednu zdravu, zelenu, i drugu, istu vrstu,|
+| koja je rasla nekoliko dana u potpunom mraku (žuta, slaba). Također, pokazuje |
+| i zatvorenu teglu u kojoj je svijeća koja gori i mala biljka. Pita učenike:  |
+| 'Šta primjećujete na ove dvije biljke? Zašto je jedna zelena i zdrava, a    |
+| druga žuta i slaba? A šta mislite, šta se dešava u ovoj tegli sa svijećom   |
+| i biljkom? Zašto svijeća može gorjeti neko vrijeme u zatvorenoj tegli?'     |
+|                                                                               |
+| Cilj: stvoriti kognitivnu disonancu — učenik mora istraživati jer           |
+| ne može odgovoriti bez dokaza.                                               |
+| ZPD veza: ova udica aktivira prethodno znanje i otvara prostor za           |
+| istraživanje koje leži unutar Zone proksimalnog razvoja.                    |
+================================================================================
+ISTRAŽIVAČKO PITANJE (mora biti otvoreno)
+================================================================================
+|                                                                               |
+|   Kako biljke pretvaraju nevidljive stvari poput sunčeve svjetlosti i zraka  |
+|   u nešto opipljivo što ih održava u životu?                                 |
+|                                                                               |
+| IBL nivo: Guided (L3)   |  Kognitivna faza: Concrete Operational -> Formal Operational |
+| ZPD:      Srednji — pitanje je iznad samostalne zone,                       |
+|           dostižno uz istraživanje dokaza i Sokratovsku podršku             |
+|                                                                               |
+| Provjera kvalitete (za nastavnika) — najviše 4 kratka reda s KONKRETNIM     |
+| razlogom za OVO pitanje (Amandman A10), nikad niz golih "DA":               |
+|   Otvoreno: Pitanje traži objašnjenje složenog procesa pretvaranja, a ne jedinstven odgovor "šta je". |
+|   Traži istraživanje: Učenici ne mogu odgovoriti bez analize ulaznih i izlaznih elemenata i njihove uloge. |
+|   ZPD: Izazovno je razumjeti transformaciju "nevidljivog u opipljivo" za 5. razred, ali dostižno s dokazima. |
+|   Vodi dalje: Otvara pitanja o tome šta se dešava s hranom i kako to utiče na druge organizme. |
+================================================================================
+
+================================================================================
+ISHODI UČENJA
+================================================================================
+| CILJ UČENJA: Učenici će istražiti proces fotosinteze kako bi razumjeli kako |
+| biljke koriste sunčevu svjetlost i plinove iz zraka za stvaranje hrane i kisika. |
+|------------------------------------------------------------------------------|
+| I1  Učenik može opisati ključne sastojke (vodu, ugljikov dioksid, sunčevu   |
+|     svjetlost) potrebne za fotosintezu, koristeći slikovne dokaze. Dokaz:   |
+|     Tok časa, popunjavanje dijagrama "Šta ulazi i izlazi". Nivo: Razumijevanje |
+| I2  Učenik može objasniti ulogu sunčeve svjetlosti u procesu pretvaranja    |
+|     ugljikovog dioksida i vode u hranu, na osnovu analize podataka. Dokaz:  |
+|     Brzi izlazni produkt. Nivo: Analiza                                     |
+| I3  Učenik može ilustrovati kako fotosinteza doprinosi opstanku biljaka i  |
+|     proizvodnji kisika za druge organizme, kreirajući jednostavan dijagram.|
+|     Dokaz: Brzi izlazni produkt. Nivo: Stvaranje                            |
+|------------------------------------------------------------------------------|
+| KRITERIJI USPJEHA (za učenike):                                              |
+|   [ ] Mogu imenovati šta je biljkama potrebno za fotosintezu.               |
+|   [ ] Mogu objasniti zašto je sunce važno za biljke.                        |
+|   [ ] Mogu nacrtati jednostavan dijagram kako biljke prave hranu i kisik.  |
+================================================================================
+
+================================================================================
+UPORIŠTE U STVARNOM ŽIVOTU
+================================================================================
+| 1. Zagađenje zraka u Sarajevu. Kako je čas koristi: Udica (povezivanje      |
+|    kvalitete zraka s biljkama i njihovom ulogom u stvaranju kisika).        |
+| 2. Uzgoj vlastitog paradajza ili drugog povrća u bašti/na balkonu. Kako je  |
+|    čas koristi: Dokaz učenja (razumijevanje potreba biljke za rast i      |
+|    "hranom" koju sama stvara).                                              |
+================================================================================
+
+================================================================================
+ISTRAŽIVAČKA FAZA — DOKAZNI MATERIJAL
+Koji materijal dajete učenicima?              Istraživanje: 25 min
+================================================================================
+|  [X]  Isječci iz udžbenika / književnih djela / članaka                     |
+|             -> Kratak, pojednostavljen tekst (150-200 riječi) prilagođen   |
+|                uzrastu 5. razreda, koji opisuje šta biljkama treba da bi   |
+|                rasle (voda iz tla, sunčeva svjetlost, nešto iz zraka).     |
+|                Tekst NE koristi termin 'fotosinteza' niti objašnjava       |
+|                proces, već samo navodi 'sastojke'.                           |
+|             IQ veza: Predstavlja ključne "nevidljive stvari" (sunčevu      |
+|                svjetlost i zrak) koje biljke koriste kao ulaz u proces pretvaranja. |
+|             ZA PROVJERU: provjeriti da ne objašnjava proces fotosinteze, već samo navodi sastojke. |
+|                                                                               |
+|  [X]  Stare mape ili fotografije                                           |
+|             -> Jednostavna ilustracija presjeka lista sa strelicama koje   |
+|                pokazuju ulaz ugljikovog dioksida i izlaz kisika. Bez etiketa|
+|                za fotosintezu, samo plinovi i smjer. Može sadržavati i     |
+|                kapljice vode na korijenu/stabljici.                         |
+|             IQ veza: Vizuelno prikazuje kako biljke uzimaju "nevidljive     |
+|                stvari" iz zraka i "opuštaju" nešto drugo, stvarajući       |
+|                vizuelnu vezu s konceptom pretvaranja.                       |
+|             ZA PROVJERU: mora biti bez objašnjenja procesa fotosinteze.     |
+|                                                                               |
+|  [ ]  Audio snimci / intervjui                                             |
+|             -> Nije odabrano za ovaj čas.                                   |
+|             IQ veza: N/A                                                   |
+|                                                                               |
+|  [ ]  Set predmeta za posmatranje                                          |
+|             -> Nije odabrano za ovaj čas, osim živih biljaka u udici.       |
+|             IQ veza: N/A                                                   |
+|                                                                               |
+|  [ ]  Video / digitalni isječak (maks. 5 min)                              |
+|             -> Nije odabrano za ovaj čas.                                   |
+|             IQ veza: N/A                                                   |
+|                                                                               |
+|  [ ]  Podaci / grafikoni / tabele                                          |
+|             -> Nije odabrano za ovaj čas kao zaseban dokazni materijal.     |
+|             IQ veza: N/A                                                   |
+|                                                                               |
+|  [ ]        Drugo: _______________________________________________            |
+--------------------------------------------------------------------------------
+|  Preporuka za 45 min: učenici istražuju približno 25 min                    |
+|  Broj izvora (Mikro): max 2                                                  |
+================================================================================
+
+================================================================================
+VIZUELNI ELEMENTI PRILAGOĐENI UZRASTU — 5. RAZRED
+================================================================================
+
+VIZUELNI ELEMENT 1: Šta ulazi i izlazi iz biljke?
+--------------------------------------------------------------------------------
+| Služi istraživačkom pitanju:                                                 |
+|   Pomaže učenicima da vizuelno prate put "nevidljivih stvari" (svjetlost,   |
+|   CO2, voda) i vide šta biljka proizvodi kao "opipljivo".                   |
+|                                                                               |
+| Opis: Dijagram procesa sa strelicama koji prikazuje ulazak sunčeve         |
+| svjetlosti, vode i ugljikovog dioksida u list, te izlazak kisika. U sredini|
+| lista, diskretno, stoji 'stvaranje hrane'.                                  |
+|                                                                               |
+| ASCII prikaz:                                                                 |
+|                                                                               |
+|   +------------------------------------------+                               |
+|   | TITLE: Šta ulazi i izlazi iz biljke?     |                               |
+|   |                                          |                               |
+|   |  SUNČEVA SVJETLOST                       |                               |
+|   |         ^                                |                               |
+|   |         |                                |                               |
+|   |   VODA  >-----> [ LIST BILJKE ] <----- UGLJIKOV DIOKSID |               |
+|   |         |                                |                               |
+|   |         v                                |                               |
+|   |       KISIK                              |                               |
+|   |                                          |                               |
+|   |  (Unutar lista: stvaranje hrane)         |                               |
+|   | Tool: hand-drawn with labels / textbook  |                               |
+|   +------------------------------------------+                               |
+|                                                                               |
+| Kako koristiti u ovoj lekciji:                                               |
+|   Uvesti nakon čitanja teksta o sastojcima. Zamoliti učenike da popune       |
+|   praznine ili opišu strelice. Koristiti uz Sokratovo pitanje 1.            |
+|                                                                               |
+| Gdje pronaći / napraviti:                                                    |
+|   Ručno nacrtano na tabli ili prilagođeno iz online izvora.                 |
+================================================================================
+
+VIZUELNI ELEMENT 2: Biljka u mraku vs. Biljka na svjetlu
+--------------------------------------------------------------------------------
+| Služi istraživačkom pitanju:                                                 |
+|   Pomaže učenicima da uporede uslove i rezultate, naglašavajući važnost    |
+|   sunčeve svjetlosti za "opipljivo" što ih održava u životu.                |
+|                                                                               |
+| Opis: Tabela sa dva stupca: 'Biljka u mraku' i 'Biljka na svjetlu'. Redovi: |
+| 'Boja', 'Snaga/Rast', 'Preživljavanje'. Učenici popunjavaju zapažanja iz    |
+| udice i dokaznog materijala.                                                |
+|                                                                               |
+| ASCII prikaz:                                                                 |
+|                                                                               |
+|   +------------------------------------------+                               |
+|   | TITLE: Biljka u mraku vs. Biljka na svjetlu |                             |
+|   |                                          |                               |
+|   | KRITERIJ      | BILJKA U MRAKU | BILJKA NA SVJETLU |                     |
+|   |---------------|----------------|-------------------|                     |
+|   | Boja          | Žuta/Blijeda   | Zelena            |                     |
+|   | Snaga/Rast    | Slaba, ne raste | Jaka, raste       |                     |
+|   | Preživljavanje| Kratko         | Dugo              |                     |
+|   | Tool: tabla / flipchart                  |                               |
+|   +------------------------------------------+                               |
+|                                                                               |
+| Kako koristiti u ovoj lekciji:                                               |
+|   Koristiti nakon diskusije o udici i prvom dokaznom materijalu. Učenici    |
+|   upoređuju svoja zapažanja i povezuju ih sa IQ. Koristiti uz Sokratovo    |
+|   pitanje 2.                                                                |
+|                                                                               |
+| Gdje pronaći / napraviti:                                                    |
+|   Tabla ili flipchart.                                                      |
+================================================================================
+
+================================================================================
+SKELA — VAŠA ULOGA
+Gdje učenici mogu "zapeti" — postavite pitanje umjesto davanja odgovora
+================================================================================
+|  N  | PITANJE                               | TIP          | KADA KORISTITI    | MIN  |
+|-----|---------------------------------------|--------------|-------------------|------|
+|  1  | Gledajući dijagram i tekst o          | Definicija / | Učenici misle da  | 15   |
+|     | sastojcima, kada kažemo da biljka     | Poređenje    | biljka "jede" kao |      |
+|     | 'stvara hranu', šta pod tim tačno     |              | čovjek; ne        |      |
+|     | podrazumijevamo? Da li je to kao da   |              | razumiju koncept  |      |
+|     | mi jedemo sendvič?                    |              | stvaranja vlastite|      |
+|     |                                       |              | hrane.           |      |
+|     |   (a) Stvara nešto da preživi.        |              | Nastavnik/ca: "Šta to 'nešto' radi za biljku? Kako se razlikuje od sendviča?" |
+|     |   (b) Jede zemlju ili vodu.           |              | Nastavnik/ca: "Gdje to vidiš u tekstu ili na dijagramu? Da li je zemlja hrana?" |
+|     |   (c) Pravi kisik.                    |              | Nastavnik/ca: "Kisik je važan, ali da li je to 'hrana' za biljku? Šta još vidimo da se dešava?" |
+|-----|---------------------------------------|--------------|-------------------|------|
+|  2  | Ako biljka ne dobije dovoljno sunčeve | Posljedice / | Učenici vide      | 25   |
+|     | svjetlosti, šta nam to govori o ulozi | Dokaz        | simptome (žuta    |      |
+|     | sunca u pretvaranju 'nevidljivih     |              | boja) ali ne      |      |
+|     | stvari'? Gdje to vidimo u našoj       |              | povezuju direktno |      |
+|     | tabeli i dijagramu?                   |              | sa procesom       |      |
+|     |                                       |              | stvaranja.        |      |
+|     |   (a) Biljka je tužna i ne može rasti.|              | Nastavnik/ca: "Šta se konkretno dešava 'unutar' biljke kada je 'tužna' zbog nedostatka sunca?" |
+|     |   (b) Sunce je kao hrana za biljke.   |              | Nastavnik/ca: "Da li biljka 'jede' sunce? Šta dijagram pokazuje da se dešava sa sunčevom svjetlošću?" |
+|     |   (c) Treba joj više vode.            |              | Nastavnik/ca: "Voda je važna, ali da li je nedostatak vode jedini problem za biljku koja je žuta i slaba, a ima dovoljno vode?" |
+|-----|---------------------------------------|--------------|-------------------|------|
+|  F  | Na osnovu svega što ste pronašli      | Sinteza i    | Na kraju, kad     | 40   |
+|     | danas — kako biste sada odgovorili    | povratak na  | učenici dijele    |      |
+|     | na naše istraživačko pitanje: 'Kako   | Istr. pitanje| zaključke         |      |
+|     | biljke pretvaraju nevidljive stvari   |              |                   |      |
+|     | poput sunčeve svjetlosti i zraka u    |              |                   |      |
+|     | nešto opipljivo što ih održava u      |              |                   |      |
+|     | životu?' I šta biste još željeli      |              |                   |      |
+|     | znati da biste bili još sigurniji u   |              |                   |      |
+|     | svoj odgovor?                         |              |                   |      |
+================================================================================
+| 3 ZLATNA PRAVILA:                                                            |
+|   1. UGRIZI SE ZA JEZIK: Brojite do 10 prije odgovora.                      |
+|      Drugi učenik će često odgovoriti. Prvi će se često sam ispraviti.      |
+|   2. VRATI LOPTICU: "Odlično pitanje — gdje misliš da bismo našli odgovor?" |
+|   3. PODRŽI SUMNJU: "A šta ako je [X] zapravo pogrešno?                     |
+|      Postoji li ijedan dokaz za to?"                                         |
+|                                                                               |
+|  Interval: približno svakih 10-15 min tokom istraživanja.                   |
+================================================================================
+
+================================================================================
+DOKAZ UČENJA                          (ne test!)
+================================================================================
+|  [X]  Mapa uma / Infografika                                               |
+|             -> Nije odabrano za ovaj čas.                                   |
+|             Kako odgovara na IQ: N/A                                       |
+|             Procijenjeno vrijeme: N/A                                      |
+|                                                                               |
+|  [ ]  Dramatizacija / Podcast                                              |
+|             -> Nije odabrano za ovaj čas.                                   |
+|             Kako odgovara na IQ: N/A                                       |
+|             Procijenjeno vrijeme: N/A                                      |
+|                                                                               |
+|  [ ]  Pismo liku ili historijskoj ličnosti                                 |
+|             -> Nije odabrano za ovaj čas.                                   |
+|             Kako odgovara na IQ: N/A                                       |
+|             Procijenjeno vrijeme: N/A                                      |
+|                                                                               |
+|  [ ]  Model / Eksperimentalni izvještaj                                    |
+|             -> Nije odabrano za ovaj čas.                                   |
+|             Kako odgovara na IQ: N/A                                       |
+|             Procijenjeno vrijeme: N/A                                      |
+|                                                                               |
+|  [ ]  Vizuelni produkt (dijagram, plakat, strip)                           |
+|             -> Nije odabrano za ovaj čas.                                   |
+|             Kako odgovara na IQ: N/A                                       |
+|             Procijenjeno vrijeme: N/A                                      |
+|                                                                               |
+|  [ ]  Digitalna prezentacija / Video                                       |
+|             -> Nije odabrano za ovaj čas.                                   |
+|             Kako odgovara na IQ: N/A                                       |
+|             Procijenjeno vrijeme: N/A                                      |
+|                                                                               |
+|  [X]  Brzi izlazni produkt (exit ticket) — preporučeno za MICRO            |
+|             -> Svaki učenik dobija 'izlaznu karticu' na kojoj treba:       |
+|                1. Nacrtati jednostavan dijagram biljke sa strelicama koje  |
+|                pokazuju 'nevidljive stvari' koje ulaze i 'opipljive stvari'|
+|                koje izlaze. 2. U jednoj rečenici objasniti zašto je sunčeva|
+|                svjetlost ključna za ovaj proces.                            |
+|             Kako odgovara na IQ: Direktan vizuelni i tekstualni odgovor na |
+|                pitanje "Kako biljke pretvaraju nevidljive stvari u opipljivo", |
+|                provjeravajući razumijevanje procesa.                        |
+|             Procijenjeno vrijeme: 8 min                                    |
+|                                                                               |
+|  [ ]        Drugo: _______________________________________________            |
+--------------------------------------------------------------------------------
+|  Preporuka za 45 min (Mikro):                                                |
+|    MICRO:    Odaberite jedan brzi produkt (5-8 min)                          |
+|    STANDARD: Odaberite jedan sistematičan produkt (15-20 min)                |
+|    EXTENDED: Možete kombinovati brzi + složeniji produkt                     |
+================================================================================
+
+================================================================================
+SAMOEVALUACIJA NASTAVNIKA
+================================================================================
+| [X]  Da li učenici pričaju više od mene?                                    |
+|      (Trebalo bi da jeste — tiho praćenje i postavljanje pitanja.)          |
+|                                                                               |
+| [X]  Da li izvor informacija nije samo moj glas / predavanje?               |
+|      (Dokazni materijali i vizuali govore umjesto mene.)                    |
+|                                                                               |
+| [X]  Da li postoji mogućnost da učenici dođu do različitih,                |
+|      ali opravdanih zaključaka?                                              |
+|      (Ovo je suštinska provjera — ako nije, to nije IBL.)                 |
+|                                                                               |
+| [X]  Da li je greška dozvoljena kao dio procesa istraživanja?               |
+|      (Greška = novi trag. "Zanimljivo — kako se to uklapa sa                |
+|       onim što smo vidjeli u drugom izvoru?")                               |
+|                                                                               |
+| --- Specifično za ovaj čas: ---                                              |
+| [ ]  Specifično za ovaj čas: Da li sam uspješno vodio/la učenike da sami    |
+|      zaključe kako biljke pretvaraju 'nevidljive' sastojke u 'opipljivu'    |
+|      hranu, bez direktnog objašnjavanja procesa fotosinteze?                |
+--------------------------------------------------------------------------------
+|  Koristite ova pitanja za refleksiju NAKON časa.                            |
+|  Svako "ne" je vrijedna informacija za sljedeći IBL čas — ne neuspjeh.     |
+================================================================================
+
+================================================================================
+DODATNI RESURSI ZA NASTAVNIKE
+================================================================================
+
+DIFERENCIJACIJA
+--------------------------------------------------------------------------------
+|  PODRŠKA — Učenici kojima je potrebna pomoć                                 |
+|    - Osigurati kartice sa slikama za ključne pojmove (sunce, voda, zrak,    |
+|      list, hrana, kisik) i njihovim nazivima na bosanskom i maternjem       |
+|      jeziku učenika.                                                        |
+|    - Pripremiti grafički organizator sa već predefinisanim ulaznim         |
+|      strelicama (sunce, voda, CO2) i praznim prostorima za 'šta se dešava  |
+|      unutra' i izlazne strelice (kisik, hrana), da se popuni tokom         |
+|      istraživanja.                                                          |
+|    - Za učenike koji imaju poteškoća s čitanjem, tekst o sastojcima može   |
+|      biti pročitan naglas u maloj grupi ili u paru, sa podvučenim ključnim |
+|      riječima.                                                              |
+|                                                                               |
+|  IZAZOV — Učenici koji brzo napreduju                                        |
+|    - Istražiti šta se dešava sa 'hranom' koju biljka stvara — kako je       |
+|      koristi za rast ili skladišti, i kako to utiče na životinje.           |
+|    - Formulisati novo istraživačko pitanje o ulozi klorofila ili kako       |
+|      biljke preživljavaju zimu bez puno sunca.                              |
+|    - Dizajnirati jednostavan eksperiment za testiranje uticaja različitih  |
+|      boja svjetlosti na rast biljaka.                                       |
+================================================================================
+
+KLJUČNI POJMOVI — 5. razred
+--------------------------------------------------------------------------------
+|  POJAM                  | DEFINICIJA (prilagođena uzrastu)                  |
+|-------------------------|---------------------------------------------------|
+|  Fotosinteza            | Proces kojim biljke, uz pomoć sunčeve svjetlosti, |
+|                         | vode i zraka, stvaraju vlastitu hranu i kisik.    |
+|  Sunčeva svjetlost      | Energija sa sunca koju biljke koriste kao "gorivo"|
+|                         | za pravljenje hrane.                               |
+|  Ugljikov dioksid       | Plin iz zraka koji biljke uzimaju kroz listove,   |
+|                         | jedan od sastojaka za stvaranje hrane.             |
+|  Kisik                  | Plin koji biljke otpuštaju u zrak tokom stvaranja |
+|                         | hrane, a koji je neophodan za disanje ljudi i     |
+|                         | životinja.                                        |
+|  Klorofil               | Zelena supstanca u biljkama koja upija sunčevu    |
+|                         | svjetlost.                                        |
+|  Hrana (biljna)         | Šećer koji biljke same proizvode i koriste za    |
+|                         | rast i energiju.                                  |
+--------------------------------------------------------------------------------
+|  Uvodite pojmove kroz kontekst istraživanja, ne kao listu za pamćenje.      |
+================================================================================
+
+POVEZANOST SA IB PROFILOM UČENIKA
+--------------------------------------------------------------------------------
+|  Istraživači (Inquirers): Kroz posmatranje biljaka i analizu dokaza, učenici|
+|    aktivno traže odgovore na pitanje kako biljke opstaju.                   |
+|  Mislioci (Thinkers): Analiziraju veze između sunca, vode i biljnog rasta, |
+|    donose zaključke o nevidljivim procesima.                                |
+|  Komunikatori (Communicators): Razmjenjuju ideje u grupama, predstavljaju  |
+|    svoje nalaze i objašnjavaju proces na izlaznoj kartici.                  |
+================================================================================
+
+================================================================================
+PREPORUKE ZA IZVOĐENJE ČASA
+Biologie | 5. razred | Tema: Fotosinteza | 45 min | Mikro
+================================================================================
+
+VREMENSKA LINIJA ČASA
+--------------------------------------------------------------------------------
+|  Uvod (Udica + Pitanje):      5 min                                         |
+|  Istraživanje (Dokazi+Viz.):  20 min                                        |
+|  Zaključak (Dijeljenje+DU):   15 min                                        |
+|  Refleksija učenika:          5 min                                         |
+|  Ukupno:                      45 min                                        |
+|                                                                               |
+|  |[=UVOD=]|[=========ISTRAŽIVANJE=========]|[====ZAKLJUČAK====]|           |
+|   5min                20min                       15min                     |
+================================================================================
+
+MATERIJALI ZA ČAS
+--------------------------------------------------------------------------------
+|  [X] Zdrava zelena biljka (npr. sobna biljka) — 1 komad (Udica)             |
+|  [X] Ista vrsta biljke koja je rasla u mraku (žuta, slaba) — 1 komad (Udica)|
+|  [X] Prozirna staklena tegla sa poklopcem — 1 komad (Udica)                 |
+|  [X] Mala svijeća — 1 komad (Udica)                                         |
+|  [X] Šibice/upaljač (za nastavnika) — 1 komad (Udica)                       |
+|  [X] Tekst "Šta biljkama treba za rast" — 5 kopija (po jedna za svaku grupu) (Istraživanje)|
+|  [X] Ilustracija "Razmjena plinova kroz list" — 5 kopija (po jedna za svaku grupu) (Istraživanje)|
+|  [X] Papir i olovke za bilješke i crtanje — po potrebi (Istraživanje)       |
+|  [X] Tabla ili flipchart — za vizuelne elemente (Istraživanje)             |
+|  [X] "Izlazne kartice" — 25 komada (po jedna za svakog učenika) (Zaključak) |
+================================================================================
+
+TOK ČASA
+--------------------------------------------------------------------------------
+| Min   | Faza            | Oblik rada  | Učenici rade      | Nastavnik radi    | Produkt / dokaz        |
+|-------|-----------------|-------------|-------------------|-------------------|------------------------|
+| 0-5   | Udica           | Frontalno   | Posmatraju biljke, | Pokazuje biljke,  | Početna zapažanja,     |
+|       |                 |             | iznose prva       | pali svijeću,     | pitanja.               |
+|       |                 |             | zapažanja.        | postavlja udicu.  |                        |
+| 5-25  | Istraživanje    | Grupa (4-5) | Čitaju tekst,     | Obilazi grupe,    | Popunjen dijagram      |
+|       |                 |             | analiziraju       | postavlja Sokrat. | "Šta ulazi i izlazi",  |
+|       |                 |             | ilustraciju,      | pitanja 1 i 2.    | popunjena tabela       |
+|       |                 |             | popunjavaju       |                   | "Biljka u mraku vs.    |
+|       |                 |             | dijagram i tabelu.|                   | na svjetlu". (Dokaz I1)|
+| 25-35 | Predstavljanje  | Grupa →     | Glasnogovornici   | Vodi diskusiju,   | Verbalni zaključci,    |
+|       | nalaza          | frontalno   | grupa predstavljaju| traži dokaze.     | uporedba zapažanja.    |
+|       |                 |             | svoje nalaze.     |                   | (Dokaz I1)             |
+| 35-43 | Sinteza i Dokaz | Individualno| Odgovaraju na     | Postavlja sintezno| Popunjene "izlazne     |
+|       | učenja          |             | sintezno Sokratovo| Sokratovo pitanje.| kartice". (Dokaz I2, I3)|
+|       |                 |             | pitanje, rade     | Daje upute za DU. |                        |
+|       |                 |             | "izlaznu karticu". |                   |                        |
+| 43-45 | Refleksija      | Individualno| Odgovaraju na     | Podsjeća na       | Kratka samorefleksija. |
+|       | učenika         |             | pitanja za        | kriterije uspjeha.|                        |
+|       |                 |             | refleksiju.       |                   |                        |
+|       |                 |             |                   | Ukupno:           | 45 min                 |
+================================================================================
+
+PREDSTAVLJANJE NALAZA
+--------------------------------------------------------------------------------
+|  Ko predstavlja: Jedan glasnogovornik po grupi   Kome: Razredu               |
+|  Oblik: Kratko usmeno izlaganje uz pokazivanje popunjenog dijagrama i tabele|
+|  Vrijeme: 10 min (2 minute po grupi)                                         |
+|  Zadatak za učenike koji slušaju: Zapišu jednu sličnost i jednu razliku     |
+|    između nalaza svoje grupe i grupe koja prezentuje.                       |
+|  Pitanja nastavnika nakon predstavljanja (bez potvrđivanja, A4):              |
+|    1. Gdje to što kažeš vidiš u tekstu ili na dijagramu?                     |
+|    2. Šta misliš o ideji koju je predložila grupa X? Kako se to uklapa sa   |
+|       vašim zapažanjima?                                                    |
+|  Dokaz učenja: Popunjeni dijagram "Šta ulazi i izlazi" i tabela "Biljka u   |
+|    mraku vs. Biljka na svjetlu" (Dokaz za I1).                              |
+================================================================================
+
+REFLEKSIJA UČENIKA (pitanja za učenike)
+--------------------------------------------------------------------------------
+|  1. Šta je bilo najizazovnije u razumijevanju kako biljke prave hranu, i kako |
+|     ste to na kraju shvatili?                                                |
+|  2. Koje "Mogu..." kriterije uspjeha sada možete označiti i zašto?           |
+|  3. Šta vas je danas najviše iznenadilo u vezi s biljkama i njihovim životom?|
+================================================================================
+
+UVODNI DIO — UDICA I ISTRAŽIVAČKO PITANJE     5 minuta
+--------------------------------------------------------------------------------
+|  0-5 min:                                                                    |
+|  Postavite dvije biljke (jedna zdrava, jedna žuta od mraka) i teglu sa      |
+|  biljkom i zapaljenom svijećom na vidno mjesto. Započnite razgovor pitanjima|
+|  iz udice. Fokusirajte se na zapažanja učenika i prirodnu znatiželju.       |
+|  NE objašnjavajte fotosintezu niti šta se dešava sa svijećom. Cilj je       |
+|  stvoriti zagonetku.                                                        |
+|                                                                               |
+|  Nakon udice, postavite istraživačko pitanje: "Kako biljke pretvaraju       |
+|  nevidljive stvari poput sunčeve svjetlosti i zraka u nešto opipljivo što  |
+|  ih održava u životu?" Zamolite 2-3 učenika da prepričaju pitanje SVOJIM    |
+|  riječima kako biste provjerili razumijevanje. Aktivirajte prethodno znanje |
+|  o tome šta biljkama treba za rast (voda, sunce), ali bez dubljeg          |
+|  objašnjenja procesa.                                                       |
+|                                                                               |
+|  ZPD SAVJET: Ovo pitanje je postavljeno iznad zone samostalnog znanja,      |
+|  ali unutar zone dostizne uz dokaze. Ako učenik odmah zna odgovor,         |
+|  pitanje je prenisko — prilagodite dokazni materijal ili razgovor.         |
+|                                                                               |
+|  VAŽNO: Ne odgovarajte na učenička pitanja o sadržaju.                      |
+|  Recite: "Odlično pitanje — upravo zato istražujemo."                       |
+================================================================================
+
+SREDIŠNJI DIO — ISTRAŽIVANJE                  20 minuta
+--------------------------------------------------------------------------------
+|  Organizacija učenika:                                                       |
+|  Podijelite učenike u grupe od 4-5. Svaka grupa dobija jednu kopiju teksta  |
+|  "Šta biljkama treba za rast" i jednu kopiju ilustracije "Razmjena plinova |
+|  kroz list". Uputite ih da pažljivo pročitaju tekst i analiziraju         |
+|  ilustraciju.                                                               |
+|                                                                               |
+|  Uvođenje dokaznog materijala:                                              |
+|  Instruirajte grupe da prvo pročitaju tekst, a zatim da koriste informacije|
+|  iz teksta i ilustracije da popune dijagram "Šta ulazi i izlazi iz biljke?"|
+|  (Vizuelni element 1) i tabelu "Biljka u mraku vs. Biljka na svjetlu"      |
+|  (Vizuelni element 2) na tabli.                                             |
+|                                                                               |
+|  Koristite Sokratova pitanja u ovim momentima:                              |
+|    Nakon 15 min (nakon prvog kruga čitanja i popunjavanja):                 |
+|      "Gledajući dijagram i tekst o sastojcima, kada kažemo da biljka       |
+|      'stvara hranu', šta pod tim tačno podrazumijevamo? Da li je to kao da |
+|      mi jedemo sendvič?"                                                    |
+|    Nakon 25 min (nakon popunjavanja tabele i diskusije o svjetlosti):       |
+|      "Ako biljka ne dobije dovoljno sunčeve svjetlosti, šta nam to govori  |
+|      o ulozi sunca u pretvaranju 'nevidljivih stvari'? Gdje to vidimo u    |
+|      našoj tabeli i dijagramu?"                                             |
+|                                                                               |
+|  Facilitation — NE dajte odgovore. Obilazite, slušajte, postavljajte Q.    |
+|  Budite spremni da usmjerite učenike da obrate pažnju na strelice na       |
+|  dijagramu i da povežu žutu boju biljke sa nedostatkom sunca, a ne samo     |
+|  'bolesti'. Pobrinite se da se svaki učenik u grupi uključi.                |
+================================================================================
+
+ZAVRŠNI DIO — DIJELJENJE I REFLEKSIJA         15 minuta
+--------------------------------------------------------------------------------
+|  Dijeljenje nalaza (10 min):                                                 |
+|  Pozovite po jednog glasnogovornika iz svake grupe da predstavi svoje       |
+|  zaključke, koristeći popunjene dijagrame i tabele. Ohrabrite ih da objasne |
+|  'kako' su došli do svojih zaključaka. Nastavnik/ca vodi diskusiju,         |
+|  postavljajući pitanja koja traže dokaz i koja podstiču poređenje među     |
+|  grupama. NE potvrđujte niti opovrgavajte odgovore, već tražite dodatne    |
+|  dokaze.                                                                    |
+|                                                                               |
+|  Sintezno Sokratovsko pitanje (Tip F) (1 min):                               |
+|  "Na osnovu svega što ste pronašli danas — kako biste sada odgovorili na   |
+|  naše istraživačko pitanje: 'Kako biljke pretvaraju nevidljive stvari      |
+|  poput sunčeve svjetlosti i zraka u nešto opipljivo što ih održava u       |
+|  životu?' I šta biste još željeli znati da biste bili još sigurniji u svoj |
+|  odgovor?"                                                                  |
+|  Ovo pitanje VODI NAZAD na IQ i otvara meta-kognitivnu refleksiju.         |
+|                                                                               |
+|  Uvođenje dokaza učenja (8 min):                                            |
+|  Podijelite "izlazne kartice". Objasnite zadatak: nacrtati jednostavan      |
+|  dijagram i u jednoj rečenici objasniti zašto je sunčeva svjetlost ključna.|
+|  Naglasi da je to prilika da pokažu šta su SAMI otkrili.                     |
+|                                                                               |
+|  Refleksija učenika (2 min):                                                 |
+|  Na samom kraju časa, pozovite učenike da razmisle o pitanjima za refleksiju |
+|  (može usmeno ili kratka pisana bilješka). Podsjetite ih na kriterije uspjeha.|
+================================================================================
+
+IDEJE ZA PRODUŽETAK
+--------------------------------------------------------------------------------
+|  - Istražiti šta se dešava sa "hranom" koju biljka stvara — kako je koristi |
+|    za rast ili skladišti, i kako to utiče na životinje koje jedu biljke.    |
+|  - Formulisati novo istraživačko pitanje o ulozi klorofila u upijanju      |
+|    sunčeve svjetlosti ili kako biljke preživljavaju zimu bez puno sunca.   |
+|  - Dizajnirati jednostavan eksperiment za testiranje uticaja različitih    |
+|    boja svjetlosti na rast biljaka (npr. koristeći filtere u boji).        |
+================================================================================
+
+MOGUĆI IZAZOVI I KAKO IH PREVAZIĆI
+--------------------------------------------------------------------------------
+|  IZAZOV                              | RJEŠENJE                             |
+|--------------------------------------|--------------------------------------|
+|  Učenici koriste termin "hrana"      | Podsjetiti ih na razliku između      |
+|  za zemlju ili vodu.                 | unosa i proizvodnje hrane, koristeći |
+|                                      | dijagram ulaska/izlaska.             |
+|  Nedostatak razumijevanja da su      | Postaviti pitanje: "Šta se dešava sa |
+|  plinovi "stvari".                   | zrakom kada ga udišemo/izdišemo? Da |
+|                                      | li ga vidimo?" Povezati s udicom i   |
+|                                      | svijećom.                            |
+|  Neke grupe se bore s tumačenjem     | Uputiti ih da preformuliraju pitanje |
+|  teksta/ilustracije.                 | ili da objasne svojim riječima šta  |
+|                                      | vide, umjesto da traže "pravi"      |
+|                                      | odgovor.                            |
+================================================================================
+
+SAVJET ZA 45 MINUTA (Mikro)
+--------------------------------------------------------------------------------
+|  MICRO:    Svaka minuta je dragocjena. Jedan dokaz. Jedno pitanje.           |
+|            Bolje duboko istražiti jedno nego plitko više.                   |
+|            ZPD savjet: 20-25 min neprekinutog istraživanja je minimum.      |
+================================================================================
+
+================================================================================
+SAVJETI I TRIKOVI ZA NASTAVNIKE
+================================================================================
+| PRIPREMA (prije časa)                                                        |
+|   - Pripremite dvije biljke (jednu zdravu, jednu dekoloriranu od mraka) i   |
+|     teglu sa svijećom dan ranije kako biste osigurali dramatičnu udicu.     |
+|   - Testirajte da li svijeća gori dovoljno dugo u tegli kako bi učenici     |
+|     mogli promatrati.                                                       |
+|   - Pripremite kartice s ključnim pojmovima (npr. sunce, voda, zrak, list)   |
+|     za učenike kojima je potrebna jezička podrška.                          |
+| IZVOĐENJE (tokom časa)                                                       |
+|   - Tokom istraživanja, tiho obilazite grupe i slušajte razgovore.       |
+|     Ubacite se samo ako je diskusija skrenula ili ako se nudi prilika za    |
+|     Sokratovo pitanje.                                                       |
+|   - Ako je razred brži, izazovite ih da pronađu dodatni "nevidljivi        |
+|     sastojak" koji biljke koriste (npr. minerale iz tla).                   |
+|   - "Wow" trenutak može biti kada učenici shvate da biljke "dišu" i da     |
+|     proizvode kisik koji svijeća (i mi) koristimo.                          |
+| NAKON ČASA                                                                   |
+|   - Kao 2-minutni follow-up, pitajte učenike da li su primijetili biljke   |
+|     oko škole i razmisle o tome šta im je potrebno za život.                 |
+|   - Povežite s temom "Lanac ishrane" za sljedeći čas, gdje će se istraživati|
+|     kako se ta "hrana" prenosi dalje.                                       |
+================================================================================
+
+================================================================================
+  Za savjete, pitanja i ideje budite slobodni da se obratite
+  gospođi Maji Ljubović na: maja.ljubovic@idss.ba
+
+  IBL Planer kreiran uz pomoć AI alata za
+  Internationale Deutsche Schule Sarajevo
+  Prilagođeno za čas od 45 minuta | Mikro | PSI v9.1
+================================================================================
+
+================================================================================
+ŠTA MOŽETE URADITI SLJEDEĆE
+================================================================================
+|  Ovaj plan je spreman za korištenje. Možete:                                 |
+|                                                                               |
+|  1. PREUZETI KAO .DOCX                                                       |
+|     Kliknite dugme "Preuzmi kao Word dokument" u interfejsu aplikacije.     |
+|     Plan će biti formatiran sa IDSS zaglavljem i profesionalnim izgledom.   |
+|                                                                               |
+|  2. POSTAVLJATI PITANJA O PLANU                                              |
+|     Možete me pitati bilo šta o ovom planu. Primjeri pitanja:               |
+|     - "Predloži alternativnu udicu za uvod"                                 |
+|     - "Kako da prilagodim ovo za učenike sa posebnim potrebama?"            |
+|     - "Generiši rubriku za ocjenjivanje dokaza učenja"                       |
+|     - "Predloži konkretan video isječak za dokazni materijal"               |
+|     - "Kako da produbim istraživačko pitanje za napredne učenike?"          |
+|     - "Prilagodi ovaj plan za 45 umjesto 90 minuta"                         |
+|                                                                               |
+|  3. KREIRATI NOVI PLAN                                                       |
+|     Unesite novi predmet, razred i temu za novi IBL plan.                   |
+================================================================================

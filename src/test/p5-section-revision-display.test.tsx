@@ -1,78 +1,70 @@
-import { describe, it, expect } from 'vitest';
-import { render } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import PlanDisplay from '@/components/PlanDisplay';
-import { findSectionRange } from '@/lib/sectionRevision';
+import { parseSegments } from '@/lib/planSegments';
+import { contentSignature } from '@/lib/planDocxStructure';
 
-// The v9 sample plan of the display regression test (p3-quality), so both tests read the same plan.
-const src = readFileSync(resolve(__dirname, 'p3-quality.test.tsx'), 'utf8');
-const V9_PLAN = src.match(/const V9_PLAN = `([\s\S]*?)`;/)![1];
+const G08 = readFileSync(resolve(__dirname, '../../supabase/functions/_shared/fixtures/plan_v91_fotosinteza_bs.txt'), 'utf8');
+const toc = () => screen.getAllByRole('navigation', { name: 'Sadržaj pripreme' })[0];
 
-describe('P5-4 every section card maps back to its lines in the plan text', () => {
-  it('each title PlanDisplay shows is found, with the next title as its end', () => {
-    const { container } = render(<PlanDisplay planText={V9_PLAN} />);
-    const titles = [...container.querySelectorAll('h2')].map((h) => h.textContent ?? '');
-    expect(titles.length).toBeGreaterThanOrEqual(5);
-    const seen = new Map<string, number>();
-    titles.forEach((title, i) => {
-      const occurrence = seen.get(title) ?? 0;
-      seen.set(title, occurrence + 1);
-      const r = findSectionRange(V9_PLAN, { title, nextTitle: titles[i + 1] ?? null, occurrence });
-      expect(r, `section "${title}" not found`).not.toBeNull();
-    });
+describe('P6 S2 workspace "Nastavnički radni sto" (real plan g08)', () => {
+  it('lists every segment of the plan in its order and with its name', () => {
+    render(<PlanDisplay planText={G08} />);
+    const text = toc().textContent ?? '';
+    let at = -1;
+    for (const s of parseSegments(G08)) { const k = text.indexOf(s.title, at + 1); expect(k, s.title).toBeGreaterThan(at); at = k; }
+  });
+
+  it('every page together shows every character of the plan (nothing lost)', () => {
+    const { container } = render(<PlanDisplay planText={G08} />);
+    let seen = '';
+    const buttons = within(toc()).getAllByRole('button');
+    for (const b of buttons) {
+      fireEvent.click(b);
+      seen += container.querySelector('article')?.textContent ?? '';
+    }
+    const want = contentSignature(G08.replace(/[\s|=─\-_·*~+]/g, ''));
+    const got = contentSignature(seen.replace(/[✓\s]/g, '').replace(/označeno:|nijeoznačeno:/g, ''));
+    for (const ch of new Set(want)) expect(got.includes(ch), ch).toBe(true);
+    expect(got.length).toBeGreaterThanOrEqual(want.length * 0.98);
+  });
+
+  it('binder tabs filter by audience: Učenik shows student segments, never the teacher-only Skela', () => {
+    render(<PlanDisplay planText={G08} />);
+    fireEvent.click(screen.getAllByRole('tab', { name: 'Učenik' })[0]);
+    const text = toc().textContent ?? '';
+    expect(text).toContain('UDICA');
+    expect(text).toContain('TOK ČASA'); // N·U
+    expect(text).not.toContain('SKELA');
+  });
+
+  it('a group heading without own text (DODATNI RESURSI) is a label, not a page (no revision on it)', () => {
+    render(<PlanDisplay planText={G08} onReviseSection={async () => {}} />);
+    expect(within(toc()).queryByRole('button', { name: /DODATNI RESURSI/ })).toBeNull();
   });
 });
 
-import { fireEvent, screen, waitFor } from '@testing-library/react';
-import { vi } from 'vitest';
-
-describe('P5-4 the "Prepravi ovaj dio" button', () => {
+describe('P5-4 "Prepravi ovaj dio" in the workspace', () => {
   it('is shown only when the page allows revisions', () => {
-    const { unmount } = render(<PlanDisplay planText={V9_PLAN} />);
-    expect(screen.queryAllByText('Prepravi ovaj dio')).toHaveLength(0);
+    const { unmount } = render(<PlanDisplay planText={G08} />);
+    expect(screen.queryByText('Prepravi ovaj dio')).toBeNull();
     unmount();
-    render(<PlanDisplay planText={V9_PLAN} onReviseSection={async () => {}} />);
-    expect(screen.getAllByText('Prepravi ovaj dio').length).toBeGreaterThanOrEqual(5);
+    render(<PlanDisplay planText={G08} onReviseSection={async () => {}} />);
+    expect(screen.getByText('Prepravi ovaj dio')).toBeTruthy();
   });
 
-  it('sends the clicked section and the teacher\'s request', async () => {
+  it('sends the open segment and the teacher\'s request', async () => {
     const onRevise = vi.fn(async () => {});
-    const { container } = render(<PlanDisplay planText={V9_PLAN} onReviseSection={onRevise} />);
-    const titles = [...container.querySelectorAll('h2')].map((h) => h.textContent ?? '');
-    fireEvent.click(screen.getAllByText('Prepravi ovaj dio')[1]);
+    render(<PlanDisplay planText={G08} onReviseSection={onRevise} />);
+    fireEvent.click(within(toc()).getByRole('button', { name: /^UDICA/ }));
+    fireEvent.click(screen.getByText('Prepravi ovaj dio'));
     fireEvent.change(screen.getByPlaceholderText('Šta želite promijeniti? (nije obavezno)'), { target: { value: 'kraće' } });
     fireEvent.click(screen.getByText('Prepravi'));
     await waitFor(() => expect(onRevise).toHaveBeenCalledTimes(1));
-    expect(onRevise).toHaveBeenCalledWith(expect.objectContaining({ title: titles[1], nextTitle: titles[2] ?? null, occurrence: 0 }), 'kraće');
-  });
-});
-
-describe('P5-4 bug 2026-11-14 (Director): group heading "DODATNI RESURSI ZA NASTAVNIKE"', () => {
-  const PLAN = [
-    'ISTRAŽIVAČKO PITANJE (IQ)', '| Zašto? |', '',
-    '================================================================================',
-    'DODATNI RESURSI ZA NASTAVNIKE',
-    '================================================================================',
-    '',
-    'DIFERENCIJACIJA',
-    '--------------------------------------------------------------------------------',
-    '|  PODRŠKA — stara podrška |',
-    '================================================================================',
-    '',
-    'KLJUČNI POJMOVI — 5. razred',
-    '|  Pojam | Definicija |',
-  ].join('\n');
-
-  it('an empty group card has no "Prepravi ovaj dio" button', () => {
-    const { container } = render(<PlanDisplay planText={PLAN} onReviseSection={async () => {}} />);
-    const cards = [...container.querySelectorAll('h2')].map((h) => h.textContent);
-    const resources = cards.findIndex((t) => t === 'DODATNI RESURSI ZA NASTAVNIKE');
-    expect(resources, 'the group card must exist, otherwise this test proves nothing').toBeGreaterThanOrEqual(0);
-    const header = container.querySelectorAll('h2')[resources].parentElement!;
-    expect(header.textContent).not.toContain('Prepravi ovaj dio');
-    // the sub-sections with text keep their button
-    const diff = container.querySelectorAll('h2')[cards.indexOf('DIFERENCIJACIJA')].parentElement!;
-    expect(diff.textContent).toContain('Prepravi ovaj dio');
+    const segs = parseSegments(G08);
+    const i = segs.findIndex((s) => s.head === 'UDICA');
+    expect(onRevise).toHaveBeenCalledWith(expect.objectContaining({ index: i, head: 'UDICA' }), 'kraće');
   });
 });

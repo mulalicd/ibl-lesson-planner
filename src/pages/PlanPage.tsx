@@ -112,109 +112,53 @@ export default function PlanPage() {
   const canChange = canChangePlan(plan.owner_id, session?.user?.id, isAdmin);
 
   return (
-    <div className="min-h-screen bg-background gradient-mesh">
+    <div className="min-h-screen bg-background">
       <AppHeader />
 
-      <motion.main
-        initial={{ opacity: 0, y: 20, filter: 'blur(4px)' }}
-        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="max-w-5xl mx-auto px-4 md:px-8 py-8"
-      >
-        {/* Breadcrumb & Actions */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
-          <div className="flex items-center gap-3 text-sm">
-            <Link to="/dashboard" className="text-muted-foreground hover:text-primary transition-colors font-medium flex items-center gap-1.5">
-              <ArrowLeft className="w-4 h-4" /> Moji planovi
-            </Link>
-            <span className="text-border/70">/</span>
-            <span className="font-semibold text-foreground">
-              {showText(plan.subject)} · {showGrade(plan.grade)}
-            </span>
+      {/* P6 S2 (direction C): the plan's title bar, then the workspace — the desk with the plan on it */}
+      <main className="mx-auto max-w-[1600px] px-4 py-6 md:px-8">
+        <div className="mb-6 flex flex-col gap-4 rounded-md bg-white px-5 py-4 shadow-[0_1px_0_rgb(221_221_221)] lg:flex-row lg:items-center">
+          <div className="min-w-0 flex-1">
+            <div className="mb-1 flex items-center gap-2 text-xs font-semibold text-neutral-600">
+              <Link to="/dashboard" className="flex items-center gap-1 hover:text-primary"><ArrowLeft className="h-3.5 w-3.5" /> Moji planovi</Link>
+              <span aria-hidden="true">/</span>
+              <span>{showText(plan.subject)} · {showGrade(plan.grade)}</span>
+            </div>
+            <h1 className="truncate font-display text-2xl font-extrabold tracking-tight">{showText(plan.topic)}</h1>
+            {plan.inquiry_question && (
+              <p className="mt-1 line-clamp-2 text-sm text-primary"><span className="font-semibold text-neutral-600">Istraživačko pitanje: </span>{plan.inquiry_question}</p>
+            )}
+            <div className="mt-2 flex flex-wrap gap-2 text-xs font-semibold">
+              <span className="rounded bg-neutral-100 px-2 py-1">{showMinutes(plan.duration_min)}</span>
+              <span className="rounded bg-neutral-100 px-2 py-1">{formatDate(plan.created_at)}</span>
+              {plan.docx_export_count > 0 && <span className="rounded bg-neutral-100 px-2 py-1">Izvezeno {plan.docx_export_count}×</span>}
+              <GeminiStatusBar tier={plan.tier} language={plan.language} durationMs={plan.generation_time_ms ?? undefined} keyIndex={plan.gemini_key_index ?? undefined} />
+            </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {/* P5-2: every teacher may star any plan they can read (own favourites) */}
-            <motion.button
-              whileTap={{ scale: 0.93 }}
-              onClick={toggleFavourite}
-              className="w-10 h-10 rounded-xl neu-btn flex items-center justify-center hover:text-idss-gold transition-colors"
-            >
-              <Star className={`w-4 h-4 ${favourite ? 'text-brand-yellow fill-brand-yellow' : 'text-muted-foreground'}`} />
+            <motion.button whileTap={{ scale: 0.93 }} onClick={toggleFavourite} aria-label="Favorit" aria-pressed={favourite}
+              className="flex h-10 w-10 items-center justify-center rounded-lg border border-neutral-200 bg-white transition-colors hover:text-idss-gold">
+              <Star className={`h-4 w-4 ${favourite ? 'fill-brand-yellow text-brand-yellow' : 'text-muted-foreground'}`} />
             </motion.button>
             <DocxExportButton planId={plan.id} planText={plan.plan_text} />
-            <motion.div whileTap={{ scale: 0.95 }}>
-              <Link
-                to="/chat"
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl neu-btn text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
-              >
-                <Plus className="w-4 h-4" /> Novi
-              </Link>
-            </motion.div>
-            {canChange && (<motion.button
-              whileTap={{ scale: 0.93 }}
-              onClick={deletePlan}
-              aria-label="Obriši plan"
-              className="w-10 h-10 rounded-xl neu-btn flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors"
-            >
-              <Trash2 className="w-4 h-4" />
-            </motion.button>)}
+            <Link to={`/chat?plan_id=${plan.id}`} className="flex h-10 items-center gap-2 rounded-lg border border-neutral-200 bg-white px-3 text-sm font-semibold text-neutral-700 hover:text-primary">
+              <MessageSquare className="h-4 w-4" /> Razgovor s AI-om
+            </Link>
+            <Link to="/chat" className="flex h-10 items-center gap-2 rounded-lg border border-neutral-200 bg-white px-3 text-sm font-semibold text-neutral-700 hover:text-primary">
+              <Plus className="h-4 w-4" /> Novi
+            </Link>
+            {canChange && (
+              <motion.button whileTap={{ scale: 0.93 }} onClick={deletePlan} aria-label="Obriši plan"
+                className="flex h-10 w-10 items-center justify-center rounded-lg border border-neutral-200 bg-white text-muted-foreground transition-colors hover:text-destructive">
+                <Trash2 className="h-4 w-4" />
+              </motion.button>
+            )}
           </div>
         </div>
 
-        {/* Meta card */}
-        <div className="neu-card p-6 mb-6">
-          <div className="flex items-start justify-between gap-4 mb-4">
-            <h1 className="text-2xl font-bold text-foreground leading-snug tracking-tight">
-              {showText(plan.topic)}
-            </h1>
-            <GeminiStatusBar
-              tier={plan.tier}
-              language={plan.language}
-              durationMs={plan.generation_time_ms ?? undefined}
-              keyIndex={plan.gemini_key_index ?? undefined}
-              className="flex-shrink-0"
-            />
-          </div>
-          <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-            <span className="pastel-tag">📚 {showText(plan.subject)}</span>
-            <span className="pastel-tag">🎓 {showGrade(plan.grade)}</span>
-            <span className="pastel-tag">⏱ {showMinutes(plan.duration_min)}</span>
-            <span className="pastel-tag">📅 {formatDate(plan.created_at)}</span>
-            {plan.docx_export_count > 0 && <span className="pastel-tag">⬇ Izvezeno {plan.docx_export_count}×</span>}
-          </div>
-        </div>
-
-        {/* Inquiry question callout */}
-        {plan.inquiry_question && (
-          <motion.div
-            initial={{ opacity: 0, x: -12 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-            className="iq-callout mb-6"
-          >
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-600 mb-2 not-italic">
-              Istraživačko pitanje
-            </p>
-            <p className="text-lg text-foreground leading-relaxed">
-              {plan.inquiry_question}
-            </p>
-          </motion.div>
-        )}
-
-        {/* Plan display - structured cards */}
         <PlanDisplay planText={plan.plan_text} planId={plan.id} />
-
-        {/* Footer actions */}
-        <div className="mt-8 flex items-center justify-between">
-          <Link
-            to={`/chat?plan_id=${plan.id}`}
-            className="flex items-center gap-2 text-sm text-primary hover:underline font-medium"
-          >
-            <MessageSquare className="w-4 h-4" /> Razgovarajte s AI-om o ovom planu
-          </Link>
-          <DocxExportButton planId={plan.id} planText={plan.plan_text} />
-        </div>
-      </motion.main>
+      </main>
     </div>
   );
 }

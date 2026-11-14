@@ -80,3 +80,6 @@ initial_instructions.md's "never `main`" rule, not to the unreleased
 - [2026-11-14 10:41] Write: ../../../tmp/claude-0/-home-user-ibl-lesson-planner/ea2107a6-01ec-5625-a80c-61df79552c75/scratchpad/p6canvas/project/C-Workspace.dc.html
 - [2026-11-14 10:41] Write: ../../../tmp/claude-0/-home-user-ibl-lesson-planner/ea2107a6-01ec-5625-a80c-61df79552c75/scratchpad/p6canvas/project/C-Journey.dc.html
 - [2026-11-14 10:42] Write: ../../../tmp/claude-0/-home-user-ibl-lesson-planner/ea2107a6-01ec-5625-a80c-61df79552c75/scratchpad/p6canvas/project/C-Phone.dc.html
+- [2026-11-14 10:56] Write: src/lib/planSegments.ts
+- [2026-11-14 10:57] Write: src/lib/sectionRevision.ts
+- [2026-11-14 10:59] Write: src/components/PlanDisplay.tsx

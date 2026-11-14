@@ -78,11 +78,12 @@ describe('QualityBadge', () => {
 
 describe('PlanDisplay recognises PSI v9 sections (display regression)', () => {
   it('shows ISHODI UČENJA, UPORIŠTE (even without diacritics) and SAVJETI I TRIKOVI as sections', () => {
+    // P6 S2: segments are listed in the workspace's table of contents (one page open at a time)
     render(<PlanDisplay planText={V9_PLAN} />);
-    const headings = screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent ?? '');
-    expect(headings).toContain('ISHODI UČENJA');
-    expect(headings).toContain('UPORISTE U STVARNOM ZIVOTU');
-    expect(headings).toContain('SAVJETI I TRIKOVI ZA NASTAVNIKE');
+    const toc = screen.getAllByRole('navigation', { name: 'Sadržaj pripreme' })[0].textContent ?? '';
+    expect(toc).toContain('ISHODI UČENJA');
+    expect(toc).toContain('UPORISTE U STVARNOM ZIVOTU');
+    expect(toc).toContain('SAVJETI I TRIKOVI ZA NASTAVNIKE');
   });
 
   it("the Director's real pre-P3 plan still renders without errors", () => {
@@ -138,7 +139,7 @@ describe('P4 labels', () => {
   });
   it('shows MATERIJALI ZA ČAS, TOK ČASA and REFLEKSIJA UČENIKA as sections', () => {
     render(<PlanDisplay planText={V9_PLAN.replace('SAVJETI I TRIKOVI', 'MATERIJALI ZA ČAS\n[ ] papir\nTOK ČASA\n| 0-5 | Udica | Frontalno |\nREFLEKSIJA UČENIKA\n1. Šta misliš?\nSAVJETI I TRIKOVI')} />);
-    const headings = screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent ?? '');
-    expect(headings).toEqual(expect.arrayContaining(['MATERIJALI ZA ČAS', 'TOK ČASA', 'REFLEKSIJA UČENIKA']));
+    const toc = screen.getAllByRole('navigation', { name: 'Sadržaj pripreme' })[0].textContent ?? '';
+    for (const h of ['MATERIJALI ZA ČAS', 'TOK ČASA', 'REFLEKSIJA UČENIKA']) expect(toc).toContain(h);
   });
 });

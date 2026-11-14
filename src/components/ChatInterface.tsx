@@ -228,10 +228,8 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
                         else toast.error(SECTION_REVISION_TEXT.FAILED);
                       }}
                       reviseDisabled={chat.isLoading}
+                      quality={msg.validation ? <QualityBadge report={msg.validation} onRepair={chat.repairPlan} disabled={chat.isLoading} /> : undefined}
                     />
-                    {msg.validation && (
-                      <QualityBadge report={msg.validation} onRepair={chat.repairPlan} disabled={chat.isLoading} />
-                    )}
                     {/* Action buttons: Save + Export */}
                     <div className="flex flex-wrap items-center gap-3 pt-3 border-t border-border/30">
                       {/* Save button */}

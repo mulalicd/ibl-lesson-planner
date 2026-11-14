@@ -1,74 +1,59 @@
 import { describe, it, expect } from 'vitest';
-import { cleanTitle, extractRevisedSection, findSectionRange, replaceSection, buildRevisionRequest } from '@/lib/sectionRevision';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { extractRevisedSection, replaceSection, buildRevisionRequest, type SectionRef } from '@/lib/sectionRevision';
+import { parseSegments } from '@/lib/planSegments';
 
-const PLAN = [
-  'PLANER ZA IBL ČAS',
-  '================================================================================',
-  'UDICA',
-  '================================================================================',
-  '| Stara udica, red 1 |',
-  '| Stara udica, red 2 |',
-  '',
-  '================================================================================',
-  'ISTRAŽIVAČKO PITANJE (IQ)',
-  '================================================================================',
-  '| Zašto? |',
-].join('\n');
+const G08 = readFileSync(resolve(__dirname, '../../supabase/functions/_shared/fixtures/plan_v91_fotosinteza_bs.txt'), 'utf8');
+const segs = parseSegments(G08);
+const refOf = (head: string): SectionRef => {
+  const index = segs.findIndex((s) => s.head === head);
+  return { index, head, title: segs[index].title, stopHeads: segs.filter((_, k) => k !== index).map((s) => s.head) };
+};
 
-describe('P5-4 one section is replaced, nothing else changes', () => {
-  it('finds the section between its heading and the next box', () => {
-    const r = findSectionRange(PLAN, { title: 'UDICA', nextTitle: 'ISTRAŽIVAČKO PITANJE (IQ)', occurrence: 0 });
-    expect(r).toEqual({ start: 2, end: 7 });
+describe('P5-4 one segment is replaced, nothing else changes (P6 S2 segments, real plan g08)', () => {
+  it('replaces only the chosen segment; every line before and after is identical', () => {
+    const ref = refOf('UDICA');
+    const out = replaceSection(G08, ref, 'UDICA                    5 minuta\n================\n| Nova udica s dvije biljke. |')!;
+    expect(out).toContain('| Nova udica s dvije biljke. |');
+    const before = G08.split('\n');
+    const after = out.split('\n');
+    const s = segs[ref.index];
+    expect(after.slice(0, s.start)).toEqual(before.slice(0, s.start));
+    expect(after.slice(after.length - (before.length - s.end))).toEqual(before.slice(s.end));
+    expect(parseSegments(out).map((x) => x.head)).toEqual(segs.map((x) => x.head));
   });
 
-  it('replaces only that section; every other line is identical', () => {
-    const out = replaceSection(PLAN, { title: 'UDICA', nextTitle: 'ISTRAŽIVAČKO PITANJE (IQ)', occurrence: 0 },
-      'UDICA\n================================================================================\n| Nova udica |')!;
-    expect(out).toContain('| Nova udica |');
-    expect(out).not.toContain('Stara udica');
-    const before = PLAN.split('\n'); const after = out.split('\n');
-    expect(after.slice(0, 2)).toEqual(before.slice(0, 2));
-    expect(after.slice(-5)).toEqual(before.slice(-5));
-  });
-
-  it('keeps only the section from the AI answer (no intro, no closing box)', () => {
-    const answer = 'Evo prepravljenog dijela:\n\nUDICA\n====\n| Nova udica |\n====\n\n';
-    expect(extractRevisedSection(answer, 'UDICA')).toBe('UDICA\n====\n| Nova udica |');
+  it('keeps only the segment from the AI answer (no intro, no closing box)', () => {
+    const answer = 'Evo prepravljenog dijela:\n\nUDICA     5 minuta\n====\n| Nova udica |\n====\n\n';
+    expect(extractRevisedSection(answer, 'UDICA')).toBe('UDICA     5 minuta\n====\n| Nova udica |');
     expect(extractRevisedSection('Ne mogu.', 'UDICA')).toBeNull();
     expect(extractRevisedSection('UDICA', 'UDICA')).toBeNull();
   });
 
-  it('a section that cannot be found leaves the plan unchanged (null)', () => {
-    expect(replaceSection(PLAN, { title: 'NEMA', nextTitle: null, occurrence: 0 }, 'X\nY')).toBeNull();
+  it('bug 2026-11-14: an answer that brings the following segments is cut at the first other heading (no duplicates)', () => {
+    const ref = refOf('DIFERENCIJACIJA');
+    const answer = 'DIFERENCIJACIJA\n| nova podrška |\n\nKLJUČNI POJMOVI — 5. razred\n| novi pojmovi |';
+    const revised = extractRevisedSection(answer, ref.head, ref.stopHeads)!;
+    expect(revised).toBe('DIFERENCIJACIJA\n| nova podrška |');
+    const out = replaceSection(G08, ref, revised)!;
+    expect(out.match(/KLJUČNI POJMOVI/g)).toHaveLength(G08.match(/KLJUČNI POJMOVI/g)!.length);
+    expect(out).not.toContain('novi pojmovi');
   });
 
-  it('the last section runs to the end of the plan', () => {
-    const out = replaceSection(PLAN, { title: 'ISTRAŽIVAČKO PITANJE (IQ)', nextTitle: null, occurrence: 0 }, 'ISTRAŽIVAČKO PITANJE (IQ)\n| Kako? |')!;
-    expect(out.endsWith('| Kako? |')).toBe(true);
-    expect(out).toContain('Stara udica, red 1');
+  it('bug 2026-11-14: a heading with only other segments under it is not a revision', () => {
+    expect(extractRevisedSection('DODATNI RESURSI ZA NASTAVNIKE\n====\n\nDIFERENCIJACIJA\n| nova |', 'DODATNI RESURSI ZA NASTAVNIKE', ['DIFERENCIJACIJA'])).toBeNull();
   });
 
-  it('the AI instruction names the section, the language and "only this section"', () => {
+  it('a segment that moved is not replaced (null, the plan stays as it was)', () => {
+    expect(replaceSection(G08, { ...refOf('UDICA'), head: 'NEŠTO DRUGO' }, 'X\nY')).toBeNull();
+  });
+
+  it('the AI instruction names the segment, the language and "only this section"', () => {
     const t = buildRevisionRequest('UDICA', 'kraće', 'german');
     expect(t).toContain('"UDICA"');
     expect(t).toContain('German (Deutsch)');
     expect(t).toContain('"kraće"');
     expect(t).toMatch(/Output ONLY the complete revised section/);
-  });
-  it('bug 2026-11-14: an answer that brings the following sections is cut at the first other heading (no duplicates)', () => {
-    const plan = 'DODATNI RESURSI ZA NASTAVNIKE\n====\n\nDIFERENCIJACIJA\n| stara |\n\nKLJUČNI POJMOVI\n| pojmovi |';
-    const ref = { title: 'DIFERENCIJACIJA', nextTitle: 'KLJUČNI POJMOVI', occurrence: 0, stopTitles: ['DODATNI RESURSI ZA NASTAVNIKE', 'KLJUČNI POJMOVI'] };
-    const answer = 'DIFERENCIJACIJA\n| nova |\n\nKLJUČNI POJMOVI\n| novi pojmovi |';
-    const revised = extractRevisedSection(answer, ref.title, ref.stopTitles)!;
-    expect(revised).toBe('DIFERENCIJACIJA\n| nova |');
-    const out = replaceSection(plan, ref, revised)!;
-    expect(out.match(/KLJUČNI POJMOVI/g)).toHaveLength(1);
-    expect(out).toContain('| pojmovi |');
-    expect(out).not.toContain('novi pojmovi');
-  });
-
-  it('bug 2026-11-14: a heading with only other sections under it is not a revision (reported as failed)', () => {
-    const answer = 'DODATNI RESURSI ZA NASTAVNIKE\n====\n\nDIFERENCIJACIJA\n| nova |';
-    expect(extractRevisedSection(answer, 'DODATNI RESURSI ZA NASTAVNIKE', ['DIFERENCIJACIJA'])).toBeNull();
   });
 });
