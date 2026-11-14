@@ -71,3 +71,4 @@ One line per feature, per Commander E-10.
   časa, Materijali …) instead of a monospaced block; every character of the plan is kept (test + eval check).
 - [2026-11-14] [LANGUAGE] A17 addition (DL-P28): German/English plans translate Bosnian template text; Latin
   script only. The eval-only language check also flags Cyrillic letters.
+- [2026-11-14] [AI] PSI v9.1 Module 3.10: every fixed template line in German and English, so de/en plans no longer copy Bosnian sample text (DL-P29).

@@ -672,3 +672,18 @@ questions, labels), and one plan had Cyrillic letters inside a word.
 
 **Decision:** two bullets are appended verbatim to A17 in `IDSS_IBL_PSI_v9_1.md`. Rollback: remove them and
 regenerate.
+
+## DL-P29 — Template lines in German and English (Director, 2026-11-14)
+
+**Decided by:** Director ("odobreno", proposal "šabloni na tri jezika").
+
+**Evidence:** eval run 43540520949 (6 German lessons, after DL-P28): language_purity 5/6. The one failing plan
+(g02) copied Bosnian sample lines word for word ("Stare mape ili fotografije", "Set predmeta za
+posmatranje", "povratak na Istr. pitanje"). An instruction to translate reduces copying but does not remove it.
+
+**Decision:** Module 3.10 of `IDSS_IBL_PSI_v9_1.md` gets a list "TEMPLATE LINES IN GERMAN AND ENGLISH": every
+fixed Bosnian template line of Modules 3.3, 3.5, 3.6, 3.7 and 3.9B with its exact DE and EN line. Bosnian plans
+are unchanged. The prompt grows by about 4,700 characters. Rollback: remove the list and regenerate.
+
+**Open point (not changed, needs a Director decision):** the Bosnian template line "Odaberite jedan sustavan
+produkt" uses "sustavan" (Croatian); standard Bosnian is "sistematičan".
