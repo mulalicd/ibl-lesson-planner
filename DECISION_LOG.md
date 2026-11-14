@@ -662,3 +662,13 @@ content changes. It goes live only via a PR that the Director merges.
     favourites as ONE owner SQL script (E-18: preview / apply / rollback, rehearsed locally).
 - P5-5 fixes are applied when a stored plan is loaded for display, export or further chat. The stored text in the
   database is never rewritten by this.
+
+## DL-P28 — A17 addition: translate Bosnian template text; Latin script only (Director, 2026-11-14)
+
+**Decided by:** Director ("A17 dopuna da"). The wording is L-1b in `specs/language-quality/SPEC.md`.
+
+**Evidence:** eval run 43538426833. German plans copied Bosnian template lines (checklists, self-evaluation
+questions, labels), and one plan had Cyrillic letters inside a word.
+
+**Decision:** two bullets are appended verbatim to A17 in `IDSS_IBL_PSI_v9_1.md`. Rollback: remove them and
+regenerate.
