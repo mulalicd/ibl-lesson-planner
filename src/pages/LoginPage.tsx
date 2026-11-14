@@ -83,14 +83,8 @@ export default function LoginPage() {
           <div className="relative rounded-md bg-white px-6 py-8 shadow-[0_1px_0_rgb(221_221_221),0_24px_50px_rgba(0,0,0,0.14)] sm:px-10">
             <div className="mb-8 text-center">
               <img src="/brand/idss-logo.png" alt="Internationale Deutsche Schule Sarajevo" width={1460} height={443} className="mx-auto h-14 w-auto sm:h-16" />
-              <div className="mt-5 flex items-center justify-center gap-2">
-                <span aria-hidden="true" className="flex gap-0.5">
-                  <span className="h-5 w-1.5 rounded-sm bg-brand-blue" /><span className="h-5 w-1.5 rounded-sm bg-brand-lightblue" />
-                  <span className="h-5 w-1.5 rounded-sm bg-brand-yellow" /><span className="h-5 w-1.5 rounded-sm bg-brand-red" />
-                  <span className="h-5 w-1.5 rounded-sm bg-black" />
-                </span>
-                <h1 className="font-display text-lg font-extrabold">IBL Planer</h1>
-              </div>
+              {/* Director 2026-11-14: the IDSS logo carries the colours; the app name alone, large */}
+              <h1 className="mt-5 font-display text-3xl font-extrabold tracking-tight sm:text-4xl">IBL Planer</h1>
             </div>
 
             {params.get('razlog') === 'neaktivnost' && status === 'idle' && (
