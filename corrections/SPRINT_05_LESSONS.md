@@ -559,3 +559,22 @@ Period: 2026-11-07 … 2026-11-14. Detailed entries follow below the summary; th
   knew only tables whose rows start with "|" (the PSI box style), so the rubric fell apart into mono lines.
 - Fix: one more table shape in the shared renderer (screen + Word), checked against the real plans for no change.
 - Rule: test the renderer on the AI's FREE-FORM answers (chat mode), not only on PSI plans — they use other shapes.
+
+### 2026-11-14 — Observation (S6): measure a bundle split, do not assume it
+- Splitting framer-motion into its own chunk made rolldown place shared helpers there, so every page (also sign-in)
+  loaded it; and lazy pages first made the plan page's LCP ~150 ms worse (a second round trip).
+- Caught only because before/after were measured interleaved (E-15). Fixed: no motion chunk; index.html preloads
+  the opened page's files.
+- Rule: every performance change ships with a before/after table; a change that wins one metric and loses another
+  is not done.
+
+### 2026-11-14 — Observation (S6): a mock without CORS headers lies
+- Guide screenshots showed "0 planova ukupno" next to four plans. Cause: the test mock did not expose the
+  `content-range` header to the browser (CORS), so the count was unreadable; production Supabase exposes it.
+- Rule: a mock for a cross-origin API must send the same CORS exposure headers as the real one, or a screenshot
+  shows a bug that does not exist (or hides one that does).
+
+### 2026-11-14 — Gotcha (S6): environment allowed the host, the session's permission classifier did not
+- Firefox/WebKit downloads were blocked by the network policy; after the Director approved the hosts, the
+  download command was refused by the session's auto-mode permission check. Not worked around.
+- Rule: cross-browser proof beyond Chromium goes to the Director's devices unless the permission is granted.

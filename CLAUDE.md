@@ -149,8 +149,8 @@ Never assume he knows. See CONSTITUTION.md rule 8.
   direction and `specs/ui-ux-redesign-milky-neumorphic/` are
   SUPERSEDED. Do not continue its TASKS.md (Tasks 5–14). The binding
   colour rule is CONSTITUTION.md rule 6 (five IDSS colours only).
-  `DESIGN_SYSTEM.md` describes the superseded system until P6
-  replaces it.
+  `DESIGN_SYSTEM.md` describes the P6 system "Nastavnički radni sto"
+  (direction C, DL-P33…DL-P37; rewritten in P6 S6).
 - **Roles (DL-P05):** `admin` = Director (`direktor@idss.ba`);
   `teacher` = any `@idss.ba` address signing in by magic link.
   Everyone signed in READS all plans (DL-P09); only the author or the

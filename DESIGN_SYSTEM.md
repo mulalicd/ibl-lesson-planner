@@ -1,78 +1,67 @@
 # DESIGN_SYSTEM.md — IBL Lesson Planner
-# Milky-White 3D Neumorphic — IDSS Brand
+# "Nastavnički radni sto" (direction C, P6 — DL-P33…DL-P37)
 
-Source of truth for token *names and intent*. Actual values live as
-CSS custom properties in `src/index.css` `:root` and are exposed as
-Tailwind utilities via `tailwind.config.ts` (E-11: no hardcoded
-hex/pixel values in component files — consume tokens, don't
-duplicate values).
+Replaces the superseded Milky-White Neumorphic description (DL-P03). Source of truth for token *names and intent*;
+the values live as CSS custom properties in `src/index.css` (`:root`) and are exposed through `tailwind.config.ts`.
+Components use tokens or Tailwind classes, never their own colour values (E-11). The CI step "Only IDSS colours"
+(`scripts/check-colours.mjs`) fails the build on any other colour.
 
-## Brand Colours (approved palette)
+## 1. Idea
+The app is a teacher's desk: a neutral grey surface (`--background`) on which plans lie as sheets of white paper
+(`--card`) with binder tabs in the five IDSS colours. Depth comes from paper shadows and small 3D tilts, never from
+colour gradients.
 
-| Token | Hex | Tailwind | Role |
+## 2. Colours (CONSTITUTION rule 6, amended DL-P33)
+Only the five IDSS colours, white and neutral greys (R = G = B), each with any transparency.
+
+| Token | Value | Use | Text on it |
 |---|---|---|---|
-| `--idss-gold` (also `--primary`) | `#FFCB29` | `text-idss-gold`, `bg-primary` | **Dominant accent.** Primary actions, CTAs, favourites. |
-| `--idss-dark-blue` (also `--secondary`) | `#035EA1` | `text-idss-dark-blue`, `bg-secondary` | **Structure.** Navigation, headings, strong hierarchy. |
-| `--idss-bright-blue` (also `--accent-foreground`) | `#08ABE6` | `text-idss-bright-blue`, `bg-accent` | **Interaction / information.** Links, badges, secondary interactive elements. |
-| `--idss-red` (also `--destructive`) | `#E8262C` | `text-idss-red`, `bg-destructive` | **Special/rare accent.** Warnings, destructive actions only — never decorative. |
-| — (`--foreground`) | near-black | `text-foreground` | Max-contrast text/icons. |
+| `--brand-blue` / `--primary` | `#035EA1` | primary actions, active navigation, links, "Nastavnik" | white (6.73:1) |
+| `--brand-yellow` / `--secondary` | `#FFCB29` | "Učenik", quality check, minutes, highlights | black (13.8:1) |
+| `--brand-lightblue` / `--ring` | `#08ABE6` | "N·U", focus ring, decoration | black only |
+| `--brand-red` / `--destructive` | `#E8262C` | warnings, delete, markers | black (5.0:1); **never small red text on white** (4.43:1) |
+| `--brand-black` / `--foreground` | `#000000` | text, "Sve", dark tabs | white |
+| `--background` | neutral 96 % | the desk | — |
+| `--card` | white | the paper | — |
+| `--muted-foreground` | `#595959` | secondary text | — (7.0:1 on white) |
 
-**Priority (brief §10):** yellow dominant → blue structure → bright
-blue interaction → red rare. Don't use all four with equal weight on
-one screen.
+Rules: text is black, neutral-600 (`#525252`) or darker, or white on blue/black. Yellow and light blue are never
+text on white. Measured on every screen in S6: 0 texts below WCAG AA (`specs/p6-workspace-redesign/S6_VERIFICATION.md`).
 
-## Surfaces
+Audience colours (DL-P34, `src/lib/planSegments.ts`): Nastavnik = blue, Učenik = yellow, N·U (both) = light blue in
+marks / black in badges.
 
-- `--background` — milky-white page background (warm-neutral, not
-  sterile pure white)
-- `--card` — pure white, for the "raised" neumorphic surface effect
-  against the warmer background
+## 3. Type (DL-P33, self-hosted, OFL)
+- `--font-display` — Manrope Variable: page titles, segment titles, numbers (800 weight).
+- `--font-sans` — Inter Variable: everything else.
+- `--font-mono` — system monospace, only for ASCII drawings of a plan.
+Loaded in `src/main.tsx` from `@fontsource-variable/*` (no requests to Google).
 
-## Depth (brief §13)
+## 4. Surfaces and depth
+- **Sheet** (paper): white, `rounded-md`/`rounded-lg`, shadow `0 1px 0 rgb(221 221 221), 0 18–24px 40–48px rgba(0,0,0,.12–.14)`;
+  pages "under" it are offset, slightly rotated white layers.
+- **Binder tabs**: IDSS colours, vertical at the right edge of a sheet on wide layouts, along the top on narrow ones.
+- **Five-colour edge**: a 6 px strip of the five colours on top of the creation block.
+- **3D cards** in the conversation: a small `rotateY/rotateX` on hover, a coloured edge (blue for the AI, yellow
+  "Vi" badge for the teacher).
+- The legacy `.neu-*` class names are kept and draw the desk style (`src/index.css`).
 
-| Token | Tailwind | Use |
-|---|---|---|
-| `--depth-1` | `shadow-depth-1` | subtle |
-| `--depth-2` | `shadow-depth-2` | light — default `.neu-btn` |
-| `--depth-3` | `shadow-depth-3` | moderate — `.neu-btn` hover |
-| `--depth-4` | `shadow-depth-4` | **deep premium — project default**, `.neu-card` |
-| `--depth-5` | `shadow-depth-5` | maximum — `.neu-card` hover |
+## 5. Layout
+- Full width on tablet and computer; the header has the IDSS logo (left), "IBL Planer" (centre on ≥ 640 px), the
+  navigation Planer / Planovi / Uputstvo and sign-out (right).
+- Planner: conversation zone (320–380 px) on the left, creation block and plan in the centre (phone: one column).
+- Plan workspace (`PlanDisplay`): chooses its layout from its own width (table of contents beside the page from
+  960 px); cards while a plan is created, one continuous document for a saved plan (`asDocument`).
 
-Built from the existing `--neu-light` / `--neu-dark` (and inset
-variants) tokens — unchanged, just given named steps.
+## 6. Motion (E-12)
+Entrance and state changes move (short slide/tilt, 0.3–0.5 s), never fade from invisible; all motion is off under
+"reduce motion". Pages keep a minimum height and the scrollbar space is reserved, so screens do not jump.
 
-## Radius (brief §15)
+## 7. Rendering plan text (`src/lib/planDocxStructure.ts`, one renderer for screen and Word)
+Headings, paragraphs, checkboxes, bullets, numbered labels (I1, K2), real tables from PSI boxes, from
+"a | b | c" rows with "----|----" separators and from space-aligned columns; drawings in monospace without the
+plan's outer box; Markdown leftovers removed; " — " shown as ", " (`src/lib/language/display.ts`).
 
-| Token | Value | Tailwind |
-|---|---|---|
-| `--radius-sm` | 8px | `rounded-sm` |
-| `--radius-md` | 12px | `rounded-md` |
-| `--radius` / `--radius-lg` | 16px (**project default**) | `rounded-lg` |
-| `--radius-xl` | 20px | `rounded-xl` |
-
-## Typography (brief §14)
-
-`Plus Jakarta Sans` — already the project's font (`--font-sans`), no
-change needed. `Inter` and `IBM Plex Mono` remain available as
-fallback/mono where already used.
-
-## Existing neumorphic utility classes (unchanged, now token-backed)
-
-`.neu-card`, `.neu-inset`, `.neu-btn`, `.neu-btn-primary` — all
-pre-existing in this codebase, now reference the named depth tokens
-above instead of duplicated literal shadow values. Behaviour and
-rendered output are unchanged; only the source of the values changed
-(M-11: refactor, not behaviour change).
-
-## Status colours (separate from brand identity)
-
-| Token | Role |
-|---|---|
-| `--status-success` / `--status-success-bg` | "Saved/done" confirmation states — universal UI convention, deliberately kept out of the 5-colour brand palette rather than reusing e.g. bright blue for a meaning it doesn't carry. |
-
-## Rule
-
-**Never hardcode a hex colour, shadow value, or radius pixel value
-inside a component file.** Use a Tailwind class backed by a token
-above, or add a new token here + in `src/index.css` first if
-something is genuinely missing (E-11).
+## 8. Word export
+Every export (plan, conversation) is on the official IDSS memorandum (`src/lib/memorandumDocx.ts`), IDSS blue
+headings, real tables.

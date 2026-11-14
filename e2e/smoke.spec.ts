@@ -22,3 +22,11 @@ test('an unknown address shows the not-found page, not a crash', async ({ page }
   await expect(page.locator('body')).not.toBeEmpty();
   expect(errors).toEqual([]);
 });
+
+test('the user guide opens without signing in and walks through all steps', async ({ page }) => {
+  await page.goto('/uputstvo');
+  await expect(page.getByRole('heading', { name: 'Od prijave do gotove pripreme' })).toBeVisible();
+  await expect(page.locator('section[aria-labelledby$="-naslov"]')).toHaveCount(9);
+  await page.goto('/login');
+  await expect(page.getByRole('link', { name: 'Uputstvo za korištenje' })).toBeVisible();
+});

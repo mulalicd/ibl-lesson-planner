@@ -923,3 +923,16 @@ plan, bez ASCII crtica"):** amendments always used the same renderer as the plan
 also reads the table shape the AI writes inside answers — "|" only BETWEEN columns, rows separated by "----|----" — as
 one real table (header and wrapped cells joined), and list items aligned with spaces as list items. Verified that
 the PSI plan fixtures render exactly as before (v81 164 blocks, v91 470 blocks, no difference).
+
+## DL-P38 — User guide "Uputstvo" (Director, 2026-11-14)
+
+**Decided by:** Director: "dodaj još korisničko uputstvo — prati korisnika kroz ovu aplikaciju"; texts approved
+("uputstvo odobreno", 2026-11-14).
+
+**Decision:** a page `/uputstvo` (`src/pages/GuidePage.tsx`), open also before sign-in, linked in the header
+(Planer · Planovi · Uputstvo) and on the sign-in page. Nine steps in the order of the work, each with a real
+screenshot (`public/uputstvo/*.jpg`, made from the app with test data, no real teacher data), and "Savjeti".
+When a screen changes, its screenshot is renewed with the same script (S6 tooling).
+
+**Rollback:** revert the PR that added it.
+
