@@ -336,3 +336,12 @@ Period: 2026-11-07 … 2026-11-13. Detailed entries follow below the summary; th
   once.
 - Rule: inside multi-item lines use `/* … */` or put the comment on its own line. The A17↔code tie test proved
   its value on its first day.
+
+### 2026-11-14 — Observation: a new check found a real defect on its first run, but the failures are intermittent
+- `language_purity` (eval only) caught Bosnian Tips sub-headings in German plans. The cause was missing de/en
+  labels in Module 3.10 (DL-P25).
+- After the fix, section_tips and the student reflection went to 10/10. Bosnian prose words still appear
+  intermittently: the same lessons failed in one run and passed in the next.
+- Rule: never claim a fix from n=2. Log the offending lines, measure on a larger sample (after the 09:00
+  quota reset), then decide. The check stays out of the teacher's badge until it is stable and the Director
+  approves a label.
