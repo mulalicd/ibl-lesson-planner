@@ -75,3 +75,4 @@ One line per feature, per Commander E-10.
 - [2026-11-14] [FEATURE] P5-2 own favourites (plan_favorites, RLS own rows; old shared star column no longer used) and P5-1b author name on every plan card (plan_authors). Owner SQL applied by the Director.
 - [2026-11-14] [AI] Language layer for German and English plans: copied Bosnian template lines are replaced by their German/English line while the plan streams and when it is shown (DL-P30). Bosnian template: "sistematičan" instead of "sustavan".
 - [2026-11-14] [FEATURE] P5-4 "Prepravi ovaj dio": rewrite one section of a new plan; only that section changes (DL-P31). Wording approved by the Director.
+- [2026-11-14] [AI] L-2 step 1: misspelled fixed headings are corrected to the PSI heading; words with three equal letters are flagged ("Moguća greška u pisanju") (DL-P32).

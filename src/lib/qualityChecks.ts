@@ -35,6 +35,8 @@ export const QUALITY_CHECK_LABELS: Record<string, string> = {
   outcomes_aligned: 'Svaki ishod ima aktivnost, dokaz i kriterij „Mogu …“',
   // DL-P19 (Director 2026-11-13): Bosnian plans in standard Bosnian, Latin script
   bosnian_standard: 'Bosanski jezik', // wording approved by the Director 2026-11-13
+  // DL-P32 (L-2 step 1, approved 2026-11-14): words with the same letter three times in a row
+  spelling_suspect: 'Moguća greška u pisanju',
 };
 
 export function qualityCheckLabel(id: string): string {
@@ -46,7 +48,7 @@ export function buildRepairMessage(failedIds: string[], checks: { id: string; de
   const items = failedIds.map((id) => {
     const detail = checks.find((c) => c.id === id)?.detail;
     // The language check names the exact words, so the AI replaces those and only those.
-    return id === 'bosnian_standard' && detail ? `- ${qualityCheckLabel(id)}: ${detail}` : `- ${qualityCheckLabel(id)}`;
+    return (id === 'bosnian_standard' || id === 'spelling_suspect') && detail ? `- ${qualityCheckLabel(id)}: ${detail}` : `- ${qualityCheckLabel(id)}`;
   }).join('\n');
   return [
     'Molim te ispravi ovaj plan i ponovo ga ispiši u cjelini, u istoj strukturi.',

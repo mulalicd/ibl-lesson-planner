@@ -719,3 +719,19 @@ language layers (DL-P19, DL-P30) apply to the answer. The old quality report is 
 it no longer describes the changed plan. Saved plans are not revised (no silent change of a stored plan).
 
 **Rollback:** revert the PR.
+
+## DL-P32 — L-2 step 1: heading guard and three-equal-letters flag (Director, 2026-11-14)
+
+**Decided by:** Director ("L-2 korak 1"), after the measured proposal `specs/language-quality/L2_PRIJEDLOG.md`.
+
+**Decision:** `src/lib/language/headingGuard.ts`.
+- A complete ALL-CAPS heading line (10+ letters) that differs by one letter (two from 14 letters on) from exactly
+  one heading of the PSI label table (Module 3.10, generated data, M-7) is corrected to that heading, e.g.
+  "TIPPPS & TRICKS" → "TIPPS & TRICKS". A longer or shorter ending (grammar) is never corrected.
+- It runs while the plan streams, when a stored plan is shown and before the server checks, so the checks
+  measure what the teacher sees. It adds about 5 ms per call on a full plan and no AI call.
+- Bosnian and English words with the same letter three times in a row are flagged, never changed: check
+  `spelling_suspect`, label "Moguća greška u pisanju". German is left out ("Schifffahrt" is correct German).
+- The dictionary spell check (L-2 step 2) is not part of this decision.
+
+**Rollback:** revert the PR.

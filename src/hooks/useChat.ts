@@ -7,6 +7,7 @@ import { ValidationEventSchema, MetaEventSchema, type ValidationReportInput } fr
 import { buildRepairMessage } from '@/lib/qualityChecks';
 import { normalizeBosnian } from '@/lib/language/bosnianStandard';
 import { normalizeTemplateLines } from '@/lib/language/templateLines';
+import { fixHeadingTypos } from '@/lib/language/headingGuard';
 import { isPlanText } from '@/lib/planMeta';
 import { buildRevisionRequest, extractRevisedSection, replaceSection, type SectionRef } from '@/lib/sectionRevision';
 
@@ -136,7 +137,8 @@ export function useChat() {
       // the text received so far (milliseconds, no extra AI call); the raw text is never displayed.
       const language = (params ?? lastParamsRef.current)?.language;
       // DL-P30: a German/English answer gets copied Bosnian template lines replaced by their German/English line.
-      const shown = (raw: string) => (language === 'bosnian' ? normalizeBosnian(raw) : normalizeTemplateLines(raw, language));
+      // DL-P32: misspelled fixed headings ("TIPPPS & TRICKS") are corrected to the PSI heading.
+      const shown = (raw: string) => fixHeadingTypos(language === 'bosnian' ? normalizeBosnian(raw) : normalizeTemplateLines(raw, language), language);
 
       while (!streamDone) {
         const { done, value } = await reader.read();
@@ -326,7 +328,7 @@ export function useChat() {
       if (buffer) takeLine(buffer);
 
       // the same language layer as a new plan (DL-P19, DL-P30)
-      const shownAnswer = language === 'bosnian' ? normalizeBosnian(answer) : normalizeTemplateLines(answer, language);
+      const shownAnswer = fixHeadingTypos(language === 'bosnian' ? normalizeBosnian(answer) : normalizeTemplateLines(answer, language), language);
       const revised = extractRevisedSection(shownAnswer, ref.title, ref.stopTitles);
       const newPlan = revised ? replaceSection(msg.content, ref, revised) : null;
       // nothing usable, or no change at all: report it honestly, the plan stays as it was

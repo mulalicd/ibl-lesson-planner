@@ -222,3 +222,381 @@ export const TEMPLATE_LINES: readonly (readonly [string, string, string])[] = [
   "Teacher questions after the presentation (no confirming, A4)"
  ]
 ];
+// [Bosnian label, German label, English label] — the label table of Module 3.10 (DL-P32)
+export const LABELS: readonly (readonly [string, string, string])[] = [
+ [
+  "PLANER ZA IBL ČAS",
+  "IBL-UNTERRICHTSPLANER",
+  "IBL LESSON PLANNER"
+ ],
+ [
+  "Škola",
+  "Schule",
+  "School"
+ ],
+ [
+  "Nastavnik/Nastavnica",
+  "Lehrkraft",
+  "Teacher"
+ ],
+ [
+  "Predmet i razred",
+  "Fach und Klasse",
+  "Subject and grade"
+ ],
+ [
+  "Tema",
+  "Thema",
+  "Topic"
+ ],
+ [
+  "Datum",
+  "Datum",
+  "Date"
+ ],
+ [
+  "Trajanje",
+  "Dauer",
+  "Duration"
+ ],
+ [
+  "ZPD nivo",
+  "ZNE-Stufe",
+  "ZPD level"
+ ],
+ [
+  "Kategorija časa",
+  "Stundentyp",
+  "Lesson category"
+ ],
+ [
+  "Mikro čas (do 45 min)",
+  "Mikro-Stunde",
+  "Micro lesson"
+ ],
+ [
+  "Standardni čas (46-90 min)",
+  "Standard-Stunde",
+  "Standard lesson"
+ ],
+ [
+  "Produženi čas (91+ min)",
+  "Erweiterte Stunde",
+  "Extended lesson"
+ ],
+ [
+  "UDICA",
+  "EINSTIEG",
+  "HOOK"
+ ],
+ [
+  "ZPD veza",
+  "ZNE-Verbindung",
+  "ZPD connection"
+ ],
+ [
+  "ISTRAŽIVAČKO PITANJE",
+  "FORSCHUNGSFRAGE",
+  "INQUIRY QUESTION"
+ ],
+ [
+  "mora biti otvoreno",
+  "muss offen sein",
+  "must be open-ended"
+ ],
+ [
+  "ISHODI UČENJA",
+  "LERNERGEBNISSE",
+  "LEARNING OUTCOMES"
+ ],
+ [
+  "CILJ UČENJA",
+  "LERNZIEL",
+  "LEARNING GOAL"
+ ],
+ [
+  "KRITERIJI USPJEHA",
+  "ERFOLGSKRITERIEN",
+  "SUCCESS CRITERIA"
+ ],
+ [
+  "Provjera kvalitete",
+  "Qualitätsprüfung",
+  "Quality check"
+ ],
+ [
+  "IQ veza",
+  "FF-Verbindung",
+  "IQ connection"
+ ],
+ [
+  "ISTRAŽIVAČKA FAZA",
+  "RECHERCHEPHASE",
+  "RESEARCH PHASE"
+ ],
+ [
+  "Dokazni materijal",
+  "Beweismaterial",
+  "Evidence materials"
+ ],
+ [
+  "Zašto stvara napetost",
+  "Warum es Spannung erzeugt",
+  "Why it creates tension"
+ ],
+ [
+  "ZA PROVJERU",
+  "ZU PRÜFEN",
+  "TO VERIFY"
+ ],
+ [
+  "Istraživanje (trajanje)",
+  "Recherche (Dauer)",
+  "Investigation (duration)"
+ ],
+ [
+  "VIZUELNI ELEMENTI",
+  "VISUELLE ELEMENTE",
+  "VISUAL ELEMENTS"
+ ],
+ [
+  "Služi istraživačkom pitanju",
+  "Dient der Forschungsfrage",
+  "Serves the inquiry question"
+ ],
+ [
+  "Kako koristiti na ovom času",
+  "Verwendung in dieser Stunde",
+  "How to use in this lesson"
+ ],
+ [
+  "SKELA — VAŠA ULOGA",
+  "GERÜST — IHRE ROLLE",
+  "SCAFFOLDING — YOUR ROLE"
+ ],
+ [
+  "Sinteza i povratak na IP",
+  "Synthese und Rückkehr zur FF",
+  "Synthesis and return to the IQ"
+ ],
+ [
+  "Tip pitanja",
+  "Fragetyp",
+  "Question type"
+ ],
+ [
+  "Mogući odgovori učenika",
+  "Mögliche Schülerantworten",
+  "Possible student responses"
+ ],
+ [
+  "Odgovor nastavnika",
+  "Reaktion der Lehrkraft",
+  "Teacher response"
+ ],
+ [
+  "Kada koristiti",
+  "Wann verwenden",
+  "When to use"
+ ],
+ [
+  "3 ZLATNA PRAVILA",
+  "3 GOLDENE REGELN",
+  "3 GOLDEN RULES"
+ ],
+ [
+  "Ugrizi se za jezik",
+  "Beiß dir auf die Zunge",
+  "Bite your tongue"
+ ],
+ [
+  "Vrati lopticu",
+  "Gib den Ball zurück",
+  "Return the ball"
+ ],
+ [
+  "Podrži sumnju",
+  "Unterstütze den Zweifel",
+  "Support doubt"
+ ],
+ [
+  "DOKAZ UČENJA",
+  "LERNNACHWEIS",
+  "EVIDENCE OF LEARNING"
+ ],
+ [
+  "ne test",
+  "kein Test",
+  "not a test"
+ ],
+ [
+  "Kako odgovara na IP",
+  "Wie es die FF beantwortet",
+  "How it answers the IQ"
+ ],
+ [
+  "Nivo (Bloom)",
+  "Stufe (Bloom)",
+  "Level (Bloom)"
+ ],
+ [
+  "SAMOEVALUACIJA NASTAVNIKA",
+  "SELBSTREFLEXION",
+  "TEACHER SELF-EVALUATION"
+ ],
+ [
+  "Specifično za ovaj čas",
+  "Spezifisch für diese Stunde",
+  "Specific to this lesson"
+ ],
+ [
+  "DODATNI RESURSI",
+  "ZUSÄTZLICHE RESSOURCEN",
+  "ADDITIONAL RESOURCES"
+ ],
+ [
+  "DIFERENCIJACIJA",
+  "DIFFERENZIERUNG",
+  "DIFFERENTIATION"
+ ],
+ [
+  "PODRŠKA",
+  "UNTERSTÜTZUNG",
+  "SUPPORT"
+ ],
+ [
+  "IZAZOV",
+  "ERWEITERUNG",
+  "EXTENSION"
+ ],
+ [
+  "KLJUČNI POJMOVI",
+  "SCHLÜSSELWÖRTER",
+  "KEY VOCABULARY"
+ ],
+ [
+  "Pojam",
+  "Begriff",
+  "Term"
+ ],
+ [
+  "Definicija (prilagođena uzrastu)",
+  "Definition (altersgerecht)",
+  "Definition (age-appropriate)"
+ ],
+ [
+  "IB PROFIL UČENIKA",
+  "IB-LERNERPROFIL",
+  "IB LEARNER PROFILE"
+ ],
+ [
+  "PREPORUKE ZA IZVOĐENJE ČASA",
+  "EMPFEHLUNGEN ZUR DURCHFÜHRUNG",
+  "LESSON DELIVERY RECOMMENDATIONS"
+ ],
+ [
+  "VREMENSKA LINIJA ČASA",
+  "ZEITPLAN",
+  "LESSON TIMELINE"
+ ],
+ [
+  "Uvodni dio",
+  "Einführungsphase",
+  "Introduction"
+ ],
+ [
+  "Središnji dio (Istraživanje)",
+  "Hauptphase (Recherche)",
+  "Main activity (Investigation)"
+ ],
+ [
+  "Ukupno",
+  "Gesamt",
+  "Total"
+ ],
+ [
+  "ZPD SAVJET",
+  "ZNE-TIPP",
+  "ZPD TIP"
+ ],
+ [
+  "ČESTE ZABLUDE",
+  "HÄUFIGE FEHLVORSTELLUNGEN",
+  "COMMON MISCONCEPTIONS"
+ ],
+ [
+  "UPORIŠTE U STVARNOM ŽIVOTU",
+  "BEZUG ZUM ALLTAG",
+  "REAL-LIFE CONNECTIONS"
+ ],
+ [
+  "SAVJETI I TRIKOVI ZA NASTAVNIKE",
+  "TIPPS & TRICKS FÜR LEHRKRÄFTE",
+  "TIPS & TRICKS FOR TEACHERS"
+ ],
+ [
+  "PRIPREMA (prije časa)",
+  "VORBEREITUNG (vor der Stunde)",
+  "PREPARATION (before the lesson)"
+ ],
+ [
+  "IZVOĐENJE (tokom časa)",
+  "DURCHFÜHRUNG (in der Stunde)",
+  "DURING THE LESSON"
+ ],
+ [
+  "NAKON ČASA",
+  "NACH DER STUNDE",
+  "AFTER THE LESSON"
+ ],
+ [
+  "MATERIJALI ZA ČAS",
+  "MATERIALIEN FÜR DIE STUNDE",
+  "MATERIALS FOR THE LESSON"
+ ],
+ [
+  "TOK ČASA",
+  "STUNDENVERLAUF",
+  "LESSON FLOW"
+ ],
+ [
+  "Oblik rada",
+  "Sozialform",
+  "Grouping"
+ ],
+ [
+  "Učenici rade / Nastavnik radi",
+  "Schüler:innen / Lehrkraft",
+  "Students do / Teacher does"
+ ],
+ [
+  "Produkt / dokaz",
+  "Produkt / Nachweis",
+  "Product / evidence"
+ ],
+ [
+  "PREDSTAVLJANJE NALAZA",
+  "PRÄSENTATION DER ERGEBNISSE",
+  "PRESENTING FINDINGS"
+ ],
+ [
+  "REFLEKSIJA UČENIKA",
+  "SCHÜLERREFLEXION",
+  "STUDENT REFLECTION"
+ ],
+ [
+  "Priprema / Izvođenje / Nakon časa",
+  "Vorbereitung / Durchführung / Danach",
+  "Preparation / Delivery / After"
+ ],
+ [
+  "IDEJE ZA PRODUŽETAK",
+  "ERWEITERUNGSIDEEN",
+  "EXTENSION IDEAS"
+ ],
+ [
+  "MOGUĆI IZAZOVI I RJEŠENJA",
+  "HERAUSFORDERUNGEN UND LÖSUNGEN",
+  "CHALLENGES AND SOLUTIONS"
+ ]
+];
