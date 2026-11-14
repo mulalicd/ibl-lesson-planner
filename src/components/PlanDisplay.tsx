@@ -1,4 +1,7 @@
 import { useState, useMemo } from 'react';
+import { Loader2, PencilLine } from 'lucide-react';
+import { SECTION_REVISION_TEXT } from '@/lib/constants';
+import type { SectionRef } from '@/lib/sectionRevision';
 import { motion } from 'framer-motion';
 import {
   Copy, Check, BookOpen, Target, Lightbulb, Clock, Users, FlaskConical,
@@ -10,6 +13,10 @@ import { cn } from '@/lib/utils';
 
 interface PlanDisplayProps {
   planText: string;
+  /** P5-4: when given, every section card gets a "Prepravi ovaj dio" button. Resolves when the revision ends. */
+  onReviseSection?: (ref: SectionRef, teacherRequest: string) => Promise<void>;
+  /** P5-4: no new revision while the AI is busy. */
+  reviseDisabled?: boolean;
   planId?: string;
   className?: string;
   compact?: boolean;
@@ -290,8 +297,12 @@ function parsePlan(text: string): ParsedPlan {
   return { headerLines, inquiryQuestion, sections };
 }
 
-export default function PlanDisplay({ planText, planId, className, compact }: PlanDisplayProps) {
+export default function PlanDisplay({ planText, planId, className, compact, onReviseSection, reviseDisabled }: PlanDisplayProps) {
   const [copied, setCopied] = useState(false);
+  // P5-4: which section card has its revision form open / is being revised
+  const [reviseIdx, setReviseIdx] = useState<number | null>(null);
+  const [reviseText, setReviseText] = useState('');
+  const [revisingIdx, setRevisingIdx] = useState<number | null>(null);
   const [showRaw, setShowRaw] = useState(false);
   const parsed = useMemo(() => parsePlan(planText), [planText]);
 
@@ -302,6 +313,24 @@ export default function PlanDisplay({ planText, planId, className, compact }: Pl
   }
 
   const hasStructured = parsed.sections.length >= 2;
+
+  function sectionRef(idx: number): SectionRef {
+    const title = parsed.sections[idx].title;
+    const occurrence = parsed.sections.slice(0, idx).filter((s) => s.title === title).length;
+    return { title, nextTitle: parsed.sections[idx + 1]?.title ?? null, occurrence };
+  }
+
+  async function submitRevision(idx: number) {
+    if (!onReviseSection) return;
+    setRevisingIdx(idx);
+    setReviseIdx(null);
+    try {
+      await onReviseSection(sectionRef(idx), reviseText);
+    } finally {
+      setRevisingIdx(null);
+      setReviseText('');
+    }
+  }
 
   return (
     <div className={cn('relative group', className)}>
@@ -414,7 +443,38 @@ export default function PlanDisplay({ planText, planId, className, compact }: Pl
                   <h2 className={cn('font-bold text-sm tracking-tight', section.accentColor)}>
                     {section.title}
                   </h2>
+                  {onReviseSection && (
+                    <button
+                      type="button"
+                      onClick={() => { setReviseIdx(reviseIdx === idx ? null : idx); setReviseText(''); }}
+                      disabled={reviseDisabled || revisingIdx !== null}
+                      className="ml-auto flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-lg neu-btn text-muted-foreground hover:text-primary font-medium disabled:opacity-50"
+                    >
+                      {revisingIdx === idx ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <PencilLine className="w-3.5 h-3.5" />}
+                      {revisingIdx === idx ? SECTION_REVISION_TEXT.WORKING : SECTION_REVISION_TEXT.BUTTON}
+                    </button>
+                  )}
                 </div>
+                {onReviseSection && reviseIdx === idx && (
+                  <form
+                    className="px-5 pt-3 flex flex-col sm:flex-row gap-2"
+                    onSubmit={(e) => { e.preventDefault(); void submitRevision(idx); }}
+                  >
+                    <input
+                      autoFocus
+                      value={reviseText}
+                      onChange={(e) => setReviseText(e.target.value)}
+                      maxLength={500}
+                      placeholder={SECTION_REVISION_TEXT.PLACEHOLDER}
+                      aria-label={SECTION_REVISION_TEXT.PLACEHOLDER}
+                      className="flex-1 text-sm px-3 py-2 rounded-lg neu-inset bg-transparent outline-none"
+                    />
+                    <div className="flex gap-2">
+                      <button type="submit" className="text-xs px-3 py-2 rounded-lg neu-btn-primary font-semibold">{SECTION_REVISION_TEXT.SUBMIT}</button>
+                      <button type="button" onClick={() => setReviseIdx(null)} className="text-xs px-3 py-2 rounded-lg neu-btn text-muted-foreground">{SECTION_REVISION_TEXT.CANCEL}</button>
+                    </div>
+                  </form>
+                )}
                 {/* Section body — render full content */}
                 <div className="px-5 py-4 text-sm text-foreground/85 leading-relaxed">
                   <SectionContent content={section.content} />

@@ -376,3 +376,12 @@ Period: 2026-11-07 … 2026-11-13. Detailed entries follow below the summary; th
 ### 2026-11-14 — Environment gotcha: the worker restart removed deno; the deno.land installer is blocked (403)
 - Deno tests could not run locally after the restart. The CI workflow (ci.yml, on pull_request) runs them,
   so the PR check is the evidence. Say so in the report instead of claiming a local run.
+
+### 2026-11-14 — Environment gotcha: the npm package dictionary-bs@1.0.2 is broken
+- Its index.aff is an HTML page (a saved web page of the LibreOffice repository), and index.dic is ISO-8859-2.
+  Every word with č/ć/š/ž/đ was "unknown". Measure a dependency on real data before proposing it.
+  Details and numbers: specs/language-quality/L2_PRIJEDLOG.md.
+
+### 2026-11-14 — Render check: framer-motion server render starts cards at opacity 0
+- A static render of PlanDisplay (renderToString + built CSS) showed an empty page. The cards are animated in
+  from opacity 0. For a static visual check, override the inline opacity/transform in the check page only.

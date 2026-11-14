@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Send, StopCircle, RotateCcw, Lightbulb, ChevronRight, Save, CheckCircle2 } from 'lucide-react';
 import { useChat } from '@/hooks/useChat';
 import { cn } from '@/lib/utils';
-import { MODE_C_SUGGESTIONS, PSI_VERSION_LABEL, deriveTier } from '@/lib/constants';
+import { MODE_C_SUGGESTIONS, PSI_VERSION_LABEL, SECTION_REVISION_TEXT, deriveTier } from '@/lib/constants';
 import PlanDisplay from './PlanDisplay';
 import DocxExportButton from './DocxExportButton';
 import ConversationExportButton from './ConversationExportButton';
@@ -218,7 +218,17 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
               )}>
                 {msg.isPlan ? (
                   <div className="space-y-4">
-                    <PlanDisplay planText={msg.content} planId={msg.plan_id} />
+                    <PlanDisplay
+                      planText={msg.content}
+                      planId={msg.plan_id}
+                      // P5-4: only before the plan is saved (a saved plan is not changed behind the teacher's back)
+                      onReviseSection={savedPlanIds.has(msg.id) ? undefined : async (ref, request) => {
+                        const result = await chat.reviseSection(msg.id, ref, request);
+                        if (result === 'ok') toast.success(SECTION_REVISION_TEXT.DONE);
+                        else toast.error(SECTION_REVISION_TEXT.FAILED);
+                      }}
+                      reviseDisabled={chat.isLoading}
+                    />
                     {msg.validation && (
                       <QualityBadge report={msg.validation} onRepair={chat.repairPlan} disabled={chat.isLoading} />
                     )}
