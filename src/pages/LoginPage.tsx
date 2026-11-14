@@ -5,7 +5,7 @@
  * Uses only the five IDSS brand tokens (CONSTITUTION rule 6).
  */
 import { useState, type FormEvent } from 'react';
-import { Navigate, useLocation, useSearchParams } from 'react-router-dom';
+import { Link, Navigate, useLocation, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { SignInEmailSchema } from '@/lib/validation/schemas';
@@ -144,6 +144,10 @@ export default function LoginPage() {
                 </button>
               </form>
             )}
+            {/* the user guide, readable before signing in (Director 2026-11-14) */}
+            <p className="mt-6 text-center text-sm">
+              <Link to="/uputstvo" className="font-semibold text-primary hover:underline">Uputstvo za korištenje</Link>
+            </p>
           </div>
         </div>
       </div>

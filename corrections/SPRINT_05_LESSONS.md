@@ -567,3 +567,14 @@ Period: 2026-11-07 … 2026-11-14. Detailed entries follow below the summary; th
   the opened page's files.
 - Rule: every performance change ships with a before/after table; a change that wins one metric and loses another
   is not done.
+
+### 2026-11-14 — Observation (S6): a mock without CORS headers lies
+- Guide screenshots showed "0 planova ukupno" next to four plans. Cause: the test mock did not expose the
+  `content-range` header to the browser (CORS), so the count was unreadable; production Supabase exposes it.
+- Rule: a mock for a cross-origin API must send the same CORS exposure headers as the real one, or a screenshot
+  shows a bug that does not exist (or hides one that does).
+
+### 2026-11-14 — Gotcha (S6): environment allowed the host, the session's permission classifier did not
+- Firefox/WebKit downloads were blocked by the network policy; after the Director approved the hosts, the
+  download command was refused by the session's auto-mode permission check. Not worked around.
+- Rule: cross-browser proof beyond Chromium goes to the Director's devices unless the permission is granted.

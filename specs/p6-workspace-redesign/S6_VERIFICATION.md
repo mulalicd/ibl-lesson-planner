@@ -39,3 +39,30 @@ removed (the measurement caught it).
 ## Functional non-regression
 vitest 133/133; Playwright smoke 3/3 on the production build; Deno check, Deno tests 43/43 and the Edge Function
 e2e 13/13 (CI steps, also run locally); every page opened on the production build with console 0 errors.
+
+## Acceptance criteria of SPEC.md — status with evidence
+Legend: ✅ met (evidence) · ⏳ waits for the Director · ↺ met in an adapted form approved by the Director.
+
+| Criterion | Status | Evidence |
+|---|---|---|
+| Parameters and AI generation as before (same requests, prompts, PSI) | ✅ | wizard sends the same request (`handleWizardGenerate` unchanged); Edge Function untouched in P6; Deno tests 43/43, e2e 13/13 |
+| Every segment shown, no loss of content | ✅ | `p5-section-revision-display.test.tsx` (character signature on the real v9.1 plan); `p6-segments.test.ts` (every line in exactly one segment) |
+| Segment names and order are the plan's own | ✅ | `planSegments.ts` builds navigation from the plan; test "lists every segment … in its order" |
+| Every feature, route, action still works | ✅ / ⏳ | vitest 133/133, smoke 3/3, all pages console 0 errors; **Director**: one production check per action (list in the release message) |
+| No fake states | ✅ | `CreationSteps` / `CreationPanel` show only real states (comment + review) |
+| Three zones, central zone widest, navigation and panel | ↺ | Director's layout of 2026-11-14 (conversation left, creation block top, plan centre; notes moved into the top block) |
+| Any segment in ≤ 2 interactions | ✅ | table of contents (1 click on wide screens; "Sadržaj" + 1 click on narrow) |
+| Previous / next in the reading zone | ✅ | buttons under the sheet (cards) |
+| Context: plan data, structure, quality check, AI actions | ↺ | creation block (data, segment marks, quality check, Save/Word); "Prepravi ovaj dio" on each sheet (Director 2026-11-14) |
+| Segments appear while the AI writes | ✅ | streaming workspace + segment marks (S3) |
+| Guided creation shows real steps | ✅ | `CreationSteps`: Parametri → AI piše → Provjera → Sačuvano |
+| Only IDSS colours, one token set, verified automatically | ✅ | CI "Only IDSS colours" |
+| Contrast WCAG AA, measured | ✅ | section "Contrast" above: 0 failures on 20 screens |
+| Typefaces with free licence | ✅ | Manrope + Inter, OFL, self-hosted (DL-P33) |
+| Motion moves, never fades; off under reduce motion | ✅ | `useReducedMotion` in all animated parts; S6 calmer transitions |
+| 3D content, no delay of first content | ✅ | CSS 3D only (no 3D library); FCP improved in S6 |
+| Tablet / phone layouts | ✅ | screenshots at 1024/768/390 px (S2–S6) |
+| Verified in Chrome, Edge, Firefox, Safari, Chrome Android | ✅ / ⏳ | Chromium by the ACA; **Director**: Firefox, Safari (macOS/iOS), Chrome Android |
+| Performance not worse than before | ✅ | section "Performance" above |
+| Released in stages with rollback | ✅ | PRs #39–#50, each revertible |
+| Every user-facing text approved | ⏳ | the user guide texts (`src/pages/GuidePage.tsx`) await the Director's approval |

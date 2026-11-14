@@ -9,7 +9,7 @@ import type { Plugin } from 'vite';
  * (<link rel="modulepreload">, chosen by the address). Only file names of this build are written into the page.
  */
 function preloadOpenedPage(): Plugin {
-  const routes: [string, string][] = [['/chat', 'ChatPage'], ['/dashboard', 'DashboardPage'], ['/plan/', 'PlanPage'], ['/login', 'LoginPage']];
+  const routes: [string, string][] = [['/chat', 'ChatPage'], ['/dashboard', 'DashboardPage'], ['/plan/', 'PlanPage'], ['/login', 'LoginPage'], ['/uputstvo', 'GuidePage']];
   return {
     name: 'ibl-preload-opened-page',
     apply: 'build',

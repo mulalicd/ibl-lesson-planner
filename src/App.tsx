@@ -12,6 +12,7 @@ const DashboardPage = lazy(() => import("./pages/DashboardPage"));
 const PlanPage = lazy(() => import("./pages/PlanPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
+const GuidePage = lazy(() => import("./pages/GuidePage"));
 import RequireAuth from "./components/RequireAuth";
 import AuthProvider from "./components/AuthProvider";
 
@@ -28,6 +29,8 @@ const App = () => (
           <Suspense fallback={<div className="min-h-screen bg-background" />}>
           <Routes>
             <Route path="/login" element={<LoginPage />} />
+            {/* the user guide is open to everyone: the sign-in step can be read before signing in */}
+            <Route path="/uputstvo" element={<GuidePage />} />
             <Route path="/" element={<RequireAuth><Index /></RequireAuth>} />
             <Route path="/chat" element={<RequireAuth><ChatPage /></RequireAuth>} />
             <Route path="/dashboard" element={<RequireAuth><DashboardPage /></RequireAuth>} />

@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { PSI_VERSION_LABEL } from '@/lib/constants';
 import { motion } from 'framer-motion';
-import { MessageSquare, LayoutGrid, Sparkles, LogOut } from 'lucide-react';
+import { MessageSquare, LayoutGrid, Sparkles, LogOut, BookOpen } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
 
@@ -12,6 +12,7 @@ export default function AppHeader() {
   const navItems = [
     { path: '/chat', icon: MessageSquare, label: 'Planer' },
     { path: '/dashboard', icon: LayoutGrid, label: 'Planovi' },
+    { path: '/uputstvo', icon: BookOpen, label: 'Uputstvo' },
   ];
 
   return (
@@ -21,11 +22,11 @@ export default function AppHeader() {
       <div className="relative flex h-full items-center justify-between gap-3 px-3 md:px-6">
         {/* Official IDSS logo (Director-supplied, 2026-11-06), served locally from /public/brand. */}
         <Link to="/chat" className="flex flex-shrink-0 items-center" aria-label="IBL Planer — početna">
-          <img src="/brand/idss-logo.png" alt="Internationale Deutsche Schule Sarajevo" width={1460} height={443} className="h-8 w-auto sm:h-9" />
+          <img src="/brand/idss-logo.png" alt="Internationale Deutsche Schule Sarajevo" width={1460} height={443} className="h-7 w-auto sm:h-9" />
         </Link>
 
         <span aria-hidden="true"
-          className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap font-display text-lg font-extrabold tracking-tight text-black sm:text-2xl lg:text-3xl">
+          className="pointer-events-none min-w-0 flex-1 truncate text-center font-display text-base font-extrabold tracking-tight text-black sm:absolute sm:left-1/2 sm:top-1/2 sm:flex-none sm:-translate-x-1/2 sm:-translate-y-1/2 sm:overflow-visible sm:whitespace-nowrap sm:text-2xl lg:text-3xl">
           IBL Planer
         </span>
 
@@ -39,7 +40,7 @@ export default function AppHeader() {
                 to={item.path}
                 aria-current={active ? 'page' : undefined}
                 className={cn(
-                  'relative flex items-center gap-2 px-3 text-sm font-semibold transition-colors lg:px-4',
+                  'relative flex items-center gap-2 px-2 text-sm font-semibold transition-colors sm:px-3 lg:px-4',
                   active ? 'text-primary' : 'text-neutral-600 hover:text-black',
                 )}
               >
