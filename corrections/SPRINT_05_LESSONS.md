@@ -559,3 +559,11 @@ Period: 2026-11-07 … 2026-11-14. Detailed entries follow below the summary; th
   knew only tables whose rows start with "|" (the PSI box style), so the rubric fell apart into mono lines.
 - Fix: one more table shape in the shared renderer (screen + Word), checked against the real plans for no change.
 - Rule: test the renderer on the AI's FREE-FORM answers (chat mode), not only on PSI plans — they use other shapes.
+
+### 2026-11-14 — Observation (S6): measure a bundle split, do not assume it
+- Splitting framer-motion into its own chunk made rolldown place shared helpers there, so every page (also sign-in)
+  loaded it; and lazy pages first made the plan page's LCP ~150 ms worse (a second round trip).
+- Caught only because before/after were measured interleaved (E-15). Fixed: no motion chunk; index.html preloads
+  the opened page's files.
+- Rule: every performance change ships with a before/after table; a change that wins one metric and loses another
+  is not done.

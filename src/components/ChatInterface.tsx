@@ -454,7 +454,7 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
         <ConversationExportButton messages={chat.messages} planTopic={lesson?.topic} />
       </div>
       <PrivacyNotice className="mt-3" />
-      <p className="mt-2 text-[11px] font-medium tracking-wide text-neutral-500">
+      <p className="mt-2 text-[11px] font-medium tracking-wide text-neutral-600">
         IBL Planer v2.0 · {PSI_VERSION_LABEL} · IDSS Sarajevo
       </p>
     </div>
@@ -582,8 +582,8 @@ function formatAIMessage(text: string): string {
     .replace(/__(.+?)__/g, '<strong>$1</strong>')
     .replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>')
     .replace(/`(.+?)`/g, '<span class="inline-code">$1</span>')
-    .replace(/^(\d+)\.\s+(.+)$/gm, '<div class="flex items-start gap-2 py-0.5"><span class="text-primary/50 font-semibold text-xs mt-0.5 w-5 text-right flex-shrink-0">$1.</span><span>$2</span></div>')
-    .replace(/^[\-•·▸►→]\s+(.+)$/gm, '<div class="flex items-start gap-2 py-0.5"><span class="text-primary/60 mt-0.5 flex-shrink-0">•</span><span>$1</span></div>')
+    .replace(/^(\d+)\.\s+(.+)$/gm, '<div class="flex items-start gap-2 py-0.5"><span class="text-primary font-semibold text-xs mt-0.5 w-5 text-right flex-shrink-0">$1.</span><span>$2</span></div>')
+    .replace(/^[\-•·▸►→]\s+(.+)$/gm, '<div class="flex items-start gap-2 py-0.5"><span class="text-primary mt-0.5 flex-shrink-0">•</span><span>$1</span></div>')
     .replace(/^\|(.+)\|$/gm, (_match, content) => {
       const cells = content.split('|').map((c: string) => c.trim()).filter(Boolean);
       if (cells.length < 2) return '';

@@ -90,3 +90,4 @@ One line per feature, per Commander E-10.
 - [2026-11-14] [FEATURE] Conversations about a saved plan kept with the plan, shown on the plan page; "Ugradi u plan" for the plan's author or the admin (DL-P37; owner script 2026-11-14_p6-plan-conversations).
 - [2026-11-14] [FIX] A page opened before a release reloads once instead of failing ("Failed to fetch dynamically imported module", e.g. Word); /assets/* no longer rewritten to index.html.
 - [2026-11-14] [DESIGN] Amendments and AI answers: "a | b | c" tables with "----|----" row lines become real tables; aligned list items stay list items (screen and Word) (DL-P37).
+- [2026-11-14] [PERF] P6 S6: pages load on demand, React/Supabase cached separately, opened page preloaded — sign-in FCP 2072→1532 ms, plan LCP 2660→2452 ms; [A11Y] three texts below WCAG AA fixed (0 failures on 20 screens).

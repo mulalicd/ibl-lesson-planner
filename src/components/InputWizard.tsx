@@ -143,7 +143,7 @@ export default function InputWizard({ onGenerate, isLoading, onSwitchToChat }: I
               <button key={h.label} type="button" onClick={() => go(h.step)} disabled={!reachable(h.step)}
                 className="flex w-full items-baseline justify-between gap-3 border-b border-neutral-100 py-2 text-left last:border-0 disabled:cursor-default">
                 <dt className="text-xs font-semibold text-neutral-600">{h.label}</dt>
-                <dd className={cn('truncate text-sm font-semibold', h.value ? 'text-black' : 'text-neutral-400')}>{h.value || '—'}</dd>
+                <dd className={cn('truncate text-sm font-semibold', h.value ? 'text-black' : 'text-neutral-600')}>{h.value || '—'}</dd>
               </button>
             ))}
           </dl>

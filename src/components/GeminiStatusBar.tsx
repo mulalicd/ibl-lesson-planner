@@ -33,7 +33,7 @@ export default function GeminiStatusBar({
           <Cpu className="w-3 h-3" /> AI #{keyIndex + 1}
         </span>
       )}
-      <span className="text-[10px] text-muted-foreground/40 font-semibold">{PSI_VERSION_LABEL}</span>
+      <span className="text-[10px] text-neutral-600 font-semibold">{PSI_VERSION_LABEL}</span>
     </div>
   );
 }
