@@ -273,6 +273,13 @@ for (const g of inputs) {
         .filter((l: string) => l.length > 4 && l.length < 70 && l === l.toUpperCase() && /\p{Lu}{4}/u.test(l));
       console.log(`     headings:\n${heads.slice(0, 60).map((l: string) => "       " + l).join("\n")}`);
     }
+    if (report.failed.includes("language_purity")) {
+      // the lines that carry the Bosnian words (before the A14 footer), to tell template leaks from prose
+      const body = (r.text as string).split(/Za savjete, pitanja|Maj[ai] Ljubovi[cć]/)[0];
+      const re = /(?<![\p{L}-])(su|na|za|se|od|kako|koji|koja|koje|nije|ili|šta|što|učenici|učenik|učenika|nastavnik|nastavnica|časa|čas|odgovor|pitanje)(?![\p{L}-])/u;
+      const hitLines = body.split("\n").filter((l: string) => re.test(l)).slice(0, 12);
+      console.log(`     language lines:\n${hitLines.map((l: string) => "       " + l.trim().slice(0, 140)).join("\n")}`);
+    }
     if (report.failed.includes("sources_marked_to_verify")) {
       const d = report.checks.find((c) => c.id === "sources_marked_to_verify")?.detail;
       console.log(`     sources detail: ${d}`);
