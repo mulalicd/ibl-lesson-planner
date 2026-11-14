@@ -1,16 +1,18 @@
 import { useState } from 'react';
-import { PSI_VERSION_LABEL } from '@/lib/constants';
 import { motion } from 'framer-motion';
 import { FileDown, Loader2, CheckCircle2, XCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { ChatMessage } from '@/lib/types';
+import memorandumUrl from '@/assets/memorandum/IDSS_memorandum_nastavnici.docx?url';
 
 interface ConversationExportButtonProps {
   messages: ChatMessage[];
+  /** The plan the conversation is about, named in the document. */
+  planTopic?: string | null;
   className?: string;
 }
 
-export default function ConversationExportButton({ messages, className }: ConversationExportButtonProps) {
+export default function ConversationExportButton({ messages, planTopic, className }: ConversationExportButtonProps) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
   async function handleExport() {
@@ -18,121 +20,12 @@ export default function ConversationExportButton({ messages, className }: Conver
     setStatus('loading');
 
     try {
-      const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, BorderStyle } = await import('docx');
-
-      const children: InstanceType<typeof Paragraph>[] = [];
-
-      // Title
-      children.push(
-        new Paragraph({
-          children: [new TextRun({ text: 'IBL Planer — Zapis razgovora', bold: true, size: 32, font: 'Arial', color: '6C63FF' })],
-          heading: HeadingLevel.HEADING_1,
-          alignment: AlignmentType.CENTER,
-          spacing: { after: 200 },
-        }),
-        new Paragraph({
-          children: [new TextRun({ text: `IDSS Sarajevo · Datum: ${new Date().toLocaleDateString('bs-BA')}`, size: 20, font: 'Arial', color: '888888' })],
-          alignment: AlignmentType.CENTER,
-          spacing: { after: 400 },
-        }),
-        new Paragraph({
-          border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: 'E0E0E0', space: 1 } },
-          spacing: { after: 300 },
-          children: [],
-        })
-      );
-
-      // Messages
-      for (const msg of messages) {
-        if (msg.id === 'welcome') continue;
-
-        const isUser = msg.role === 'user';
-        const label = isUser ? '👤 KORISNIK' : '🤖 AI ASISTENT';
-        const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString('bs-BA', { hour: '2-digit', minute: '2-digit' }) : '';
-
-        children.push(
-          new Paragraph({
-            children: [
-              new TextRun({ text: label, bold: true, size: 22, font: 'Arial', color: isUser ? '6C63FF' : '4CAF93' }),
-              new TextRun({ text: `  ${time}`, size: 18, font: 'Arial', color: 'AAAAAA' }),
-            ],
-            spacing: { before: 240, after: 80 },
-          })
-        );
-
-        // Clean content - remove markdown/decoration characters
-        const cleanContent = msg.content
-          .replace(/[═╔║╚╗╝╟╠╣╬┌┐└┘├┤┬┴┼]/g, '')
-          .replace(/={4,}/g, '')
-          .replace(/-{4,}/g, '')
-          .replace(/\|/g, '');
-
-        const contentLines = cleanContent.split('\n');
-        for (const line of contentLines) {
-          const trimmed = line.trim();
-          if (!trimmed) {
-            children.push(new Paragraph({ spacing: { after: 60 }, children: [] }));
-            continue;
-          }
-
-          const isBullet = trimmed.match(/^[•·\-–]\s/);
-          const isNumbered = trimmed.match(/^\d+[\.\)]\s/);
-          const isAllCaps = trimmed === trimmed.toUpperCase() && trimmed.length > 3 && trimmed.length < 60 && /[A-Z]/.test(trimmed);
-
-          if (isAllCaps) {
-            children.push(
-              new Paragraph({
-                children: [new TextRun({ text: trimmed, bold: true, size: 22, font: 'Arial', color: '333333' })],
-                spacing: { before: 160, after: 80 },
-              })
-            );
-          } else {
-            children.push(
-              new Paragraph({
-                children: [new TextRun({
-                  text: (isBullet || isNumbered) ? trimmed : trimmed,
-                  size: 20,
-                  font: 'Arial',
-                  color: '444444',
-                })],
-                spacing: { after: 40 },
-                indent: (isBullet || isNumbered) ? { left: 360 } : undefined,
-              })
-            );
-          }
-        }
-
-        // Separator
-        children.push(
-          new Paragraph({
-            border: { bottom: { style: BorderStyle.SINGLE, size: 1, color: 'F0F0F0', space: 1 } },
-            spacing: { before: 120, after: 120 },
-            children: [],
-          })
-        );
-      }
-
-      // Footer
-      children.push(
-        new Paragraph({
-          children: [new TextRun({ text: `IBL Planer v2.0 · ${PSI_VERSION_LABEL} · IDSS Sarajevo`, size: 18, font: 'Arial', color: 'AAAAAA', italics: true })],
-          alignment: AlignmentType.CENTER,
-          spacing: { before: 400 },
-        })
-      );
-
-      const doc = new Document({
-        sections: [{
-          properties: {
-            page: {
-              margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 },
-            },
-          },
-          children,
-        }],
-      });
-
-      const blob = await Packer.toBlob(doc);
+      // Director 2026-11-14: on the school's memorandum, like the plan (one Word builder, M-7). Loaded on click only.
+      const { buildConversationOnMemorandum } = await import('@/lib/memorandumDocx');
+      const template = await (await fetch(memorandumUrl)).arrayBuffer();
+      const entries = messages.filter((m) => m.id !== 'welcome').map((m) => ({ role: m.role, content: m.content, timestamp: m.timestamp }));
+      const bytes = await buildConversationOnMemorandum(template, entries, planTopic);
+      const blob = new Blob([new Uint8Array(bytes)], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;

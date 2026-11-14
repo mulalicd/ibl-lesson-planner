@@ -42,3 +42,27 @@ describe('lesson plan on the official IDSS memorandum (Director 2026-11-10)', ()
     expect(core).not.toMatch(/Davor|Mulali/);
   });
 });
+
+describe('conversation export on the memorandum (Director 2026-11-14)', () => {
+  it('keeps the memorandum headers and writes the conversation like the plan, IDSS colours only', async () => {
+    const { buildConversationOnMemorandum } = await import('@/lib/memorandumDocx');
+    const entries = [
+      { role: 'user', content: 'Predloži konkretan video za dokazni materijal', timestamp: '2026-11-14T14:56:00Z' },
+      { role: 'model', content: 'PRIJEDLOG VIDEO DOKAZNOG MATERIJALA\n\n| Kriterij | Opis |\n|---|---|\n| Trajanje | 3 min |\n', timestamp: '2026-11-14T14:56:30Z' },
+    ];
+    const out = await JSZip.loadAsync(await buildConversationOnMemorandum(TEMPLATE, entries, 'Geni i okolina'));
+    const orig = await JSZip.loadAsync(ORIGINAL);
+    for (const part of ['word/header1.xml', 'word/footer1.xml', 'word/media/image1.png']) {
+      const a = await orig.file(part)!.async('uint8array');
+      const b = await out.file(part)?.async('uint8array');
+      expect(Buffer.from(b!).equals(Buffer.from(a)), part).toBe(true);
+    }
+    const doc = await out.file('word/document.xml')!.async('string');
+    expect(doc).toContain('Zapis razgovora s AI asistentom');
+    expect(doc).toContain('Pisana priprema: Geni i okolina');
+    expect(doc).toContain('Nastavnik');
+    expect(doc).toContain('AI asistent');
+    expect(doc).toContain('<w:tbl>'); // the AI answer's table is a real table
+    expect(doc).not.toMatch(/6C63FF|4CAF93/i);
+  });
+});

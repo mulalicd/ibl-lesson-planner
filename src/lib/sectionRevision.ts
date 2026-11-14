@@ -68,3 +68,26 @@ export function buildRevisionRequest(title: string, teacherRequest: string, lang
     'Output ONLY the complete revised section, starting with its heading line exactly as it is now. Do not write any other section, introduction or closing text.',
   ].join('\n');
 }
+
+/** "Ugradi u plan" (Director 2026-11-14, DL-P37): the instruction to the AI after a conversation about a saved plan.
+ *  English, like every instruction in the PSI wrapper. */
+export function buildIncorporateRequest(language: string | undefined): string {
+  return [
+    'INCORPORATE THE CONVERSATION: rewrite the COMPLETE lesson plan above so that it includes what was proposed and discussed in this conversation.',
+    'Keep every rule of the system instructions, every section, the order of the sections, the format (plain text, the same boxes and tables) and the minutes, except where the conversation changed them.',
+    `Write in ${LANGUAGE_NAMES[language ?? ''] ?? 'the language of the plan'}.`,
+    'Output ONLY the complete plan, starting with its first heading line and ending with its last section. No introduction, no closing text, no suggested follow-up questions.',
+  ].join('\n');
+}
+
+/** The complete plan from an AI answer: text before the plan's first heading (an introduction) is left out.
+ *  Null when the answer is not a complete plan. */
+export function extractFullPlan(answer: string, isPlan: (text: string) => boolean): string | null {
+  const lines = answer.replace(/\r/g, '').split('\n');
+  const first = lines.findIndex((l) => headingOf(l) !== null);
+  if (first < 0) return null;
+  // keep a box line directly above the first heading
+  const start = first > 0 && DECORATION.test(lines[first - 1]) && lines[first - 1].trim() ? first - 1 : first;
+  const plan = lines.slice(start).join('\n').trim();
+  return isPlan(plan) ? plan : null;
+}

@@ -111,3 +111,22 @@ export const SignInEmailSchema = z
   .refine((email) => email.endsWith(`@${IDSS_EMAIL_DOMAIN}`), {
     message: 'domain',
   });
+
+// ── P6 plan conversations (DL-P37): rows read from the database are checked before use (E-2) ──
+export const ConversationRowSchema = z.object({
+  id: z.string().uuid(),
+  created_at: z.string(),
+  author_id: z.string().uuid().nullable(),
+  plan_text_before: z.string().nullable(),
+});
+export const ConversationMessageRowSchema = z.object({
+  conversation_id: z.string().uuid(),
+  role: z.enum(['user', 'model']),
+  content: z.string(),
+  message_order: z.number().int(),
+  created_at: z.string(),
+});
+export const ConversationAuthorRowSchema = z.object({
+  conversation_id: z.string().uuid(),
+  author: z.string(),
+});

@@ -59,6 +59,9 @@ export type Database = {
           mode: string
           plan_id: string | null
           updated_at: string
+          // P6 (DL-P37), supabase/owner-scripts/2026-11-14_p6-plan-conversations/02_APPLY.sql
+          author_id: string | null
+          plan_text_before: string | null
         }
         Insert: {
           created_at?: string
@@ -67,6 +70,8 @@ export type Database = {
           mode: string
           plan_id?: string | null
           updated_at?: string
+          author_id?: string | null
+          plan_text_before?: string | null
         }
         Update: {
           created_at?: string
@@ -75,6 +80,8 @@ export type Database = {
           mode?: string
           plan_id?: string | null
           updated_at?: string
+          author_id?: string | null
+          plan_text_before?: string | null
         }
         Relationships: [
           {
@@ -171,6 +178,8 @@ export type Database = {
       increment_docx_export: { Args: { p_plan_id: string }; Returns: number }
       // P5-1b, same owner script as plan_favorites
       plan_authors: { Args: { p_plan_ids: string[] }; Returns: { plan_id: string; author: string }[] }
+      // P6 (DL-P37), supabase/owner-scripts/2026-11-14_p6-plan-conversations/02_APPLY.sql
+      conversation_authors: { Args: { p_plan_id: string }; Returns: { conversation_id: string; author: string }[] }
     }
     Enums: {
       [_ in never]: never

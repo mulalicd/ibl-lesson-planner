@@ -507,3 +507,16 @@ Period: 2026-11-07 … 2026-11-14. Detailed entries follow below the summary; th
 ### 2026-11-14 — Gotcha: src/lib/language is shared with the Deno server
 - `bosnianStandard.ts` is imported by the Edge Function validator. A client import (with the "@/" alias) there would
   break the deploy. Client-only display code lives in `display.ts` / `dashes.ts`.
+
+### 2026-11-14 — Director correction: conversation export not on the memorandum
+- "Izvezi razgovor" had its own old Word builder (Arial, purple/green, emoji) and was missed when the plan export
+  moved to the memorandum (2026-11-10). Two builders for one kind of output broke M-7.
+- Fix: one memorandum builder for plan and conversation.
+- Rule: when an output format rule is set ("every export on the memorandum"), search for EVERY place that writes
+  that format (grep for the library, here `docx`), not only the one in front of you.
+
+### 2026-11-14 — Observation: "Razgovor s AI-om" never kept anything
+- The chat about a saved plan lived only in the browser; the tables meant for it existed since before P1 but were
+  closed in P1 and never wired. The Director expected the conversation to stay with the plan.
+- Fix: DL-P37 (owner script with a local rehearsal, 26/26; app saves each exchange; plan page lists them).
+- Rule: when a feature "talks about" a stored object, ask early whether its result must be stored with it.

@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Star, Trash2, Plus, MessageSquare, Loader2 } from 'lucide-react';
 import AppHeader from '@/components/AppHeader';
 import PlanDisplay from '@/components/PlanDisplay';
+import PlanConversations from '@/components/PlanConversations';
 import GeminiStatusBar from '@/components/GeminiStatusBar';
 import DocxExportButton from '@/components/DocxExportButton';
 import { supabase } from '@/integrations/supabase/client';
@@ -158,6 +159,7 @@ export default function PlanPage() {
         </div>
 
         <PlanDisplay planText={plan.plan_text} planId={plan.id} asDocument />
+        <PlanConversations planId={plan.id} planTopic={plan.topic} />
       </main>
     </div>
   );

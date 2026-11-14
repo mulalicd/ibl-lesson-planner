@@ -15,7 +15,7 @@ import { Copy, Check, Code2, BookOpen, ChevronLeft, ChevronRight, ListTree, Penc
 import { cn } from '@/lib/utils';
 import { SECTION_REVISION_TEXT, PSI_VERSION_LABEL } from '@/lib/constants';
 import { groupSubtitle, isGroupHeading, parseSegments, type Audience, type PlanSegment } from '@/lib/planSegments';
-import { structurePlan, type PlanBlock } from '@/lib/planDocxStructure';
+import { joinWrappedLines, structurePlan, type PlanBlock } from '@/lib/planDocxStructure';
 import { showHeading } from '@/lib/language/dashes';
 import type { SectionRef } from '@/lib/sectionRevision';
 
@@ -349,25 +349,6 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
   );
 }
 
-/** Lines of the plan are wrapped at about 78 characters inside its boxes. For reading, a line that continues the
- *  sentence of the line before (no closing punctuation before, a lower-case start, or a hyphen break) joins it into
- *  one paragraph. Only line breaks change (and a hyphen that split a word at a line break). */
-function joinWrapped(blocks: PlanBlock[]): PlanBlock[] {
-  const out: PlanBlock[] = [];
-  for (const b of blocks) {
-    const prev = out[out.length - 1];
-    if (b.type === 'para' && prev?.type === 'para' && !/^(\[[ xX✓✔]\]|[-•–*]\s|\d+[.)]\s|#{1,6}\s)/.test(b.text) && !/^#{1,6}\s/.test(prev.text)) {
-      const p = prev.text.trimEnd();
-      const continues = /-$/.test(p) || /,$/.test(p) || (!/[.:?!“”"]$/.test(p) && /^[\p{Ll}(„"']/u.test(b.text.trimStart()));
-      if (continues) {
-        out[out.length - 1] = { type: 'para', text: /-$/.test(p) ? p.slice(0, -1) + b.text.trimStart() : `${p} ${b.text.trimStart()}` };
-        continue;
-      }
-    }
-    out.push(b);
-  }
-  return out;
-}
 
 /** A drawing that spans several lines is one block; the plan's own box around it ("| … |" on every line) is not
  *  shown, and the common indent is removed. Only the drawing's own characters remain (display only). */
@@ -398,7 +379,7 @@ function Inline({ text }: { text: string }) {
 
 /** The text of one segment: headings, paragraphs (with checkboxes and lists), real tables and drawings. */
 function SegmentBlocks({ blocks: raw }: { blocks: PlanBlock[] }) {
-  const blocks = mergeDrawings(joinWrapped(raw));
+  const blocks = mergeDrawings(joinWrappedLines(raw));
   return (
     <div className="flex flex-col gap-1.5 text-[15px] leading-[1.55] text-neutral-900">
       {blocks.map((b, i) => {
@@ -439,4 +420,10 @@ function SegmentBlocks({ blocks: raw }: { blocks: PlanBlock[] }) {
       })}
     </div>
   );
+}
+
+/** Plan-style text (e.g. an AI answer about a plan) shown exactly like a plan section (same clean-up, M-7). */
+export function PlanText({ text }: { text: string }) {
+  const blocks = useMemo(() => structurePlan(text), [text]);
+  return <SegmentBlocks blocks={blocks} />;
 }

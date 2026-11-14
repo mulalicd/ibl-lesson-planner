@@ -866,3 +866,29 @@ unchanged; the flag and duration emoji are replaced by language codes and block 
 - "Razgovor s AI-om" on a saved plan: the plan now lies on the desk as a document (with Word) beside the conversation,
   so the teacher sees what is being discussed. The conversation itself already worked; only the plan was not shown.
 - Welcome text in the Director's wording.
+- Conversation export ("Izvezi razgovor") is on the school's memorandum, built by the same Word builder as the plan
+  (`memorandumDocx.ts`): title "Zapis razgovora s AI asistentom", the plan's topic and date, "Nastavnik" / "AI asistent"
+  with the time, AI answers with real headings and tables; IDSS colours only (the old export used purple/green
+  and emoji). Wrapped lines are joined in Word as on screen (one rule, `joinWrappedLines`).
+
+## DL-P37 — Conversations about a saved plan are kept with the plan; "Ugradi u plan" (Director, 2026-11-14)
+
+**Decided by:** Director, after "Zašto se nije dodalo na konkretan postojeći plan časa u arhivi?": options chosen
+"Čuvanje + Ugradi" and "Svi prijavljeni".
+
+**Decision:**
+- A conversation with the AI about a saved plan ("Razgovor s AI-om") is saved automatically with that plan, question
+  by question. It uses the two tables that existed before P1 (`conversations`, `conversation_messages`), closed in P1
+  step B and now opened with rules (owner script `supabase/owner-scripts/2026-11-14_p6-plan-conversations`):
+  every signed-in user reads the conversations about a plan that is not deleted (like plans, DL-P09); a teacher
+  writes only their own; the author or the admin deletes; messages cannot be changed; old pre-P1 rows stay hidden.
+- The plan page shows "Razgovori o ovoj pripremi" (author, date, messages, Word on the memorandum).
+- "Ugradi u plan" (author of the plan or admin; the database decides): the AI rewrites the complete plan with what
+  was discussed; the teacher sees the new plan first and chooses "Sačuvaj u postojeći plan" or "Odbaci". The replaced
+  text is kept on the conversation (`plan_text_before`), so a change can be undone by hand.
+- The instruction to the AI (English, like the PSI wrapper): `buildIncorporateRequest` in `src/lib/sectionRevision.ts`.
+
+**Verified locally:** `supabase/tests/run_p6_conversations_rehearsal.sh` — 26/26 checks (preview, apply twice, rights
+matrix, rollback twice with rows kept, apply again).
+
+**Rollback:** `03_ROLLBACK.sql` closes the tables again (rows kept); revert the app PR.

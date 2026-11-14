@@ -108,6 +108,27 @@ export function structurePlan(planText: string): PlanBlock[] {
   return blocks;
 }
 
+
+/** Lines of the plan are wrapped at about 78 characters inside its boxes. For reading, a line that continues the
+ *  sentence of the line before (no closing punctuation before, a lower-case start, or a hyphen break) joins it into
+ *  one paragraph (screen and Word, one rule, M-7). Only line breaks change (and a hyphen that split a word at a line break). */
+export function joinWrappedLines(blocks: PlanBlock[]): PlanBlock[] {
+  const out: PlanBlock[] = [];
+  for (const b of blocks) {
+    const prev = out[out.length - 1];
+    if (b.type === 'para' && prev?.type === 'para' && !/^(\[[ xX✓✔]\]|[-•–*]\s|\d+[.)]\s|#{1,6}\s)/.test(b.text) && !/^#{1,6}\s/.test(prev.text)) {
+      const p = prev.text.trimEnd();
+      const continues = /-$/.test(p) || /,$/.test(p) || (!/[.:?!“”"]$/.test(p) && /^[\p{Ll}(„"']/u.test(b.text.trimStart()));
+      if (continues) {
+        out[out.length - 1] = { type: 'para', text: /-$/.test(p) ? p.slice(0, -1) + b.text.trimStart() : `${p} ${b.text.trimStart()}` };
+        continue;
+      }
+    }
+    out.push(b);
+  }
+  return out;
+}
+
 /** Every non-space character of the plan, in order — used by tests to prove nothing is lost. */
 export function contentSignature(text: string): string {
   return text.replace(/[\s|=\-_─━·*~+]/g, '');

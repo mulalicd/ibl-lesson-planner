@@ -8,18 +8,18 @@ import { supabase } from '@/integrations/supabase/client';
 export default function ChatPage() {
   const [searchParams] = useSearchParams();
   const planId = searchParams.get('plan_id');
-  const [initialPlan, setInitialPlan] = useState<{id: string, text: string} | null>(null);
+  const [initialPlan, setInitialPlan] = useState<{ id: string; text: string; language: string; owner_id: string | null } | null>(null);
 
   useEffect(() => {
     if (planId) {
       supabase
         .from('plans')
-        .select('id, plan_text, subject, grade, topic, language')
+        .select('id, plan_text, subject, grade, topic, language, owner_id')
         .eq('id', planId)
         .single()
         .then(({ data }) => {
           if (data) {
-            setInitialPlan({ id: data.id, text: displayPlanText(data.plan_text, data.language) }); // P5-5
+            setInitialPlan({ id: data.id, text: displayPlanText(data.plan_text, data.language), language: data.language, owner_id: data.owner_id }); // P5-5
           }
         });
     }
