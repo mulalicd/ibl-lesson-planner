@@ -6,6 +6,8 @@
  * section, so the answer is short. Only that section is replaced; every other line stays exactly as it was.
  */
 
+import { AI_LANGUAGE_NAMES } from '@/lib/language/languageNames';
+
 const DECORATION = /^[\s═=─\-*#╔║╚╗╝│|_~+·]*$/;
 
 /** The section title as PlanDisplay shows it (same cleaning), so a click maps back to the plan text. */
@@ -75,7 +77,7 @@ export function replaceSection(planText: string, ref: SectionRef, revised: strin
   return [...lines.slice(0, range.start), ...revised.split('\n'), ...lines.slice(keepFrom)].join('\n');
 }
 
-const LANGUAGE_NAMES: Record<string, string> = { bosnian: 'Bosnian (bosanski)', german: 'German (Deutsch)', english: 'English' };
+const LANGUAGE_NAMES: Record<string, string> = AI_LANGUAGE_NAMES;
 
 /** The instruction to the AI (English, like every instruction in the PSI wrapper). Approved by the Director 2026-11-14 (DL-P31). */
 export function buildRevisionRequest(title: string, teacherRequest: string, language: string | undefined): string {
