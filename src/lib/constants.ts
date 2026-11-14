@@ -59,8 +59,8 @@ export const ERROR_MESSAGES = {
   ALL_KEYS_EXHAUSTED: 'Google AI je trenutno preopterećen. Pokušajte ponovo za 1–2 minute.', // approved by the Director 2026-11-09
 } as const;
 
-/** P5-4 "Prepravi ovaj dio". The button text was approved by the Director 2026-11-14 ("1-4 odobravam");
- *  the other texts are proposed with it and need his approval before they go live. */
+/** P5-4 "Prepravi ovaj dio". All texts approved by the Director 2026-11-14 ("1-4 odobravam" for the button,
+ *  "Odobravam tekstove" for the rest, DL-P31). Do not change without his approval. */
 export const SECTION_REVISION_TEXT = {
   BUTTON:      'Prepravi ovaj dio',
   PLACEHOLDER: 'Šta želite promijeniti? (nije obavezno)',

@@ -69,7 +69,7 @@ export function replaceSection(planText: string, ref: SectionRef, revised: strin
 
 const LANGUAGE_NAMES: Record<string, string> = { bosnian: 'Bosnian (bosanski)', german: 'German (Deutsch)', english: 'English' };
 
-/** The instruction to the AI (English, like every instruction in the PSI wrapper). Needs the Director's approval. */
+/** The instruction to the AI (English, like every instruction in the PSI wrapper). Approved by the Director 2026-11-14 (DL-P31). */
 export function buildRevisionRequest(title: string, teacherRequest: string, language: string | undefined): string {
   const want = teacherRequest.trim()
     ? `The teacher's request: "${teacherRequest.trim()}"`

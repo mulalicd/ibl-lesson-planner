@@ -708,8 +708,8 @@ Croatian). "sustav…" is added to the flagged Bosnian words (standard: sistem /
 ## DL-P31 — P5-4 "Prepravi ovaj dio" (Director, 2026-11-14)
 
 **Decided by:** Director ("1-4 odobravam": the button text "Prepravi ovaj dio"). The instruction to the AI and the
-other short texts (`SECTION_REVISION_TEXT`, `buildRevisionRequest`) are proposed with it and go live only after
-his explicit approval of their wording.
+other short texts (`SECTION_REVISION_TEXT`) and the instruction to the AI (`buildRevisionRequest`) were approved
+the same day ("Odobravam tekstove").
 
 **Decision:** on a new plan, before it is saved, every section card has a "Prepravi ovaj dio" button with an
 optional request field. The AI gets the whole plan as context (mode "chat", one AI request from the teacher's
