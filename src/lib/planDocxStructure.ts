@@ -82,6 +82,49 @@ function alignedTable(lines: string[]): string[][] | null {
   return rows.length >= 2 && full >= 2 ? rows : null;
 }
 
+/** A separator row of a table: "-----|------|---" (dashes, pipes, colons, plus signs). */
+const SEPARATOR = /^[\s|:+=_-]*-{3,}[\s|:+=_-]*$/;
+const pipeCount = (l: string) => (l.match(/\|/g) ?? []).length;
+
+/**
+ * A table drawn with "|" between the columns but not at the line start (Director 2026-11-14: an AI rubric in an
+ * amendment showed as broken lines with dashes). Rows are separated by "----|----" lines when there are any;
+ * otherwise a line whose first cell is empty or starts in lower case continues the row above (a wrapped cell).
+ */
+/** Cells of an inner-pipe row: an empty first cell (a wrapped row) keeps its place. */
+const innerCells = (l: string) => {
+  const parts = l.split('|').map((c) => c.trim());
+  if (parts.length > 1 && parts[parts.length - 1] === '' && l.trim().endsWith('|')) parts.pop();
+  return parts;
+};
+
+function innerPipeTable(lines: string[]): string[][] | null {
+  const width = Math.max(...lines.filter((l) => !SEPARATOR.test(l)).map((l) => innerCells(l).length));
+  if (width < 2) return null;
+  const merge = (group: string[]) => {
+    const row: string[] = Array(width).fill('');
+    for (const l of group) innerCells(l).forEach((c, i) => { row[i] = joinCell(row[i], c); });
+    return row;
+  };
+  const rows: string[][] = [];
+  if (lines.some((l) => SEPARATOR.test(l))) {
+    let group: string[] = [];
+    for (const l of lines) {
+      if (SEPARATOR.test(l)) { if (group.length) rows.push(merge(group)); group = []; } else group.push(l);
+    }
+    if (group.length) rows.push(merge(group));
+  } else {
+    for (const l of lines) {
+      const first = innerCells(l)[0] ?? '';
+      if (rows.length && (!first || !/^[\p{Lu}\p{N}]/u.test(first))) {
+        const prev = rows[rows.length - 1];
+        innerCells(l).forEach((c, i) => { prev[i] = joinCell(prev[i] ?? '', c); });
+      } else rows.push(merge([l]));
+    }
+  }
+  return rows.length >= 2 ? rows : null;
+}
+
 export function structurePlan(planText: string): PlanBlock[] {
   const blocks: PlanBlock[] = [];
   let table: string[][] | null = null;
@@ -102,6 +145,18 @@ export function structurePlan(planText: string): PlanBlock[] {
   const all = planText.replace(/\r/g, '').split('\n');
   for (let idx = 0; idx < all.length; idx++) {
     const line = all[idx].replace(/\s+$/, '');
+    // "a | b | c" rows whose first column is not boxed (a table the AI wrote inside an answer or a section)
+    if (!table && !/^\s*[|│]/.test(line) && pipeCount(line) >= 2 && !DRAWING.test(line)) {
+      let end = idx;
+      while (end + 1 < all.length && all[end + 1].trim() && !DRAWING.test(all[end + 1])
+        && (pipeCount(all[end + 1]) >= 1 || SEPARATOR.test(all[end + 1]))) end++;
+      const rows = end > idx ? innerPipeTable(all.slice(idx, end + 1)) : null;
+      if (rows) {
+        blocks.push({ type: 'table', rows });
+        idx = end;
+        continue;
+      }
+    }
     if (!table && spaceAligned(line)) {
       let end = idx;
       while (end + 1 < all.length && all[end + 1].trim() && !/^\s*[|│[]/.test(all[end + 1]) && !DRAWING.test(all[end + 1])
@@ -145,7 +200,10 @@ export function structurePlan(planText: string): PlanBlock[] {
     const trimmed = text.trim();
     // a heading of the plan's own sections ("UDICA      5 minuta") is a heading too, written with single spaces
     if ((isHeading(trimmed) && !ALIGNED.test(trimmed)) || headingOf(trimmed)) blocks.push({ type: 'heading', text: headingOf(trimmed) ? trimmed.replace(/\s{2,}/g, ' ') : trimmed });
-    else if (ALIGNED.test(trimmed) && KEY_VALUE.test(trimmed) && !DRAWING.test(trimmed)) {
+    // a list item aligned with spaces ("- 5-7 bodova   = Dovoljan (2)") is a list item, not a drawing
+    else if (ALIGNED.test(trimmed) && /^([-•–*]|\d+[.)])\s/.test(trimmed) && !DRAWING.test(trimmed) && !/[|│]/.test(trimmed)) {
+      blocks.push({ type: 'para', text: trimmed.replace(/ {2,}/g, ' ') });
+    } else if (ALIGNED.test(trimmed) && KEY_VALUE.test(trimmed) && !DRAWING.test(trimmed)) {
       // "Ko predstavlja: …   Kome: …" — label/value pairs, not a drawing: one readable line
       blocks.push({ type: 'para', text: trimmed.replace(/: {2,}/g, ': ').replace(/ {3,}/g, '  ·  ') });
     } else if (ALIGNED.test(trimmed)) blocks.push({ type: 'mono', text: text.replace(/^ {2}/, '') });

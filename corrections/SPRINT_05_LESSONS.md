@@ -553,3 +553,9 @@ Period: 2026-11-07 … 2026-11-14. Detailed entries follow below the summary; th
   and Deno read.
 - Rule: before pushing a change to src/lib, run the CI's Deno steps locally (`npx -y deno@2 check|test|run` with the
   exact CI arguments; Deno is now reachable through npx) — not only vitest/tsc.
+
+### 2026-11-14 — Director correction: an amendment showed "----|----" and broken rows in Word
+- The AI wrote its rubric as "a | b | c" with "|" only between columns and "----|----" between rows. The renderer
+  knew only tables whose rows start with "|" (the PSI box style), so the rubric fell apart into mono lines.
+- Fix: one more table shape in the shared renderer (screen + Word), checked against the real plans for no change.
+- Rule: test the renderer on the AI's FREE-FORM answers (chat mode), not only on PSI plans — they use other shapes.
