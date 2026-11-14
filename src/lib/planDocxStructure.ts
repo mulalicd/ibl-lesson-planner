@@ -87,6 +87,11 @@ export function structurePlan(planText: string): PlanBlock[] {
     // single-cell box line "|  text  |" → its text
     const boxed = line.trim().startsWith('|') ? line.trim().replace(/^\|/, '').replace(/\|$/, '') : line;
     const text = boxed.replace(/\s+$/, '');
+    // a rule drawn inside a box ("|------|") is decoration too, never text (Director 2026-11-14)
+    if (/^[\s\-=_─━·*~+]{3,}$/.test(text) && /[-=_─━]{3,}/.test(text)) {
+      if (blocks.length && blocks[blocks.length - 1].type !== 'blank') blocks.push({ type: 'blank' });
+      continue;
+    }
     if (!text.trim()) {
       if (blocks.length && blocks[blocks.length - 1].type !== 'blank') blocks.push({ type: 'blank' });
       continue;

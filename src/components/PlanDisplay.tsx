@@ -14,7 +14,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { Copy, Check, Code2, BookOpen, ChevronLeft, ChevronRight, ListTree, PencilLine, Loader2, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SECTION_REVISION_TEXT, PSI_VERSION_LABEL } from '@/lib/constants';
-import { parseSegments, type Audience, type PlanSegment } from '@/lib/planSegments';
+import { groupSubtitle, isGroupHeading, parseSegments, type Audience, type PlanSegment } from '@/lib/planSegments';
 import { structurePlan, type PlanBlock } from '@/lib/planDocxStructure';
 import type { SectionRef } from '@/lib/sectionRevision';
 
@@ -30,6 +30,9 @@ interface PlanDisplayProps {
   reviseDisabled?: boolean;
   /** P6 S3: the AI is still writing — the last segment is marked as being written, revisions wait. */
   streaming?: boolean;
+  /** A saved plan (Director 2026-11-14): one continuous, professional document instead of one card per segment.
+   *  The table of contents scrolls to a section and follows the reading position. */
+  asDocument?: boolean;
 }
 
 type View = 'all' | 'n' | 'u';
@@ -53,10 +56,11 @@ const VIEW_NOTE: Record<View, string> = {
   u: 'Za učenike: ono što učenici vide, čuju i rade',
 };
 
-const hasText = (s: PlanSegment) => s.body.split('\n').some((l) => /[\p{L}\p{N}]/u.test(l.replace(/[|│=─-]/g, '')));
+/** A segment that is a page of its own (a group heading is only a label). */
+const hasText = (s: PlanSegment) => !isGroupHeading(s);
 const inView = (s: PlanSegment, v: View) => v === 'all' || s.audience === v || s.audience === 'nu';
 
-export default function PlanDisplay({ planText, planId, className, onReviseSection, reviseDisabled, streaming }: PlanDisplayProps) {
+export default function PlanDisplay({ planText, planId, className, onReviseSection, reviseDisabled, streaming, asDocument }: PlanDisplayProps) {
   const segments = useMemo(() => parseSegments(planText), [planText]);
   const [view, setView] = useState<View>('all');
   const [active, setActive] = useState(() => Math.max(0, segments.findIndex(hasText)));
@@ -79,6 +83,23 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
   }, [boxEl]);
   const wide = boxWidth >= 960;
 
+  // Document mode: every section's blocks, section anchors, and the section being read (scroll spy)
+  const allBlocks = useMemo(() => (asDocument ? segments.map((s) => structurePlan(s.body)) : []), [asDocument, segments]);
+  const secId = (i: number) => `${planId ?? 'plan'}-sekcija-${i}`;
+  const [reading, setReading] = useState(0);
+  useEffect(() => {
+    if (!asDocument || raw || typeof IntersectionObserver === 'undefined') return;
+    const els = segments.map((_, i) => window.document.getElementById(secId(i))).filter((e): e is HTMLElement => !!e);
+    const io = new IntersectionObserver((entries) => {
+      const seen = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+      if (seen[0]) setReading(Number((seen[0].target as HTMLElement).dataset.seg));
+    }, { rootMargin: '-90px 0px -65% 0px' });
+    els.forEach((e) => io.observe(e));
+    return () => io.disconnect();
+    // secId depends only on planId
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [asDocument, raw, segments, view, planId]);
+
   // Segments that can be opened as a page in the current view (a group heading without own text is only a label)
   const pages = useMemo(() => segments.map((s, i) => ({ s, i })).filter(({ s }) => hasText(s) && inView(s, view)).map(({ i }) => i), [segments, view]);
   const cur = Math.min(active, segments.length - 1);
@@ -90,6 +111,12 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
   const blocks = useMemo(() => (seg ? structurePlan(seg.body) : []), [seg]);
 
   function open(i: number) {
+    if (asDocument) {
+      setTocOpen(false);
+      setReading(i);
+      window.document.getElementById(secId(i))?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+      return;
+    }
     setActive(i);
     setTocOpen(false);
     setReviseOpen(false);
@@ -153,7 +180,7 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
         if (!hasText(s)) {
           return <div key={i} className="px-2.5 pb-0.5 pt-2 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">{s.title}</div>;
         }
-        const on = i === cur;
+        const on = asDocument ? i === reading : i === cur;
         return (
           <motion.button
             key={i}
@@ -205,7 +232,8 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
               ))}
             </div>
             <div className="relative">
-              <div role="tablist" aria-label="Prikaz po usmjerenju" className={cn('absolute -right-11 top-10 z-10 flex-col gap-1.5', wide ? 'flex' : 'hidden')}>
+              <div className={cn('absolute -right-11 bottom-0 top-10 z-10 w-11', wide ? 'block' : 'hidden')}>
+              <div role="tablist" aria-label="Prikaz po usmjerenju" className="sticky top-24 flex flex-col gap-1.5">
                 {VIEWS.map((v) => (
                   <button key={v.id} type="button" role="tab" aria-selected={view === v.id} onClick={() => setView(v.id)}
                     className={cn('w-11 rounded-r-lg py-4 text-xs font-bold tracking-wide shadow-md transition-transform [writing-mode:vertical-rl]', v.tab, view === v.id ? 'translate-x-2' : 'translate-x-0')}>
@@ -213,6 +241,47 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
                   </button>
                 ))}
               </div>
+              </div>
+              {asDocument ? (
+                <article className={cn('relative rounded-md bg-white px-5 py-8 shadow-[0_1px_0_rgb(221_221_221),0_18px_40px_rgba(0,0,0,0.12)]', wide ? 'sm:px-12 sm:py-12' : 'sm:px-8 sm:py-10')}>
+                  {segments.map((s, i) => {
+                    if (!inView(s, view)) return null;
+                    const blocksOf = allBlocks[i] ?? [];
+                    if (i === 0) {
+                      return (
+                        <header key={i} id={secId(i)} data-seg={i} className="scroll-mt-24 border-b-4 border-black pb-6">
+                          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Internationale Deutsche Schule Sarajevo</p>
+                          <h1 className="mb-4 mt-1 font-display text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">{s.title}</h1>
+                          <SegmentBlocks blocks={blocksOf} />
+                        </header>
+                      );
+                    }
+                    if (isGroupHeading(s)) {
+                      const sub = groupSubtitle(s);
+                      return (
+                        <div key={i} id={secId(i)} data-seg={i} className="mt-14 scroll-mt-24 border-t-4 border-black pt-4">
+                          <h2 className="font-display text-2xl font-extrabold tracking-tight sm:text-[28px]">{s.title}</h2>
+                          {sub && <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-neutral-600">{sub}</p>}
+                        </div>
+                      );
+                    }
+                    const b = AUDIENCE_BADGE[s.audience];
+                    return (
+                      <section key={i} id={secId(i)} data-seg={i} className="mt-10 scroll-mt-24">
+                        <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-neutral-200 pb-2">
+                          <h3 className="font-display text-xl font-extrabold leading-tight tracking-tight sm:text-[22px]">{s.title}</h3>
+                          <span aria-label={b.label} className={cn('rounded px-2 py-0.5 text-[11px] font-bold', b.cls)}>{b.short}</span>
+                        </div>
+                        <SegmentBlocks blocks={blocksOf} />
+                      </section>
+                    );
+                  })}
+                  <footer className="mt-14 flex justify-between border-t border-neutral-200 pt-3 text-xs text-muted-foreground">
+                    <span>{PSI_VERSION_LABEL}</span>
+                    <span>Internationale Deutsche Schule Sarajevo</span>
+                  </footer>
+                </article>
+              ) : (<>
               <motion.article
                 key={`${cur}-${view}`}
                 initial={reduce ? false : { x: 10, rotateY: -2 }}
@@ -256,6 +325,7 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
                   <span className="truncate">{nextIdx !== null ? segments[nextIdx].title : 'Kraj'}</span><ChevronRight className="h-4 w-4 flex-none" />
                 </button>
               </div>
+              </>)}
             </div>
           </div>
 
@@ -285,9 +355,9 @@ function joinWrapped(blocks: PlanBlock[]): PlanBlock[] {
   const out: PlanBlock[] = [];
   for (const b of blocks) {
     const prev = out[out.length - 1];
-    if (b.type === 'para' && prev?.type === 'para' && !/^(\[[ xX✓✔]\]|[-•–]\s|\d+[.)]\s)/.test(b.text)) {
+    if (b.type === 'para' && prev?.type === 'para' && !/^(\[[ xX✓✔]\]|[-•–*]\s|\d+[.)]\s|#{1,6}\s)/.test(b.text) && !/^#{1,6}\s/.test(prev.text)) {
       const p = prev.text.trimEnd();
-      const continues = /-$/.test(p) || (!/[.:?!“”"]$/.test(p) && /^[\p{Ll}(„"']/u.test(b.text.trimStart()));
+      const continues = /-$/.test(p) || /,$/.test(p) || (!/[.:?!“”"]$/.test(p) && /^[\p{Ll}(„"']/u.test(b.text.trimStart()));
       if (continues) {
         out[out.length - 1] = { type: 'para', text: /-$/.test(p) ? p.slice(0, -1) + b.text.trimStart() : `${p} ${b.text.trimStart()}` };
         continue;
@@ -298,22 +368,49 @@ function joinWrapped(blocks: PlanBlock[]): PlanBlock[] {
   return out;
 }
 
+/** A drawing that spans several lines is one block; the plan's own box around it ("| … |" on every line) is not
+ *  shown, and the common indent is removed. Only the drawing's own characters remain (display only). */
+function mergeDrawings(blocks: PlanBlock[]): PlanBlock[] {
+  const out: PlanBlock[] = [];
+  for (const b of blocks) {
+    const prev = out[out.length - 1];
+    if (b.type === 'mono' && prev?.type === 'mono') out[out.length - 1] = { type: 'mono', text: `${prev.text}\n${b.text}` };
+    else out.push(b);
+  }
+  return out.map((b) => {
+    if (b.type !== 'mono') return b;
+    let lines = b.text.split('\n');
+    if (lines.every((l) => /^\s*\|/.test(l) && /\|\s*$/.test(l) && l.trim().length > 1)) {
+      lines = lines.map((l) => l.replace(/^\s*\|/, '').replace(/\|\s*$/, '').replace(/\s+$/, ''));
+    }
+    const indent = Math.min(...lines.filter((l) => l.trim()).map((l) => l.match(/^ */)?.[0].length ?? 0));
+    return { type: 'mono', text: lines.map((l) => l.slice(Number.isFinite(indent) ? indent : 0)).join('\n') };
+  });
+}
+
+/** Display-only clean-up of Markdown the AI sometimes adds (Director 2026-11-14: no leftovers on screen):
+ *  **bold** is shown bold, stray ** and `back-ticks` are not shown. Underscores stay (they are fill-in lines). */
+function Inline({ text }: { text: string }) {
+  const parts = text.split(/(\*\*[^*\n]+\*\*)/g);
+  return <>{parts.map((p, i) => (/^\*\*[^*]+\*\*$/.test(p) ? <strong key={i}>{p.slice(2, -2)}</strong> : p.replace(/\*\*|`/g, '')))}</>;
+}
+
 /** The text of one segment: headings, paragraphs (with checkboxes and lists), real tables and drawings. */
 function SegmentBlocks({ blocks: raw }: { blocks: PlanBlock[] }) {
-  const blocks = joinWrapped(raw);
+  const blocks = mergeDrawings(joinWrapped(raw));
   return (
     <div className="flex flex-col gap-1.5 text-[15px] leading-[1.55] text-neutral-900">
       {blocks.map((b, i) => {
         if (b.type === 'blank') return <div key={i} className="h-0.5" />;
-        if (b.type === 'heading') return <h3 key={i} className="mt-2 font-display text-base font-bold text-black">{b.text}</h3>;
-        if (b.type === 'mono') return <pre key={i} className="overflow-x-auto whitespace-pre rounded bg-neutral-50 px-3 py-1 font-mono text-[12px] leading-relaxed text-neutral-800">{b.text}</pre>;
+        if (b.type === 'heading') return <h3 key={i} className="mt-2 font-display text-base font-bold text-black"><Inline text={b.text} /></h3>;
+        if (b.type === 'mono') return <pre key={i} className="my-1 overflow-x-auto whitespace-pre rounded-md bg-neutral-50 px-4 py-3 font-mono text-[12px] leading-relaxed text-neutral-800 ring-1 ring-neutral-200">{b.text}</pre>;
         if (b.type === 'table') {
           const [head, ...rows] = b.rows;
           return (
             <div key={i} className="overflow-x-auto">
               <table className="w-full border-collapse text-[13.5px] leading-snug">
-                <thead><tr>{head.map((c, k) => <th key={k} className="border-b-2 border-black px-2 py-1.5 text-left align-bottom text-xs font-bold">{c}</th>)}</tr></thead>
-                <tbody>{rows.map((r, k) => <tr key={k}>{r.map((c, m) => <td key={m} className="border-b border-neutral-200 px-2 py-1.5 align-top">{c}</td>)}</tr>)}</tbody>
+                <thead><tr>{head.map((c, k) => <th key={k} className="border-b-2 border-black px-2 py-1.5 text-left align-bottom text-xs font-bold"><Inline text={c} /></th>)}</tr></thead>
+                <tbody>{rows.map((r, k) => <tr key={k}>{r.map((c, m) => <td key={m} className="border-b border-neutral-200 px-2 py-1.5 align-top"><Inline text={c} /></td>)}</tr>)}</tbody>
               </table>
             </div>
           );
@@ -326,13 +423,18 @@ function SegmentBlocks({ blocks: raw }: { blocks: PlanBlock[] }) {
             <div key={i} className="flex items-start gap-2.5">
               <span aria-hidden="true" className={cn('mt-0.5 flex h-[18px] w-[18px] flex-none items-center justify-center rounded border-2 text-[11px]', on ? 'border-primary bg-primary text-white' : 'border-neutral-300 bg-white')}>{on ? '✓' : ''}</span>
               <span className="sr-only">{on ? 'označeno: ' : 'nije označeno: '}</span>
-              <span>{box[2]}</span>
+              <span><Inline text={box[2]} /></span>
             </div>
           );
         }
-        const bullet = t.match(/^[-•–]\s+(.*)$/);
-        if (bullet) return <div key={i} className="flex gap-3"><span aria-hidden="true" className="mt-[9px] h-1.5 w-1.5 flex-none rotate-45 bg-primary" /><span>{bullet[1]}</span></div>;
-        return <p key={i} className="m-0 whitespace-pre-line">{t}</p>;
+        const md = t.match(/^#{1,6}\s+(.*)$/);
+        if (md) return <h3 key={i} className="mt-2 font-display text-base font-bold text-black"><Inline text={md[1]} /></h3>;
+        const bullet = t.match(/^[-•–*]\s+(.*)$/);
+        if (bullet) return <div key={i} className="flex gap-3"><span aria-hidden="true" className="mt-[9px] h-1.5 w-1.5 flex-none rotate-45 bg-primary" /><span><Inline text={bullet[1]} /></span></div>;
+        // numbered items of the plan ("I1 …", "K2 …"): the code as a label, the text beside it
+        const code = t.match(/^([A-ZČĆŠĐŽ]\d{1,2})\s+(\S.*)$/u);
+        if (code) return <div key={i} className="mt-1 flex gap-3"><span className="mt-0.5 h-fit flex-none rounded bg-black px-1.5 py-0.5 text-[11px] font-bold text-white">{code[1]}</span><span><Inline text={code[2]} /></span></div>;
+        return <p key={i} className="m-0 whitespace-pre-line"><Inline text={t} /></p>;
       })}
     </div>
   );

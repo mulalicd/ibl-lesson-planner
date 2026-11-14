@@ -844,3 +844,14 @@ unchanged; the flag and duration emoji are replaced by language codes and block 
 - No jumping screens: smaller, shorter page transitions; a page keeps a minimum height so the navigation buttons
   stay in place; the scrollbar space is always reserved; the plan is not rebuilt when the AI finishes (same key
   while writing and after); the conversation scrolls only when a message is added, not on every streamed word.
+
+**Update 2026-11-14 (DL-P36, rendering quality and the saved plan as a document, Director):**
+- Display clean-up: a rule drawn inside a box ("|-----|") is decoration, never text (also in the Word export, where it
+  was an empty "-----" paragraph); **bold** Markdown is shown bold and stray ** and back-ticks are not shown; "#"
+  headings and "*" bullets are shown as headings and bullets; numbered items ("I1", "K2") get a label; a multi-line
+  drawing is one block without the plan's outer box. The stored plan text is unchanged.
+- A group heading (a heading whose only text is one "a | b | c" line, e.g. "PREPORUKE ZA IZVOĐENJE ČASA") is a label
+  over the sections that follow, never a page of its own, so no section looks empty.
+- A saved plan (plan page) is shown as one continuous document: title block, group dividers, every section in order,
+  the table of contents scrolls to a section and follows the reading position; the Sve / Nastavnik / Učenik tabs
+  still filter. While a plan is being created, one card per section stays.

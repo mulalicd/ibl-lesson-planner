@@ -157,7 +157,7 @@ export default function PlanPage() {
           </div>
         </div>
 
-        <PlanDisplay planText={plan.plan_text} planId={plan.id} />
+        <PlanDisplay planText={plan.plan_text} planId={plan.id} asDocument />
       </main>
     </div>
   );
