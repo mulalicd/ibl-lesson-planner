@@ -641,3 +641,10 @@ so the model copied the Bosnian template.
 
 This is a mechanical application of the approved A17 ("every word in output_language"). No pedagogical
 content changes. It goes live only via a PR that the Director merges.
+
+## DL-P26 — "Ako jeste" (Director, 2026-11-14)
+
+**Decided by:** Director ("Ako jeste").
+
+**Decision:** PSI v9.1, the confirmation line of the input dialogue: "Ako jest, kažite 'Generiši' …" becomes
+"Ako jeste, kažite 'Generiši' …". This is the only occurrence. The v9.0 rollback is untouched.
