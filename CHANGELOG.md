@@ -86,3 +86,4 @@ One line per feature, per Commander E-10.
 - [2026-11-14] [UX] Welcome text replaced by the Director's wording: "Na ovom mjestu kreiramo pisane pripreme nastavnog časa zasnovane na istraživačkom učenju."
 - [2026-11-14] [DESIGN] Sign-in: colour marks next to "IBL Planer" removed (the IDSS logo carries the colours); app name larger.
 - [2026-11-14] [UX] " — " shown as ", "; title uses the plan's corrected topic (also when saved); saved plan visible on the desk in "Razgovor s AI-om" (DL-P36).
+- [2026-11-14] [EXPORT] Conversation export on the IDSS memorandum (same builder as the plan); wrapped lines joined in Word for plan and conversation (DL-P36).

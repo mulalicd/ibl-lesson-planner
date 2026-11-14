@@ -866,3 +866,7 @@ unchanged; the flag and duration emoji are replaced by language codes and block 
 - "Razgovor s AI-om" on a saved plan: the plan now lies on the desk as a document (with Word) beside the conversation,
   so the teacher sees what is being discussed. The conversation itself already worked; only the plan was not shown.
 - Welcome text in the Director's wording.
+- Conversation export ("Izvezi razgovor") is on the school's memorandum, built by the same Word builder as the plan
+  (`memorandumDocx.ts`): title "Zapis razgovora s AI asistentom", the plan's topic and date, "Nastavnik" / "AI asistent"
+  with the time, AI answers with real headings and tables; IDSS colours only (the old export used purple/green
+  and emoji). Wrapped lines are joined in Word as on screen (one rule, `joinWrappedLines`).

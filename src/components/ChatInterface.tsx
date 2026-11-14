@@ -336,7 +336,7 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
         >
           <RotateCcw className="h-4 w-4" />
         </button>
-        <ConversationExportButton messages={chat.messages} />
+        <ConversationExportButton messages={chat.messages} planTopic={lesson?.topic} />
       </div>
       <PrivacyNotice className="mt-3" />
       <p className="mt-2 text-[11px] font-medium tracking-wide text-neutral-500">
