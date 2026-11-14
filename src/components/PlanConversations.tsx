@@ -27,12 +27,12 @@ export default function PlanConversations({ planId, planTopic, canChange, onRest
 
   async function restore(c: PlanConversation) {
     if (!c.planTextBefore) return;
-    if (!confirm('Vratiti plan na tekst od prije ugradnje ovog razgovora? Sadašnji tekst plana biće zamijenjen.')) return;
+    if (!confirm('Vratiti plan na tekst od prije izmjena iz ovog razgovora? Sadašnji tekst plana biće zamijenjen.')) return;
     const result = await restorePlanText(planId, c.id, c.planTextBefore);
     if (result === 'ok') {
       onRestored?.(c.planTextBefore);
       setItems((all) => all.map((x) => (x.id === c.id ? { ...x, replacedPlan: false, planTextBefore: null } : x)));
-      toast.success('Plan je vraćen na tekst od prije ugradnje.');
+      toast.success('Plan je vraćen na tekst od prije izmjena.');
     } else if (result === 'forbidden') {
       toast.error('Samo autor plana ili direktor može mijenjati ovaj plan.');
     } else {
@@ -67,11 +67,11 @@ export default function PlanConversations({ planId, planTopic, canChange, onRest
                     <span className="block text-xs text-neutral-600">{[c.author, when(c.created_at), `${c.messages.length} poruka`].filter(Boolean).join(' · ')}</span>
                   </span>
                 </button>
-                {c.replacedPlan && <span className="rounded bg-brand-yellow px-2 py-0.5 text-[11px] font-bold text-black">Ugrađeno u plan</span>}
+                {c.replacedPlan && <span className="rounded bg-brand-yellow px-2 py-0.5 text-[11px] font-bold text-black">Plan izmijenjen</span>}
                 {c.replacedPlan && c.planTextBefore && canChange && (
                   <button type="button" onClick={() => void restore(c)}
                     className="flex h-9 items-center gap-1.5 rounded-md border border-neutral-300 bg-white px-3 text-xs font-semibold text-black hover:border-primary">
-                    <Undo2 className="h-3.5 w-3.5" /> Vrati plan od prije ugradnje
+                    <Undo2 className="h-3.5 w-3.5" /> Vrati plan od prije izmjena
                   </button>
                 )}
                 <ConversationExportButton messages={asChat} planTopic={planTopic} />

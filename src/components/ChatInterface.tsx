@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { Send, StopCircle, RotateCcw, Lightbulb, Save, CheckCircle2, Wand2, Loader2, X } from 'lucide-react';
+import { Send, StopCircle, RotateCcw, Lightbulb, Save, CheckCircle2, FilePlus2 } from 'lucide-react';
 import { useChat } from '@/hooks/useChat';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { MODE_C_SUGGESTIONS, PSI_VERSION_LABEL, SECTION_REVISION_TEXT, deriveTier } from '@/lib/constants';
-import PlanDisplay from './PlanDisplay';
+import PlanDisplay, { PlanText } from './PlanDisplay';
 import CreationPanel from './CreationPanel';
 import { parseSegments } from '@/lib/planSegments';
 import DocxExportButton from './DocxExportButton';
@@ -22,10 +22,14 @@ import { extractInquiryQuestion, extractPlanMeta } from '@/lib/planMeta';
 import { useAuth } from '@/hooks/useAuth';
 import { canChangePlan, fetchIsAdmin } from '@/lib/planActions';
 import { appendMessages, replacePlanText, startConversation } from '@/lib/planConversations';
+import { addAmendment, amendmentFromAnswer } from '@/lib/planAppendix';
+import { showHeading } from '@/lib/language/dashes';
+import { displayPlanText } from '@/lib/language/display';
+import type { SectionRef } from '@/lib/sectionRevision';
 
 interface ChatInterfaceProps {
   /** A saved plan opened with "Razgovor s AI-om": its language and author decide "Ugradi u plan". */
-  initialPlan?: { id: string; text: string; language?: string | null; owner_id?: string | null } | null;
+  initialPlan?: { id: string; text: string; raw?: string; language?: string | null; owner_id?: string | null } | null;
 }
 
 export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
@@ -42,9 +46,8 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
   const pendingRef = useRef<{ planId: string; userMsgId: string } | null>(null);
   const [savedExchanges, setSavedExchanges] = useState(0);
   const warnedRef = useRef(false); // a failed save is reported once per conversation, not after every answer
-  // "Ugradi u plan": the new plan the AI wrote from the conversation, shown before anything is saved
-  const [proposal, setProposal] = useState<string | null>(null);
-  const [incorporating, setIncorporating] = useState(false);
+  // "Dodaj u plan" (Director 2026-11-14, "Dodaj + Prepravi"): answers already added to the saved plan
+  const [addedIds, setAddedIds] = useState<Set<string>>(new Set());
   const [contextText, setContextText] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -77,25 +80,32 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
     const i = chat.messages.findIndex((m) => m.id === p.userMsgId);
     const answer = i >= 0 ? chat.messages[i + 1] : undefined;
     if (!answer || answer.role !== 'model') return;
-    void (async () => {
-      let conv = convRef.current?.planId === p.planId ? convRef.current : null;
-      if (!conv) {
-        const id = await startConversation(p.planId);
-        if (!id) { if (!warnedRef.current) toast.error('Razgovor nije sačuvan uz plan.'); warnedRef.current = true; return; }
-        conv = { planId: p.planId, id, next: 0 };
-        convRef.current = conv;
-      }
-      const ok = await appendMessages(conv.id, conv.next, [
-        { role: 'user', content: chat.messages[i].content },
-        { role: 'model', content: answer.content },
-      ]);
-      if (!ok) { if (!warnedRef.current) toast.error('Razgovor nije sačuvan uz plan.'); warnedRef.current = true; return; }
-      conv.next += 2;
-      setSavedExchanges((n) => n + 1);
-    })();
+    void saveExchange(p.planId, chat.messages[i].content, answer.content);
     // runs when an answer finishes; the messages are read at that moment
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chat.isLoading]);
+
+  /** The conversation about this saved plan (started on first use). Null when the database refused. */
+  async function ensureConversation(planId: string) {
+    if (convRef.current?.planId === planId) return convRef.current;
+    const id = await startConversation(planId);
+    if (!id) return null;
+    convRef.current = { planId, id, next: 0 };
+    return convRef.current;
+  }
+
+  /** One question and its answer, kept with the plan. A failure is reported once per conversation. */
+  async function saveExchange(planId: string, question: string, answer: string) {
+    const conv = await ensureConversation(planId);
+    const ok = !!conv && await appendMessages(conv.id, conv.next, [{ role: 'user', content: question }, { role: 'model', content: answer }]);
+    if (!ok || !conv) {
+      if (!warnedRef.current) toast.error('Razgovor nije sačuvan uz plan.');
+      warnedRef.current = true;
+      return;
+    }
+    conv.next += 2;
+    setSavedExchanges((n) => n + 1);
+  }
 
   useEffect(() => {
     if (!showWizard) inputRef.current?.focus();
@@ -229,36 +239,60 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
   const shownPlan = streamingMsg || generating ? null : (plans.find((m) => m.id === shownPlanId) ?? plans[plans.length - 1] ?? null);
   // A saved plan opened with "Razgovor s AI-om" (/chat?plan_id=…): it lies on the desk while the teacher talks to the
   // AI about it (Director 2026-11-14: a saved plan can always be discussed further).
+  // contextText is the plan as STORED (amendments are added to it, the original lines stay exactly as they are);
+  // the desk shows it through the display layer
+  const contextRaw = contextText ?? initialPlan?.raw ?? initialPlan?.text ?? '';
   const contextPlan = initialPlan && !generating && !streamingMsg && !shownPlan
-    ? { ...initialPlan, text: contextText ?? initialPlan.text } : null;
-  const canIncorporate = !!contextPlan && savedExchanges > 0 && convRef.current?.planId === contextPlan.id
-    && canChangePlan(contextPlan.owner_id, session?.user?.id, isAdmin);
+    ? { ...initialPlan, text: contextText ? displayPlanText(contextText, initialPlan.language) : initialPlan.text } : null;
+  // "Dodaj u plan" and "Prepravi ovaj dio" on a saved plan: its author or the admin (UI only; the database decides)
+  const canEditContext = !!contextPlan && canChangePlan(contextPlan.owner_id, session?.user?.id, isAdmin);
 
-  async function handleIncorporate() {
-    if (!contextPlan) return;
-    setIncorporating(true);
-    const result = await chat.incorporateConversation(contextPlan.text, contextPlan.language ?? undefined);
-    setIncorporating(false);
-    if (result.ok) setProposal(result.plan);
-    else toast.error('AI nije vratio cijeli plan, pa ništa nije promijenjeno. Pokušajte ponovo.', {
-      description: result.missing.length ? `Nedostaje: ${result.missing.slice(0, 5).join(', ')}${result.missing.length > 5 ? '…' : ''}` : undefined,
-    });
+  /** Writes a change from this conversation to the saved plan (newText = the stored text) and shows it. */
+  async function saveContextChange(newText: string): Promise<boolean> {
+    if (!contextPlan) return false;
+    const conv = await ensureConversation(contextPlan.id);
+    const result = await replacePlanText(contextPlan.id, conv?.id ?? null, contextRaw, newText);
+    if (result === 'ok') {
+      setContextText(newText);
+      chat.setPlanContext(contextPlan.id, displayPlanText(newText, contextPlan.language));
+      return true;
+    }
+    toast.error(result === 'forbidden' ? 'Samo autor plana ili direktor može mijenjati ovaj plan.' : 'Plan nije sačuvan. Pokušajte ponovo.');
+    return false;
   }
 
-  async function handleSaveProposal() {
-    if (!contextPlan || !proposal) return;
-    const result = await replacePlanText(contextPlan.id, convRef.current?.id ?? null, contextPlan.text, proposal);
-    if (result === 'ok') {
-      setContextText(proposal);
-      chat.setPlanContext(contextPlan.id, proposal);
-      setProposal(null);
-      toast.success('Plan je ažuriran prema razgovoru.');
-    } else if (result === 'forbidden') {
-      toast.error('Samo autor plana ili direktor može mijenjati ovaj plan.');
-    } else {
-      toast.error('Plan nije ažuriran. Pokušajte ponovo.');
+  // Director 2026-11-14: "originalni plan ostaje intaktan a u nastavku se lijepi dodatni AI razgovor kao amandman 1, 2".
+  // A saved plan is never rewritten: what the teacher takes from the conversation is added after it, numbered.
+
+  /** "Dodaj u plan": the AI answer, word for word, as the next "AMANDMAN n — …". */
+  async function handleAddToPlan(answerIdx: number) {
+    if (!contextPlan) return;
+    const answer = chat.messages[answerIdx];
+    const question = [...chat.messages.slice(0, answerIdx)].reverse().find((m) => m.role === 'user')?.content ?? '';
+    const amendment = amendmentFromAnswer(answer.content, question);
+    if (!amendment) { toast.error('Ovaj odgovor nema sadržaja za plan.'); return; }
+    const newText = addAmendment(contextRaw, amendment, contextPlan.language);
+    if (await saveContextChange(newText)) {
+      setAddedIds((s0) => new Set(s0).add(answer.id));
+      toast.success('Dodano u plan kao amandman.', { description: showHeading(amendmentTitle(newText)) });
     }
   }
+
+  /** "Prepravi ovaj dio" on a saved plan: the section stays as it is; the AI's new version is added as the next
+   *  amendment ("AMANDMAN n — UDICA 5 minuta, nova verzija"). The request and the new version are kept with the
+   *  conversation too. */
+  async function handleReviseContext(ref: SectionRef, request: string) {
+    if (!contextPlan) return;
+    const revisedPlan = await chat.revisePlanText(contextPlan.text, ref, request, contextPlan.language ?? undefined);
+    const seg = revisedPlan ? parseSegments(revisedPlan)[ref.index] : undefined;
+    const body = seg?.body.trim();
+    if (!revisedPlan || !body) { toast.error(SECTION_REVISION_TEXT.FAILED); return; }
+    const newText = addAmendment(contextRaw, { title: `${ref.title}, ${NEW_VERSION[contextPlan.language ?? ''] ?? NEW_VERSION.bosnian}`, body }, contextPlan.language);
+    if (!(await saveContextChange(newText))) return;
+    toast.success('Nova verzija je dodana u plan kao amandman.', { description: showHeading(amendmentTitle(newText)) });
+    void saveExchange(contextPlan.id, `${SECTION_REVISION_TEXT.BUTTON}: ${ref.title}${request.trim() ? `\n${request.trim()}` : ''}`, body);
+  }
+
   const hasDesk = generating || !!streamingMsg || !!shownPlan || !!contextPlan;
   const deskText = streamingMsg?.content ?? pendingMsg?.content ?? shownPlan?.content ?? contextPlan?.text ?? '';
   // The plan's own subject/topic win over what was typed: the AI corrects a misspelt topic ("fOdozindesa" →
@@ -296,36 +330,18 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
   const desk = hasDesk && (
     <div className="space-y-6">
       <CreationPanel
-        step={contextPlan ? (proposal ? 'check' : 'saved') : shownPlan ? (savedPlanIds.has(shownPlan.id) ? 'saved' : 'check') : 'writing'}
+        step={contextPlan ? 'saved' : shownPlan ? (savedPlanIds.has(shownPlan.id) ? 'saved' : 'check') : 'writing'}
         lesson={lesson}
         planText={deskText}
         writing={!shownPlan && !contextPlan}
-        actions={contextPlan ? (proposal ? (
-          <>
-            <button type="button" onClick={() => void handleSaveProposal()} className="neu-btn-primary flex h-10 items-center gap-2 px-4 text-sm font-semibold">
-              <Save className="h-4 w-4" /> Sačuvaj u postojeći plan
-            </button>
-            <button type="button" onClick={() => setProposal(null)} className="neu-btn flex h-10 items-center gap-2 px-4 text-sm font-semibold text-black">
-              <X className="h-4 w-4" /> Odbaci
-            </button>
-          </>
-        ) : (
-          <>
-            {canIncorporate && (
-              <button type="button" onClick={() => void handleIncorporate()} disabled={incorporating || chat.isLoading}
-                className="neu-btn-primary flex h-10 items-center gap-2 px-4 text-sm font-semibold disabled:opacity-50">
-                {incorporating ? <><Loader2 className="h-4 w-4 animate-spin" /> AI ugrađuje razgovor…</> : <><Wand2 className="h-4 w-4" /> Ugradi u plan</>}
-              </button>
-            )}
-            <DocxExportButton planId={contextPlan.id} planText={contextPlan.text} />
-          </>
-        )) : planActions || undefined}
+        actions={contextPlan ? <DocxExportButton planId={contextPlan.id} planText={contextPlan.text} /> : planActions || undefined}
         quality={shownPlan?.validation ? <QualityBadge report={shownPlan.validation} onRepair={chat.repairPlan} disabled={chat.isLoading} /> : undefined}
       />
       {streamingMsg ? (
         <PlanDisplay key={streamingMsg.id} planText={streamingMsg.content} streaming />
       ) : contextPlan ? (
-        <PlanDisplay key={`${contextPlan.id}-${proposal ? 'novi' : 'sacuvan'}`} planText={proposal ?? contextPlan.text} planId={contextPlan.id} asDocument />
+        <PlanDisplay key={contextPlan.id} planText={contextPlan.text} planId={contextPlan.id}
+          onReviseSection={canEditContext ? handleReviseContext : undefined} reviseDisabled={chat.isLoading} />
       ) : shownPlan ? (
         <PlanDisplay
           key={shownPlan.id}
@@ -359,7 +375,9 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
             </button>
           );
         }
-        return <RailMessage key={msg.id} role={msg.role} content={msg.content} first={idx === 0} />;
+        const canAdd = canEditContext && msg.role === 'model' && idx > 0 && msg.id !== 'welcome';
+        return <RailMessage key={msg.id} role={msg.role} content={msg.content} first={idx === 0}
+          onAdd={canAdd ? () => void handleAddToPlan(idx) : undefined} added={addedIds.has(msg.id)} addDisabled={chat.isLoading} />;
       })}
 
       {chat.isLoading && !generating && !streamingMsg && (
@@ -426,7 +444,7 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
       <div className="mt-2 flex items-center gap-2">
         <button
           type="button"
-          onClick={() => { chat.clearChat(); setShowWizard(true); setSavedPlanIds(new Set()); setShownPlanId(null); lastParamsRef.current = null; convRef.current = null; warnedRef.current = false; setProposal(null); setSavedExchanges(0); }}
+          onClick={() => { chat.clearChat(); setShowWizard(true); setSavedPlanIds(new Set()); setShownPlanId(null); lastParamsRef.current = null; convRef.current = null; warnedRef.current = false; setAddedIds(new Set()); setSavedExchanges(0); }}
           className="neu-btn flex h-9 w-9 shrink-0 items-center justify-center text-neutral-700 transition-colors hover:text-primary"
           title="Novi razgovor"
           aria-label="Novi razgovor"
@@ -469,8 +487,20 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
   );
 }
 
+/** "nova verzija" in the plan's language (title of an amendment made by "Prepravi ovaj dio"). */
+const NEW_VERSION: Record<string, string> = { bosnian: 'nova verzija', german: 'neue Fassung', english: 'new version' };
+
+/** The title of the amendment just added (the plan's last amendment). */
+function amendmentTitle(planText: string): string {
+  return [...parseSegments(planText)].reverse().find((s) => /^(AMANDMAN|ERGÄNZUNG|AMENDMENT) \d+$/.test(s.head))?.title ?? '';
+}
+
 /** A message of the conversation as a sheet on the desk (P6, Director 2026-11-14: "3D AAA" cards in the left zone). */
-function RailMessage({ role, content, first }: { role: string; content: string; first: boolean }) {
+function RailMessage({ role, content, first, onAdd, added, addDisabled }: {
+  role: string; content: string; first: boolean;
+  /** "Dodaj u plan" (saved plan, its author or the admin). */
+  onAdd?: () => void; added?: boolean; addDisabled?: boolean;
+}) {
   const reduce = useReducedMotion();
   if (role === 'user') {
     // The wizard sends "Label: value" lines; show them as an index card, anything else as text.
@@ -515,7 +545,24 @@ function RailMessage({ role, content, first }: { role: string; content: string; 
           <img src={aiAvatarImg} alt="AI Asistent"
             className="float-right mb-2 ml-3 h-12 w-12 rounded-full object-cover shadow-[0_8px_18px_rgba(0,0,0,0.20)] ring-4 ring-white" />
         )}
-        <div className="ai-message-content text-sm leading-relaxed text-black" dangerouslySetInnerHTML={{ __html: formatAIMessage(content) }} />
+        {first ? (
+          <div className="ai-message-content text-sm leading-relaxed text-black" dangerouslySetInnerHTML={{ __html: formatAIMessage(content) }} />
+        ) : (
+          // an answer about a plan is shown like the plan (tables, lists, no leftovers), M-7
+          <div className="text-sm [&_table]:text-[12px]"><PlanText text={content} /></div>
+        )}
+        {(onAdd || added) && (
+          <div className="mt-3 flex justify-end border-t border-neutral-200 pt-3">
+            {added ? (
+              <span className="flex items-center gap-1.5 text-xs font-bold text-primary"><CheckCircle2 className="h-4 w-4" /> Dodano u plan</span>
+            ) : (
+              <button type="button" onClick={onAdd} disabled={addDisabled}
+                className="neu-btn-primary flex h-9 items-center gap-2 px-3 text-xs font-semibold disabled:opacity-50">
+                <FilePlus2 className="h-4 w-4" /> Dodaj u plan
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </motion.article>
   );

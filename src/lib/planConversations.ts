@@ -6,8 +6,8 @@
  * Every signed-in teacher reads the conversations of a plan (like the plan itself, DL-P09); only the author adds to
  * a conversation. Owner script: supabase/owner-scripts/2026-11-14_p6-plan-conversations.
  *
- * "Ugradi u plan" replaces the plan's text (plans rule: author of the plan or admin) and keeps the replaced text on
- * the conversation (`plan_text_before`), so a change can be undone by hand.
+ * "Dodaj u plan" and "Prepravi ovaj dio" change the plan's text (plans rule: author of the plan or admin) and keep the
+ * text from before on the conversation (`plan_text_before`), so the change can be undone with one click.
  */
 import { supabase } from '@/integrations/supabase/client';
 import type { ChangeResult } from '@/lib/planActions';
@@ -25,7 +25,7 @@ export interface PlanConversation {
   created_at: string;
   author: string | null;
   replacedPlan: boolean;
-  /** The plan text that "Ugradi u plan" replaced (to give it back with "Vrati plan od prije ugradnje"). */
+  /** The plan text from before this conversation's changes (given back with "Vrati plan od prije izmjena"). */
   planTextBefore: string | null;
   messages: StoredMessage[];
 }
@@ -97,15 +97,19 @@ export async function fetchPlanConversations(planId: string): Promise<PlanConver
   }
 }
 
-/** "Ugradi u plan": the plan's new text (author of the plan or admin only — the database decides). The replaced text
- *  is kept on the conversation first, so nothing is lost if the plan change then fails or is refused. */
+/** A change to a saved plan from a conversation ("Dodaj u plan", "Prepravi ovaj dio"; author of the plan or admin —
+ *  the database decides). The plan text from BEFORE the conversation's first change is kept on the conversation
+ *  (`plan_text_before`, written only once), so "Vrati plan od prije izmjena" gives back the original. */
 export async function replacePlanText(planId: string, conversationId: string | null, before: string, after: string): Promise<ChangeResult> {
-  // second barrier: a plan that lost a section is never written over the teacher's plan
+  // a change from a conversation never removes a section of the teacher's plan
   if (missingSections(before, after).length) return 'error';
   try {
+    let markedNow = false;
     if (conversationId) {
-      const { error } = await supabase.from('conversations').update({ plan_text_before: before }).eq('id', conversationId);
+      const { data: marked, error } = await supabase.from('conversations').update({ plan_text_before: before })
+        .eq('id', conversationId).is('plan_text_before', null).select('id');
       if (error) console.error('keeping the old plan text failed:', error.message);
+      markedNow = !!marked && marked.length > 0;
     }
     const { data, error } = await supabase
       .from('plans')
@@ -114,8 +118,8 @@ export async function replacePlanText(planId: string, conversationId: string | n
       .select('id');
     const result: ChangeResult = error ? 'error' : data && data.length > 0 ? 'ok' : 'forbidden';
     if (error) console.error('plan text update failed:', error.message);
-    // the plan did not change: the conversation must not say it replaced the plan
-    if (result !== 'ok' && conversationId) await supabase.from('conversations').update({ plan_text_before: null }).eq('id', conversationId);
+    // the plan did not change: the conversation must not say it changed the plan
+    if (result !== 'ok' && markedNow && conversationId) await supabase.from('conversations').update({ plan_text_before: null }).eq('id', conversationId);
     return result;
   } catch (e) {
     console.error('plan text update failed:', e);
@@ -123,7 +127,7 @@ export async function replacePlanText(planId: string, conversationId: string | n
   }
 }
 
-/** "Vrati plan od prije ugradnje": the plan gets back the text it had before "Ugradi u plan" (author of the plan or
+/** "Vrati plan od prije izmjena": the plan gets back the text it had before this conversation's changes (author of the plan or
  *  admin — the database decides); then the conversation no longer says it replaced the plan. */
 export async function restorePlanText(planId: string, conversationId: string, before: string): Promise<ChangeResult> {
   try {

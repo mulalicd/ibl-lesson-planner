@@ -7,8 +7,7 @@ import { ValidationEventSchema, MetaEventSchema, type ValidationReportInput } fr
 import { buildRepairMessage } from '@/lib/qualityChecks';
 import { displayPlanText } from '@/lib/language/display';
 import { isPlanText } from '@/lib/planMeta';
-import { buildIncorporateRequest, buildRevisionRequest, extractFullPlan, extractRevisedSection, isMuchShorter, missingSections, replaceSection, type SectionRef } from '@/lib/sectionRevision';
-import { parseSegments } from '@/lib/planSegments';
+import { buildRevisionRequest, extractRevisedSection, replaceSection, type SectionRef } from '@/lib/sectionRevision';
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ibl-chat`;
 
@@ -70,9 +69,6 @@ async function fetchAnswer(body: { mode: 'chat'; messages: { role: string; conte
   if (buffer) takeLine(buffer);
   return answer;
 }
-
-/** "Ugradi u plan": a complete new plan, or why there is none (sections the AI left out). */
-export type IncorporateResult = { ok: true; plan: string } | { ok: false; missing: string[] };
 
 export function useChat() {
   const [state, setState] = useState<ConversationState>({
@@ -317,78 +313,53 @@ export function useChat() {
    * plan). The old quality report no longer describes the changed plan, so it is removed.
    * Returns 'ok' or 'failed'; on 'failed' the plan is unchanged.
    */
-  const reviseSection = useCallback(async (messageId: string, ref: SectionRef, teacherRequest: string): Promise<'ok' | 'failed'> => {
-    const msg = state.messages.find((m) => m.id === messageId);
-    if (!msg?.isPlan) return 'failed';
-    const language = lastParamsRef.current?.language;
+  /** P5-4 core: the plan text with ONE section rewritten by the AI, or null (nothing usable / no change). Used for a new
+   *  plan (a message) and for a saved plan opened with "Razgovor s AI-om" (Director 2026-11-14, "Dodaj + Prepravi"). */
+  const revisePlanText = useCallback(async (planText: string, ref: SectionRef, teacherRequest: string, language: string | undefined): Promise<string | null> => {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
     try {
       const answer = await fetchAnswer({
         mode: 'chat',
         messages: [{ role: 'user', content: buildRevisionRequest(ref.title, teacherRequest, language) }],
-        plan_context: msg.content,
+        plan_context: planText,
       });
-      if (answer === null) return 'failed';
-
+      if (answer === null) return null;
       // the same language layer as a new plan (DL-P19, DL-P30)
-      const shownAnswer = displayPlanText(answer, language);
-      const revised = extractRevisedSection(shownAnswer, ref.head, ref.stopHeads);
-      const newPlan = revised ? replaceSection(msg.content, ref, revised) : null;
-      // nothing usable, or no change at all: report it honestly, the plan stays as it was
-      if (!newPlan || newPlan === msg.content) return 'failed';
-      setState(prev => ({
-        ...prev,
-        activePlan: prev.activePlan === msg.content ? newPlan : prev.activePlan,
-        messages: prev.messages.map((m) => (m.id === messageId ? { ...m, content: newPlan, validation: undefined } : m)),
-      }));
-      return 'ok';
+      const revised = extractRevisedSection(displayPlanText(answer, language), ref.head, ref.stopHeads);
+      const newPlan = revised ? replaceSection(planText, ref, revised) : null;
+      return newPlan && newPlan !== planText ? newPlan : null;
     } catch (err) {
       console.error('section revision failed:', err);
-      return 'failed';
+      return null;
     } finally {
       setState(prev => ({ ...prev, isLoading: false }));
     }
-  }, [state.messages]);
+  }, []);
+
+  const reviseSection = useCallback(async (messageId: string, ref: SectionRef, teacherRequest: string): Promise<'ok' | 'failed'> => {
+    const msg = state.messages.find((m) => m.id === messageId);
+    if (!msg?.isPlan) return 'failed';
+    // nothing usable, or no change at all: report it honestly, the plan stays as it was
+    const newPlan = await revisePlanText(msg.content, ref, teacherRequest, lastParamsRef.current?.language);
+    if (!newPlan) return 'failed';
+    setState(prev => ({
+      ...prev,
+      activePlan: prev.activePlan === msg.content ? newPlan : prev.activePlan,
+      messages: prev.messages.map((m) => (m.id === messageId ? { ...m, content: newPlan, validation: undefined } : m)),
+    }));
+    return 'ok';
+  }, [state.messages, revisePlanText]);
 
   const cancelStream = useCallback(() => {
     abortRef.current?.abort();
     setState(prev => ({ ...prev, isLoading: false }));
   }, []);
 
-  /**
-   * "Ugradi u plan" (Director 2026-11-14, DL-P37): the AI rewrites the whole saved plan with what was discussed in
-   * this conversation. Nothing is saved here: the teacher sees the new plan first. Null when no complete plan came back.
-   */
-  const incorporateConversation = useCallback(async (planText: string, language: string | undefined): Promise<IncorporateResult> => {
-    const history = state.messages
-      .filter((m) => m.id !== 'welcome' && !m.isPlan)
-      .map((m) => ({ role: m.role, content: m.content }));
-    setState(prev => ({ ...prev, isLoading: true, error: null }));
-    try {
-      const answer = await fetchAnswer({
-        mode: 'chat',
-        messages: [...history, { role: 'user', content: buildIncorporateRequest(language, parseSegments(planText).map((s) => s.title)) }],
-        plan_context: planText,
-      });
-      if (answer === null) return { ok: false, missing: [] };
-      const plan = extractFullPlan(displayPlanText(answer, language), isPlanText);
-      if (!plan || plan === planText) return { ok: false, missing: [] };
-      // never offer a plan that lost a section or was cut down (it could be saved over the teacher's plan)
-      const missing = missingSections(planText, plan);
-      if (missing.length || isMuchShorter(planText, plan)) return { ok: false, missing };
-      return { ok: true, plan };
-    } catch (err) {
-      console.error('incorporate failed:', err);
-      return { ok: false, missing: [] };
-    } finally {
-      setState(prev => ({ ...prev, isLoading: false }));
-    }
-  }, [state.messages]);
 
   return {
     ...state,
     sendMessage,
-    incorporateConversation,
+    revisePlanText,
     setMode,
     setPlanContext,
     clearChat,

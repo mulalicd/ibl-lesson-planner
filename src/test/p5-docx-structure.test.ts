@@ -37,7 +37,8 @@ describe('P5-3 structured Word export (DL-P27)', () => {
   });
   it('recognises headings, also with a lowercase remark in brackets', () => {
     const heads = structurePlan(V91).filter((b) => b.type === 'heading').map((b) => ('text' in b ? b.text : ''));
-    expect(heads).toEqual(['PLANER ZA IBL ČAS  (Inquiry-Based Learning)', 'TOK ČASA', 'REFLEKSIJA UČENIKA (pitanja za učenike)']);
+    // section headings are written with single spaces (Director 2026-11-14)
+    expect(heads).toEqual(['PLANER ZA IBL ČAS (Inquiry-Based Learning)', 'TOK ČASA', 'REFLEKSIJA UČENIKA (pitanja za učenike)']);
   });
   it('label/value lines become one readable line; a one-line "table" stays a drawing', () => {
     const b = structurePlan(V91);
@@ -51,5 +52,29 @@ describe('P5-3 label/value spacing', () => {
     const b = structurePlan('School:       Internationale Deutsche Schule\nSubject:      Biologie        Grade:      5. razred');
     const texts = b.filter((x) => x.type === 'para').map((x) => ('text' in x ? x.text : ''));
     expect(texts).toEqual(['School: Internationale Deutsche Schule', 'Subject: Biologie  ·  Grade: 5. razred']);
+  });
+});
+
+describe('space-aligned tables (Director 2026-11-14: an AI rubric showed as "a · b · c")', () => {
+  const RUBRIC = [
+    'KRITERIJ                 4 - Iznad očekivanja         3 - Ispunjeno očekivanje     2 - Djelimično ispunjeno',
+    '1. Upotreba dokaza i     Sintetizuje dokaze iz        Koristi dokaze iz teksta     Navodi neke dokaze, ali',
+    '   istraživanja          teksta i tabele.             i tabele.                    ih ne povezuje.',
+    '2. Dubina rezonovanja    Analizira složenu            Objašnjava uticaj gena       Prepoznaje uticaj oba',
+    '                         interakciju.                 i okoline.                   faktora.',
+  ].join('\n');
+
+  it('becomes a real table with wrapped cells joined', () => {
+    const t = structurePlan(RUBRIC).find((b) => b.type === 'table');
+    expect(t && 'rows' in t ? t.rows : null).toEqual([
+      ['KRITERIJ', '4 - Iznad očekivanja', '3 - Ispunjeno očekivanje', '2 - Djelimično ispunjeno'],
+      ['1. Upotreba dokaza i istraživanja', 'Sintetizuje dokaze iz teksta i tabele.', 'Koristi dokaze iz teksta i tabele.', 'Navodi neke dokaze, ali ih ne povezuje.'],
+      ['2. Dubina rezonovanja', 'Analizira složenu interakciju.', 'Objašnjava uticaj gena i okoline.', 'Prepoznaje uticaj oba faktora.'],
+    ]);
+  });
+
+  it('a plan section heading with minutes is a heading', () => {
+    const b = structurePlan('UDICA                                   5 minuta\nTekst.');
+    expect(b[0]).toEqual({ type: 'heading', text: 'UDICA 5 minuta' });
   });
 });

@@ -537,3 +537,11 @@ Period: 2026-11-07 … 2026-11-14. Detailed entries follow below the summary; th
   rewritten to index.html, so a missing file is a clean 404.
 - Rule: every app that loads code on demand needs a "new release while open" path. Test it by removing a chunk
   from a built copy while the page is open.
+
+### 2026-11-14 — Director correction: "dodavanje dodatnog AI razgovora u postojeći plan nije u funkciji"
+- "Ugradi u plan" asked the AI to rewrite the whole saved plan. It reduced a rubric to one sentence (and earlier lost
+  UDICA). An AI rewrite of stored content cannot guarantee that nothing else changes.
+- Fix: no rewrite; numbered amendments appended to the stored text, word for word ("originalni plan ostaje
+  intaktan"); a section revision on a saved plan becomes an amendment too.
+- Rule: when AI output is meant to ADD to a stored document, append it deterministically; never let the AI
+  regenerate the document to include it. Verify "original intact" line by line in the test.

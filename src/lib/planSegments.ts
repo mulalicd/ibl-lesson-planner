@@ -36,6 +36,8 @@ export function headingOf(line: string): string | null {
   if (!core || /^[|│[]/.test(core) || DECORATION.test(core)) return null;
   // "Label: value" lines ("ZPD NOTE: …", "VIZUELNI ELEMENT 1: …") are content, not segment headings
   if (/:\s*\S/.test(core)) return null;
+  // a row of a table aligned with spaces ("KRITERIJ   4 - Iznad …   3 - …") is content too: a heading has at most one gap
+  if ((core.match(/\S {3,}(?=\S)/g) ?? []).length >= 2) return null;
   const head = core.split(/\s{2,}|\s+—\s+|\s+\(/)[0].replace(/[:\s]+$/, '');
   const letters = head.replace(/[^\p{L}]/gu, '');
   if (letters.length < 4 || head.length > 70 || head.split(/\s+/).length > 9) return null;
