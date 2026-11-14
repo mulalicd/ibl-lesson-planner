@@ -44,7 +44,6 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
   // ── P6 (DL-P37): a conversation about a SAVED plan is kept with that plan ──
   const convRef = useRef<{ planId: string; id: string; next: number } | null>(null);
   const pendingRef = useRef<{ planId: string; userMsgId: string } | null>(null);
-  const [savedExchanges, setSavedExchanges] = useState(0);
   const warnedRef = useRef(false); // a failed save is reported once per conversation, not after every answer
   // "Dodaj u plan" (Director 2026-11-14, "Dodaj + Prepravi"): answers already added to the saved plan
   const [addedIds, setAddedIds] = useState<Set<string>>(new Set());
@@ -104,7 +103,6 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
       return;
     }
     conv.next += 2;
-    setSavedExchanges((n) => n + 1);
   }
 
   useEffect(() => {
@@ -444,7 +442,7 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
       <div className="mt-2 flex items-center gap-2">
         <button
           type="button"
-          onClick={() => { chat.clearChat(); setShowWizard(true); setSavedPlanIds(new Set()); setShownPlanId(null); lastParamsRef.current = null; convRef.current = null; warnedRef.current = false; setAddedIds(new Set()); setSavedExchanges(0); }}
+          onClick={() => { chat.clearChat(); setShowWizard(true); setSavedPlanIds(new Set()); setShownPlanId(null); lastParamsRef.current = null; convRef.current = null; warnedRef.current = false; setAddedIds(new Set()); }}
           className="neu-btn flex h-9 w-9 shrink-0 items-center justify-center text-neutral-700 transition-colors hover:text-primary"
           title="Novi razgovor"
           aria-label="Novi razgovor"
@@ -583,7 +581,7 @@ function formatAIMessage(text: string): string {
     .replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>')
     .replace(/`(.+?)`/g, '<span class="inline-code">$1</span>')
     .replace(/^(\d+)\.\s+(.+)$/gm, '<div class="flex items-start gap-2 py-0.5"><span class="text-primary font-semibold text-xs mt-0.5 w-5 text-right flex-shrink-0">$1.</span><span>$2</span></div>')
-    .replace(/^[\-•·▸►→]\s+(.+)$/gm, '<div class="flex items-start gap-2 py-0.5"><span class="text-primary mt-0.5 flex-shrink-0">•</span><span>$1</span></div>')
+    .replace(/^[-•·▸►→]\s+(.+)$/gm, '<div class="flex items-start gap-2 py-0.5"><span class="text-primary mt-0.5 flex-shrink-0">•</span><span>$1</span></div>')
     .replace(/^\|(.+)\|$/gm, (_match, content) => {
       const cells = content.split('|').map((c: string) => c.trim()).filter(Boolean);
       if (cells.length < 2) return '';

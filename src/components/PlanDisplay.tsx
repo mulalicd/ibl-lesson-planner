@@ -9,7 +9,7 @@
  * Nothing in the plan text is changed or left out: "Sve" lists every segment, and "Izvorni tekst" shows the plan
  * exactly as generated.
  */
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Copy, Check, Code2, BookOpen, ChevronLeft, ChevronRight, ListTree, PencilLine, Loader2, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -23,8 +23,6 @@ interface PlanDisplayProps {
   planText: string;
   planId?: string;
   className?: string;
-  /** Kept for existing call sites; the workspace adapts to the space it gets. */
-  compact?: boolean;
   /** P5-4: when given, a segment with its own text can be revised ("Prepravi ovaj dio"). */
   onReviseSection?: (ref: SectionRef, teacherRequest: string) => Promise<void>;
   /** P5-4: no new revision while the AI is busy. */

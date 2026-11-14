@@ -936,3 +936,9 @@ When a screen changes, its screenshot is renewed with the same script (S6 toolin
 
 **Rollback:** revert the PR that added it.
 
+
+## Future work recorded at the P6 close (2026-11-14)
+- Move the five pre-P6 direct Supabase calls in UI files (ChatInterface save, DocxExportButton counter, ChatPage,
+  PlanPage, DashboardPage loads) into `src/lib/` repository functions (Commander DONE_CHECKLIST, architecture). Not
+  started: a separate, explicitly approved refactor (non-regression).
+- GitHub Actions: move the workflows off Node 20 (deprecation warning).

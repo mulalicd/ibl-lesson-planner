@@ -92,3 +92,4 @@ One line per feature, per Commander E-10.
 - [2026-11-14] [DESIGN] Amendments and AI answers: "a | b | c" tables with "----|----" row lines become real tables; aligned list items stay list items (screen and Word) (DL-P37).
 - [2026-11-14] [PERF] P6 S6: pages load on demand, React/Supabase cached separately, opened page preloaded — sign-in FCP 2072→1532 ms, plan LCP 2660→2452 ms; [A11Y] three texts below WCAG AA fixed (0 failures on 20 screens).
 - [2026-11-14] [DOCS] User guide "Uputstvo" (/uputstvo, open before sign-in; header and sign-in link) with real screenshots; DESIGN_SYSTEM.md rewritten for "Nastavnički radni sto"; S6 acceptance matrix.
+- [2026-11-14] [CLOSE] P6 closed (Sprint 06): Done Checklist, owner live security check script, unused code removed, E-12 fade fixed; Director's device test "sve radi".

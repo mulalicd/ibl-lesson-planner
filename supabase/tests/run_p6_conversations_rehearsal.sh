@@ -106,6 +106,11 @@ SQL
 step "6. Apply again after rollback"
 $P -f "$C/02_APPLY.sql" 2>&1 | grep -o "OK:.*\|ERROR:.*\|CHECK FAILED.*" || true
 
+step "7. Live adversarial check script (changes nothing)"
+BEFORE_C=$($Q -c "select count(*) from conversations"); BEFORE_M=$($Q -c "select count(*) from conversation_messages")
+$P -f "$C/04_LIVE_CHECK_changes_nothing.sql" 2>&1 | grep -o "LIVE CHECK.*" || true
+[ "$($Q -c "select count(*) from conversations")" = "$BEFORE_C" ] && [ "$($Q -c "select count(*) from conversation_messages")" = "$BEFORE_M" ] && echo "live check changed nothing: OK" || { echo "LIVE CHECK CHANGED DATA"; exit 1; }
+
 step "RESULTS"
 $Q -F ' | ' -c "select phase, label, expected, actual, CASE WHEN pass THEN 'PASS' ELSE 'FAIL' END from test.results order by id"
 FAILS=$($Q -c "select count(*) from test.results where not pass"); TOTAL=$($Q -c "select count(*) from test.results")

@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { Star, Clock, GraduationCap, User } from 'lucide-react';
 import { cn, formatDate, truncate, UNKNOWN, showText, showGrade, showMinutes } from '@/lib/utils';
 import { TIER_COLORS, TIER_LABELS } from '@/lib/constants';
