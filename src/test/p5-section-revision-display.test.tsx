@@ -68,3 +68,15 @@ describe('P5-4 "Prepravi ovaj dio" in the workspace', () => {
     expect(onRevise).toHaveBeenCalledWith(expect.objectContaining({ index: i, head: 'UDICA' }), 'kraće');
   });
 });
+
+describe('P6 saved plan as one document (Director 2026-11-14)', () => {
+  it('shows every section on one page, with no page-by-page navigation and no stray rules', () => {
+    render(<PlanDisplay planText={G08} planId="d1" asDocument />);
+    const segs = parseSegments(G08);
+    for (let i = 0; i < segs.length; i++) expect(document.getElementById(`d1-sekcija-${i}`), segs[i].title).toBeTruthy();
+    expect(screen.queryByText(/^\d+ \/ \d+$/)).toBeNull();
+    const body = document.body.textContent ?? '';
+    expect(body).not.toMatch(/-{6,}I1/);
+    expect(body).toContain('DODATNI RESURSI ZA NASTAVNIKE');
+  });
+});

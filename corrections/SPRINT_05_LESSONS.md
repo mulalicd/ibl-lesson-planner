@@ -480,3 +480,11 @@ Period: 2026-11-07 … 2026-11-14. Detailed entries follow below the summary; th
   messages.
 - Rule: include the owner's own screen size (here 1920 px) in every screenshot set, and check every step of a
   multi-step screen, including the shortest one.
+
+### 2026-11-14 — Director correction: leftovers on screen and an "empty" section
+- The Director saw "-----...I1 Učenik može …": a rule drawn inside a box ("|-----|") passed as text, and the
+  line-joining for reading glued it to the next line because it ended with "-" (a hyphen break).
+- "PREPORUKE ZA IZVOĐENJE ČASA" looked empty: it is a group heading whose content is the sections after it, but it
+  was shown as a page with only its "Physik | 8. razred | …" line.
+- Rule: check every segment of a real plan for (a) characters that are not content (rules, frames, Markdown) and
+  (b) pages with fewer than two lines of content, before showing a rendering to the owner.

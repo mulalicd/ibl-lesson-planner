@@ -49,3 +49,23 @@ describe('P6 S2 plan segments (real PSI v9.1 plan g08)', () => {
     expect(after.slice(-(before.length - segs[i].end))).toEqual(before.slice(segs[i].end));
   });
 });
+
+// Director 2026-11-14: no Markdown/ASCII leftovers, no section that looks empty, a saved plan as one document
+describe('P6 rendering quality', () => {
+  it('a rule drawn inside a box ("|-----|") is never text', async () => {
+    const { structurePlan } = await import('@/lib/planDocxStructure');
+    const blocks = structurePlan('| CILJ: tekst |\n|------------------------------|\n| I1  Učenik može opisati. |');
+    expect(blocks.some((b) => b.type === 'para' && /-{3,}/.test(b.text))).toBe(false);
+    expect(blocks.some((b) => b.type === 'para' && b.text.startsWith('I1'))).toBe(true);
+  });
+
+  it('a group heading ("PREPORUKE ZA IZVOĐENJE ČASA" + one "a | b | c" line) is a label, not a page', async () => {
+    const { isGroupHeading, groupSubtitle } = await import('@/lib/planSegments');
+    const segs = parseSegments(G08);
+    const g = segs.find((s) => s.head.startsWith('PREPORUKE ZA IZVO'));
+    expect(g && isGroupHeading(g)).toBe(true);
+    expect(g && groupSubtitle(g)).toMatch(/\| 45 min \|/);
+    const udica = segs.find((s) => s.head === 'UDICA');
+    expect(udica && isGroupHeading(udica)).toBe(false);
+  });
+});

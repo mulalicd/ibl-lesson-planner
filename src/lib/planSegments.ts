@@ -90,6 +90,25 @@ export function parseSegments(planText: string): PlanSegment[] {
   });
 }
 
+/** Lines of a segment that carry text (not box borders or rules). */
+const contentLines = (s: PlanSegment) => s.body.split('\n').filter((l) => /[\p{L}\p{N}]/u.test(l.replace(/[|│=─-]/g, '')));
+
+/** A group heading: a heading whose own text is at most one "a | b | c" line (e.g. "PREPORUKE ZA IZVOĐENJE ČASA" over
+ *  "Physik | 8. razred | Tema: … | 45 min"). Its content is the segments that follow it, so it is a label, never a page
+ *  of its own (Director 2026-11-14: no section may look empty). */
+export function isGroupHeading(s: PlanSegment): boolean {
+  const lines = contentLines(s);
+  if (lines.length === 0) return true;
+  const only = lines[0].trim();
+  return lines.length === 1 && !only.startsWith('|') && only.split(/\s\|\s/).length >= 3;
+}
+
+/** The "a | b | c" line under a group heading, if any. */
+export function groupSubtitle(s: PlanSegment): string | null {
+  const lines = contentLines(s);
+  return isGroupHeading(s) && lines.length === 1 ? lines[0].trim() : null;
+}
+
 /** The plan with one segment's lines replaced (used by "Prepravi ovaj dio"). */
 export function replaceSegment(planText: string, index: number, newSegmentText: string): string {
   const lines = planText.replace(/\r/g, '').split('\n');
