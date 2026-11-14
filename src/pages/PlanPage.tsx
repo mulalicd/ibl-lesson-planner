@@ -159,7 +159,8 @@ export default function PlanPage() {
         </div>
 
         <PlanDisplay planText={plan.plan_text} planId={plan.id} asDocument />
-        <PlanConversations planId={plan.id} planTopic={plan.topic} />
+        <PlanConversations planId={plan.id} planTopic={plan.topic} canChange={canChange}
+          onRestored={(text) => setPlan((p) => (p ? { ...p, plan_text: displayPlanText(text, p.language) } : p))} />
       </main>
     </div>
   );

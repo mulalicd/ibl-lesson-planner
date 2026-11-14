@@ -71,9 +71,12 @@ export function buildRevisionRequest(title: string, teacherRequest: string, lang
 
 /** "Ugradi u plan" (Director 2026-11-14, DL-P37): the instruction to the AI after a conversation about a saved plan.
  *  English, like every instruction in the PSI wrapper. */
-export function buildIncorporateRequest(language: string | undefined): string {
+export function buildIncorporateRequest(language: string | undefined, sectionTitles: string[] = []): string {
   return [
     'INCORPORATE THE CONVERSATION: rewrite the COMPLETE lesson plan above so that it includes what was proposed and discussed in this conversation.',
+    ...(sectionTitles.length
+      ? [`The plan MUST keep ALL ${sectionTitles.length} sections, in this order, each with its heading line. Never leave a section out, never shorten a section to a reference such as "unchanged":`, ...sectionTitles.map((t) => `- ${t}`)]
+      : []),
     'Keep every rule of the system instructions, every section, the order of the sections, the format (plain text, the same boxes and tables) and the minutes, except where the conversation changed them.',
     `Write in ${LANGUAGE_NAMES[language ?? ''] ?? 'the language of the plan'}.`,
     'Output ONLY the complete plan, starting with its first heading line and ending with its last section. No introduction, no closing text, no suggested follow-up questions.',
@@ -91,3 +94,15 @@ export function extractFullPlan(answer: string, isPlan: (text: string) => boolea
   const plan = lines.slice(start).join('\n').trim();
   return isPlan(plan) ? plan : null;
 }
+
+const foldHead = (h: string) => h.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ').trim();
+
+/** "Ugradi u plan" completeness gate (Director 2026-11-14: the AI once left UDICA out and it was saved):
+ *  the titles of the old plan's sections that the new plan does not have. Empty = every section is there. */
+export function missingSections(oldPlan: string, newPlan: string): string[] {
+  const have = new Set(parseSegments(newPlan).map((s) => foldHead(s.head)));
+  return parseSegments(oldPlan).filter((s) => !have.has(foldHead(s.head))).map((s) => s.title);
+}
+
+/** The new plan is much shorter than the old one (sections cut down to a line). */
+export const isMuchShorter = (oldPlan: string, newPlan: string): boolean => newPlan.trim().length < oldPlan.trim().length * 0.8;

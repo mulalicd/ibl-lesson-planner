@@ -520,3 +520,11 @@ Period: 2026-11-07 … 2026-11-14. Detailed entries follow below the summary; th
   closed in P1 and never wired. The Director expected the conversation to stay with the plan.
 - Fix: DL-P37 (owner script with a local rehearsal, 26/26; app saves each exchange; plan page lists them).
 - Rule: when a feature "talks about" a stored object, ask early whether its result must be stored with it.
+
+### 2026-11-14 — Director correction (serious): "Ugradi u plan" saved a plan without UDICA
+- The AI returned a plan that left UDICA out; the app only checked "header + inquiry question" and saved it over
+  the teacher's plan. The old text was kept (plan_text_before), so nothing was lost, but the saved plan was wrong.
+- Fix: the AI is told every section that must stay; a plan missing any section or much shorter is refused twice
+  (on arrival and before writing); "Vrati plan od prije ugradnje" restores the old text with one click.
+- Rule (data integrity, M-3): an AI output that REPLACES stored content must be checked for completeness against
+  what it replaces, not only for its shape. Test the bad case (a missing section) before the good one.
