@@ -59,6 +59,18 @@ export const ERROR_MESSAGES = {
   ALL_KEYS_EXHAUSTED: 'Google AI je trenutno preopterećen. Pokušajte ponovo za 1–2 minute.', // approved by the Director 2026-11-09
 } as const;
 
+/** P5-4 "Prepravi ovaj dio". The button text was approved by the Director 2026-11-14 ("1-4 odobravam");
+ *  the other texts are proposed with it and need his approval before they go live. */
+export const SECTION_REVISION_TEXT = {
+  BUTTON:      'Prepravi ovaj dio',
+  PLACEHOLDER: 'Šta želite promijeniti? (nije obavezno)',
+  SUBMIT:      'Prepravi',
+  CANCEL:      'Odustani',
+  WORKING:     'Prepravljam…',
+  DONE:        'Dio je prepravljen.',
+  FAILED:      'Prepravka nije uspjela. Plan je ostao isti.',
+} as const;
+
 export const SESSION_DURATION_MS = 8 * 60 * 60 * 1000;
 
 export const ZPD_THRESHOLDS = {

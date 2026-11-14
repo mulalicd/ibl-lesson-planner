@@ -704,3 +704,18 @@ text the teacher sees.
 Croatian). "sustav…" is added to the flagged Bosnian words (standard: sistem / sistematičan).
 
 **Rollback:** revert the PR. The PSI edit is one line.
+
+## DL-P31 — P5-4 "Prepravi ovaj dio" (Director, 2026-11-14)
+
+**Decided by:** Director ("1-4 odobravam": the button text "Prepravi ovaj dio"). The instruction to the AI and the
+other short texts (`SECTION_REVISION_TEXT`, `buildRevisionRequest`) are proposed with it and go live only after
+his explicit approval of their wording.
+
+**Decision:** on a new plan, before it is saved, every section card has a "Prepravi ovaj dio" button with an
+optional request field. The AI gets the whole plan as context (mode "chat", one AI request from the teacher's
+quota) and answers with that section only. Only that section's lines are replaced
+(`src/lib/sectionRevision.ts`); if the answer does not contain the section, the plan stays unchanged. The
+language layers (DL-P19, DL-P30) apply to the answer. The old quality report is removed after a revision, because
+it no longer describes the changed plan. Saved plans are not revised (no silent change of a stored plan).
+
+**Rollback:** revert the PR.

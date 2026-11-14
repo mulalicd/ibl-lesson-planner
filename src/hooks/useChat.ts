@@ -8,6 +8,7 @@ import { buildRepairMessage } from '@/lib/qualityChecks';
 import { normalizeBosnian } from '@/lib/language/bosnianStandard';
 import { normalizeTemplateLines } from '@/lib/language/templateLines';
 import { isPlanText } from '@/lib/planMeta';
+import { buildRevisionRequest, extractRevisedSection, replaceSection, type SectionRef } from '@/lib/sectionRevision';
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ibl-chat`;
 
@@ -263,6 +264,86 @@ export function useChat() {
     void sendMessage(buildRepairMessage(failedIds, checks), 'chat', lastParamsRef.current);
   }, [sendMessage]);
 
+  /**
+   * P5-4 "Prepravi ovaj dio": the AI rewrites ONE section of a plan message; only that section is replaced.
+   * The whole plan goes as context (mode "chat", no params, so the server does not score the section as a
+   * plan). The old quality report no longer describes the changed plan, so it is removed.
+   * Returns 'ok' or 'failed'; on 'failed' the plan is unchanged.
+   */
+  const reviseSection = useCallback(async (messageId: string, ref: SectionRef, teacherRequest: string): Promise<'ok' | 'failed'> => {
+    const msg = state.messages.find((m) => m.id === messageId);
+    if (!msg?.isPlan) return 'failed';
+    const language = lastParamsRef.current?.language;
+    setState(prev => ({ ...prev, isLoading: true, error: null }));
+    try {
+      const accessToken = await getAccessToken();
+      if (!accessToken) {
+        window.location.assign('/login');
+        throw new Error(ERROR_MESSAGES.UNAUTHORIZED);
+      }
+      const resp = await fetch(CHAT_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          mode: 'chat',
+          messages: [{ role: 'user', content: buildRevisionRequest(ref.title, teacherRequest, language) }],
+          plan_context: msg.content,
+        }),
+      });
+      if (!resp.ok || !resp.body) {
+        if (resp.status === 401) window.location.assign('/login');
+        return 'failed';
+      }
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let answer = '';
+      const takeLine = (line: string) => {
+        const l = line.endsWith('\r') ? line.slice(0, -1) : line;
+        if (!l.startsWith('data: ')) return;
+        const json = l.slice(6).trim();
+        if (!json || json === '[DONE]') return;
+        try {
+          const parsed = JSON.parse(json) as { choices?: { delta?: { content?: string } }[] };
+          const token = parsed.choices?.[0]?.delta?.content;
+          if (token) { answer += token; signalActivity(); }
+        } catch { /* an event that is not text (meta, validation) */ }
+      };
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        let nl: number;
+        while ((nl = buffer.indexOf('\n')) !== -1) {
+          takeLine(buffer.slice(0, nl));
+          buffer = buffer.slice(nl + 1);
+        }
+      }
+      if (buffer) takeLine(buffer);
+
+      // the same language layer as a new plan (DL-P19, DL-P30)
+      const shownAnswer = language === 'bosnian' ? normalizeBosnian(answer) : normalizeTemplateLines(answer, language);
+      const revised = extractRevisedSection(shownAnswer, ref.title);
+      const newPlan = revised ? replaceSection(msg.content, ref, revised) : null;
+      if (!newPlan) return 'failed';
+      setState(prev => ({
+        ...prev,
+        activePlan: prev.activePlan === msg.content ? newPlan : prev.activePlan,
+        messages: prev.messages.map((m) => (m.id === messageId ? { ...m, content: newPlan, validation: undefined } : m)),
+      }));
+      return 'ok';
+    } catch (err) {
+      console.error('section revision failed:', err);
+      return 'failed';
+    } finally {
+      setState(prev => ({ ...prev, isLoading: false }));
+    }
+  }, [state.messages]);
+
   const cancelStream = useCallback(() => {
     abortRef.current?.abort();
     setState(prev => ({ ...prev, isLoading: false }));
@@ -277,5 +358,6 @@ export function useChat() {
     cancelStream,
     repairPlan,
     attachPlanId,
+    reviseSection,
   };
 }
