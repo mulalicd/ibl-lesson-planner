@@ -119,7 +119,7 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
         // Language stays required: Bosnian is the school's and PSI's default output language.
         subject: params?.subject || meta.subject || null,
         grade: params?.grade || meta.grade || null,
-        topic: params?.topic || meta.topic || null,
+        topic: meta.topic || params?.topic || null, // the plan's corrected topic first (Director 2026-11-14)
         duration_min: duration ?? null,
         language: (params?.language || meta.language || 'bosnian') as string,
         tier: duration ? deriveTier(duration) : null,
@@ -178,9 +178,16 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
   const pendingMsg = chat.messages.find((m, i) => isPendingPlan(m, i)) ?? null;
   const plans = chat.messages.filter((m) => m.isPlan);
   const shownPlan = streamingMsg || generating ? null : (plans.find((m) => m.id === shownPlanId) ?? plans[plans.length - 1] ?? null);
-  const hasDesk = generating || !!streamingMsg || !!shownPlan;
-  const deskText = streamingMsg?.content ?? pendingMsg?.content ?? shownPlan?.content ?? '';
-  const lesson = lastParamsRef.current ?? (deskText ? extractPlanMeta(deskText) : null);
+  // A saved plan opened with "Razgovor s AI-om" (/chat?plan_id=…): it lies on the desk while the teacher talks to the
+  // AI about it (Director 2026-11-14: a saved plan can always be discussed further).
+  const contextPlan = initialPlan && !generating && !streamingMsg && !shownPlan ? initialPlan : null;
+  const hasDesk = generating || !!streamingMsg || !!shownPlan || !!contextPlan;
+  const deskText = streamingMsg?.content ?? pendingMsg?.content ?? shownPlan?.content ?? contextPlan?.text ?? '';
+  // The plan's own subject/topic win over what was typed: the AI corrects a misspelt topic ("fOdozindesa" →
+  // "Fotosinteza"), and the title must show the corrected one (Director 2026-11-14).
+  const planMeta = deskText ? extractPlanMeta(deskText) : null;
+  const typed = lastParamsRef.current;
+  const lesson = typed ? { ...typed, topic: planMeta?.topic || typed.topic } : planMeta;
 
   const planActions = shownPlan && (
     <>
@@ -211,15 +218,17 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
   const desk = hasDesk && (
     <div className="space-y-6">
       <CreationPanel
-        step={shownPlan ? (savedPlanIds.has(shownPlan.id) ? 'saved' : 'check') : 'writing'}
+        step={contextPlan ? 'saved' : shownPlan ? (savedPlanIds.has(shownPlan.id) ? 'saved' : 'check') : 'writing'}
         lesson={lesson}
         planText={deskText}
-        writing={!shownPlan}
-        actions={planActions || undefined}
+        writing={!shownPlan && !contextPlan}
+        actions={contextPlan ? <DocxExportButton planId={contextPlan.id} planText={contextPlan.text} /> : planActions || undefined}
         quality={shownPlan?.validation ? <QualityBadge report={shownPlan.validation} onRepair={chat.repairPlan} disabled={chat.isLoading} /> : undefined}
       />
       {streamingMsg ? (
         <PlanDisplay key={streamingMsg.id} planText={streamingMsg.content} streaming />
+      ) : contextPlan ? (
+        <PlanDisplay key={contextPlan.id} planText={contextPlan.text} planId={contextPlan.id} asDocument />
       ) : shownPlan ? (
         <PlanDisplay
           key={shownPlan.id}

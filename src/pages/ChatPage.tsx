@@ -1,4 +1,4 @@
-import { displayPlanText } from '@/lib/language/bosnianStandard';
+import { displayPlanText } from '@/lib/language/display';
 import AppHeader from '@/components/AppHeader';
 import ChatInterface from '@/components/ChatInterface';
 import { useSearchParams } from 'react-router-dom';

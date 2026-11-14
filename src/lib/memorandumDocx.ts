@@ -9,6 +9,7 @@
  */
 import { patchDocument, PatchType, Paragraph, Table, TableCell, TableRow, TextRun, WidthType } from 'docx';
 import { structurePlan } from '@/lib/planDocxStructure';
+import { showHeading } from '@/lib/language/dashes';
 
 /** IDSS Blue (CONSTITUTION rule 6 — the five IDSS colours apply to DOCX export too). */
 const IDSS_BLUE = '035EA1';
@@ -43,7 +44,7 @@ export function planParagraphs(planText: string): (Paragraph | Table)[] {
   for (const b of structurePlan(planText)) {
     if (b.type === 'heading') {
       out.push(new Paragraph({
-        children: [new TextRun({ text: b.text, bold: true, size: 24, color: IDSS_BLUE })],
+        children: [new TextRun({ text: showHeading(b.text), bold: true, size: 24, color: IDSS_BLUE })],
         spacing: { before: 240, after: 80 },
         keepNext: true,
       }));

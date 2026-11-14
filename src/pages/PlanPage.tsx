@@ -1,4 +1,4 @@
-import { displayPlanText } from '@/lib/language/bosnianStandard';
+import { displayPlanText } from '@/lib/language/display';
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';

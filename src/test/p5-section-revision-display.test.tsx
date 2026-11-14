@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import PlanDisplay from '@/components/PlanDisplay';
 import { parseSegments } from '@/lib/planSegments';
+import { showHeading } from '@/lib/language/dashes';
 import { contentSignature } from '@/lib/planDocxStructure';
 
 const G08 = readFileSync(resolve(__dirname, '../../supabase/functions/_shared/fixtures/plan_v91_fotosinteza_bs.txt'), 'utf8');
@@ -14,7 +15,7 @@ describe('P6 S2 workspace "Nastavnički radni sto" (real plan g08)', () => {
     render(<PlanDisplay planText={G08} />);
     const text = toc().textContent ?? '';
     let at = -1;
-    for (const s of parseSegments(G08)) { const k = text.indexOf(s.title, at + 1); expect(k, s.title).toBeGreaterThan(at); at = k; }
+    for (const s of parseSegments(G08)) { const t = showHeading(s.title); const k = text.indexOf(t, at + 1); expect(k, t).toBeGreaterThan(at); at = k; }
   });
 
   it('every page together shows every character of the plan (nothing lost)', () => {

@@ -5,9 +5,7 @@ import { getAccessToken, signalActivity } from '@/lib/auth';
 import { ERROR_MESSAGES } from '@/lib/constants';
 import { ValidationEventSchema, MetaEventSchema, type ValidationReportInput } from '@/lib/validation/schemas';
 import { buildRepairMessage } from '@/lib/qualityChecks';
-import { normalizeBosnian } from '@/lib/language/bosnianStandard';
-import { normalizeTemplateLines } from '@/lib/language/templateLines';
-import { fixHeadingTypos } from '@/lib/language/headingGuard';
+import { displayPlanText } from '@/lib/language/display';
 import { isPlanText } from '@/lib/planMeta';
 import { buildRevisionRequest, extractRevisedSection, replaceSection, type SectionRef } from '@/lib/sectionRevision';
 
@@ -18,15 +16,7 @@ const WELCOME_MESSAGE: ChatMessage = {
   role: 'model',
   content: `Dobrodošli u IBL Planer! 🎓
 
-Ja sam vaš AI asistent za kreiranje planova časa zasnovanih na istraživačkom učenju (IBL) za Internationale Deutsche Schule Sarajevo.
-
-Kako mogu pomoći?
-
-  1. Kreirajte novi IBL plan časa
-  2. Unesite direktno: naziv predmeta, razred, temu i trajanje
-     Primjer: "Matematika, 5. razred, Razlomci, 90 minuta"
-
-Za početak — recite mi za koji predmet i razred trebate plan.`,
+Na ovom mjestu kreiramo pisane pripreme nastavnog časa zasnovane na istraživačkom učenju.`,
   timestamp: new Date().toISOString(),
 };
 
@@ -138,7 +128,8 @@ export function useChat() {
       const language = (params ?? lastParamsRef.current)?.language;
       // DL-P30: a German/English answer gets copied Bosnian template lines replaced by their German/English line.
       // DL-P32: misspelled fixed headings ("TIPPPS & TRICKS") are corrected to the PSI heading.
-      const shown = (raw: string) => fixHeadingTypos(language === 'bosnian' ? normalizeBosnian(raw) : normalizeTemplateLines(raw, language), language);
+      // DL-P19/DL-P30/DL-P32 + dashes: one display layer for new plans, revisions and saved plans (M-7)
+      const shown = (raw: string) => displayPlanText(raw, language);
 
       while (!streamDone) {
         const { done, value } = await reader.read();
@@ -328,7 +319,7 @@ export function useChat() {
       if (buffer) takeLine(buffer);
 
       // the same language layer as a new plan (DL-P19, DL-P30)
-      const shownAnswer = fixHeadingTypos(language === 'bosnian' ? normalizeBosnian(answer) : normalizeTemplateLines(answer, language), language);
+      const shownAnswer = displayPlanText(answer, language);
       const revised = extractRevisedSection(shownAnswer, ref.head, ref.stopHeads);
       const newPlan = revised ? replaceSection(msg.content, ref, revised) : null;
       // nothing usable, or no change at all: report it honestly, the plan stays as it was

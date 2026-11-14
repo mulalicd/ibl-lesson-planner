@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 import { SECTION_REVISION_TEXT, PSI_VERSION_LABEL } from '@/lib/constants';
 import { groupSubtitle, isGroupHeading, parseSegments, type Audience, type PlanSegment } from '@/lib/planSegments';
 import { structurePlan, type PlanBlock } from '@/lib/planDocxStructure';
+import { showHeading } from '@/lib/language/dashes';
 import type { SectionRef } from '@/lib/sectionRevision';
 
 interface PlanDisplayProps {
@@ -178,7 +179,7 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
         if (!inView(s, view)) return null;
         const b = AUDIENCE_BADGE[s.audience];
         if (!hasText(s)) {
-          return <div key={i} className="px-2.5 pb-0.5 pt-2 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">{s.title}</div>;
+          return <div key={i} className="px-2.5 pb-0.5 pt-2 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">{showHeading(s.title)}</div>;
         }
         const on = asDocument ? i === reading : i === cur;
         return (
@@ -195,7 +196,7 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
               on ? cn('bg-white font-bold text-black shadow-sm', b.rail) : 'font-medium text-neutral-800 hover:bg-white/70',
             )}
           >
-            <span className="min-w-0 flex-1 truncate">{s.title}</span>
+            <span className="min-w-0 flex-1 truncate">{showHeading(s.title)}</span>
             {streaming && i === segments.length - 1 && <span className="flex-none animate-pulse rounded bg-brand-yellow px-1.5 py-0.5 text-[10px] font-bold text-black">piše se…</span>}
             <span aria-label={b.label} className={cn('flex-none rounded px-1.5 py-0.5 text-[10px] font-bold', b.cls)}>{b.short}</span>
           </motion.button>
@@ -251,7 +252,7 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
                       return (
                         <header key={i} id={secId(i)} data-seg={i} className="scroll-mt-24 border-b-4 border-black pb-6">
                           <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Internationale Deutsche Schule Sarajevo</p>
-                          <h1 className="mb-4 mt-1 font-display text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">{s.title}</h1>
+                          <h1 className="mb-4 mt-1 font-display text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">{showHeading(s.title)}</h1>
                           <SegmentBlocks blocks={blocksOf} />
                         </header>
                       );
@@ -260,7 +261,7 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
                       const sub = groupSubtitle(s);
                       return (
                         <div key={i} id={secId(i)} data-seg={i} className="mt-14 scroll-mt-24 border-t-4 border-black pt-4">
-                          <h2 className="font-display text-2xl font-extrabold tracking-tight sm:text-[28px]">{s.title}</h2>
+                          <h2 className="font-display text-2xl font-extrabold tracking-tight sm:text-[28px]">{showHeading(s.title)}</h2>
                           {sub && <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-neutral-600">{sub}</p>}
                         </div>
                       );
@@ -269,7 +270,7 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
                     return (
                       <section key={i} id={secId(i)} data-seg={i} className="mt-10 scroll-mt-24">
                         <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-neutral-200 pb-2">
-                          <h3 className="font-display text-xl font-extrabold leading-tight tracking-tight sm:text-[22px]">{s.title}</h3>
+                          <h3 className="font-display text-xl font-extrabold leading-tight tracking-tight sm:text-[22px]">{showHeading(s.title)}</h3>
                           <span aria-label={b.label} className={cn('rounded px-2 py-0.5 text-[11px] font-bold', b.cls)}>{b.short}</span>
                         </div>
                         <SegmentBlocks blocks={blocksOf} />
@@ -304,7 +305,7 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
                     <button type="button" onClick={() => setReviseOpen(false)} className="h-10 rounded-md bg-white px-4 text-sm font-semibold ring-1 ring-neutral-300">{SECTION_REVISION_TEXT.CANCEL}</button>
                   </form>
                 )}
-                <h2 className="mb-1.5 font-display text-[24px] font-extrabold leading-tight tracking-tight sm:text-[28px]">{seg.title}</h2>
+                <h2 className="mb-1.5 font-display text-[24px] font-extrabold leading-tight tracking-tight sm:text-[28px]">{showHeading(seg.title)}</h2>
                 <div className="mb-4 flex flex-wrap items-center gap-2">
                   <span className={cn('rounded px-2 py-0.5 text-[11px] font-bold', badge.cls)}>{badge.short}</span>
                   {seg.minutes && <span className="rounded bg-brand-yellow px-2 py-0.5 text-xs font-bold text-black">{seg.minutes}</span>}
@@ -318,11 +319,11 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
               <div className="mt-3 flex flex-wrap justify-between gap-3">
                 <button type="button" disabled={prevIdx === null} onClick={() => prevIdx !== null && open(prevIdx)}
                   className="flex h-11 max-w-[48%] items-center gap-2 rounded-lg border border-neutral-300 bg-white px-4 text-sm font-semibold disabled:opacity-40">
-                  <ChevronLeft className="h-4 w-4 flex-none" /><span className="truncate">{prevIdx !== null ? segments[prevIdx].title : 'Početak'}</span>
+                  <ChevronLeft className="h-4 w-4 flex-none" /><span className="truncate">{prevIdx !== null ? showHeading(segments[prevIdx].title) : 'Početak'}</span>
                 </button>
                 <button type="button" disabled={nextIdx === null} onClick={() => nextIdx !== null && open(nextIdx)}
                   className="flex h-11 max-w-[48%] items-center gap-2 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground disabled:opacity-40">
-                  <span className="truncate">{nextIdx !== null ? segments[nextIdx].title : 'Kraj'}</span><ChevronRight className="h-4 w-4 flex-none" />
+                  <span className="truncate">{nextIdx !== null ? showHeading(segments[nextIdx].title) : 'Kraj'}</span><ChevronRight className="h-4 w-4 flex-none" />
                 </button>
               </div>
               </>)}

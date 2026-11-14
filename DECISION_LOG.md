@@ -855,3 +855,14 @@ unchanged; the flag and duration emoji are replaced by language codes and block 
 - A saved plan (plan page) is shown as one continuous document: title block, group dividers, every section in order,
   the table of contents scrolls to a section and follows the reading position; the Sve / Nastavnik / Učenik tabs
   still filter. While a plan is being created, one card per section stays.
+
+**Update 2026-11-14 (DL-P36, Director):**
+- Spaced long dash " — " is shown as ", " (new `src/lib/language/dashes.ts`, part of the one display layer
+  `src/lib/language/display.ts`, client only; the server's `bosnianStandard.ts` stays free of client imports).
+  Heading lines keep their " — " in the text so sections are still found; they are shown through `showHeading()`
+  on screen and in Word. ASCII drawings keep their exact width.
+- The title of a plan shows the plan's own (AI-corrected) topic, not a misspelt typed one; a plan is saved with that
+  topic too. The parameters card keeps what the teacher typed.
+- "Razgovor s AI-om" on a saved plan: the plan now lies on the desk as a document (with Word) beside the conversation,
+  so the teacher sees what is being discussed. The conversation itself already worked; only the plan was not shown.
+- Welcome text in the Director's wording.

@@ -488,3 +488,22 @@ Period: 2026-11-07 … 2026-11-14. Detailed entries follow below the summary; th
   was shown as a page with only its "Physik | 8. razred | …" line.
 - Rule: check every segment of a real plan for (a) characters that are not content (rules, frames, Markdown) and
   (b) pages with fewer than two lines of content, before showing a rendering to the owner.
+
+### 2026-11-14 — Director wording: the welcome text
+- The Director replaced the welcome text. The "..." at the end of his sentence was kept as a full stop (no words
+  added); he can extend the text. User-facing wording comes from the owner, word for word.
+
+### 2026-11-14 — Director correction: a change pushed after the merge ("zašto nisi izmijenio pozdravni tekst")
+- I pushed the welcome text to the branch of PR #43 while the Director was merging it. The merge did not contain
+  the commit, and I reported it as "in PR #43".
+- Rule: before saying a change is in a PR, check that the PR is still open (and after a push, that its head is the
+  pushed commit). If it was merged, open a new PR and say so.
+
+### 2026-11-14 — Director correction: "Razgovor s AI-om" on a saved plan looked inactive
+- The plan was loaded as context and the chat worked, but the screen showed only the welcome text, so it looked
+  like nothing happened. Since the two-zone layout, a desk appears only for plans in the conversation.
+- Rule: every entry point of a screen (here /chat?plan_id=…) is part of the screenshot set.
+
+### 2026-11-14 — Gotcha: src/lib/language is shared with the Deno server
+- `bosnianStandard.ts` is imported by the Edge Function validator. A client import (with the "@/" alias) there would
+  break the deploy. Client-only display code lives in `display.ts` / `dashes.ts`.
