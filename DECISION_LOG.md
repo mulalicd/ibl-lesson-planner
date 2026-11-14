@@ -687,3 +687,20 @@ are unchanged. The prompt grows by about 4,700 characters. Rollback: remove the 
 
 **Open point (not changed, needs a Director decision):** the Bosnian template line "Odaberite jedan sustavan
 produkt" uses "sustavan" (Croatian); standard Bosnian is "sistematičan".
+
+## DL-P30 — Control layer for German and English; "sustavan" → "sistematičan" (Director, 2026-11-14)
+
+**Decided by:** Director ("1-4 odobravam", items 1 and 2 of the report after PR #33).
+
+**Decision 1 — template-line layer.** `src/lib/language/templateLines.ts` replaces every EXACT Bosnian template
+line (PSI Module 3.10 list, DL-P29) in a German or English plan with its German/English line. It runs while the
+plan streams (useChat) and when a stored plan is shown (displayPlanText). It adds no wait and no AI call, and
+Bosnian plans are never touched. The data is generated from the PSI .md by `scripts/build-psi.mjs` into
+`templateLines.generated.ts`, and CI checks it is in sync (M-7). Table cells keep their width. Free Bosnian
+text that is not a known template line is not changed; `language_purity` (eval only) is now measured on the
+text the teacher sees.
+
+**Decision 2.** The Bosnian PSI template reads "Odaberite jedan sistematičan produkt" (was "sustavan",
+Croatian). "sustav…" is added to the flagged Bosnian words (standard: sistem / sistematičan).
+
+**Rollback:** revert the PR. The PSI edit is one line.
