@@ -65,4 +65,4 @@ Legend: ✅ met (evidence) · ⏳ waits for the Director · ↺ met in an adapte
 | Verified in Chrome, Edge, Firefox, Safari, Chrome Android | ✅ / ⏳ | Chromium by the ACA; **Director**: Firefox, Safari (macOS/iOS), Chrome Android |
 | Performance not worse than before | ✅ | section "Performance" above |
 | Released in stages with rollback | ✅ | PRs #39–#50, each revertible |
-| Every user-facing text approved | ⏳ | the user guide texts (`src/pages/GuidePage.tsx`) await the Director's approval |
+| Every user-facing text approved | ✅ | user guide texts approved by the Director 2026-11-14 ("uputstvo odobreno") |
