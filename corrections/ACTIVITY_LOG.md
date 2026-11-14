@@ -71,3 +71,12 @@ initial_instructions.md's "never `main`" rule, not to the unreleased
 - [2026-11-14 10:22] Write: specs/p6-workspace-redesign/SPEC.md
 - [2026-11-14 10:30] Write: specs/p6-workspace-redesign/PLAN.md
 - [2026-11-14 10:32] Write: ../../../tmp/claude-0/-home-user-ibl-lesson-planner/ea2107a6-01ec-5625-a80c-61df79552c75/scratchpad/p6canvas/project/canvas.json
+- [2026-11-14 10:36] Write: ../../../tmp/claude-0/-home-user-ibl-lesson-planner/ea2107a6-01ec-5625-a80c-61df79552c75/scratchpad/p6canvas/project/Main.dc.html
+- [2026-11-14 10:37] Write: ../../../tmp/claude-0/-home-user-ibl-lesson-planner/ea2107a6-01ec-5625-a80c-61df79552c75/scratchpad/p6canvas/project/A-Journey.dc.html
+- [2026-11-14 10:37] Write: ../../../tmp/claude-0/-home-user-ibl-lesson-planner/ea2107a6-01ec-5625-a80c-61df79552c75/scratchpad/p6canvas/project/A-Phone.dc.html
+- [2026-11-14 10:39] Write: ../../../tmp/claude-0/-home-user-ibl-lesson-planner/ea2107a6-01ec-5625-a80c-61df79552c75/scratchpad/p6canvas/project/B-Workspace.dc.html
+- [2026-11-14 10:39] Write: ../../../tmp/claude-0/-home-user-ibl-lesson-planner/ea2107a6-01ec-5625-a80c-61df79552c75/scratchpad/p6canvas/project/B-Journey.dc.html
+- [2026-11-14 10:40] Write: ../../../tmp/claude-0/-home-user-ibl-lesson-planner/ea2107a6-01ec-5625-a80c-61df79552c75/scratchpad/p6canvas/project/B-Phone.dc.html
+- [2026-11-14 10:41] Write: ../../../tmp/claude-0/-home-user-ibl-lesson-planner/ea2107a6-01ec-5625-a80c-61df79552c75/scratchpad/p6canvas/project/C-Workspace.dc.html
+- [2026-11-14 10:41] Write: ../../../tmp/claude-0/-home-user-ibl-lesson-planner/ea2107a6-01ec-5625-a80c-61df79552c75/scratchpad/p6canvas/project/C-Journey.dc.html
+- [2026-11-14 10:42] Write: ../../../tmp/claude-0/-home-user-ibl-lesson-planner/ea2107a6-01ec-5625-a80c-61df79552c75/scratchpad/p6canvas/project/C-Phone.dc.html
