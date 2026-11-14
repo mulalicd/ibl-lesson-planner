@@ -1685,6 +1685,10 @@ REFLEKSIJA UČENIKA (pitanja za učenike)
 ================================================================================
 (Rows and minutes are an EXAMPLE of shape only: adapt phases to THIS lesson and tier; the minutes must add
 up to duration_min. Keep the table at most 100 characters wide; shorten cell text, never drop a column.)
+(German/English plans: print this module in output_language with the headings from Module 3.10 —
+MATERIALIEN FÜR DIE STUNDE, STUNDENVERLAUF, PRÄSENTATION DER ERGEBNISSE, SCHÜLERREFLEXION /
+MATERIALS FOR THE LESSON, LESSON FLOW, PRESENTING FINDINGS, STUDENT REFLECTION. Student reflection is
+never omitted, in any language.)
 
 ------------------------------------------------------------------------
 MODULE 3.9A — TIPS & TRICKS FOR TEACHERS (Amendment A13) — ALWAYS print,
@@ -1707,6 +1711,8 @@ SAVJETI I TRIKOVI ZA NASTAVNIKE
 |   - [veza sa sljedećim časom]                                               |
 ================================================================================
 (6 do 8 savjeta ukupno, svaki specifičan za ovu temu, razred i trajanje.)
+(German/English plans: this template is printed in output_language — headings and sub-headings from
+Module 3.10, every tip written in output_language (A17). The template above is the Bosnian example.)
 
 ------------------------------------------------------------------------
 MODULE 3.10 — LANGUAGE TRANSLATION TABLE (v9.0: correct spelling)
@@ -1779,6 +1785,9 @@ ZPD SAVJET                            ZNE-TIPP                        ZPD TIP
 ČESTE ZABLUDE                         HÄUFIGE FEHLVORSTELLUNGEN       COMMON MISCONCEPTIONS
 UPORIŠTE U STVARNOM ŽIVOTU            BEZUG ZUM ALLTAG                REAL-LIFE CONNECTIONS
 SAVJETI I TRIKOVI ZA NASTAVNIKE       TIPPS & TRICKS FÜR LEHRKRÄFTE   TIPS & TRICKS FOR TEACHERS
+PRIPREMA (prije časa)                 VORBEREITUNG (vor der Stunde)   PREPARATION (before the lesson)
+IZVOĐENJE (tokom časa)                DURCHFÜHRUNG (in der Stunde)    DURING THE LESSON
+NAKON ČASA                            NACH DER STUNDE                 AFTER THE LESSON
 MATERIJALI ZA ČAS                     MATERIALIEN FÜR DIE STUNDE      MATERIALS FOR THE LESSON
 TOK ČASA                              STUNDENVERLAUF                  LESSON FLOW
 Oblik rada                            Sozialform                      Grouping

@@ -623,3 +623,21 @@ It is not shipped in the browser bundle; the app exports through `docx`, which i
 used by the green deploys #23 and #24. A step prints `supabase --version`. Upgrades are deliberate: change the
 number, then watch one deploy. This is a reversible engineering-hygiene change within the approved deploy
 pipeline.
+
+## DL-P25 — De/en labels for the Tips sub-headings; templates printed in the output language (ACA, applying A17, 2026-11-14)
+
+**Evidence:** the L-3 eval (run 43531716938, 7 de/en plans).
+- German plans printed "SAVJETI I TRIKOVI ZA NASTAVNIKE / NAKON ČASA" in Bosnian. `language_purity` caught
+  it in g14 ("za, učenici, pitanje, časa").
+- 2/7 German plans had no student reflection.
+
+**Cause:** Module 3.10 had no de/en labels for PRIPREMA (prije časa), IZVOĐENJE (tokom časa) and NAKON ČASA,
+so the model copied the Bosnian template.
+
+**Change:**
+1. Module 3.10 gains the 3 rows.
+2. Modules 3.9A and 3.9B each get one note: in de/en plans, print the module in output_language with the
+   3.10 headings, and never omit the student reflection.
+
+This is a mechanical application of the approved A17 ("every word in output_language"). No pedagogical
+content changes. It goes live only via a PR that the Director merges.
