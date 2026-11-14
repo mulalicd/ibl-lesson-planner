@@ -65,3 +65,9 @@ One line per feature, per Commander E-10.
   rubriku" (PR #23).
 - [2026-11-13] [LANGUAGE] PSI amendment A17: the plan is written only in the chosen language at native
   level; Bosnian standard (Latin, ijekavian, no Croatisms or Serbisms) is named in the prompt itself (DL-P22).
+- [2026-11-14] [UX] P5-1: the plan library opens on "Moji IBL planovi", with a "Moji / Svi" switch. P5-5: older
+  Bosnian plans are shown and exported with the language fixes (stored text unchanged). DL-P27.
+- [2026-11-14] [EXPORT] P5-3: the Word export (on the memorandum) has real headings and real tables (Tok
+  časa, Materijali …) instead of a monospaced block; every character of the plan is kept (test + eval check).
+- [2026-11-14] [LANGUAGE] A17 addition (DL-P28): German/English plans translate Bosnian template text; Latin
+  script only. The eval-only language check also flags Cyrillic letters.

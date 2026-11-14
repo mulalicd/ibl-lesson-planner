@@ -228,6 +228,11 @@ A17 — LANGUAGE OF THE OUTPUT (approved by the Director 2026-11-13, DL-P19/DL-P
   - english: one variety throughout (British spelling), no Bosnian or German words except names and
     quoted sources.
   - Before printing, check every word for missing or swapped letters.
+  - The templates and examples in this document are written in Bosnian. In German and English plans,
+    TRANSLATE every template line into output_language — checklist items, self-evaluation questions,
+    labels and sub-labels. Never copy Bosnian template wording into a German or English plan.
+  - Use only the Latin alphabet (with č ć š ž đ, ä ö ü ß as the language needs). Never write
+    Cyrillic letters.
 
 A15 — FIXED ORDER OF THE CLOSING ELEMENTS (replaces the placement rule in Module 3.13)
   - The plan always ends in this order: ... PREPORUKE ZA IZVOĐENJE ČASA →

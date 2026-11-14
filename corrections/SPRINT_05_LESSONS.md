@@ -345,3 +345,19 @@ Period: 2026-11-07 … 2026-11-13. Detailed entries follow below the summary; th
 - Rule: never claim a fix from n=2. Log the offending lines, measure on a larger sample (after the 09:00
   quota reset), then decide. The check stays out of the teacher's badge until it is stable and the Director
   approves a label.
+
+### 2026-11-14 — No lessons this session (routine changes only)
+- "Ako jeste" (DL-P26) and the P5 SPEC draft: routine changes, no new gotcha or correction.
+
+### 2026-11-14 — Observation: the A17 addition helps, but the model still copies sample text verbatim
+- Eval run 43540520949 (6 German lessons, A17 addition): language_purity 5/6, no Cyrillic. Remaining hits in
+  g02 only. They are word-for-word copies of Bosnian SAMPLE lines in the PSI ("Stare mape ili fotografije",
+  "Set predmeta za posmatranje", "povratak na Istr. pitanje"). An instruction ("translate templates") reduces
+  copying; it does not remove it.
+- Rule: the strongest fix for copied template text is to give the template in every output language. That
+  is PSI text, so it needs a Director decision. Do not claim "fixed" from one run.
+
+### 2026-11-14 — Render check found three defects that unit tests passed (P5-3 Word export)
+- The first render of the structured export merged the "Ukupno" row into the row above, kept key/value lines
+  in monospace, and printed "School: · …". All tests were green at that point.
+- Confirms the 2026-11-10 rule: render generated documents and look at them before the PR.

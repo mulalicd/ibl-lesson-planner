@@ -648,3 +648,27 @@ content changes. It goes live only via a PR that the Director merges.
 
 **Decision:** PSI v9.1, the confirmation line of the input dialogue: "Ako jest, kažite 'Generiši' …" becomes
 "Ako jeste, kažite 'Generiši' …". This is the only occurrence. The v9.0 rollback is untouched.
+
+## DL-P27 — P5 teacher workflow approved (Director, 2026-11-14)
+
+**Decided by:** Director ("P5 odobren", default "Moji").
+
+**Scope:** `specs/p5-ux-workflow/SPEC.md`, items P5-1 … P5-5.
+
+**Notes on implementation:**
+- P5-1 is split.
+  - The "Moji / Svi" filter is code only and ships first.
+  - The author's name needs data the client may not read (auth.users). It ships with P5-2 per-user
+    favourites as ONE owner SQL script (E-18: preview / apply / rollback, rehearsed locally).
+- P5-5 fixes are applied when a stored plan is loaded for display, export or further chat. The stored text in the
+  database is never rewritten by this.
+
+## DL-P28 — A17 addition: translate Bosnian template text; Latin script only (Director, 2026-11-14)
+
+**Decided by:** Director ("A17 dopuna da"). The wording is L-1b in `specs/language-quality/SPEC.md`.
+
+**Evidence:** eval run 43538426833. German plans copied Bosnian template lines (checklists, self-evaluation
+questions, labels), and one plan had Cyrillic letters inside a word.
+
+**Decision:** two bullets are appended verbatim to A17 in `IDSS_IBL_PSI_v9_1.md`. Rollback: remove them and
+regenerate.

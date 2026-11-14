@@ -201,3 +201,9 @@ Deno.test("L-3 language_purity (eval only): Bosnian words in an English plan are
   const off = validatePlan(en, { language: "english", duration_min: 45 }).checks.find((c) => c.id === "language_purity");
   if (off) throw new Error("must be off in production until a label is approved");
 });
+
+Deno.test("L-3 language_purity: Cyrillic letters inside a German plan fail (seen 2026-11-14)", () => {
+  const de = "FORSCHUNGSFRAGE\nWarum?\nZadatak für слушаoсе: hört genau hin.\nZa savjete, pitanja i ideje …";
+  const c = validatePlan(de, { language: "german", duration_min: 45, languagePurity: true }).checks.find((x) => x.id === "language_purity");
+  if (c?.ok !== false || !c.detail.includes("Cyrillic")) throw new Error(JSON.stringify(c));
+});

@@ -15,6 +15,7 @@ import { validatePlan, type ValidationReport } from "../../supabase/functions/_s
 import { PSI_V80_PROMPT } from "../../supabase/functions/_shared/psi_v80.generated.ts";
 import { IblChatRequestSchema } from "../../src/lib/validation/schemas.ts";
 import { GEMINI_GENERATION_CONFIG, GEMINI_MODELS } from "../../supabase/functions/_shared/generation.ts";
+import { contentSignature, structurePlan } from "../../src/lib/planDocxStructure.ts";
 
 const VARIANTS: Record<string, { kind: "v81" | "psi"; text?: string; label: string }> = {
   v81: { kind: "v81", label: "production today (compressed v8.1)" },
@@ -284,6 +285,17 @@ for (const g of inputs) {
       const d = report.checks.find((c) => c.id === "sources_marked_to_verify")?.detail;
       console.log(`     sources detail: ${d}`);
     }
+    // Small runs (1–2 lessons) print the whole plan so real outputs can be used as test fixtures
+    // (job logs are readable; artifacts are not, from the ACA's network).
+    // P5-3: the structured Word export keeps every character of this real plan
+    {
+      const blocks = structurePlan(r.text);
+      const flat = blocks.map((b) => (b.type === "table" ? b.rows.flat().join(" ") : "text" in b ? b.text : "")).join(" ");
+      const chars = (t: string) => [...contentSignature(t).replace(/·/g, "")].sort().join("");
+      const tables = blocks.filter((b) => b.type === "table").length;
+      console.log(`     word export: ${chars(flat) === chars(r.text) ? "all text kept" : "TEXT LOST"}, ${tables} tables, ${blocks.filter((b) => b.type === "heading").length} headings`);
+    }
+    if (inputs.length <= 2) console.log(`<<<PLAN ${v} ${g.id}\n${r.text}\nPLAN>>>`);
     console.log(`     usage: ${JSON.stringify(r.usage)}`);
     console.log(`     tail: ${JSON.stringify(r.text.slice(-400))}`);
   }

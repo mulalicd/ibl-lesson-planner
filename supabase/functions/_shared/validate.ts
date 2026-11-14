@@ -251,8 +251,10 @@ export function validatePlan(text: string, params: ValidateParams): ValidationRe
     const body = footerStart > 0 ? text.slice(0, footerStart) : text;
     const found = [...body.matchAll(BOSNIAN_FUNCTION_WORDS)].map((m) => m[0]);
     const uniq = [...new Set(found)];
-    add("language_purity", uniq.length < 2,
-      uniq.length < 2 ? "ok" : `Bosnian words: ${uniq.slice(0, 10).join(", ")} (${found.length}×)`);
+    // Cyrillic letters inside Latin words (seen 2026-11-14: "слушаoсе" in a German plan) always fail.
+    const cyr = body.match(/\S*\p{Script=Cyrillic}\S*/u)?.[0];
+    add("language_purity", uniq.length < 2 && !cyr,
+      cyr ? `Cyrillic letters: ${cyr}` : uniq.length < 2 ? "ok" : `Bosnian words: ${uniq.slice(0, 10).join(", ")} (${found.length}×)`);
   }
 
   const failed = checks.filter((c) => !c.ok).map((c) => c.id);

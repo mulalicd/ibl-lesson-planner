@@ -54,3 +54,21 @@ A17 — LANGUAGE OF THE OUTPUT (Director 2026-11-13, DL-P19)
   - Before printing, check every word for missing or swapped letters.
 ```
 The list mirrors `src/lib/language/bosnianStandard.ts`, so the code and the prompt name the same words.
+
+## L-1b — Proposed addition to A17 (for the Director's approval; not live)
+Evidence: eval run 43538426833 (13 de/en plans), lines printed by `language_purity`. German plans copied
+Bosnian template text verbatim:
+- checklist items: "Stare mape ili fotografije", "Pismo liku ili historijskoj ličnosti";
+- teacher self-evaluation questions: "Da li učenici pričaju više od mene?";
+- labels: "Specifično za ovaj čas", "IZAZOV — Učenici koji brzo napreduju", "Zadatak za učenike koji slušaju".
+
+One plan had Cyrillic letters inside a word ("слушаoсе").
+
+Proposed wording (appended to A17):
+```
+  - The templates and examples in this document are written in Bosnian. In German and English plans,
+    TRANSLATE every template line into output_language — checklist items, self-evaluation questions,
+    labels and sub-labels. Never copy Bosnian template wording into a German or English plan.
+  - Use only the Latin alphabet (with č ć š ž đ, ä ö ü ß as the language needs). Never write
+    Cyrillic letters.
+```
