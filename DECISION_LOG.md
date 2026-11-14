@@ -833,3 +833,14 @@ unchanged; the flag and duration emoji are replaced by language codes and block 
 - The plan workspace chooses its layout from the width it really has (table of contents beside the page from
   960 px, notes in their own column from 1200 px, otherwise above the table of contents), so the page never gets
   squeezed beside the conversation.
+
+**Update 2026-11-14 (DL-P36, fine-tuning, Director's marked screenshots):**
+- "Prepravi ovaj dio" sits at the top of every segment page (header row); its form opens inside the page, so the
+  teacher never leaves the segment to change it. The right-hand notes column is removed; the page runs to the
+  right edge of the screen.
+- The quality check ("Provjera kvaliteta") moves into the creation block at the top, between the steps and
+  "Sačuvaj plan".
+- Creation form: the sheet is tall enough for the five binder tabs, so "Dalje" never meets "Generiši".
+- No jumping screens: smaller, shorter page transitions; a page keeps a minimum height so the navigation buttons
+  stay in place; the scrollbar space is always reserved; the plan is not rebuilt when the AI finishes (same key
+  while writing and after); the conversation scrolls only when a message is added, not on every streamed word.

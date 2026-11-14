@@ -279,3 +279,13 @@ body { overflow-x: hidden; }
 @media print {
   .no-print { display: none !important; }
 }
+
+/* P6 (Director 2026-11-14: "ekrani se ne smiju tresti"): the space of the scrollbar is always reserved, so a page
+   or panel never shifts sideways when its content grows past the screen height. */
+@layer base {
+  html,
+  .overflow-y-auto,
+  .overflow-auto {
+    scrollbar-gutter: stable;
+  }
+}

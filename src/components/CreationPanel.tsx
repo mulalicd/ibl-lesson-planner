@@ -19,7 +19,7 @@ export interface CreationLesson {
 
 const AUDIENCE_BAR: Record<Audience, string> = { n: 'bg-brand-blue', u: 'bg-brand-yellow', nu: 'bg-brand-lightblue' };
 
-export default function CreationPanel({ step, lesson, planText, writing, actions }: {
+export default function CreationPanel({ step, lesson, planText, writing, actions, quality }: {
   step: CreationStep;
   lesson: CreationLesson | null;
   /** The plan text so far (streaming) or the finished plan; empty before the first words arrive. */
@@ -28,6 +28,8 @@ export default function CreationPanel({ step, lesson, planText, writing, actions
   writing: boolean;
   /** Save / Word buttons of a finished plan. */
   actions?: ReactNode;
+  /** The quality check of the finished plan (QualityBadge), between the steps and the actions. */
+  quality?: ReactNode;
 }) {
   const reduce = useReducedMotion();
   const segments = planText.trim() ? parseSegments(planText) : [];
@@ -51,9 +53,19 @@ export default function CreationPanel({ step, lesson, planText, writing, actions
           <span className="bg-brand-red" /><span className="bg-black" />
         </div>
         <div className="space-y-4 px-4 py-4 md:px-6">
-          <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <CreationSteps step={step} flat />
-            {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
+            {/* quality check and actions stay together; on a narrow desk they move to their own line as one row */}
+            {(quality || actions) && (
+              <div className="flex min-w-0 flex-1 basis-[300px] flex-wrap items-center justify-end gap-3">
+                {quality && (
+                  <div className="min-w-[240px] flex-1 rounded-md bg-brand-yellow text-black shadow-[0_8px_18px_rgba(0,0,0,0.12)] [&>div]:border-0 [&>div]:py-2 [&_.text-muted-foreground]:text-black">
+                    {quality}
+                  </div>
+                )}
+                {actions && <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>}
+              </div>
+            )}
           </div>
 
           {(meta || lesson?.topic) && (

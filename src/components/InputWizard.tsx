@@ -159,11 +159,11 @@ export default function InputWizard({ onGenerate, isLoading, onSwitchToChat }: I
           <div aria-hidden="true" className="absolute inset-0 translate-x-2 translate-y-2 rotate-[0.8deg] rounded-md bg-white shadow-[0_14px_30px_rgba(0,0,0,0.08)]" />
           <motion.section
             key={step}
-            initial={reduce ? false : { x: 28, rotateY: -6 }}
+            initial={reduce ? false : { x: 10, rotateY: -2 }}
             animate={{ x: 0, rotateY: 0 }}
-            transition={{ duration: 0.45, ease: [0.2, 0.8, 0.2, 1] }}
+            transition={{ duration: 0.3, ease: [0.25, 1, 0.5, 1] }}
             aria-label={STEPS[step].label}
-            className="relative rounded-md bg-white px-5 py-6 shadow-[0_1px_0_rgb(221_221_221),0_22px_40px_rgba(0,0,0,0.12)] sm:px-8 sm:py-7"
+            className="relative rounded-md bg-white px-5 py-6 shadow-[0_1px_0_rgb(221_221_221),0_22px_40px_rgba(0,0,0,0.12)] sm:px-8 sm:py-7 lg:min-h-[540px]"
           >
             <div className="flex items-center justify-between border-b border-neutral-200 pb-2 text-[11px] font-bold uppercase tracking-widest text-neutral-600">
               <span>Nova priprema</span>
