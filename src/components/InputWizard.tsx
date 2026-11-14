@@ -117,7 +117,7 @@ export default function InputWizard({ onGenerate, isLoading, onSwitchToChat }: I
   );
 
   return (
-    <div className="mx-auto grid w-full max-w-[1280px] gap-6 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-10">
+    <div className="grid w-full gap-6 lg:grid-cols-[340px_minmax(0,1fr)] lg:gap-10 xl:grid-cols-[380px_minmax(0,1fr)]">
       {/* Left: what is being created, the real creation steps, and the plan header filling in */}
       <aside className="space-y-4 lg:sticky lg:top-4 lg:self-start">
         <div>

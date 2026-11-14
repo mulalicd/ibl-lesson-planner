@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { Send, StopCircle, RotateCcw, Lightbulb, ChevronRight, Save, CheckCircle2 } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { Send, StopCircle, RotateCcw, Lightbulb, Save, CheckCircle2 } from 'lucide-react';
 import { useChat } from '@/hooks/useChat';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { MODE_C_SUGGESTIONS, PSI_VERSION_LABEL, SECTION_REVISION_TEXT, deriveTier } from '@/lib/constants';
 import PlanDisplay from './PlanDisplay';
-import CreationSteps from './CreationSteps';
+import CreationPanel from './CreationPanel';
 import { parseSegments } from '@/lib/planSegments';
 import DocxExportButton from './DocxExportButton';
 import ConversationExportButton from './ConversationExportButton';
@@ -33,11 +34,18 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   // Store last generate params for saving
   const lastParamsRef = useRef<{ subject: string; grade: number; topic: string; duration_min: number; language: Language; prior_knowledge?: string; notes?: string } | null>(null);
-  const reduceMotion = useReducedMotion();
+  const isMobile = useIsMobile();
+  /** Which finished plan the desk shows (null: the newest). */
+  const [shownPlanId, setShownPlanId] = useState<string | null>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chat.messages, chat.isLoading]);
+
+  // a new answer (a new plan, a repair) brings the newest plan back onto the desk
+  useEffect(() => {
+    if (chat.isLoading) setShownPlanId(null);
+  }, [chat.isLoading]);
 
   useEffect(() => {
     if (!showWizard) inputRef.current?.focus();
@@ -157,231 +165,252 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
     );
   }
 
-  return (
-    <div className="flex flex-col h-full">
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6 space-y-5">
-        <AnimatePresence mode="popLayout">
-          {chat.messages.map((msg, idx) => (
-            <motion.div
-              key={msg.id}
-              initial={{ y: 16 }}
-              animate={{ y: 0 }}
-              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: idx === 0 ? 0 : 0.05 }}
-              className={cn(
-                'flex gap-3',
-                msg.role === 'user' ? 'flex-row-reverse' : 'flex-row',
-                !(msg.isPlan || isStreamingPlan(msg, idx)) && 'mx-auto w-full max-w-4xl',
-              )}
-            >
-              {/* Avatar (not next to a plan on the desk) */}
-              {(msg.isPlan || isStreamingPlan(msg, idx)) ? null : msg.role === 'user' ? (
-                <motion.div
-                  whileHover={{ scale: 1.08 }}
-                  className="flex-shrink-0 w-10 h-10 rounded-2xl flex items-center justify-center text-xs font-bold neu-btn-primary"
-                >
-                  Vi
-                </motion.div>
-              ) : (
-                <motion.div
-                  whileHover={{ scale: 1.08 }}
-                  className="flex-shrink-0 w-10 h-10 rounded-2xl overflow-hidden neu-card"
-                >
-                  <img src={aiAvatarImg} alt="AI Asistent" className="w-full h-full object-cover" />
-                </motion.div>
-              )}
+  // ── P6 layout (Director 2026-11-14): on a tablet or computer the whole screen is used. Left: the conversation
+  // (welcome, the teacher's parameters, chat answers) and the composer. Centre, at the top: the creation block that
+  // grows as the plan is written; under it the plan itself. A phone keeps one column in the same order.
+  const lastIdx = chat.messages.length - 1;
+  const generating = chat.isLoading && chat.mode === 'onboarding';
+  /** The answer the AI is writing while a plan is being created: shown in the creation block, not as a message. */
+  const isPendingPlan = (msg: { role: string; isPlan?: boolean }, idx: number) =>
+    generating && msg.role === 'model' && !msg.isPlan && idx === lastIdx;
+  const streamingMsg = chat.messages.find((m, i) => isStreamingPlan(m, i)) ?? null;
+  const pendingMsg = chat.messages.find((m, i) => isPendingPlan(m, i)) ?? null;
+  const plans = chat.messages.filter((m) => m.isPlan);
+  const shownPlan = streamingMsg || generating ? null : (plans.find((m) => m.id === shownPlanId) ?? plans[plans.length - 1] ?? null);
+  const hasDesk = generating || !!streamingMsg || !!shownPlan;
+  const deskText = streamingMsg?.content ?? pendingMsg?.content ?? shownPlan?.content ?? '';
+  const lesson = lastParamsRef.current ?? (deskText ? extractPlanMeta(deskText) : null);
 
-              {/* Message bubble — a plan is not a bubble: it lies on the desk (P6, direction C) */}
-              <div className={cn(
-                'max-w-[85%] rounded-2xl',
-                msg.role === 'user'
-                  ? 'neu-bubble-user rounded-tr-lg px-5 py-4'
-                  : 'neu-bubble-ai rounded-tl-lg px-5 py-4',
-                (msg.isPlan || isStreamingPlan(msg, idx)) && '!max-w-full w-full !rounded-none !bg-transparent !p-0 !shadow-none'
-              )}>
-                {isStreamingPlan(msg, idx) ? (
-                  <div className="space-y-4">
-                    <CreationSteps step="writing" />
-                    <PlanDisplay planText={msg.content} streaming />
-                  </div>
-                ) : msg.isPlan ? (
-                  <div className="space-y-4">
-                    <CreationSteps step={savedPlanIds.has(msg.id) ? 'saved' : 'check'} />
-                    <PlanDisplay
-                      planText={msg.content}
-                      planId={msg.plan_id}
-                      // P5-4: only before the plan is saved (a saved plan is not changed behind the teacher's back)
-                      onReviseSection={savedPlanIds.has(msg.id) ? undefined : async (ref, request) => {
-                        const result = await chat.reviseSection(msg.id, ref, request);
-                        if (result === 'ok') toast.success(SECTION_REVISION_TEXT.DONE);
-                        else toast.error(SECTION_REVISION_TEXT.FAILED);
-                      }}
-                      reviseDisabled={chat.isLoading}
-                      quality={msg.validation ? <QualityBadge report={msg.validation} onRepair={chat.repairPlan} disabled={chat.isLoading} /> : undefined}
-                    />
-                    {/* Action buttons: Save + Export */}
-                    <div className="flex flex-wrap items-center gap-3 pt-3 border-t border-border/30">
-                      {/* Save button */}
-                      <motion.button
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => handleSavePlan(msg.id, msg.content)}
-                        disabled={!!savingPlanId || savedPlanIds.has(msg.id)}
-                        className={cn(
-                          'flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all',
-                          savedPlanIds.has(msg.id)
-                            ? 'bg-status-success-bg text-status-success border border-status-success/20 cursor-default'
-                            : 'neu-btn-primary hover:shadow-depth-3',
-                          savingPlanId === msg.id && 'opacity-70 cursor-wait'
-                        )}
-                      >
-                        {savedPlanIds.has(msg.id) ? (
-                          <><CheckCircle2 className="w-4 h-4" /> Sačuvano</>
-                        ) : savingPlanId === msg.id ? (
-                          <><Save className="w-4 h-4 animate-pulse" /> Čuvanje...</>
-                        ) : (
-                          <><Save className="w-4 h-4" /> Sačuvaj plan</>
-                        )}
-                      </motion.button>
-                      {msg.plan_id && (
-                        <DocxExportButton planId={msg.plan_id} planText={msg.content} />
-                      )}
-                    </div>
-                  </div>
-                ) : msg.role === 'model' ? (
-                  <div className="ai-message-content text-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: formatAIMessage(msg.content) }} />
-                ) : (
-                  <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
-                )}
-              </div>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-
-        {/* Loading. A plan being created (onboarding mode) waits on the desk with the real creation steps (P6, direction
-            C); a chat answer keeps the small bubble. Once three segments have arrived the workspace takes over above. */}
-        {chat.isLoading && !chat.messages.some((m, i) => isStreamingPlan(m, i)) && (
-          chat.mode === 'onboarding' ? (
-            <div className="mx-auto w-full max-w-4xl space-y-3">
-              <CreationSteps step="writing" />
-              <div className="rounded-md bg-white px-5 py-5 shadow-[0_1px_0_rgb(221_221_221),0_14px_30px_rgba(0,0,0,0.10)]">
-                {lastParamsRef.current && (
-                  <>
-                    <p className="text-[11px] font-bold uppercase tracking-widest text-neutral-600">
-                      {lastParamsRef.current.subject} · {lastParamsRef.current.grade}. razred · {lastParamsRef.current.duration_min} min
-                    </p>
-                    <h2 className="mt-1 font-display text-2xl font-extrabold tracking-tight text-black">{lastParamsRef.current.topic}</h2>
-                  </>
-                )}
-                <div className="mt-3 flex items-center gap-3 text-sm font-semibold text-black">
-                  <motion.span aria-hidden="true" className="inline-block h-3 w-3 rotate-45 rounded-[3px] bg-brand-red"
-                    animate={reduceMotion ? undefined : { y: [0, -4, 0] }} transition={{ duration: 0.6, repeat: Infinity, ease: 'easeInOut' }} />
-                  AI analizira i gradi plan časa...
-                </div>
-                <div aria-hidden="true" className="mt-3 h-2 overflow-hidden rounded-sm bg-neutral-100">
-                  <motion.div className="h-full bg-black" animate={reduceMotion ? { width: '35%' } : { width: ['0%', '100%'] }}
-                    transition={{ duration: 2.6, repeat: Infinity, ease: 'linear' }} />
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="mx-auto flex w-full max-w-4xl gap-3">
-              <div className="w-10 h-10 rounded-2xl overflow-hidden neu-card flex-shrink-0">
-                <img src={aiAvatarImg} alt="AI" className="w-full h-full object-cover animate-pulse" />
-              </div>
-              <div className="neu-bubble-ai rounded-2xl rounded-tl-lg px-5 py-4 max-w-md">
-                <LoadingIndicator />
-              </div>
-            </div>
-          )
+  const planActions = shownPlan && (
+    <>
+      <motion.button
+        whileTap={{ scale: 0.95 }}
+        onClick={() => handleSavePlan(shownPlan.id, shownPlan.content)}
+        disabled={!!savingPlanId || savedPlanIds.has(shownPlan.id)}
+        className={cn(
+          'flex h-10 items-center gap-2 rounded-md px-4 text-sm font-semibold transition-all',
+          savedPlanIds.has(shownPlan.id)
+            ? 'bg-status-success-bg text-status-success border border-status-success/20 cursor-default'
+            : 'neu-btn-primary',
+          savingPlanId === shownPlan.id && 'opacity-70 cursor-wait'
         )}
-
-        {chat.error && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="mx-auto max-w-md bg-destructive/8 text-destructive rounded-2xl px-5 py-3.5 text-sm text-center border border-destructive/15 shadow-depth-2"
-          >
-            ⚠️ {chat.error}
-          </motion.div>
+      >
+        {savedPlanIds.has(shownPlan.id) ? (
+          <><CheckCircle2 className="w-4 h-4" /> Sačuvano</>
+        ) : savingPlanId === shownPlan.id ? (
+          <><Save className="w-4 h-4 animate-pulse" /> Čuvanje...</>
+        ) : (
+          <><Save className="w-4 h-4" /> Sačuvaj plan</>
         )}
+      </motion.button>
+      {shownPlan.plan_id && <DocxExportButton planId={shownPlan.plan_id} planText={shownPlan.content} />}
+    </>
+  );
 
-        <div ref={bottomRef} />
-      </div>
+  const desk = hasDesk && (
+    <div className="space-y-6">
+      <CreationPanel
+        step={shownPlan ? (savedPlanIds.has(shownPlan.id) ? 'saved' : 'check') : 'writing'}
+        lesson={lesson}
+        planText={deskText}
+        writing={!shownPlan}
+        actions={planActions || undefined}
+      />
+      {streamingMsg ? (
+        <PlanDisplay planText={streamingMsg.content} streaming />
+      ) : shownPlan ? (
+        <PlanDisplay
+          key={shownPlan.id}
+          planText={shownPlan.content}
+          planId={shownPlan.plan_id}
+          // P5-4: only before the plan is saved (a saved plan is not changed behind the teacher's back)
+          onReviseSection={savedPlanIds.has(shownPlan.id) ? undefined : async (ref, request) => {
+            const result = await chat.reviseSection(shownPlan.id, ref, request);
+            if (result === 'ok') toast.success(SECTION_REVISION_TEXT.DONE);
+            else toast.error(SECTION_REVISION_TEXT.FAILED);
+          }}
+          reviseDisabled={chat.isLoading}
+          quality={shownPlan.validation ? <QualityBadge report={shownPlan.validation} onRepair={chat.repairPlan} disabled={chat.isLoading} /> : undefined}
+        />
+      ) : null}
+    </div>
+  );
 
-      {/* Suggestions */}
-      {chat.mode === 'chat' && !chat.isLoading && (
-        <div className="px-4 md:px-8 pb-3 flex flex-wrap gap-2 max-w-4xl mx-auto w-full">
-          {MODE_C_SUGGESTIONS.slice(0, 4).map(q => (
-            <motion.button
-              key={q}
-              whileHover={{ scale: 1.02, y: -1 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={() => { setInput(q); inputRef.current?.focus(); }}
-              className="text-xs px-4 py-2.5 rounded-xl neu-btn text-muted-foreground hover:text-primary font-medium flex items-center gap-1.5"
-            >
-              <Lightbulb className="w-3 h-3 opacity-50" />{q}
-              <ChevronRight className="w-3 h-3 opacity-30" />
-            </motion.button>
-          ))}
+  const conversation = (
+    <div className="space-y-6">
+      {chat.messages.map((msg, idx) => {
+        if (isPendingPlan(msg, idx) || isStreamingPlan(msg, idx)) return null;
+        if (msg.isPlan) {
+          const m = extractPlanMeta(msg.content);
+          const open = shownPlan?.id === msg.id;
+          return (
+            <button key={msg.id} type="button" aria-pressed={open} onClick={() => setShownPlanId(msg.id)}
+              className={cn('block w-full rounded-lg border-l-[6px] bg-white px-4 py-3 text-left shadow-[0_1px_0_rgb(221_221_221),0_10px_24px_rgba(0,0,0,0.10)] transition-transform hover:-translate-y-0.5',
+                open ? 'border-black' : 'border-neutral-300')}>
+              <span className="block text-[11px] font-bold uppercase tracking-widest text-neutral-600">Priprema</span>
+              <span className="mt-0.5 block font-display text-base font-extrabold leading-snug text-black">{m.topic || lastParamsRef.current?.topic || 'IBL plan'}</span>
+            </button>
+          );
+        }
+        return <RailMessage key={msg.id} role={msg.role} content={msg.content} first={idx === 0} />;
+      })}
+
+      {chat.isLoading && !generating && !streamingMsg && (
+        <div className="flex items-center gap-3 rounded-lg bg-white px-4 py-3 shadow-[0_1px_0_rgb(221_221_221),0_10px_24px_rgba(0,0,0,0.10)]">
+          <img src={aiAvatarImg} alt="AI" className="h-8 w-8 rounded-full object-cover animate-pulse" />
+          <LoadingIndicator />
         </div>
       )}
 
-      {/* Input Area */}
-      <div className="px-4 md:px-8 pb-5 pt-3 bg-gradient-to-t from-background via-background to-transparent">
-        <div className="flex gap-3 items-end max-w-4xl mx-auto">
-          <div className="flex flex-col gap-1.5">
-            <motion.button
-              whileTap={{ scale: 0.93 }}
-              onClick={() => { chat.clearChat(); setShowWizard(true); setSavedPlanIds(new Set()); lastParamsRef.current = null; }}
-              className="flex-shrink-0 w-11 h-11 rounded-xl neu-btn flex items-center justify-center text-muted-foreground hover:text-primary transition-colors"
-              title="Novi razgovor"
+      {chat.error && (
+        <div role="alert" className="flex items-start gap-3 rounded-lg border-l-[6px] border-brand-red bg-white px-4 py-3 text-sm font-medium text-black shadow-[0_10px_24px_rgba(0,0,0,0.10)]">
+          {chat.error}
+        </div>
+      )}
+      <div ref={bottomRef} />
+    </div>
+  );
+
+  const composer = (
+    <div className="border-t border-neutral-200 bg-background px-4 pb-4 pt-3">
+      {chat.mode === 'chat' && !chat.isLoading && (
+        <div className="-mx-4 mb-3 flex gap-2 overflow-x-auto px-4 pb-1 md:mx-0 md:flex-wrap md:overflow-visible md:px-0 md:pb-0">
+          {MODE_C_SUGGESTIONS.slice(0, 4).map(q => (
+            <button
+              key={q}
+              type="button"
+              onClick={() => { setInput(q); inputRef.current?.focus(); }}
+              className="neu-btn flex shrink-0 items-center gap-1.5 whitespace-nowrap px-3 py-2 text-left text-xs font-medium text-neutral-700 hover:text-primary md:shrink md:whitespace-normal"
             >
-              <RotateCcw className="w-4 h-4" />
-            </motion.button>
-            <ConversationExportButton messages={chat.messages} />
-          </div>
-          <div className="flex-1 relative">
-            <textarea
-              ref={inputRef}
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder={chat.mode === 'chat' ? 'Postavite pitanje o ovom planu...' : 'Napišite predmet, razred, temu... ili postavite pitanje'}
-              disabled={chat.isLoading}
-              rows={1}
-              className="w-full resize-none neu-inset px-5 py-3.5 pr-14 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all disabled:opacity-50 max-h-36 overflow-y-auto placeholder:text-muted-foreground/50"
-              style={{ minHeight: '52px' }}
-              onInput={e => { const t = e.currentTarget; t.style.height = 'auto'; t.style.height = Math.min(t.scrollHeight, 144) + 'px'; }}
-            />
-            <div className="absolute right-2.5 bottom-2.5 flex items-center gap-1">
-              {chat.isLoading ? (
-                <motion.button
-                  whileTap={{ scale: 0.9 }}
-                  onClick={chat.cancelStream}
-                  className="w-9 h-9 rounded-xl bg-destructive/10 text-destructive flex items-center justify-center hover:bg-destructive/20 transition-colors"
-                >
-                  <StopCircle className="w-4 h-4" />
-                </motion.button>
-              ) : (
-                <motion.button
-                  whileTap={{ scale: 0.9 }}
-                  whileHover={{ scale: 1.05 }}
-                  onClick={handleSend}
-                  disabled={!input.trim()}
-                  className="w-9 h-9 rounded-xl neu-btn-primary flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed"
-                >
-                  <Send className="w-4 h-4" />
-                </motion.button>
-              )}
-            </div>
+              <Lightbulb className="h-3 w-3 shrink-0" />{q}
+            </button>
+          ))}
+        </div>
+      )}
+      <div className="flex items-end gap-2">
+        <div className="relative flex-1">
+          <textarea
+            ref={inputRef}
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder={chat.mode === 'chat' ? 'Postavite pitanje o ovom planu...' : 'Napišite predmet, razred, temu... ili postavite pitanje'}
+            disabled={chat.isLoading}
+            rows={1}
+            className="neu-inset w-full resize-none overflow-y-auto px-4 py-3.5 pr-14 text-sm transition-all placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-primary/25 disabled:opacity-50 max-h-36"
+            style={{ minHeight: '52px' }}
+            onInput={e => { const t = e.currentTarget; t.style.height = 'auto'; t.style.height = Math.min(t.scrollHeight, 144) + 'px'; }}
+          />
+          <div className="absolute bottom-2.5 right-2.5 flex items-center gap-1">
+            {chat.isLoading ? (
+              <button type="button" onClick={chat.cancelStream} aria-label="Zaustavi"
+                className="flex h-9 w-9 items-center justify-center rounded-md bg-destructive/10 text-destructive transition-colors hover:bg-destructive/20">
+                <StopCircle className="h-4 w-4" />
+              </button>
+            ) : (
+              <button type="button" onClick={handleSend} disabled={!input.trim()} aria-label="Pošalji"
+                className="neu-btn-primary flex h-9 w-9 items-center justify-center disabled:cursor-not-allowed disabled:opacity-30">
+                <Send className="h-4 w-4" />
+              </button>
+            )}
           </div>
         </div>
-        <PrivacyNotice className="justify-center text-center mt-3 max-w-2xl mx-auto" />
-        <p className="text-center text-[11px] text-muted-foreground/40 mt-2 font-medium tracking-wide">
-          IBL Planer v2.0 · {PSI_VERSION_LABEL} · IDSS Sarajevo
-        </p>
       </div>
+      <div className="mt-2 flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => { chat.clearChat(); setShowWizard(true); setSavedPlanIds(new Set()); setShownPlanId(null); lastParamsRef.current = null; }}
+          className="neu-btn flex h-9 w-9 shrink-0 items-center justify-center text-neutral-700 transition-colors hover:text-primary"
+          title="Novi razgovor"
+          aria-label="Novi razgovor"
+        >
+          <RotateCcw className="h-4 w-4" />
+        </button>
+        <ConversationExportButton messages={chat.messages} />
+      </div>
+      <PrivacyNotice className="mt-3" />
+      <p className="mt-2 text-[11px] font-medium tracking-wide text-neutral-500">
+        IBL Planer v2.0 · {PSI_VERSION_LABEL} · IDSS Sarajevo
+      </p>
     </div>
+  );
+
+  // Tablet and computer with a plan on the desk: two zones over the full width.
+  if (hasDesk && !isMobile) {
+    return (
+      <div className="grid h-full grid-cols-[320px_minmax(0,1fr)] xl:grid-cols-[380px_minmax(0,1fr)]">
+        <aside aria-label="Razgovor" className="flex min-h-0 flex-col border-r border-neutral-200">
+          <div className="flex-1 overflow-y-auto px-4 py-5">{conversation}</div>
+          {composer}
+        </aside>
+        <div className="min-h-0 overflow-y-auto px-4 py-5 lg:px-6">{desk}</div>
+      </div>
+    );
+  }
+
+  // A phone, or no plan yet (free chat): one column.
+  return (
+    <div className="flex h-full flex-col">
+      <div className="flex-1 overflow-y-auto px-4 py-5">
+        <div className={cn('mx-auto space-y-6', !hasDesk && 'max-w-3xl')}>
+          {conversation}
+          {desk}
+        </div>
+      </div>
+      <div className={cn('mx-auto w-full', !hasDesk && 'max-w-3xl')}>{composer}</div>
+    </div>
+  );
+}
+
+/** A message of the conversation as a sheet on the desk (P6, Director 2026-11-14: "3D AAA" cards in the left zone). */
+function RailMessage({ role, content, first }: { role: string; content: string; first: boolean }) {
+  const reduce = useReducedMotion();
+  if (role === 'user') {
+    // The wizard sends "Label: value" lines; show them as an index card, anything else as text.
+    const lines = content.split('\n').map((l) => l.trim()).filter(Boolean);
+    const pairs = lines.map((l) => l.match(/^([^:]{2,24}):\s*(.+)$/));
+    const isCard = pairs.length > 1 && pairs.every(Boolean);
+    return (
+      <motion.article
+        initial={reduce ? false : { rotateX: 12, y: 14 }} animate={{ rotateX: 0, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
+        className="group relative ml-6" style={{ perspective: 1000 }}
+      >
+        <div aria-hidden="true" className="absolute inset-0 translate-x-1.5 translate-y-2 rotate-[1.5deg] rounded-lg bg-brand-blue/30" />
+        <div className="relative rounded-lg bg-primary px-4 py-4 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_18px_32px_rgb(var(--primary)/0.35)] transition-transform duration-300 group-hover:[transform:rotateY(4deg)_rotateX(-2deg)_translateY(-2px)]">
+          <span aria-hidden="true" className="absolute -right-3 -top-3 flex h-9 w-9 items-center justify-center rounded-full bg-brand-yellow text-xs font-extrabold text-black shadow-[0_6px_14px_rgba(0,0,0,0.25)]">Vi</span>
+          {isCard ? (
+            <dl className="space-y-1.5">
+              {pairs.map((m, i) => m && (
+                <div key={i} className="flex items-baseline justify-between gap-3 border-b border-white/20 pb-1.5 last:border-0 last:pb-0">
+                  <dt className="text-xs font-semibold uppercase tracking-wider">{m[1]}</dt>
+                  <dd className="text-right text-sm font-bold">{m[2]}</dd>
+                </div>
+              ))}
+            </dl>
+          ) : (
+            <p className="whitespace-pre-wrap text-sm leading-relaxed">{content}</p>
+          )}
+        </div>
+      </motion.article>
+    );
+  }
+  return (
+    <motion.article
+      initial={reduce ? false : { rotateY: -10, x: -16 }} animate={{ rotateY: 0, x: 0 }}
+      transition={{ duration: 0.55, ease: [0.2, 0.8, 0.2, 1] }}
+      className="group relative" style={{ perspective: 1200 }}
+    >
+      <div aria-hidden="true" className="absolute inset-0 translate-x-2 translate-y-2 rotate-[1.2deg] rounded-lg bg-white shadow-[0_14px_30px_rgba(0,0,0,0.08)]" />
+      <div className="relative rounded-lg bg-white py-4 pl-6 pr-4 shadow-[0_1px_0_rgb(221_221_221),0_22px_40px_rgba(0,0,0,0.14)] transition-transform duration-300 group-hover:[transform:rotateY(-4deg)_rotateX(2deg)_translateY(-2px)]">
+        <span aria-hidden="true" className="absolute left-0 top-5 h-12 w-1.5 rounded-r bg-brand-blue" />
+        {first && (
+          <img src={aiAvatarImg} alt="AI Asistent"
+            className="float-right mb-2 ml-3 h-12 w-12 rounded-full object-cover shadow-[0_8px_18px_rgba(0,0,0,0.20)] ring-4 ring-white" />
+        )}
+        <div className="ai-message-content text-sm leading-relaxed text-black" dangerouslySetInnerHTML={{ __html: formatAIMessage(content) }} />
+      </div>
+    </motion.article>
   );
 }
 

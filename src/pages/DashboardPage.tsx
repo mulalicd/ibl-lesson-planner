@@ -107,7 +107,7 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-background">
       <AppHeader />
 
-      <main className="mx-auto max-w-[1680px] px-3 py-4 md:px-6">
+      <main className="px-3 py-4 md:px-6">
         {/* Title bar with the Moji / Svi binder tabs */}
         <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>

@@ -15,11 +15,12 @@ const STEPS: { id: string; label: string }[] = [
   { id: 'saved', label: 'Sačuvano' },
 ];
 
-export default function CreationSteps({ step }: { step: CreationStep }) {
+/** `flat`: without its own card, when it sits inside another sheet. */
+export default function CreationSteps({ step, flat }: { step: CreationStep; flat?: boolean }) {
   const reduce = useReducedMotion();
   const at = STEPS.findIndex((s) => s.id === step);
   return (
-    <ol aria-label="Koraci kreiranja pripreme" className="flex flex-wrap items-center gap-2 rounded-md bg-white px-3 py-2 shadow-[0_1px_0_rgb(221_221_221)]">
+    <ol aria-label="Koraci kreiranja pripreme" className={cn('flex flex-wrap items-center gap-2', !flat && 'rounded-md bg-white px-3 py-2 shadow-[0_1px_0_rgb(221_221_221)]')}>
       {STEPS.map((s, i) => {
         const done = i < at || (step === 'saved' && i === at);
         const current = i === at && step !== 'saved';
