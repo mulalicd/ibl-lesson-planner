@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fixHeadingTypos, correctHeading, findTripleLetters } from '@/lib/language/headingGuard';
-import { displayPlanText } from '@/lib/language/bosnianStandard';
+import { displayPlanText } from '@/lib/language/display';
 import { QUALITY_CHECK_LABELS, buildRepairMessage } from '@/lib/qualityChecks';
 
 const read = (p: string) => readFileSync(resolve(__dirname, p), 'utf8');

@@ -3,7 +3,8 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { normalizeTemplateLines } from '@/lib/language/templateLines';
 import { TEMPLATE_LINES } from '@/lib/language/templateLines.generated';
-import { displayPlanText, findNonStandardBosnian } from '@/lib/language/bosnianStandard';
+import { findNonStandardBosnian } from '@/lib/language/bosnianStandard';
+import { displayPlanText } from '@/lib/language/display';
 
 // DL-P30: exact Bosnian template lines in a German/English plan → the German/English line of PSI Module 3.10.
 describe('DL-P30 template-line layer (German and English plans)', () => {
@@ -58,5 +59,19 @@ describe('DL-P30 "sustavan" (Croatian) is flagged in Bosnian plans', () => {
   it('the Bosnian PSI template no longer contains it', () => {
     const psi = readFileSync(resolve(__dirname, '../../IDSS_IBL_PSI_v9_1.md'), 'utf8');
     expect(psi).not.toMatch(/sustav/i);
+  });
+});
+
+describe('Display: spaced long dashes (Director 2026-11-14)', () => {
+  it('shows " — " as ", " in text, keeps headings findable and drawings exact', async () => {
+    const { showHeading } = await import('@/lib/language/dashes');
+    const { parseSegments } = await import('@/lib/planSegments');
+    const plan = 'SKELA — VAŠA ULOGA\n| Pitanje — bez odgovora |\n| VODA -->  [ LIST ] — CO2 |\n';
+    const out = displayPlanText(plan, 'bosnian');
+    expect(out).toContain('| Pitanje, bez odgovora |');
+    expect(out).toContain('SKELA — VAŠA ULOGA');
+    expect(out).toContain('VODA -->  [ LIST ] — CO2');
+    expect(parseSegments(out)[0].head).toBe('SKELA');
+    expect(showHeading('SKELA — VAŠA ULOGA')).toBe('SKELA, VAŠA ULOGA');
   });
 });

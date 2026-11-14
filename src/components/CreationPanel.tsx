@@ -8,6 +8,7 @@ import type { ReactNode } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import CreationSteps, { type CreationStep } from '@/components/CreationSteps';
 import { parseSegments, type Audience } from '@/lib/planSegments';
+import { showHeading } from '@/lib/language/dashes';
 import { cn } from '@/lib/utils';
 
 export interface CreationLesson {
@@ -94,7 +95,7 @@ export default function CreationPanel({ step, lesson, planText, writing, actions
               {/* one mark per arrived segment, in plan order */}
               <ol aria-label="Dijelovi pripreme" className="flex items-center gap-1">
                 {segments.map((s, i) => (
-                  <motion.li key={`${i}-${s.head}`} title={s.title}
+                  <motion.li key={`${i}-${s.head}`} title={showHeading(s.title)}
                     initial={reduce ? false : { scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.35 }}
                     className={cn('h-2.5 min-w-[4px] flex-1 origin-left rounded-[2px]', AUDIENCE_BAR[s.audience],
                       current && i === segments.length - 1 && 'animate-pulse')} />
@@ -103,7 +104,7 @@ export default function CreationPanel({ step, lesson, planText, writing, actions
               <div className="mt-2 flex flex-wrap items-center justify-between gap-x-6 gap-y-1 text-xs font-semibold text-neutral-700">
                 <span>
                   Dijelova: <span className="text-black">{segments.length}</span>
-                  {current && <> · Sada se piše: <span className="text-black">{current.title}</span></>}
+                  {current && <> · Sada se piše: <span className="text-black">{showHeading(current.title)}</span></>}
                 </span>
                 <span className="flex items-center gap-3">
                   <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm bg-brand-blue" />Nastavnik</span>
