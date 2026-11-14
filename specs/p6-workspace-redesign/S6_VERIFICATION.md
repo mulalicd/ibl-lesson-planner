@@ -78,4 +78,4 @@ Legend: ✅ met (evidence) · ⏳ waits for the Director · ↺ met in an adapte
 `supabase/owner-scripts/2026-11-14_p6-plan-conversations/04_LIVE_CHECK_changes_nothing.sql`: acts as a real
 non-admin teacher against another teacher's conversation and plan (read allowed; add, impersonate, change, delete,
 change the plan, change messages refused; nothing readable without sign-in) and rolls everything back.
-Local rehearsal: 0 of 8 failed, row counts unchanged. **Director** runs it once on production.
+Local rehearsal: 0 of 8 failed, row counts unchanged. **Production (run by the Director, 2026-11-14): "LIVE CHECK: 0 of 8 FAILED (nothing was changed)" — all 8 PASS.**
