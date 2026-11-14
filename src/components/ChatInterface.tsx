@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { Send, StopCircle, RotateCcw, Lightbulb, Save, CheckCircle2 } from 'lucide-react';
+import { Send, StopCircle, RotateCcw, Lightbulb, Save, CheckCircle2, Wand2, Loader2, X } from 'lucide-react';
 import { useChat } from '@/hooks/useChat';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
@@ -19,9 +19,13 @@ import type { Language } from '@/lib/types';
 import { PrivacyNotice } from '@/components/PrivacyNotice';
 import { QualityBadge } from '@/components/QualityBadge';
 import { extractInquiryQuestion, extractPlanMeta } from '@/lib/planMeta';
+import { useAuth } from '@/hooks/useAuth';
+import { canChangePlan, fetchIsAdmin } from '@/lib/planActions';
+import { appendMessages, replacePlanText, startConversation } from '@/lib/planConversations';
 
 interface ChatInterfaceProps {
-  initialPlan?: { id: string; text: string } | null;
+  /** A saved plan opened with "Razgovor s AI-om": its language and author decide "Ugradi u plan". */
+  initialPlan?: { id: string; text: string; language?: string | null; owner_id?: string | null } | null;
 }
 
 export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
@@ -30,6 +34,18 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
   const [showWizard, setShowWizard] = useState(!initialPlan);
   const [savingPlanId, setSavingPlanId] = useState<string | null>(null);
   const [savedPlanIds, setSavedPlanIds] = useState<Set<string>>(new Set());
+  const { session } = useAuth();
+  const [isAdmin, setIsAdmin] = useState(false);
+  useEffect(() => { void fetchIsAdmin().then(setIsAdmin); }, []);
+  // ── P6 (DL-P37): a conversation about a SAVED plan is kept with that plan ──
+  const convRef = useRef<{ planId: string; id: string; next: number } | null>(null);
+  const pendingRef = useRef<{ planId: string; userMsgId: string } | null>(null);
+  const [savedExchanges, setSavedExchanges] = useState(0);
+  const warnedRef = useRef(false); // a failed save is reported once per conversation, not after every answer
+  // "Ugradi u plan": the new plan the AI wrote from the conversation, shown before anything is saved
+  const [proposal, setProposal] = useState<string | null>(null);
+  const [incorporating, setIncorporating] = useState(false);
+  const [contextText, setContextText] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   // Store last generate params for saving
@@ -46,6 +62,39 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
   // a new answer (a new plan, a repair) brings the newest plan back onto the desk
   useEffect(() => {
     if (chat.isLoading) setShownPlanId(null);
+  }, [chat.isLoading]);
+
+  // Keep each question and answer about a saved plan with that plan (only while a saved plan is the context).
+  useEffect(() => {
+    if (chat.isLoading) {
+      const last = chat.messages[chat.messages.length - 1];
+      if (chat.activePlanId && last?.role === 'user' && !pendingRef.current) pendingRef.current = { planId: chat.activePlanId, userMsgId: last.id };
+      return;
+    }
+    const p = pendingRef.current;
+    if (!p) return;
+    pendingRef.current = null;
+    const i = chat.messages.findIndex((m) => m.id === p.userMsgId);
+    const answer = i >= 0 ? chat.messages[i + 1] : undefined;
+    if (!answer || answer.role !== 'model') return;
+    void (async () => {
+      let conv = convRef.current?.planId === p.planId ? convRef.current : null;
+      if (!conv) {
+        const id = await startConversation(p.planId);
+        if (!id) { if (!warnedRef.current) toast.error('Razgovor nije sačuvan uz plan.'); warnedRef.current = true; return; }
+        conv = { planId: p.planId, id, next: 0 };
+        convRef.current = conv;
+      }
+      const ok = await appendMessages(conv.id, conv.next, [
+        { role: 'user', content: chat.messages[i].content },
+        { role: 'model', content: answer.content },
+      ]);
+      if (!ok) { if (!warnedRef.current) toast.error('Razgovor nije sačuvan uz plan.'); warnedRef.current = true; return; }
+      conv.next += 2;
+      setSavedExchanges((n) => n + 1);
+    })();
+    // runs when an answer finishes; the messages are read at that moment
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chat.isLoading]);
 
   useEffect(() => {
@@ -180,7 +229,34 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
   const shownPlan = streamingMsg || generating ? null : (plans.find((m) => m.id === shownPlanId) ?? plans[plans.length - 1] ?? null);
   // A saved plan opened with "Razgovor s AI-om" (/chat?plan_id=…): it lies on the desk while the teacher talks to the
   // AI about it (Director 2026-11-14: a saved plan can always be discussed further).
-  const contextPlan = initialPlan && !generating && !streamingMsg && !shownPlan ? initialPlan : null;
+  const contextPlan = initialPlan && !generating && !streamingMsg && !shownPlan
+    ? { ...initialPlan, text: contextText ?? initialPlan.text } : null;
+  const canIncorporate = !!contextPlan && savedExchanges > 0 && convRef.current?.planId === contextPlan.id
+    && canChangePlan(contextPlan.owner_id, session?.user?.id, isAdmin);
+
+  async function handleIncorporate() {
+    if (!contextPlan) return;
+    setIncorporating(true);
+    const plan = await chat.incorporateConversation(contextPlan.text, contextPlan.language ?? undefined);
+    setIncorporating(false);
+    if (plan) setProposal(plan);
+    else toast.error('AI nije vratio cijeli plan. Pokušajte ponovo.');
+  }
+
+  async function handleSaveProposal() {
+    if (!contextPlan || !proposal) return;
+    const result = await replacePlanText(contextPlan.id, convRef.current?.id ?? null, contextPlan.text, proposal);
+    if (result === 'ok') {
+      setContextText(proposal);
+      chat.setPlanContext(contextPlan.id, proposal);
+      setProposal(null);
+      toast.success('Plan je ažuriran prema razgovoru.');
+    } else if (result === 'forbidden') {
+      toast.error('Samo autor plana ili direktor može mijenjati ovaj plan.');
+    } else {
+      toast.error('Plan nije ažuriran. Pokušajte ponovo.');
+    }
+  }
   const hasDesk = generating || !!streamingMsg || !!shownPlan || !!contextPlan;
   const deskText = streamingMsg?.content ?? pendingMsg?.content ?? shownPlan?.content ?? contextPlan?.text ?? '';
   // The plan's own subject/topic win over what was typed: the AI corrects a misspelt topic ("fOdozindesa" →
@@ -218,17 +294,36 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
   const desk = hasDesk && (
     <div className="space-y-6">
       <CreationPanel
-        step={contextPlan ? 'saved' : shownPlan ? (savedPlanIds.has(shownPlan.id) ? 'saved' : 'check') : 'writing'}
+        step={contextPlan ? (proposal ? 'check' : 'saved') : shownPlan ? (savedPlanIds.has(shownPlan.id) ? 'saved' : 'check') : 'writing'}
         lesson={lesson}
         planText={deskText}
         writing={!shownPlan && !contextPlan}
-        actions={contextPlan ? <DocxExportButton planId={contextPlan.id} planText={contextPlan.text} /> : planActions || undefined}
+        actions={contextPlan ? (proposal ? (
+          <>
+            <button type="button" onClick={() => void handleSaveProposal()} className="neu-btn-primary flex h-10 items-center gap-2 px-4 text-sm font-semibold">
+              <Save className="h-4 w-4" /> Sačuvaj u postojeći plan
+            </button>
+            <button type="button" onClick={() => setProposal(null)} className="neu-btn flex h-10 items-center gap-2 px-4 text-sm font-semibold text-black">
+              <X className="h-4 w-4" /> Odbaci
+            </button>
+          </>
+        ) : (
+          <>
+            {canIncorporate && (
+              <button type="button" onClick={() => void handleIncorporate()} disabled={incorporating || chat.isLoading}
+                className="neu-btn-primary flex h-10 items-center gap-2 px-4 text-sm font-semibold disabled:opacity-50">
+                {incorporating ? <><Loader2 className="h-4 w-4 animate-spin" /> AI ugrađuje razgovor…</> : <><Wand2 className="h-4 w-4" /> Ugradi u plan</>}
+              </button>
+            )}
+            <DocxExportButton planId={contextPlan.id} planText={contextPlan.text} />
+          </>
+        )) : planActions || undefined}
         quality={shownPlan?.validation ? <QualityBadge report={shownPlan.validation} onRepair={chat.repairPlan} disabled={chat.isLoading} /> : undefined}
       />
       {streamingMsg ? (
         <PlanDisplay key={streamingMsg.id} planText={streamingMsg.content} streaming />
       ) : contextPlan ? (
-        <PlanDisplay key={contextPlan.id} planText={contextPlan.text} planId={contextPlan.id} asDocument />
+        <PlanDisplay key={`${contextPlan.id}-${proposal ? 'novi' : 'sacuvan'}`} planText={proposal ?? contextPlan.text} planId={contextPlan.id} asDocument />
       ) : shownPlan ? (
         <PlanDisplay
           key={shownPlan.id}
@@ -329,7 +424,7 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
       <div className="mt-2 flex items-center gap-2">
         <button
           type="button"
-          onClick={() => { chat.clearChat(); setShowWizard(true); setSavedPlanIds(new Set()); setShownPlanId(null); lastParamsRef.current = null; }}
+          onClick={() => { chat.clearChat(); setShowWizard(true); setSavedPlanIds(new Set()); setShownPlanId(null); lastParamsRef.current = null; convRef.current = null; warnedRef.current = false; setProposal(null); setSavedExchanges(0); }}
           className="neu-btn flex h-9 w-9 shrink-0 items-center justify-center text-neutral-700 transition-colors hover:text-primary"
           title="Novi razgovor"
           aria-label="Novi razgovor"

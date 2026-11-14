@@ -421,3 +421,9 @@ function SegmentBlocks({ blocks: raw }: { blocks: PlanBlock[] }) {
     </div>
   );
 }
+
+/** Plan-style text (e.g. an AI answer about a plan) shown exactly like a plan section (same clean-up, M-7). */
+export function PlanText({ text }: { text: string }) {
+  const blocks = useMemo(() => structurePlan(text), [text]);
+  return <SegmentBlocks blocks={blocks} />;
+}

@@ -7,7 +7,7 @@ import { ValidationEventSchema, MetaEventSchema, type ValidationReportInput } fr
 import { buildRepairMessage } from '@/lib/qualityChecks';
 import { displayPlanText } from '@/lib/language/display';
 import { isPlanText } from '@/lib/planMeta';
-import { buildRevisionRequest, extractRevisedSection, replaceSection, type SectionRef } from '@/lib/sectionRevision';
+import { buildIncorporateRequest, buildRevisionRequest, extractFullPlan, extractRevisedSection, replaceSection, type SectionRef } from '@/lib/sectionRevision';
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ibl-chat`;
 
@@ -19,6 +19,56 @@ const WELCOME_MESSAGE: ChatMessage = {
 Na ovom mjestu kreiramo pisane pripreme nastavnog časa zasnovane na istraživačkom učenju.`,
   timestamp: new Date().toISOString(),
 };
+
+/** One answer from the Edge Function as plain text (the streamed words joined; meta and quality events skipped).
+ *  Null when the request failed. Used by "Prepravi ovaj dio" and "Ugradi u plan" (M-7). */
+async function fetchAnswer(body: { mode: 'chat'; messages: { role: string; content: string }[]; plan_context: string }): Promise<string | null> {
+  const accessToken = await getAccessToken();
+  if (!accessToken) {
+    window.location.assign('/login');
+    throw new Error(ERROR_MESSAGES.UNAUTHORIZED);
+  }
+  const resp = await fetch(CHAT_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(body),
+  });
+  if (!resp.ok || !resp.body) {
+    if (resp.status === 401) window.location.assign('/login');
+    return null;
+  }
+  const reader = resp.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  let answer = '';
+  const takeLine = (line: string) => {
+    const l = line.endsWith('\r') ? line.slice(0, -1) : line;
+    if (!l.startsWith('data: ')) return;
+    const json = l.slice(6).trim();
+    if (!json || json === '[DONE]') return;
+    try {
+      const parsed = JSON.parse(json) as { choices?: { delta?: { content?: string } }[] };
+      const token = parsed.choices?.[0]?.delta?.content;
+      if (token) { answer += token; signalActivity(); }
+    } catch { /* an event that is not text (meta, validation) */ }
+  };
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    let nl: number;
+    while ((nl = buffer.indexOf('\n')) !== -1) {
+      takeLine(buffer.slice(0, nl));
+      buffer = buffer.slice(nl + 1);
+    }
+  }
+  if (buffer) takeLine(buffer);
+  return answer;
+}
 
 export function useChat() {
   const [state, setState] = useState<ConversationState>({
@@ -269,54 +319,12 @@ export function useChat() {
     const language = lastParamsRef.current?.language;
     setState(prev => ({ ...prev, isLoading: true, error: null }));
     try {
-      const accessToken = await getAccessToken();
-      if (!accessToken) {
-        window.location.assign('/login');
-        throw new Error(ERROR_MESSAGES.UNAUTHORIZED);
-      }
-      const resp = await fetch(CHAT_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({
-          mode: 'chat',
-          messages: [{ role: 'user', content: buildRevisionRequest(ref.title, teacherRequest, language) }],
-          plan_context: msg.content,
-        }),
+      const answer = await fetchAnswer({
+        mode: 'chat',
+        messages: [{ role: 'user', content: buildRevisionRequest(ref.title, teacherRequest, language) }],
+        plan_context: msg.content,
       });
-      if (!resp.ok || !resp.body) {
-        if (resp.status === 401) window.location.assign('/login');
-        return 'failed';
-      }
-      const reader = resp.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = '';
-      let answer = '';
-      const takeLine = (line: string) => {
-        const l = line.endsWith('\r') ? line.slice(0, -1) : line;
-        if (!l.startsWith('data: ')) return;
-        const json = l.slice(6).trim();
-        if (!json || json === '[DONE]') return;
-        try {
-          const parsed = JSON.parse(json) as { choices?: { delta?: { content?: string } }[] };
-          const token = parsed.choices?.[0]?.delta?.content;
-          if (token) { answer += token; signalActivity(); }
-        } catch { /* an event that is not text (meta, validation) */ }
-      };
-      for (;;) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        let nl: number;
-        while ((nl = buffer.indexOf('\n')) !== -1) {
-          takeLine(buffer.slice(0, nl));
-          buffer = buffer.slice(nl + 1);
-        }
-      }
-      if (buffer) takeLine(buffer);
+      if (answer === null) return 'failed';
 
       // the same language layer as a new plan (DL-P19, DL-P30)
       const shownAnswer = displayPlanText(answer, language);
@@ -343,9 +351,36 @@ export function useChat() {
     setState(prev => ({ ...prev, isLoading: false }));
   }, []);
 
+  /**
+   * "Ugradi u plan" (Director 2026-11-14, DL-P37): the AI rewrites the whole saved plan with what was discussed in
+   * this conversation. Nothing is saved here: the teacher sees the new plan first. Null when no complete plan came back.
+   */
+  const incorporateConversation = useCallback(async (planText: string, language: string | undefined): Promise<string | null> => {
+    const history = state.messages
+      .filter((m) => m.id !== 'welcome' && !m.isPlan)
+      .map((m) => ({ role: m.role, content: m.content }));
+    setState(prev => ({ ...prev, isLoading: true, error: null }));
+    try {
+      const answer = await fetchAnswer({
+        mode: 'chat',
+        messages: [...history, { role: 'user', content: buildIncorporateRequest(language) }],
+        plan_context: planText,
+      });
+      if (answer === null) return null;
+      const plan = extractFullPlan(displayPlanText(answer, language), isPlanText);
+      return plan && plan !== planText ? plan : null;
+    } catch (err) {
+      console.error('incorporate failed:', err);
+      return null;
+    } finally {
+      setState(prev => ({ ...prev, isLoading: false }));
+    }
+  }, [state.messages]);
+
   return {
     ...state,
     sendMessage,
+    incorporateConversation,
     setMode,
     setPlanContext,
     clearChat,

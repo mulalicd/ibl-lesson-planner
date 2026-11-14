@@ -57,3 +57,26 @@ describe('P5-4 one segment is replaced, nothing else changes (P6 S2 segments, re
     expect(t).toMatch(/Output ONLY the complete revised section/);
   });
 });
+
+describe('P6 "Ugradi u plan" (DL-P37)', () => {
+  it('keeps only the complete plan from the AI answer, without an introduction', async () => {
+    const { extractFullPlan } = await import('@/lib/sectionRevision');
+    const { isPlanText } = await import('@/lib/planMeta');
+    const { readFileSync } = await import('node:fs');
+    const { resolve } = await import('node:path');
+    const plan = readFileSync(resolve(__dirname, '../../supabase/functions/_shared/fixtures/plan_v91_fotosinteza_bs.txt'), 'utf8');
+    const out = extractFullPlan(`Evo plana s ugrađenim prijedlozima:\n\n${plan}`, isPlanText);
+    expect(out).not.toBeNull();
+    expect(out!.startsWith('Evo')).toBe(false);
+    expect(out).toContain('UDICA');
+    expect(extractFullPlan('Samo kratak odgovor bez plana.', isPlanText)).toBeNull();
+  });
+
+  it('asks for the whole plan in the plan language, with no follow-up questions', async () => {
+    const { buildIncorporateRequest } = await import('@/lib/sectionRevision');
+    const r = buildIncorporateRequest('bosnian');
+    expect(r).toMatch(/COMPLETE lesson plan/);
+    expect(r).toMatch(/no suggested follow-up questions/);
+    expect(r).toMatch(/Bosnian/);
+  });
+});

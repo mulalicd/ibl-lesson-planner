@@ -514,3 +514,9 @@ Period: 2026-11-07 … 2026-11-14. Detailed entries follow below the summary; th
 - Fix: one memorandum builder for plan and conversation.
 - Rule: when an output format rule is set ("every export on the memorandum"), search for EVERY place that writes
   that format (grep for the library, here `docx`), not only the one in front of you.
+
+### 2026-11-14 — Observation: "Razgovor s AI-om" never kept anything
+- The chat about a saved plan lived only in the browser; the tables meant for it existed since before P1 but were
+  closed in P1 and never wired. The Director expected the conversation to stay with the plan.
+- Fix: DL-P37 (owner script with a local rehearsal, 26/26; app saves each exchange; plan page lists them).
+- Rule: when a feature "talks about" a stored object, ask early whether its result must be stored with it.

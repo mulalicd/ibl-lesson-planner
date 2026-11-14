@@ -87,3 +87,4 @@ One line per feature, per Commander E-10.
 - [2026-11-14] [DESIGN] Sign-in: colour marks next to "IBL Planer" removed (the IDSS logo carries the colours); app name larger.
 - [2026-11-14] [UX] " — " shown as ", "; title uses the plan's corrected topic (also when saved); saved plan visible on the desk in "Razgovor s AI-om" (DL-P36).
 - [2026-11-14] [EXPORT] Conversation export on the IDSS memorandum (same builder as the plan); wrapped lines joined in Word for plan and conversation (DL-P36).
+- [2026-11-14] [FEATURE] Conversations about a saved plan kept with the plan, shown on the plan page; "Ugradi u plan" for the plan's author or the admin (DL-P37; owner script 2026-11-14_p6-plan-conversations).
