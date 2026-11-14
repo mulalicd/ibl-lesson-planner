@@ -1,7 +1,7 @@
 import { displayPlanText } from '@/lib/language/display';
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowLeft, Star, Trash2, Plus, MessageSquare, Loader2 } from 'lucide-react';
 import AppHeader from '@/components/AppHeader';
 import PlanDisplay from '@/components/PlanDisplay';
@@ -19,6 +19,7 @@ import { isFavourite, setFavourite } from '@/lib/planFavourites';
 
 export default function PlanPage() {
   const { id } = useParams<{ id: string }>();
+  const reduce = useReducedMotion();
   const navigate = useNavigate();
   const [plan, setPlan] = useState<PlanRecord | null>(null);
   const [loading, setLoading] = useState(true);
@@ -96,7 +97,8 @@ export default function PlanPage() {
     <div className="min-h-screen bg-background gradient-mesh">
       <AppHeader />
       <div className="flex items-center justify-center py-32">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center">
+        {/* E-12: moves in, never fades from invisible; off under "reduce motion" */}
+        <motion.div initial={reduce ? false : { y: 20 }} animate={{ y: 0 }} className="text-center">
           <div className="neu-card inline-block p-6 rounded-3xl mb-4">
             <p className="text-4xl">📋</p>
           </div>

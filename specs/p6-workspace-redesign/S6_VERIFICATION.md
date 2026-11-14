@@ -33,8 +33,8 @@ removed (the measurement caught it).
 | Browser | Status |
 |---|---|
 | Chromium (Chrome, Edge engine) | ACA: every changed screen at 1920/1440/1024/768/390 px, console 0 errors (S1–S6) |
-| Firefox, Safari/WebKit | Not available here: the download of Playwright's Firefox/WebKit is not permitted in this cloud session. **Director**: check on own devices (list in the release message). |
-| Safari iOS, Chrome Android | **Director**: real devices. |
+| Firefox, Safari/WebKit | Download of Playwright's Firefox/WebKit not permitted in this cloud session; checked by the **Director** on his devices: "sve radi" (2026-11-14). |
+| Safari iOS, Chrome Android | **Director**, real devices: "sve radi" (2026-11-14). |
 
 ## Functional non-regression
 vitest 133/133; Playwright smoke 3/3 on the production build; Deno check, Deno tests 43/43 and the Edge Function
@@ -48,7 +48,7 @@ Legend: ✅ met (evidence) · ⏳ waits for the Director · ↺ met in an adapte
 | Parameters and AI generation as before (same requests, prompts, PSI) | ✅ | wizard sends the same request (`handleWizardGenerate` unchanged); Edge Function untouched in P6; Deno tests 43/43, e2e 13/13 |
 | Every segment shown, no loss of content | ✅ | `p5-section-revision-display.test.tsx` (character signature on the real v9.1 plan); `p6-segments.test.ts` (every line in exactly one segment) |
 | Segment names and order are the plan's own | ✅ | `planSegments.ts` builds navigation from the plan; test "lists every segment … in its order" |
-| Every feature, route, action still works | ✅ / ⏳ | vitest 133/133, smoke 3/3, all pages console 0 errors; **Director**: one production check per action (list in the release message) |
+| Every feature, route, action still works | ✅ | vitest 133/133, smoke 4/4, all pages console 0 errors; Director's production check of every action on three devices: "sve radi" (2026-11-14) |
 | No fake states | ✅ | `CreationSteps` / `CreationPanel` show only real states (comment + review) |
 | Three zones, central zone widest, navigation and panel | ↺ | Director's layout of 2026-11-14 (conversation left, creation block top, plan centre; notes moved into the top block) |
 | Any segment in ≤ 2 interactions | ✅ | table of contents (1 click on wide screens; "Sadržaj" + 1 click on narrow) |
@@ -62,7 +62,20 @@ Legend: ✅ met (evidence) · ⏳ waits for the Director · ↺ met in an adapte
 | Motion moves, never fades; off under reduce motion | ✅ | `useReducedMotion` in all animated parts; S6 calmer transitions |
 | 3D content, no delay of first content | ✅ | CSS 3D only (no 3D library); FCP improved in S6 |
 | Tablet / phone layouts | ✅ | screenshots at 1024/768/390 px (S2–S6) |
-| Verified in Chrome, Edge, Firefox, Safari, Chrome Android | ✅ / ⏳ | Chromium by the ACA; **Director**: Firefox, Safari (macOS/iOS), Chrome Android |
+| Verified in Chrome, Edge, Firefox, Safari, Chrome Android | ✅ | Chromium by the ACA; Firefox, Safari (iOS) and Chrome (Android) by the Director: "sve radi" (2026-11-14) |
 | Performance not worse than before | ✅ | section "Performance" above |
 | Released in stages with rollback | ✅ | PRs #39–#50, each revertible |
 | Every user-facing text approved | ✅ | user guide texts approved by the Director 2026-11-14 ("uputstvo odobreno") |
+
+## Production measurement (E-15, production HTTPS, 5 runs, median, same throttling) — after release
+| Page | FCP | LCP |
+|---|---|---|
+| Sign-in | 1620 ms | 1620 ms |
+| User guide | 1844 ms | 1844 ms |
+(Before S6, the same sign-in page measured 2072 ms on the production build.)
+
+## Security — live adversarial check
+`supabase/owner-scripts/2026-11-14_p6-plan-conversations/04_LIVE_CHECK_changes_nothing.sql`: acts as a real
+non-admin teacher against another teacher's conversation and plan (read allowed; add, impersonate, change, delete,
+change the plan, change messages refused; nothing readable without sign-in) and rolls everything back.
+Local rehearsal: 0 of 8 failed, row counts unchanged. **Director** runs it once on production.
