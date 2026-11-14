@@ -90,3 +90,4 @@ initial_instructions.md's "never `main`" rule, not to the unreleased
 - [2026-11-14 16:51] Write: src/pages/GuidePage.tsx
 - [2026-11-14 16:53] Write: DESIGN_SYSTEM.md
 - [2026-11-14 17:26] Write: sprints/SPRINT_06.md
+- [2026-11-14 17:36] Write: COMMANDER_UPDATE_PROPOSAL.md
