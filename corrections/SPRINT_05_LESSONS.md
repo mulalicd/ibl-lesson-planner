@@ -424,3 +424,11 @@ Period: 2026-11-07 … 2026-11-14. Detailed entries follow below the summary; th
   in specs/p6-workspace-redesign/SPEC.md instead of being resolved silently (M-4, M-10).
 - Rule: before writing a SPEC from an owner's brief, check it against the Constitution and earlier decisions,
   and surface each conflict as a decision with a recommendation.
+
+### 2026-11-14 — Observation: design proposals built on a real production plan (P6 S0)
+- A small eval run (one lesson, `only=g08`) printed a full real PSI v9.1 plan in the job log. The plan came
+  out of the log through `get_job_logs` (saved to a file because of its size); artifacts stay blocked by
+  the proxy.
+- The plan showed details a fixture does not have: 25 segments, a group heading with no text, and inline
+  "Uvodni/Središnji/Završni dio" blocks. All three proposals use the real structure.
+- Rule: design and test steps start from a real production output (same rule as the P5-4 correction).
