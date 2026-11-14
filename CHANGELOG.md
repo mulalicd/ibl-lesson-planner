@@ -71,3 +71,4 @@ One line per feature, per Commander E-10.
   časa, Materijali …) instead of a monospaced block; every character of the plan is kept (test + eval check).
 - [2026-11-14] [LANGUAGE] A17 addition (DL-P28): German/English plans translate Bosnian template text; Latin
   script only. The eval-only language check also flags Cyrillic letters.
+- [2026-11-14] [FEATURE] P5-2 own favourites (plan_favorites, RLS own rows; old shared star column no longer used) and P5-1b author name on every plan card (plan_authors). Owner SQL applied by the Director.

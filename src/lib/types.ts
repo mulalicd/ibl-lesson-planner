@@ -39,8 +39,13 @@ export interface PlanRecord {
 export type PlanCardData = Pick<
   PlanRecord,
   | 'id' | 'subject' | 'grade' | 'topic' | 'created_at'
-  | 'duration_min' | 'tier' | 'language' | 'inquiry_question' | 'is_favourite'
->;
+  | 'duration_min' | 'tier' | 'language' | 'inquiry_question'
+> & {
+  /** P5-2: the signed-in teacher's own star (plan_favorites), not the old shared column. */
+  favourite: boolean;
+  /** P5-1b: the author's name (e-mail before "@"), null when unknown. */
+  author: string | null;
+};
 
 export interface GenerateParams {
   language: Language;

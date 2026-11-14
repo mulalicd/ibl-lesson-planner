@@ -152,6 +152,13 @@ export type Database = {
         }
         Relationships: []
       }
+      // P5-2 (2026-11-14): added by hand, supabase/owner-scripts/2026-11-14_p5-favourites-authors/02_APPLY.sql
+      plan_favorites: {
+        Row: { user_id: string; plan_id: string; created_at: string }
+        Insert: { user_id?: string; plan_id: string; created_at?: string }
+        Update: { user_id?: string; plan_id?: string; created_at?: string }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -162,6 +169,8 @@ export type Database = {
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean }
       // P2-7, supabase/owner-scripts/2026-11-10_p2-plans-metadata/02_APPLY.sql
       increment_docx_export: { Args: { p_plan_id: string }; Returns: number }
+      // P5-1b, same owner script as plan_favorites
+      plan_authors: { Args: { p_plan_ids: string[] }; Returns: { plan_id: string; author: string }[] }
     }
     Enums: {
       [_ in never]: never
