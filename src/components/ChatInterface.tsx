@@ -5,6 +5,8 @@ import { useChat } from '@/hooks/useChat';
 import { cn } from '@/lib/utils';
 import { MODE_C_SUGGESTIONS, PSI_VERSION_LABEL, SECTION_REVISION_TEXT, deriveTier } from '@/lib/constants';
 import PlanDisplay from './PlanDisplay';
+import CreationSteps from './CreationSteps';
+import { parseSegments } from '@/lib/planSegments';
 import DocxExportButton from './DocxExportButton';
 import ConversationExportButton from './ConversationExportButton';
 import InputWizard from './InputWizard';
@@ -139,6 +141,9 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
   }
 
   const hasMessages = chat.messages.length > 1 || chat.messages.some(m => m.id !== 'welcome');
+  // P6 S3: the answer being written is already a plan when it has at least three segment headings
+  const isStreamingPlan = (msg: { role: string; isPlan?: boolean; content: string }, idx: number) =>
+    chat.isLoading && !msg.isPlan && msg.role === 'model' && idx === chat.messages.length - 1 && parseSegments(msg.content).length >= 3;
 
   // Wizard view
   if (showWizard && chat.mode === 'onboarding' && !hasMessages) {
@@ -183,16 +188,17 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
           {chat.messages.map((msg, idx) => (
             <motion.div
               key={msg.id}
-              initial={{ opacity: 0, y: 16, filter: 'blur(4px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              initial={{ y: 16 }}
+              animate={{ y: 0 }}
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: idx === 0 ? 0 : 0.05 }}
               className={cn(
                 'flex gap-3',
                 msg.role === 'user' ? 'flex-row-reverse' : 'flex-row',
+                !(msg.isPlan || isStreamingPlan(msg, idx)) && 'mx-auto w-full max-w-4xl',
               )}
             >
-              {/* Avatar */}
-              {msg.role === 'user' ? (
+              {/* Avatar (not next to a plan on the desk) */}
+              {(msg.isPlan || isStreamingPlan(msg, idx)) ? null : msg.role === 'user' ? (
                 <motion.div
                   whileHover={{ scale: 1.08 }}
                   className="flex-shrink-0 w-10 h-10 rounded-2xl flex items-center justify-center text-xs font-bold neu-btn-primary"
@@ -208,16 +214,22 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
                 </motion.div>
               )}
 
-              {/* Message bubble */}
+              {/* Message bubble — a plan is not a bubble: it lies on the desk (P6, direction C) */}
               <div className={cn(
                 'max-w-[85%] rounded-2xl',
                 msg.role === 'user'
                   ? 'neu-bubble-user rounded-tr-lg px-5 py-4'
                   : 'neu-bubble-ai rounded-tl-lg px-5 py-4',
-                msg.isPlan && 'max-w-full w-full !px-4 !py-5'
+                (msg.isPlan || isStreamingPlan(msg, idx)) && '!max-w-full w-full !rounded-none !bg-transparent !p-0 !shadow-none'
               )}>
-                {msg.isPlan ? (
+                {isStreamingPlan(msg, idx) ? (
                   <div className="space-y-4">
+                    <CreationSteps step="writing" />
+                    <PlanDisplay planText={msg.content} streaming />
+                  </div>
+                ) : msg.isPlan ? (
+                  <div className="space-y-4">
+                    <CreationSteps step={savedPlanIds.has(msg.id) ? 'saved' : 'check'} />
                     <PlanDisplay
                       planText={msg.content}
                       planId={msg.plan_id}
@@ -299,7 +311,7 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
 
       {/* Suggestions */}
       {chat.mode === 'chat' && !chat.isLoading && (
-        <div className="px-4 md:px-8 pb-3 flex flex-wrap gap-2">
+        <div className="px-4 md:px-8 pb-3 flex flex-wrap gap-2 max-w-4xl mx-auto w-full">
           {MODE_C_SUGGESTIONS.slice(0, 4).map(q => (
             <motion.button
               key={q}

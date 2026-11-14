@@ -788,3 +788,22 @@ daće nam mogućnost da prikažemo sadržaje po logici usmjerenja: Nastavnik vs.
   workspace first needs it. S1 stays a pure visual foundation.
 
 **Rollback:** revert the PR.
+
+## DL-P36 — P6 total redesign in direction C, all screens (Director, 2026-11-14)
+
+**Decided by:** Director: "Hoću tačno kako si dao u prijedlogu C" and "TOTALNI UI/UX REDIZAJN … smjer C".
+
+**Decision (one release, PR #39, merged only when the Director approves the result):**
+- Plan page and the plan in the planner: the workspace "Nastavnički radni sto" (`PlanDisplay`): table of contents
+  of all segments, one segment as a sheet of paper, binder tabs Sve / Nastavnik / Učenik (DL-P34 map), sticky notes
+  (quality check, "Prepravi ovaj dio"), "Izvorni tekst" unchanged.
+- Segments come from ONE parser (`src/lib/planSegments.ts`), also used by "Prepravi ovaj dio" (M-7). Segment text is
+  shown through the Word-export structure (`planDocxStructure.ts`), so tables are real tables.
+- Creation: real steps Parametri → AI piše pripremu → Provjera kvaliteta → Sačuvano (`CreationSteps`); while the AI
+  writes, the workspace builds itself segment by segment and arrived segments can be read.
+- Library: plans as sheets on the desk, Moji / Svi binder tabs, filter bar. Sign-in: a sheet on the desk with the
+  five-colour binder tabs. Header: white bar, five-colour mark, underlined active navigation.
+- Small red text (4.43:1) is never used for text; the privacy notice and the sign-in error use black text with a red
+  marker.
+
+**Rollback:** revert PR #39.

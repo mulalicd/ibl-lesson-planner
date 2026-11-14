@@ -142,63 +142,54 @@
     background: rgb(var(--muted) / 0.6);
   }
 
-  /* ========= Neumorphic System ========= */
+  /* ========= P6 S2 "Nastavnički radni sto" (direction C, DL-P34) =========
+     The old neu-* class names are kept (they are used across the app) but now draw the desk style:
+     cards are sheets of paper, buttons are flat white with a neutral border, inputs are bordered fields. */
   .neu-card {
     background: rgb(var(--card));
-    border-radius: var(--radius);
-    box-shadow: var(--depth-4);
-    border: 1px solid rgb(var(--border) / 0.45);
-    transition: box-shadow 0.25s ease, transform 0.2s ease;
+    border-radius: 8px;
+    box-shadow: 0 1px 0 rgb(221 221 221), 0 14px 30px rgba(0, 0, 0, 0.10);
+    border: 0;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
   }
   .neu-card:hover {
-    box-shadow: var(--depth-5);
+    box-shadow: 0 1px 0 rgb(221 221 221), 0 18px 36px rgba(0, 0, 0, 0.12);
   }
 
   .neu-inset {
-    background: rgb(var(--background));
-    border-radius: calc(var(--radius) - 4px);
-    box-shadow:
-      inset 2px 2px 5px var(--neu-inset-dark),
-      inset -2px -2px 5px var(--neu-inset-light);
-    border: 1px solid rgb(var(--border) / 0.25);
+    background: rgb(255 255 255);
+    border-radius: 8px;
+    box-shadow: none;
+    border: 1px solid rgb(var(--input));
   }
 
   .neu-btn {
-    background: rgb(var(--card));
-    border-radius: calc(var(--radius) - 2px);
-    box-shadow: var(--depth-2);
-    border: 1px solid rgb(var(--border) / 0.35);
-    transition: box-shadow 0.15s ease, transform 0.1s ease;
+    background: rgb(255 255 255);
+    border-radius: 8px;
+    box-shadow: none;
+    border: 1px solid rgb(var(--border));
+    transition: border-color 0.15s ease, transform 0.1s ease;
   }
   .neu-btn:hover {
-    box-shadow: var(--depth-3);
+    border-color: rgb(var(--input));
   }
   .neu-btn:active {
-    box-shadow:
-      inset 2px 2px 4px var(--neu-inset-dark),
-      inset -2px -2px 4px var(--neu-inset-light);
-    transform: scale(0.97);
+    transform: scale(0.98);
   }
 
   .neu-btn-primary {
     background: rgb(var(--primary));
     color: rgb(var(--primary-foreground));
-    border-radius: calc(var(--radius) - 2px);
-    box-shadow:
-      3px 3px 8px rgb(var(--primary) / 0.3),
-      -2px -2px 6px var(--neu-light);
+    border-radius: 8px;
+    box-shadow: 0 6px 14px rgb(var(--primary) / 0.25);
     border: none;
     transition: box-shadow 0.15s ease, transform 0.1s ease;
   }
   .neu-btn-primary:hover {
-    box-shadow:
-      5px 5px 12px rgb(var(--primary) / 0.35),
-      -3px -3px 8px var(--neu-light);
+    box-shadow: 0 8px 18px rgb(var(--primary) / 0.32);
   }
   .neu-btn-primary:active {
-    box-shadow:
-      inset 2px 2px 5px rgb(var(--primary) / 0.5);
-    transform: scale(0.97);
+    transform: scale(0.98);
   }
 
   .glass-card {
@@ -215,13 +206,13 @@
   .neu-bubble-user {
     background: rgb(var(--primary));
     color: rgb(var(--primary-foreground));
-    box-shadow: var(--depth-3);
+    box-shadow: none;
   }
   .neu-bubble-ai {
     background: rgb(var(--card));
     color: rgb(var(--card-foreground));
-    box-shadow: var(--depth-3);
-    border: 1px solid rgb(var(--border) / 0.4);
+    box-shadow: 0 1px 0 rgb(221 221 221), 0 10px 24px rgba(0, 0, 0, 0.08);
+    border: 0;
   }
 
   /* P6 S1: the old pastel mesh used non-IDSS hues; the desk is now a plain neutral surface. */

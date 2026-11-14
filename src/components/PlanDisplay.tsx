@@ -29,6 +29,8 @@ interface PlanDisplayProps {
   reviseDisabled?: boolean;
   /** Optional sticky note with the quality check (the existing QualityBadge). */
   quality?: ReactNode;
+  /** P6 S3: the AI is still writing — the last segment is marked as being written, revisions wait. */
+  streaming?: boolean;
 }
 
 type View = 'all' | 'n' | 'u';
@@ -55,7 +57,7 @@ const VIEW_NOTE: Record<View, string> = {
 const hasText = (s: PlanSegment) => s.body.split('\n').some((l) => /[\p{L}\p{N}]/u.test(l.replace(/[|│=─-]/g, '')));
 const inView = (s: PlanSegment, v: View) => v === 'all' || s.audience === v || s.audience === 'nu';
 
-export default function PlanDisplay({ planText, planId, className, onReviseSection, reviseDisabled, quality }: PlanDisplayProps) {
+export default function PlanDisplay({ planText, planId, className, onReviseSection, reviseDisabled, quality, streaming }: PlanDisplayProps) {
   const segments = useMemo(() => parseSegments(planText), [planText]);
   const [view, setView] = useState<View>('all');
   const [active, setActive] = useState(() => Math.max(0, segments.findIndex(hasText)));
@@ -117,8 +119,11 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
         }
         const on = i === cur;
         return (
-          <button
+          <motion.button
             key={i}
+            initial={streaming && !reduce ? { x: -24 } : false}
+            animate={{ x: 0 }}
+            transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
             type="button"
             onClick={() => open(i)}
             aria-current={on ? 'page' : undefined}
@@ -128,8 +133,9 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
             )}
           >
             <span className="min-w-0 flex-1 truncate">{s.title}</span>
+            {streaming && i === segments.length - 1 && <span className="flex-none animate-pulse rounded bg-brand-yellow px-1.5 py-0.5 text-[10px] font-bold text-black">piše se…</span>}
             <span aria-label={b.label} className={cn('flex-none rounded px-1.5 py-0.5 text-[10px] font-bold', b.cls)}>{b.short}</span>
-          </button>
+          </motion.button>
         );
       })}
     </nav>
@@ -225,7 +231,7 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
             {quality && <div className="-rotate-1 rounded bg-brand-yellow p-4 text-black shadow-[0_10px_20px_rgba(0,0,0,0.12)]">{quality}</div>}
             {onReviseSection && (
               <div className="rotate-[0.6deg] rounded bg-white p-4 shadow-[0_10px_20px_rgba(0,0,0,0.08)]">
-                <button type="button" disabled={reviseDisabled || revising} onClick={() => setReviseOpen(!reviseOpen)}
+                <button type="button" disabled={reviseDisabled || revising || streaming} onClick={() => setReviseOpen(!reviseOpen)}
                   className="flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-primary bg-white text-sm font-semibold text-primary disabled:opacity-50">
                   {revising ? <Loader2 className="h-4 w-4 animate-spin" /> : <PencilLine className="h-4 w-4" />}
                   {revising ? SECTION_REVISION_TEXT.WORKING : SECTION_REVISION_TEXT.BUTTON}

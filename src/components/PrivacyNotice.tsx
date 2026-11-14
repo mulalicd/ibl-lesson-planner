@@ -15,9 +15,10 @@ export function PrivacyNotice({ className = '' }: { className?: string }) {
   return (
     <p
       role="note"
-      className={`flex items-start gap-2 text-[11px] leading-snug text-destructive font-medium ${className}`}
+      // P6: IDSS Red is below 4.5:1 for small text on white, so the text is black and the icon carries the red
+      className={`flex items-start gap-2 text-[11px] leading-snug text-black font-semibold ${className}`}
     >
-      <ShieldAlert className="w-3.5 h-3.5 mt-px flex-shrink-0" aria-hidden="true" />
+      <ShieldAlert className="w-3.5 h-3.5 mt-px flex-shrink-0 text-destructive" aria-hidden="true" />
       <span>{PRIVACY_NOTICE_TEXT}</span>
     </p>
   );
