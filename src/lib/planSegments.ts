@@ -6,7 +6,7 @@
  * exactly one segment (lines before the first heading belong to the first segment), so nothing is lost and the
  * plan text is never changed. Names and order are those of the plan itself; there is no fixed list.
  */
-import { LABELS } from '@/lib/language/templateLines.generated';
+import { LABELS } from './language/templateLines.generated.ts';
 
 export type Audience = 'n' | 'u' | 'nu';
 

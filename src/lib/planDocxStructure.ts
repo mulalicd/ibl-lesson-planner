@@ -5,7 +5,7 @@
  * (QUALITY_FINDINGS U-10). The plan text itself is not changed: every word ends up in a block.
  */
 
-import { headingOf } from '@/lib/planSegments';
+import { headingOf } from './planSegments.ts';
 
 export type PlanBlock =
   | { type: 'heading'; text: string }
