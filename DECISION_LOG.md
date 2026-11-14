@@ -812,3 +812,10 @@ daće nam mogućnost da prikažemo sadržaje po logici usmjerenja: Nastavnik vs.
 prostora između tekstova; prostor mora biti bolje iskorišten". Applied: a wider page (up to 1040 px), denser type
 and spacing, wrapped plan lines joined into paragraphs for reading (display only; the stored text and the Word
 export are unchanged), tighter tables, cards and title bars, and the workspace toolbar moved above the page.
+
+**Update 2026-11-14 (DL-P36, missed screen):** after the release the Director found the creation form still in the
+old look ("Stari izgled?"). The form (`InputWizard`) had not been redesigned. Now in direction C: the five steps
+Predmet / Razred / Tema / Trajanje / Generiši are binder tabs in the IDSS colours on a sheet of paper (vertical at
+the right edge on a computer, along the top on a phone); beside the sheet, the creation steps and a "Zaglavlje
+pripreme" card that fills in as the teacher chooses. Steps, fields, limits, texts and the request sent to the AI are
+unchanged; the flag and duration emoji are replaced by language codes and block marks (IDSS colours only).

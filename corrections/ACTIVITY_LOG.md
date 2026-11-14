@@ -83,3 +83,4 @@ initial_instructions.md's "never `main`" rule, not to the unreleased
 - [2026-11-14 10:56] Write: src/lib/planSegments.ts
 - [2026-11-14 10:57] Write: src/lib/sectionRevision.ts
 - [2026-11-14 10:59] Write: src/components/PlanDisplay.tsx
+- [2026-11-14 11:56] Write: src/components/InputWizard.tsx
