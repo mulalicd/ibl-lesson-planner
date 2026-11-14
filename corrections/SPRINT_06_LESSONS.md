@@ -226,3 +226,10 @@ Lessons captured: 24 entries (detailed below), moved here from SPRINT_05_LESSONS
   a patch that applies cleanly to `main` (`commander-update/v1.8.0/`).
 - Rule (Commander improvement candidate for the next KRAJ): at project start, check that the session can push to the
   Commander repository (or plan a second session for KRAJ), so step 5 does not wait.
+
+### 2026-11-14 — Gotcha (KRAJ): the session's git proxy pushes branches but not tags
+- After the Director gave write access, `main` of IDSS123a/commander was pushed (28eb278 → 895a203), but
+  `git push origin v1.8.0` ended with "remote end hung up" four times; branch pushes worked. Not worked around.
+- The tag is created by the Director in GitHub (Releases → new release → new tag v1.8.0 on main).
+- Rule (Commander improvement candidate): M-22 step 5 names a fallback for the tag — a release created in the
+  GitHub web UI on the pushed commit — when the session cannot push tags.

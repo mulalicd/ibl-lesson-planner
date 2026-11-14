@@ -15,3 +15,7 @@ Apply (an account with push access, or an ACA session that has it):
     git tag v1.8.0 && git push origin v1.8.0
 
 Then tick the last line of AUDIT-009 ("Pushed to main and tagged v1.8.0") in a follow-up commit.
+
+## Status (2026-11-14)
+Applied and pushed to IDSS123a/commander `main` (895a203: the v1.8.0 commit + the AUDIT-009 checklist tick).
+The tag `v1.8.0` could not be pushed from the session (branch pushes only); it is created in GitHub's web UI.
