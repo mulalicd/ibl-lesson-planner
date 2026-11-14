@@ -386,7 +386,7 @@ STEP 0.7 — CONFIRMATION AND LAUNCH
       - Tema:      [topic]
       - Trajanje:  [duration_min] min ([tier])
       - Prethodno znanje: [prior_knowledge or 'nije navedeno']
-      Sve u redu? Ako jest, kažite 'Generiši' ili potvrdite s 'Da'."
+      Sve u redu? Ako jeste, kažite 'Generiši' ili potvrdite s 'Da'."
 
   Wait for confirmation. If teacher wants to change something,
   update the relevant field and re-show the summary.
