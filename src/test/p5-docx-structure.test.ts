@@ -78,3 +78,38 @@ describe('space-aligned tables (Director 2026-11-14: an AI rubric showed as "a �
     expect(b[0]).toEqual({ type: 'heading', text: 'UDICA 5 minuta' });
   });
 });
+
+describe('tables with "|" only between columns (Director 2026-11-14: amendment rubric in Word)', () => {
+  const RUBRIC = [
+    'KRITERIJ           | NIVO 4: PREMAŠUJE   | NIVO 3: ZADOVOLJAVA | NIVO 2: U RAZVOJU   | NIVO 1: POČETNI',
+    '                   | OČEKIVANJA (4)      | OČEKIVANJA (3)      | (2)                 | NIVO (1)',
+    '-------------------|---------------------|---------------------|---------------------|-------------------',
+    '1. Korištenje      | Precizno koristi    | Navodi odgovarajuće | Navodi samo jedan   | Ne koristi dokaze',
+    'dokaza i naučnih   | dokaze iz teksta i  | dokaze iz teksta za | vid dokaza.         | iz teksta.',
+    '-------------------|---------------------|---------------------|---------------------|-------------------',
+    '4. Jasnoća         | Izražava misli sa-  | Izražava misli      | Stav je uočen.      | Misli su nejasne.',
+    'komunikacije       | držajno.            | jasno.              |                     |',
+    '',
+    'UPLIV U FORMIRANJE OCJENE:',
+    '- 5-7 bodova   = Dovoljan (2)',
+  ].join('\n');
+
+  it('becomes one real table: header and rows joined, no dashes, no "·"', () => {
+    const b = structurePlan(RUBRIC);
+    const t = b.find((x) => x.type === 'table');
+    expect(t && 'rows' in t ? t.rows : null).toEqual([
+      ['KRITERIJ', 'NIVO 4: PREMAŠUJE OČEKIVANJA (4)', 'NIVO 3: ZADOVOLJAVA OČEKIVANJA (3)', 'NIVO 2: U RAZVOJU (2)', 'NIVO 1: POČETNI NIVO (1)'],
+      ['1. Korištenje dokaza i naučnih', 'Precizno koristi dokaze iz teksta i', 'Navodi odgovarajuće dokaze iz teksta za', 'Navodi samo jedan vid dokaza.', 'Ne koristi dokaze iz teksta.'],
+      ['4. Jasnoća komunikacije', 'Izražava misli sadržajno.', 'Izražava misli jasno.', 'Stav je uočen.', 'Misli su nejasne.'],
+    ]);
+    const text = b.map((x) => ('text' in x ? x.text : '')).join('\n');
+    expect(text).not.toMatch(/-{3,}|·/);
+    expect(b.some((x) => x.type === 'mono')).toBe(false);
+    expect(b.some((x) => x.type === 'para' && x.text === '- 5-7 bodova = Dovoljan (2)')).toBe(true);
+  });
+
+  it('a single "a | b | c" line (a group subtitle) stays text', () => {
+    const b = structurePlan('Biologie | 9. razred | Tema: geni | 45 min | Mikro čas\n================');
+    expect(b.some((x) => x.type === 'table')).toBe(false);
+  });
+});

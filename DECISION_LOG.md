@@ -917,3 +917,9 @@ intaktan a u nastavku se lijepi dodatni AI razgovor kao amandman 1, 2 …"):**
   kept (`plan_text_before`, written once); "Vrati plan od prije izmjena" gives it back.
 - Display: tables aligned with spaces (AI rubrics) are real tables on screen and in Word; plan section headings are
   Word headings, written with ", " instead of " — "; an aligned table row is never taken for a section heading.
+
+**Update 2026-11-14 (DL-P37, Director: "amandman mora proći jednaki mehanizam formatiranja i pregleda kao i originalni
+plan, bez ASCII crtica"):** amendments always used the same renderer as the plan (screen and Word); the renderer now
+also reads the table shape the AI writes inside answers — "|" only BETWEEN columns, rows separated by "----|----" — as
+one real table (header and wrapped cells joined), and list items aligned with spaces as list items. Verified that
+the PSI plan fixtures render exactly as before (v81 164 blocks, v91 470 blocks, no difference).

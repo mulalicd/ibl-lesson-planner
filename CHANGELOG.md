@@ -89,3 +89,4 @@ One line per feature, per Commander E-10.
 - [2026-11-14] [EXPORT] Conversation export on the IDSS memorandum (same builder as the plan); wrapped lines joined in Word for plan and conversation (DL-P36).
 - [2026-11-14] [FEATURE] Conversations about a saved plan kept with the plan, shown on the plan page; "Ugradi u plan" for the plan's author or the admin (DL-P37; owner script 2026-11-14_p6-plan-conversations).
 - [2026-11-14] [FIX] A page opened before a release reloads once instead of failing ("Failed to fetch dynamically imported module", e.g. Word); /assets/* no longer rewritten to index.html.
+- [2026-11-14] [DESIGN] Amendments and AI answers: "a | b | c" tables with "----|----" row lines become real tables; aligned list items stay list items (screen and Word) (DL-P37).
