@@ -768,4 +768,23 @@ daće nam mogućnost da prikažemo sadržaje po logici usmjerenja: Nastavnik vs.
 - The binder tabs filter the segments by **audience**: Sve / Nastavnik / Učenik. This is a view only: segment
   names, order and text never change, and every segment stays reachable under "Sve".
 - The audience of each segment is a pedagogical classification. Its mapping
-  (`specs/p6-workspace-redesign/AUDIENCE_MAP.md`) needs the Director's approval before S2.
+  (`specs/p6-workspace-redesign/AUDIENCE_MAP.md`) was approved by the Director the same day ("raspored N/U odobren").
+
+## DL-P35 — P6 S1 foundations: colour tokens, typefaces, colour guard (2026-11-14)
+
+**Under:** P6 approval ("P6 odobren, kreni sa S0"), SPEC/PLAN, DL-P33, DL-P34.
+
+**Decision:**
+- Semantic colour tokens are RGB channels built only from the five IDSS colours, white and neutral greys.
+  Primary = IDSS Blue (white text), secondary = IDSS Yellow (black text), destructive = IDSS Red, focus ring =
+  IDSS Light Blue, background = neutral 96 % ("desk"), cards = white ("paper").
+- Tailwind's default palette is REPLACED by that set (plus a neutral grey scale), so any other colour class is not
+  generated at all. Section cards use one style per plan group (yellow, blue, light blue, black, red).
+- `npm run colours:check` (CI, after the build) fails on any colour value outside the palette in the built CSS.
+- **New dependencies:** `@fontsource-variable/inter` 5.3.0 and `@fontsource-variable/manrope` 5.3.0 (OFL-1.1),
+  self-hosted. The Google Fonts import (Inter, Plus Jakarta Sans, IBM Plex Mono) is removed; monospace text uses
+  the system monospace font.
+- **Deviation from PLAN.md:** the shared segment parser (`planSegments.ts`) moves from S1 to S2, where the
+  workspace first needs it. S1 stays a pure visual foundation.
+
+**Rollback:** revert the PR.

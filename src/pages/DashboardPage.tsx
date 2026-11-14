@@ -307,8 +307,8 @@ export default function DashboardPage() {
               <button
                 onClick={(e) => handleDeletePlan(plan.id, e)}
                 className="absolute top-3 right-3 z-10 opacity-0 group-hover/card:opacity-100
-                           transition-opacity w-7 h-7 rounded-lg bg-white border border-gray-200
-                           text-gray-400 hover:text-red-500 hover:border-red-200 hover:bg-red-50
+                           transition-opacity w-7 h-7 rounded-lg bg-white border border-neutral-200
+                           text-neutral-500 hover:text-brand-red hover:border-brand-red/40 hover:bg-brand-red/10
                            flex items-center justify-center text-xs shadow-sm"
                 title="Obriši plan"
               >

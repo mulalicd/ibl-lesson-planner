@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -16,50 +15,37 @@
     --brand-yellow: 255 203 41;    /* #FFCB29 */
     --brand-lightblue: 8 171 230;  /* #08ABE6 */
 
-    /* IDSS Brand Palette — Milky-White 3D Neumorphic (approved
-       Variation 1). Yellow = dominant accent, dark blue = structure,
-       bright blue = interaction/info, red = rare/special accent
-       (see Master UI/UX Redesign Brief §9-10, specs/
-       ui-ux-redesign-milky-neumorphic/PLAN.md "Design Tokens"). */
-    --background: 38 30% 97%;
-    --foreground: 230 25% 15%;
+    /* P6 S1 (DL-P33): semantic tokens as RGB channels, built ONLY from the five IDSS colours, white and
+       neutral greys (no hue). Tailwind derives transparency from the same channels (bg-primary/10).
+       Text pairs follow the measured contrast table in specs/p6-workspace-redesign/PLAN.md:
+       Red on white 4.43 (large text only), Yellow and Light Blue are never text on white. */
+    --background: 245 245 245;        /* neutral 96 % — the "desk" (direction C, DL-P34) */
+    --foreground: 0 0 0;              /* IDSS Black */
 
-    --card: 0 0% 100%;
-    --card-foreground: 230 25% 15%;
+    --card: 255 255 255;              /* the "paper" */
+    --card-foreground: 0 0 0;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 230 25% 15%;
+    --popover: 255 255 255;
+    --popover-foreground: 0 0 0;
 
-    /* Primary = brand yellow #FFCB29 (brief §10: "Yellow should
-       attract attention to primary actions"). Dark foreground for
-       contrast on a light, saturated background. */
-    --primary: 45 100% 58%;
-    --primary-foreground: 230 25% 15%;
+    --primary: 3 94 161;              /* IDSS Blue — primary actions (white text 6.73:1) */
+    --primary-foreground: 255 255 255;
 
-    /* Secondary = brand dark blue #035EA1 (structure). */
-    --secondary: 206 96% 32%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 255 203 41;          /* IDSS Yellow — highlights (black text 13.8:1) */
+    --secondary-foreground: 0 0 0;
 
-    --muted: 240 14% 93%;
-    --muted-foreground: 230 12% 46%;
+    --muted: 242 242 242;             /* neutral */
+    --muted-foreground: 89 89 89;     /* neutral #595959, 7.0:1 on white */
 
-    /* Accent = brand bright blue #08ABE6 (interaction/information),
-       light tint for badge/highlight backgrounds, saturated hue for
-       the foreground text/icon on top of it. */
-    --accent: 196 85% 95%;
-    --accent-foreground: 196 93% 38%;
+    --accent: 237 237 237;            /* neutral surface for tags and hovers */
+    --accent-foreground: 3 94 161;    /* IDSS Blue text on it */
 
-    /* Destructive = brand red #E8262C (brief §10: "Red should remain
-       comparatively rare" — attention/warnings/destructive only). */
-    --destructive: 358 81% 53%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 232 38 44;         /* IDSS Red */
+    --destructive-foreground: 255 255 255;
 
-    --border: 240 12% 90%;
-    --input: 240 12% 90%;
-    /* Focus ring stays bright blue regardless of what --primary is,
-       so it remains a clear, accessible indicator on any surface
-       (brief §31 accessibility). */
-    --ring: 196 93% 47%;
+    --border: 221 221 221;            /* neutral */
+    --input: 212 212 212;             /* neutral */
+    --ring: 8 171 230;                /* IDSS Light Blue focus ring */
 
     /* Default corner radius stays 16px (brief §15 approved default)
        — full scale below for components that need a different step. */
@@ -81,52 +67,47 @@
     --depth-4: 5px 5px 12px var(--neu-dark), -5px -5px 12px var(--neu-light);
     --depth-5: 7px 7px 18px var(--neu-dark), -7px -7px 18px var(--neu-light);
 
-    /* IDSS-branded aliases (brief §9) — kept under the existing
-       `--idss-*` variable names already consumed by PlanCard.tsx /
-       PlanPage.tsx (`text-idss-gold`, `fill-idss-gold`) so those
-       call sites now render the correct brand yellow with zero code
-       changes. `--idss-emerald` is intentionally left untouched:
-       it isn't part of the approved 5-colour brand palette and isn't
-       referenced anywhere in the codebase (verified by audit). */
-    --idss-dark-blue: 206 96% 32%;
-    --idss-gold: 45 100% 58%;
-    --idss-light-blue: 196 85% 95%;
-    --idss-grey-bg: 38 30% 97%;
-    --idss-emerald: 162 40% 52%;
-    --idss-bright-blue: 196 93% 47%;
-    --idss-red: 358 81% 53%;
+    /* Older aliases still used by components (text-idss-gold …), now pointing at the exact IDSS colours. */
+    --idss-dark-blue: 3 94 161;
+    --idss-gold: 255 203 41;
+    --idss-bright-blue: 8 171 230;
+    --idss-red: 232 38 44;
 
-    /* System status colour (NOT part of the 5-colour brand palette,
-       brief §9 — this is a universal UI convention for "saved/done"
-       confirmation, kept separate from brand identity per E-11's
-       tokenization requirement rather than left as a hardcoded
-       Tailwind class). */
-    --status-success: 152 55% 40%;
-    --status-success-bg: 152 55% 95%;
+    /* "Saved / done" state: IDSS Blue on a neutral surface (green is not an IDSS colour, DL-P33). */
+    --status-success: 3 94 161;
+    --status-success-bg: 242 242 242;
 
-    --sidebar-background: 245 30% 20%;
-    --sidebar-foreground: 240 20% 95%;
-    --sidebar-primary: 245 55% 65%;
+    /* Sidebar (shadcn, unused today): neutral greys in HSL because src/components/ui/sidebar.tsx reads them
+       with hsl(); hue 0 and saturation 0 keep them exact greys. */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 0 0% 0%;
+    --sidebar-primary: 0 0% 0%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 245 35% 30%;
-    --sidebar-accent-foreground: 240 20% 95%;
-    --sidebar-border: 245 25% 28%;
-    --sidebar-ring: 245 55% 65%;
+    --sidebar-accent: 0 0% 95%;
+    --sidebar-accent-foreground: 0 0% 0%;
+    --sidebar-border: 0 0% 87%;
+    --sidebar-ring: 0 0% 64%;
 
-    --font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
-    --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+    /* P6 S1: self-hosted, OFL-1.1 (no requests to Google). Manrope for headings, Inter for reading. */
+    --font-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --font-display: 'Manrope Variable', 'Manrope', 'Inter Variable', system-ui, sans-serif;
+    --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, 'Courier New', monospace;
 
     /* Neumorphism tokens */
     --neu-light: rgba(255, 255, 255, 0.75);
-    --neu-dark: rgba(166, 170, 190, 0.22);
+    --neu-dark: rgba(0, 0, 0, 0.10);
     --neu-inset-light: rgba(255, 255, 255, 0.55);
-    --neu-inset-dark: rgba(166, 170, 190, 0.13);
+    --neu-inset-dark: rgba(0, 0, 0, 0.06);
   }
 }
 
 @layer base {
   * {
     @apply border-border;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
   }
 
   body {
@@ -139,10 +120,10 @@
   ::-webkit-scrollbar { width: 5px; height: 5px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb {
-    background: hsl(var(--border));
+    background: rgb(var(--border));
     border-radius: 10px;
   }
-  ::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground) / 0.3); }
+  ::-webkit-scrollbar-thumb:hover { background: rgb(var(--muted-foreground) / 0.3); }
 }
 
 @layer components {
@@ -158,15 +139,15 @@
   }
   .ai-message-content .inline-code {
     @apply px-1.5 py-0.5 rounded-md text-xs font-mono;
-    background: hsl(var(--muted) / 0.6);
+    background: rgb(var(--muted) / 0.6);
   }
 
   /* ========= Neumorphic System ========= */
   .neu-card {
-    background: hsl(var(--card));
+    background: rgb(var(--card));
     border-radius: var(--radius);
     box-shadow: var(--depth-4);
-    border: 1px solid hsl(var(--border) / 0.45);
+    border: 1px solid rgb(var(--border) / 0.45);
     transition: box-shadow 0.25s ease, transform 0.2s ease;
   }
   .neu-card:hover {
@@ -174,19 +155,19 @@
   }
 
   .neu-inset {
-    background: hsl(var(--background));
+    background: rgb(var(--background));
     border-radius: calc(var(--radius) - 4px);
     box-shadow:
       inset 2px 2px 5px var(--neu-inset-dark),
       inset -2px -2px 5px var(--neu-inset-light);
-    border: 1px solid hsl(var(--border) / 0.25);
+    border: 1px solid rgb(var(--border) / 0.25);
   }
 
   .neu-btn {
-    background: hsl(var(--card));
+    background: rgb(var(--card));
     border-radius: calc(var(--radius) - 2px);
     box-shadow: var(--depth-2);
-    border: 1px solid hsl(var(--border) / 0.35);
+    border: 1px solid rgb(var(--border) / 0.35);
     transition: box-shadow 0.15s ease, transform 0.1s ease;
   }
   .neu-btn:hover {
@@ -200,23 +181,23 @@
   }
 
   .neu-btn-primary {
-    background: hsl(var(--primary));
-    color: hsl(var(--primary-foreground));
+    background: rgb(var(--primary));
+    color: rgb(var(--primary-foreground));
     border-radius: calc(var(--radius) - 2px);
     box-shadow:
-      3px 3px 8px hsl(var(--primary) / 0.3),
+      3px 3px 8px rgb(var(--primary) / 0.3),
       -2px -2px 6px var(--neu-light);
     border: none;
     transition: box-shadow 0.15s ease, transform 0.1s ease;
   }
   .neu-btn-primary:hover {
     box-shadow:
-      5px 5px 12px hsl(var(--primary) / 0.35),
+      5px 5px 12px rgb(var(--primary) / 0.35),
       -3px -3px 8px var(--neu-light);
   }
   .neu-btn-primary:active {
     box-shadow:
-      inset 2px 2px 5px hsl(var(--primary) / 0.5);
+      inset 2px 2px 5px rgb(var(--primary) / 0.5);
     transform: scale(0.97);
   }
 
@@ -232,27 +213,25 @@
      hover/active states — unlike .neu-btn-primary / .neu-card, a
      message bubble isn't clickable and shouldn't look like it is. */
   .neu-bubble-user {
-    background: hsl(var(--primary));
-    color: hsl(var(--primary-foreground));
+    background: rgb(var(--primary));
+    color: rgb(var(--primary-foreground));
     box-shadow: var(--depth-3);
   }
   .neu-bubble-ai {
-    background: hsl(var(--card));
-    color: hsl(var(--card-foreground));
+    background: rgb(var(--card));
+    color: rgb(var(--card-foreground));
     box-shadow: var(--depth-3);
-    border: 1px solid hsl(var(--border) / 0.4);
+    border: 1px solid rgb(var(--border) / 0.4);
   }
 
+  /* P6 S1: the old pastel mesh used non-IDSS hues; the desk is now a plain neutral surface. */
   .gradient-mesh {
-    background:
-      radial-gradient(at 0% 0%, hsl(245 55% 60% / 0.05) 0px, transparent 50%),
-      radial-gradient(at 100% 0%, hsl(162 40% 52% / 0.04) 0px, transparent 50%),
-      radial-gradient(at 50% 100%, hsl(42 78% 58% / 0.03) 0px, transparent 50%);
+    background: rgb(var(--background));
   }
 
   .iq-callout {
-    border-left: 4px solid hsl(var(--idss-gold));
-    background: linear-gradient(135deg, hsl(42 78% 58% / 0.08), hsl(42 78% 58% / 0.02));
+    border-left: 4px solid rgb(var(--idss-gold));
+    background: rgb(var(--brand-yellow) / 0.10);
     padding: 1.25rem 1.5rem;
     font-style: italic;
     font-weight: 600;
@@ -262,16 +241,16 @@
 
   .pastel-tag {
     @apply text-xs font-semibold px-3 py-1 rounded-full;
-    background: hsl(var(--accent));
-    color: hsl(var(--accent-foreground));
+    background: rgb(var(--accent));
+    color: rgb(var(--accent-foreground));
   }
 
   .skeleton-shimmer {
     background: linear-gradient(
       90deg,
-      hsl(var(--muted)) 25%,
-      hsl(var(--muted) / 0.6) 50%,
-      hsl(var(--muted)) 75%
+      rgb(var(--muted)) 25%,
+      rgb(var(--muted) / 0.6) 50%,
+      rgb(var(--muted)) 75%
     );
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;

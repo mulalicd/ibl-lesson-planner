@@ -32,7 +32,19 @@ interface PlanSection {
   accentColor: string;
 }
 
-// Known section patterns with unique pastel colors
+// P6 S1 (DL-P33/DL-P34): section cards use only the five IDSS colours plus white and neutral greys, one style per
+// group of the plan (Uvod = yellow, Istraživanje = blue, Nastavnik = light blue, Izvođenje = black, Nakon časa = red).
+// Text on a coloured surface follows the measured contrast table in specs/p6-workspace-redesign/PLAN.md.
+const GROUP_STYLE = {
+  yellow:    { bgColor: 'bg-white', borderColor: 'border-brand-yellow/70', iconBg: 'bg-brand-yellow text-black', accentColor: 'text-black' },
+  blue:      { bgColor: 'bg-white', borderColor: 'border-brand-blue/30', iconBg: 'bg-brand-blue text-white', accentColor: 'text-brand-blue' },
+  lightblue: { bgColor: 'bg-white', borderColor: 'border-brand-lightblue/50', iconBg: 'bg-brand-lightblue text-black', accentColor: 'text-black' },
+  black:     { bgColor: 'bg-white', borderColor: 'border-black/15', iconBg: 'bg-black text-white', accentColor: 'text-black' },
+  red:       { bgColor: 'bg-white', borderColor: 'border-brand-red/40', iconBg: 'bg-brand-red text-white', accentColor: 'text-black' },
+  neutral:   { bgColor: 'bg-white', borderColor: 'border-neutral-200', iconBg: 'bg-neutral-100 text-neutral-700', accentColor: 'text-neutral-700' },
+} as const;
+
+// Known section patterns, each with its group style
 const SECTION_DEFS: {
   patterns: string[];
   bgColor: string;
@@ -43,134 +55,84 @@ const SECTION_DEFS: {
 }[] = [
   {
     patterns: ['IBL NASTAVNI PLAN', 'INTERNATIONALE DEUTSCHE', 'HEADER', 'ZAGLAVLJE'],
-    bgColor: 'bg-gradient-to-br from-slate-50 to-blue-50/40',
-    borderColor: 'border-blue-200/50',
-    iconBg: 'bg-blue-100 text-blue-700',
-    accentColor: 'text-blue-700',
+    ...GROUP_STYLE.yellow,
     icon: <GraduationCap className="w-4 h-4" />,
   },
   {
     patterns: ['HOOK', 'UDICA', 'EINSTIEG', 'ISTRAŽIVAČKO PITANJE'],
-    bgColor: 'bg-gradient-to-br from-amber-50 to-orange-50/40',
-    borderColor: 'border-amber-200/50',
-    iconBg: 'bg-amber-100 text-amber-700',
-    accentColor: 'text-amber-700',
+    ...GROUP_STYLE.yellow,
     icon: <Lightbulb className="w-4 h-4" />,
   },
   {
     patterns: ['DOKAZNI MATERIJAL', 'EVIDENCE MATERIAL', 'BEWEISMATERIAL'],
-    bgColor: 'bg-gradient-to-br from-rose-50 to-pink-50/40',
-    borderColor: 'border-rose-200/50',
-    iconBg: 'bg-rose-100 text-rose-700',
-    accentColor: 'text-rose-700',
+    ...GROUP_STYLE.blue,
     icon: <BookOpen className="w-4 h-4" />,
   },
   {
     patterns: ['VIZUALNI ELEMENT', 'VISUAL ELEMENT', 'VISUELLE'],
-    bgColor: 'bg-gradient-to-br from-fuchsia-50 to-purple-50/40',
-    borderColor: 'border-fuchsia-200/50',
-    iconBg: 'bg-fuchsia-100 text-fuchsia-700',
-    accentColor: 'text-fuchsia-700',
+    ...GROUP_STYLE.blue,
     icon: <Palette className="w-4 h-4" />,
   },
   {
     patterns: ['SOKRATOV', 'SOCRATIC', 'SCAFFOLD', 'SOKRATISCH', 'SKELA', 'GERÜST'],
-    bgColor: 'bg-gradient-to-br from-indigo-50 to-violet-50/40',
-    borderColor: 'border-indigo-200/50',
-    iconBg: 'bg-indigo-100 text-indigo-700',
-    accentColor: 'text-indigo-700',
+    ...GROUP_STYLE.blue,
     icon: <MessageCircle className="w-4 h-4" />,
   },
   {
     patterns: ['DOKAZI O UČENJU', 'DOKAZ UČENJA', 'EVIDENCE OF LEARNING', 'LEARNING EVIDENCE', 'LERNNACHWEIS'],
-    bgColor: 'bg-gradient-to-br from-teal-50 to-emerald-50/40',
-    borderColor: 'border-teal-200/50',
-    iconBg: 'bg-teal-100 text-teal-700',
-    accentColor: 'text-teal-700',
+    ...GROUP_STYLE.blue,
     icon: <ListChecks className="w-4 h-4" />,
   },
   {
     patterns: ['SAMOEVALUACIJA', 'SELF-EVAL', 'SELBSTBEWERTUNG', 'SELBSTREFLEXION', 'NASTAVNIČKA SAMO'],
-    bgColor: 'bg-gradient-to-br from-orange-50 to-amber-50/40',
-    borderColor: 'border-orange-200/50',
-    iconBg: 'bg-orange-100 text-orange-700',
-    accentColor: 'text-orange-700',
+    ...GROUP_STYLE.lightblue,
     icon: <Brain className="w-4 h-4" />,
   },
   {
     patterns: ['DODATNI RESURSI', 'ADDITIONAL RESOURCE', 'ZUSÄTZLICHE', 'DIFERENCIJACIJA', 'DIFFERENTIATION'],
-    bgColor: 'bg-gradient-to-br from-cyan-50 to-sky-50/40',
-    borderColor: 'border-cyan-200/50',
-    iconBg: 'bg-cyan-100 text-cyan-700',
-    accentColor: 'text-cyan-700',
+    ...GROUP_STYLE.lightblue,
     icon: <BookMarked className="w-4 h-4" />,
   },
   {
     patterns: ['PREPORUKE ZA IZVOĐENJE', 'DELIVERY RECOMMEND', 'LESSON DELIVERY', 'EMPFEHLUNG'],
-    bgColor: 'bg-gradient-to-br from-sky-50 to-blue-50/40',
-    borderColor: 'border-sky-200/50',
-    iconBg: 'bg-sky-100 text-sky-700',
-    accentColor: 'text-sky-700',
+    ...GROUP_STYLE.black,
     icon: <Timer className="w-4 h-4" />,
   },
   // PSI v9 (A6, A12, A13) — Director requirements 2026-11-07
   {
     patterns: ['ISHODI UČENJA', 'LERNERGEBNISSE', 'LEARNING OUTCOMES'],
-    bgColor: 'bg-gradient-to-br from-emerald-50 to-teal-50/40',
-    borderColor: 'border-emerald-200/50',
-    iconBg: 'bg-emerald-100 text-emerald-700',
-    accentColor: 'text-emerald-700',
+    ...GROUP_STYLE.yellow,
     icon: <ListChecks className="w-4 h-4" />,
   },
   {
     patterns: ['UPORIŠTE U STVARNOM', 'BEZUG ZUM ALLTAG', 'REAL-LIFE', 'REAL LIFE'],
-    bgColor: 'bg-gradient-to-br from-yellow-50 to-amber-50/40',
-    borderColor: 'border-yellow-200/50',
-    iconBg: 'bg-yellow-100 text-yellow-700',
-    accentColor: 'text-yellow-700',
+    ...GROUP_STYLE.yellow,
     icon: <Lightbulb className="w-4 h-4" />,
   },
   {
     patterns: ['SAVJETI I TRIKOVI', 'TIPPS & TRICKS', 'TIPS & TRICKS', 'TIPS AND TRICKS'],
-    bgColor: 'bg-gradient-to-br from-violet-50 to-purple-50/40',
-    borderColor: 'border-violet-200/50',
-    iconBg: 'bg-violet-100 text-violet-700',
-    accentColor: 'text-violet-700',
+    ...GROUP_STYLE.red,
     icon: <Brain className="w-4 h-4" />,
   },
   // PSI v9.1 (P4, A16)
   {
     patterns: ['MATERIJALI ZA ČAS', 'MATERIALIEN FÜR DIE STUNDE', 'MATERIALS FOR THE LESSON', 'TOK ČASA', 'STUNDENVERLAUF', 'LESSON FLOW'],
-    bgColor: 'bg-gradient-to-br from-sky-50 to-blue-50/40',
-    borderColor: 'border-sky-200/50',
-    iconBg: 'bg-sky-100 text-sky-700',
-    accentColor: 'text-sky-700',
+    ...GROUP_STYLE.black,
     icon: <Timer className="w-4 h-4" />,
   },
   {
     patterns: ['REFLEKSIJA UČENIKA', 'SCHÜLERREFLEXION', 'STUDENT REFLECTION'],
-    bgColor: 'bg-gradient-to-br from-teal-50 to-emerald-50/40',
-    borderColor: 'border-teal-200/50',
-    iconBg: 'bg-teal-100 text-teal-700',
-    accentColor: 'text-teal-700',
+    ...GROUP_STYLE.black,
     icon: <MessageCircle className="w-4 h-4" />,
   },
   {
     patterns: ['FOOTER', 'POST-GENERATION', 'KONTAKT', 'CONTACT'],
-    bgColor: 'bg-gradient-to-br from-gray-50 to-slate-50/40',
-    borderColor: 'border-gray-200/50',
-    iconBg: 'bg-gray-100 text-gray-600',
-    accentColor: 'text-gray-600',
+    ...GROUP_STYLE.neutral,
     icon: <FileText className="w-4 h-4" />,
   },
 ];
 
-const FALLBACK_COLORS = [
-  { bgColor: 'bg-gradient-to-br from-violet-50 to-purple-50/40', borderColor: 'border-violet-200/50', iconBg: 'bg-violet-100 text-violet-700', accentColor: 'text-violet-700' },
-  { bgColor: 'bg-gradient-to-br from-lime-50 to-green-50/40', borderColor: 'border-lime-200/50', iconBg: 'bg-lime-100 text-lime-700', accentColor: 'text-lime-700' },
-  { bgColor: 'bg-gradient-to-br from-yellow-50 to-amber-50/40', borderColor: 'border-yellow-200/50', iconBg: 'bg-yellow-100 text-yellow-700', accentColor: 'text-yellow-700' },
-  { bgColor: 'bg-gradient-to-br from-emerald-50 to-teal-50/40', borderColor: 'border-emerald-200/50', iconBg: 'bg-emerald-100 text-emerald-700', accentColor: 'text-emerald-700' },
-];
+const FALLBACK_COLORS = [GROUP_STYLE.yellow, GROUP_STYLE.blue, GROUP_STYLE.lightblue, GROUP_STYLE.black, GROUP_STYLE.red];
 
 // Diacritic-insensitive match: "ISTRAZIVACKO" finds "ISTRAŽIVAČKO" (P3: some
 // models drop č ć š ž đ in headings). Đ → DJ as in PSI ASCII spelling.
@@ -404,14 +366,14 @@ export default function PlanDisplay({ planText, planId, className, compact, onRe
               initial={{ opacity: 0, x: -8 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.1 }}
-              className="rounded-2xl p-5 border-2 bg-gradient-to-br from-amber-50 to-orange-50/50 border-amber-300/50 shadow-sm"
+              className="rounded-2xl p-5 border-2 bg-white border-brand-yellow shadow-sm"
             >
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0 shadow-inner">
-                  <Lightbulb className="w-5 h-5 text-amber-600" />
+                <div className="w-10 h-10 rounded-xl bg-brand-yellow flex items-center justify-center flex-shrink-0">
+                  <Lightbulb className="w-5 h-5 text-black" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-amber-700/70 mb-1">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-600 mb-1">
                     Istraživačko pitanje (IQ)
                   </p>
                   <p className="text-base font-semibold text-foreground leading-relaxed italic">
@@ -534,7 +496,7 @@ function SectionContent({ content }: { content: string }) {
         }
       }
       elements.push(
-        <pre key={i} className="font-mono text-xs bg-slate-900 text-green-300 border border-slate-700
+        <pre key={i} className="font-mono text-xs bg-black text-brand-yellow border border-neutral-700
                            rounded-xl p-4 overflow-x-auto my-3 leading-relaxed shadow-inner
                            whitespace-pre select-all">
           {asciiLines.join('\n')}
@@ -592,8 +554,8 @@ function SectionContent({ content }: { content: string }) {
           <span className={cn(
             'mt-0.5 flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center text-xs',
             checked
-              ? 'bg-emerald-100 border-emerald-400 text-emerald-700'
-              : 'bg-white border-gray-300 text-transparent'
+              ? 'bg-brand-blue border-brand-blue text-white'
+              : 'bg-white border-neutral-300 text-transparent'
           )}>
             {checked ? '✓' : ''}
           </span>

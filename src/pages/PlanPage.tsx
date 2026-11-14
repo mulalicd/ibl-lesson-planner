@@ -139,7 +139,7 @@ export default function PlanPage() {
               onClick={toggleFavourite}
               className="w-10 h-10 rounded-xl neu-btn flex items-center justify-center hover:text-idss-gold transition-colors"
             >
-              <Star className={`w-4 h-4 ${favourite ? 'text-amber-500 fill-amber-500' : 'text-muted-foreground'}`} />
+              <Star className={`w-4 h-4 ${favourite ? 'text-brand-yellow fill-brand-yellow' : 'text-muted-foreground'}`} />
             </motion.button>
             <DocxExportButton planId={plan.id} planText={plan.plan_text} />
             <motion.div whileTap={{ scale: 0.95 }}>
@@ -192,7 +192,7 @@ export default function PlanPage() {
             transition={{ delay: 0.2 }}
             className="iq-callout mb-6"
           >
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-amber-700/70 mb-2 not-italic">
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-600 mb-2 not-italic">
               Istraživačko pitanje
             </p>
             <p className="text-lg text-foreground leading-relaxed">

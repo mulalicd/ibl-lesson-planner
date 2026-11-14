@@ -76,3 +76,4 @@ One line per feature, per Commander E-10.
 - [2026-11-14] [AI] Language layer for German and English plans: copied Bosnian template lines are replaced by their German/English line while the plan streams and when it is shown (DL-P30). Bosnian template: "sistematičan" instead of "sustavan".
 - [2026-11-14] [FEATURE] P5-4 "Prepravi ovaj dio": rewrite one section of a new plan; only that section changes (DL-P31). Wording approved by the Director.
 - [2026-11-14] [AI] L-2 step 1: misspelled fixed headings are corrected to the PSI heading; words with three equal letters are flagged ("Moguća greška u pisanju") (DL-P32).
+- [2026-11-14] [DESIGN] P6 S1: IDSS-only colour tokens (five colours, white, neutral greys), Tailwind palette restricted to them, CI colour guard, self-hosted Manrope + Inter (DL-P35).

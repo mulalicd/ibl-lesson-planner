@@ -1,4 +1,4 @@
-# P6 — Proposed audience of each segment (for the Director's approval, DL-P34)
+# P6 — Audience of each segment (approved by the Director 2026-11-14: "raspored N/U odobren", DL-P34)
 
 N = Za nastavnika (vođenje časa) · U = Za učenike (ono što učenici vide, čuju i rade) · N·U = oboje.
 A segment marked N·U appears under both tabs. Under "Sve" every segment is shown, in its original order.

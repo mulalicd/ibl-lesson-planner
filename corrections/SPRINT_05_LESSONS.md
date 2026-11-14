@@ -432,3 +432,11 @@ Period: 2026-11-07 … 2026-11-14. Detailed entries follow below the summary; th
 - The plan showed details a fixture does not have: 25 segments, a group heading with no text, and inline
   "Uvodni/Središnji/Završni dio" blocks. All three proposals use the real structure.
 - Rule: design and test steps start from a real production output (same rule as the P5-4 correction).
+
+### 2026-11-14 — Gotcha: Tailwind's base styles bring their own colours (P6 S1)
+- After the palette was restricted, the colour guard still found #9CA3AF (placeholder text from `colors.gray`)
+  and #3B82F680 (default focus ring). Tailwind's preflight reads `colors.gray` and a built-in ring colour.
+- Fix: a neutral `gray` alias and `ringColor.DEFAULT` from the IDSS ring token. A guard on the built CSS finds
+  what a search in the source cannot.
+- Also: a component gallery that imports only `index.css` (not `main.tsx`) shows fallback fonts. Load the fonts
+  the same way the app does, or the screenshots lie.
