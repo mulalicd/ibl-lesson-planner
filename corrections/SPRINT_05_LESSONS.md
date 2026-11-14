@@ -528,3 +528,12 @@ Period: 2026-11-07 … 2026-11-14. Detailed entries follow below the summary; th
   (on arrival and before writing); "Vrati plan od prije ugradnje" restores the old text with one click.
 - Rule (data integrity, M-3): an AI output that REPLACES stored content must be checked for completeness against
   what it replaces, not only for its shape. Test the bad case (a missing section) before the good one.
+
+### 2026-11-14 — Gotcha: a page opened before a release cannot load parts of the new release
+- After a merge, the Director's open plan page clicked "Word dokument": it asked for the OLD file
+  `memorandumDocx-<hash>.js`, which the new release had replaced; Vercel's SPA rewrite answered with index.html
+  ("MIME type text/html", "Failed to fetch dynamically imported module").
+- Fix: on Vite's `vite:preloadError` the app reloads once (at most once a minute); `/assets/*` is no longer
+  rewritten to index.html, so a missing file is a clean 404.
+- Rule: every app that loads code on demand needs a "new release while open" path. Test it by removing a chunk
+  from a built copy while the page is open.
