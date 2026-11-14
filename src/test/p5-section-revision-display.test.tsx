@@ -44,6 +44,35 @@ describe('P5-4 the "Prepravi ovaj dio" button', () => {
     fireEvent.change(screen.getByPlaceholderText('Šta želite promijeniti? (nije obavezno)'), { target: { value: 'kraće' } });
     fireEvent.click(screen.getByText('Prepravi'));
     await waitFor(() => expect(onRevise).toHaveBeenCalledTimes(1));
-    expect(onRevise).toHaveBeenCalledWith({ title: titles[1], nextTitle: titles[2] ?? null, occurrence: 0 }, 'kraće');
+    expect(onRevise).toHaveBeenCalledWith(expect.objectContaining({ title: titles[1], nextTitle: titles[2] ?? null, occurrence: 0 }), 'kraće');
+  });
+});
+
+describe('P5-4 bug 2026-11-14 (Director): group heading "DODATNI RESURSI ZA NASTAVNIKE"', () => {
+  const PLAN = [
+    'ISTRAŽIVAČKO PITANJE (IQ)', '| Zašto? |', '',
+    '================================================================================',
+    'DODATNI RESURSI ZA NASTAVNIKE',
+    '================================================================================',
+    '',
+    'DIFERENCIJACIJA',
+    '--------------------------------------------------------------------------------',
+    '|  PODRŠKA — stara podrška |',
+    '================================================================================',
+    '',
+    'KLJUČNI POJMOVI — 5. razred',
+    '|  Pojam | Definicija |',
+  ].join('\n');
+
+  it('an empty group card has no "Prepravi ovaj dio" button', () => {
+    const { container } = render(<PlanDisplay planText={PLAN} onReviseSection={async () => {}} />);
+    const cards = [...container.querySelectorAll('h2')].map((h) => h.textContent);
+    const resources = cards.findIndex((t) => t === 'DODATNI RESURSI ZA NASTAVNIKE');
+    expect(resources, 'the group card must exist, otherwise this test proves nothing').toBeGreaterThanOrEqual(0);
+    const header = container.querySelectorAll('h2')[resources].parentElement!;
+    expect(header.textContent).not.toContain('Prepravi ovaj dio');
+    // the sub-sections with text keep their button
+    const diff = container.querySelectorAll('h2')[cards.indexOf('DIFERENCIJACIJA')].parentElement!;
+    expect(diff.textContent).toContain('Prepravi ovaj dio');
   });
 });
