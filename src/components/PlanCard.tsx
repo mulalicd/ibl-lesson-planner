@@ -15,53 +15,37 @@ export default function PlanCard({ plan, className }: PlanCardProps) {
   const tierLabel = plan.tier ? TIER_LABELS[plan.tier][langKey] : UNKNOWN;
 
   return (
+    // P6 S2 (direction C): a plan is a sheet of paper on the desk
     <Link
       to={`/plan/${plan.id}`}
       className={cn(
-        'group block neu-card p-5',
-        'hover:shadow-[8px_8px_20px_var(--neu-dark),-8px_-8px_20px_var(--neu-light)]',
-        'transition-all duration-300 ease-out',
+        'group flex min-h-[230px] flex-col rounded-md bg-white p-5 shadow-[0_1px_0_rgb(221_221_221),0_14px_30px_rgba(0,0,0,0.10)]',
+        'transition-transform duration-200 ease-out hover:-translate-y-1 hover:rotate-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
         className
       )}
     >
-      <div className="flex items-start justify-between gap-3 mb-3">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="pastel-tag">
-            {showText(plan.subject)}
-          </span>
-          <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
-            <GraduationCap className="w-3 h-3" />
-            {showGrade(plan.grade)}
-          </span>
-        </div>
-        <div className="flex items-center gap-1.5 flex-shrink-0">
-          <span className={cn('text-[10px] px-2.5 py-0.5 rounded-full border font-semibold', plan.tier ? TIER_COLORS[plan.tier] : '')}>
-            {tierLabel}
-          </span>
-          {plan.favourite && <Star className="w-4 h-4 text-idss-gold fill-idss-gold" />}
-        </div>
+      <div className="mb-3 flex items-center justify-between gap-2 border-b border-neutral-200 pb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+        <span className="truncate">{showText(plan.subject)} · <GraduationCap className="inline h-3 w-3" /> {showGrade(plan.grade)}</span>
+        <span className="flex flex-none items-center gap-1.5">
+          <span className={cn('rounded px-2 py-0.5 text-[10px] font-bold normal-case tracking-normal', plan.tier ? TIER_COLORS[plan.tier] : '')}>{tierLabel}</span>
+          {plan.favourite && <Star className="h-4 w-4 fill-idss-gold text-idss-gold" />}
+        </span>
       </div>
 
-      <h3 className="font-semibold text-foreground text-[15px] leading-snug mb-3 group-hover:text-primary transition-colors duration-200">
+      <h3 className="mb-2 font-display text-lg font-extrabold leading-snug text-black transition-colors group-hover:text-primary">
         {truncate(showText(plan.topic), 70)}
       </h3>
 
       {plan.inquiry_question && (
-        <div className="iq-callout rounded-r-xl mb-3">
-          <p className="text-xs text-foreground/80 leading-relaxed not-italic font-normal">
-            {truncate(plan.inquiry_question, 100)}
-          </p>
-        </div>
+        <p className="mb-3 text-sm leading-relaxed text-primary">„{truncate(plan.inquiry_question, 110)}“</p>
       )}
 
-      <div className="flex items-center gap-3 text-[11px] text-muted-foreground mt-auto pt-3 border-t border-border/30">
-        <span className="flex items-center gap-1">
-          <Clock className="w-3 h-3" /> {showMinutes(plan.duration_min)}
-        </span>
+      <div className="mt-auto flex items-center gap-3 border-t border-neutral-200 pt-3 text-[11px] text-muted-foreground">
+        <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {showMinutes(plan.duration_min)}</span>
         <span>{formatDate(plan.created_at)}</span>
         {plan.author && (
-          <span className="flex items-center gap-1 ml-auto truncate" title={plan.author}>
-            <User className="w-3 h-3 flex-shrink-0" /> <span className="truncate">{plan.author}</span>
+          <span className="ml-auto flex items-center gap-1 truncate" title={plan.author}>
+            <User className="h-3 w-3 flex-shrink-0" /> <span className="truncate">{plan.author}</span>
           </span>
         )}
       </div>

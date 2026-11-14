@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Plus, Search, X, Star, LayoutGrid, Loader2, SlidersHorizontal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import AppHeader from '@/components/AppHeader';
@@ -100,257 +100,146 @@ export default function DashboardPage() {
   const totalPages = Math.ceil(total / limit);
   const hasActiveFilters = filters.subject || filters.grade || filters.tier || filters.isFavourite || filters.searchQuery;
 
+  const selectCls = 'h-10 min-w-[150px] cursor-pointer appearance-none rounded-lg border border-neutral-200 bg-white px-3 text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-ring';
+
   return (
-    <div className="min-h-screen bg-background gradient-mesh">
+    // P6 S2 (direction C, DL-P34): the library is the desk — each plan is a sheet of paper on it.
+    <div className="min-h-screen bg-background">
       <AppHeader />
 
-      <div className="max-w-7xl mx-auto px-4 md:px-8 py-8">
-        {/* Hero */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4"
-        >
+      <main className="mx-auto max-w-[1600px] px-4 py-6 md:px-8">
+        {/* Title bar with the Moji / Svi binder tabs */}
+        <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-foreground tracking-tight">{planScopeTitle(scope)}</h2>
-            <div role="group" aria-label="Prikaz planova" className="mt-2 inline-flex gap-1 neu-inset p-1 rounded-xl">
-              {(['mine', 'all'] as const).map((s) => (
+            <div role="group" aria-label="Prikaz planova" className="mb-[-1px] flex gap-1.5">
+              {(['mine', 'all'] as const).map((sc) => (
                 <button
-                  key={s}
+                  key={sc}
                   type="button"
-                  aria-pressed={scope === s}
-                  onClick={() => { setScope(s); setPage(1); }}
+                  aria-pressed={scope === sc}
+                  onClick={() => { setScope(sc); setPage(1); }}
                   className={cn(
-                    'px-3 py-1 text-xs font-semibold rounded-lg transition-colors',
-                    scope === s ? 'neu-btn-primary' : 'text-muted-foreground hover:text-foreground',
+                    'h-10 rounded-t-lg px-5 text-sm font-bold transition-transform',
+                    scope === sc ? 'translate-y-0 bg-white text-black shadow-[0_-1px_0_rgb(221_221_221)]' : 'translate-y-1 bg-neutral-200 text-neutral-700 hover:text-black',
                   )}
                 >
-                  {PLAN_SCOPE_LABELS[s]}
+                  {PLAN_SCOPE_LABELS[sc]}
                 </button>
               ))}
             </div>
-            <p className="text-sm text-muted-foreground mt-1">
-              {total} {total === 1 ? 'plan' : 'planova'} ukupno
-            </p>
+            <div className="rounded-b-md rounded-tr-md bg-white px-5 py-4 shadow-[0_1px_0_rgb(221_221_221)]">
+              <h1 className="font-display text-2xl font-extrabold tracking-tight">{planScopeTitle(scope)}</h1>
+              <p className="mt-0.5 text-sm text-muted-foreground">{total} {total === 1 ? 'plan' : 'planova'} ukupno</p>
+            </div>
           </div>
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>
-            <Link
-              to="/chat"
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl neu-btn-primary
-                         text-sm font-bold"
-            >
-              <Plus className="w-4 h-4" /> Novi plan
-            </Link>
-          </motion.div>
-        </motion.div>
+          <Link to="/chat" className="inline-flex h-12 items-center gap-2 self-start rounded-lg bg-primary px-5 text-sm font-bold text-primary-foreground sm:self-auto">
+            <Plus className="h-4 w-4" /> Novi plan
+          </Link>
+        </div>
 
-        {/* Filters */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="neu-card p-4 mb-6"
-        >
-          <div className="flex flex-wrap gap-3 items-center">
-            {/* Search */}
-            <div className="relative flex-1 min-w-[200px] max-w-[320px]">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
+        {/* Filters: always visible on a desktop, behind "Filteri" on a phone */}
+        <div className="mb-6 rounded-md bg-white p-3 shadow-[0_1px_0_rgb(221_221_221)]">
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="relative min-w-[200px] flex-1 lg:max-w-[340px]">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
               <input
                 type="text"
                 placeholder="Pretraži teme..."
+                aria-label="Pretraži teme"
                 value={filters.searchQuery || ''}
                 onChange={e => setFilter('searchQuery', e.target.value)}
-                className="w-full neu-inset pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25
-                           placeholder:text-muted-foreground/40"
+                className="h-10 w-full rounded-lg border border-neutral-200 bg-white pl-9 pr-3 text-sm placeholder:text-neutral-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               />
             </div>
-
-            {/* Toggle filters */}
-            <motion.button
-              whileTap={{ scale: 0.95 }}
+            <button
+              type="button"
               onClick={() => setFiltersOpen(prev => !prev)}
-              className={cn(
-                'neu-btn flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-colors',
-                filtersOpen ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
-              )}
+              aria-expanded={filtersOpen}
+              className={cn('flex h-10 items-center gap-2 rounded-lg border border-neutral-200 bg-white px-3 text-sm font-semibold lg:hidden', filtersOpen ? 'text-primary' : 'text-neutral-700')}
             >
-              <SlidersHorizontal className="w-4 h-4" />
-              Filteri
-              {hasActiveFilters && (
-                <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-              )}
-            </motion.button>
-
+              <SlidersHorizontal className="h-4 w-4" /> Filteri
+              {hasActiveFilters && <span className="h-2 w-2 rounded-full bg-primary" />}
+            </button>
+            <div className={cn('w-full flex-wrap items-center gap-3 lg:flex lg:w-auto', filtersOpen ? 'flex' : 'hidden')}>
+              <select value={filters.subject || ''} onChange={e => setFilter('subject', e.target.value)} className={selectCls} aria-label="Predmet">
+                <option value="">Svi predmeti</option>
+                {SUBJECTS.map(sub => <option key={sub} value={sub}>{sub}</option>)}
+              </select>
+              <select value={filters.grade ?? ''} onChange={e => setFilter('grade', e.target.value ? Number(e.target.value) : null)} className={selectCls} aria-label="Razred">
+                <option value="">Svi razredi</option>
+                {Array.from({ length: 9 }, (_, i) => i + 1).map(g => (<option key={g} value={g}>{g}. razred</option>))}
+              </select>
+              <select value={filters.tier ?? ''} onChange={e => { const t = TierSchema.safeParse(e.target.value); setFilter('tier', t.success ? t.data : null); }} className={selectCls} aria-label="Tip časa">
+                <option value="">Svi tipovi</option>
+                <option value="MICRO">Mikro čas</option>
+                <option value="STANDARD">Standardni čas</option>
+                <option value="EXTENDED">Produženi čas</option>
+              </select>
+              <label className="flex h-10 cursor-pointer select-none items-center gap-2 rounded-lg border border-neutral-200 bg-white px-3 text-sm font-medium text-neutral-800">
+                <input type="checkbox" checked={filters.isFavourite || false} onChange={e => setFilter('isFavourite', e.target.checked)} className="h-4 w-4 accent-primary" />
+                <Star className="h-3.5 w-3.5" /> Omiljeni
+              </label>
+            </div>
             {hasActiveFilters && (
-              <motion.button
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => { setFilters(INITIAL_FILTERS); setPage(1); }}
-                className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-destructive
-                           px-3 py-2 rounded-xl hover:bg-destructive/8 transition-all font-medium"
-              >
-                <X className="w-3 h-3" /> Resetuj
-              </motion.button>
+              <button type="button" onClick={() => { setFilters(INITIAL_FILTERS); setPage(1); }}
+                className="flex h-10 items-center gap-1.5 rounded-lg px-3 text-xs font-semibold text-neutral-700 hover:text-destructive">
+                <X className="h-3 w-3" /> Resetuj
+              </button>
             )}
           </div>
+        </div>
 
-          {/* Expanded filters */}
-          <AnimatePresence>
-            {filtersOpen && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="overflow-hidden"
-              >
-                <div className="flex flex-wrap gap-3 mt-4 pt-4 border-t border-border/30">
-                  <select
-                    value={filters.subject || ''}
-                    onChange={e => setFilter('subject', e.target.value)}
-                    className="neu-inset px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25
-                               appearance-none cursor-pointer font-medium min-w-[160px]"
-                  >
-                    <option value="">Svi predmeti</option>
-                    {SUBJECTS.map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
-
-                  <select
-                    value={filters.grade ?? ''}
-                    onChange={e => setFilter('grade', e.target.value ? Number(e.target.value) : null)}
-                    className="neu-inset px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25
-                               appearance-none cursor-pointer font-medium min-w-[140px]"
-                  >
-                    <option value="">Svi razredi</option>
-                    {Array.from({ length: 9 }, (_, i) => i + 1).map(g => (
-                      <option key={g} value={g}>{g}. razred</option>
-                    ))}
-                  </select>
-
-                  <select
-                    value={filters.tier ?? ''}
-                    onChange={e => { const t = TierSchema.safeParse(e.target.value); setFilter('tier', t.success ? t.data : null); }}
-                    className="neu-inset px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25
-                               appearance-none cursor-pointer font-medium min-w-[160px]"
-                  >
-                    <option value="">Svi tipovi</option>
-                    <option value="MICRO">Mikro čas</option>
-                    <option value="STANDARD">Standardni čas</option>
-                    <option value="EXTENDED">Produženi čas</option>
-                  </select>
-
-                  <label className="flex items-center gap-2.5 text-sm text-muted-foreground cursor-pointer select-none font-medium
-                                    neu-btn px-4 py-2.5 rounded-xl">
-                    <input
-                      type="checkbox"
-                      checked={filters.isFavourite || false}
-                      onChange={e => setFilter('isFavourite', e.target.checked)}
-                      className="rounded border-border text-primary focus:ring-primary/20 w-4 h-4 accent-primary"
-                    />
-                    <Star className="w-3.5 h-3.5" /> Omiljeni
-                  </label>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
-
-        {/* Grid */}
+        {/* The desk with the plans */}
         {loading ? (
           <div className="flex items-center justify-center py-24">
-            <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}>
-              <Loader2 className="w-8 h-8 text-primary" />
-            </motion.div>
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
         ) : plans.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center py-24"
-          >
-            <div className="neu-card inline-block p-8 rounded-3xl mb-6">
-              <LayoutGrid className="w-16 h-16 text-muted-foreground/20 mx-auto" />
+          <div className="py-20 text-center">
+            <div className="mx-auto mb-6 flex h-40 w-32 rotate-[-4deg] items-center justify-center rounded bg-white shadow-[0_18px_40px_rgba(0,0,0,0.12)]">
+              <LayoutGrid className="h-10 w-10 text-neutral-300" />
             </div>
-            <p className="text-xl font-bold text-foreground mb-2">
-              {hasActiveFilters ? 'Nema rezultata' : 'Nema planova'}
-            </p>
-            <p className="text-muted-foreground text-sm mb-6">
-              {hasActiveFilters
-                ? 'Promijenite filtere za više rezultata.'
-                : 'Kreirajte prvi IBL plan časa.'}
-            </p>
-            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>
-              <Link to="/chat"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl neu-btn-primary text-sm font-bold">
-                <Plus className="w-4 h-4" /> Novi plan
-              </Link>
-            </motion.div>
-          </motion.div>
+            <p className="mb-2 font-display text-xl font-bold">{hasActiveFilters ? 'Nema rezultata' : 'Nema planova'}</p>
+            <p className="mb-6 text-sm text-muted-foreground">{hasActiveFilters ? 'Promijenite filtere za više rezultata.' : 'Kreirajte prvi IBL plan časa.'}</p>
+            <Link to="/chat" className="inline-flex h-12 items-center gap-2 rounded-lg bg-primary px-6 text-sm font-bold text-primary-foreground">
+              <Plus className="h-4 w-4" /> Novi plan
+            </Link>
+          </div>
         ) : (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
-          >
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6">
             {plans.map((plan, i) => (
               <motion.div
                 key={plan.id}
-                initial={{ opacity: 0, y: 20, filter: 'blur(4px)' }}
-                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                transition={{ delay: i * 0.06, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                initial={{ y: 24 }}
+                animate={{ y: 0 }}
+                transition={{ delay: Math.min(i, 8) * 0.05, duration: 0.45, ease: [0.2, 0.8, 0.2, 1] }}
+                className="group/card relative"
               >
-                <div className="relative group/card">
-              <PlanCard plan={plan} />
-              <button
-                onClick={(e) => handleDeletePlan(plan.id, e)}
-                className="absolute top-3 right-3 z-10 opacity-0 group-hover/card:opacity-100
-                           transition-opacity w-7 h-7 rounded-lg bg-white border border-neutral-200
-                           text-neutral-500 hover:text-brand-red hover:border-brand-red/40 hover:bg-brand-red/10
-                           flex items-center justify-center text-xs shadow-sm"
-                title="Obriši plan"
-              >
-                ✗
-              </button>
-            </div>
-          </motion.div>
+                <PlanCard plan={plan} className={i % 3 === 1 ? 'rotate-[0.6deg]' : i % 3 === 2 ? 'rotate-[-0.5deg]' : ''} />
+                <button
+                  type="button"
+                  onClick={(e) => handleDeletePlan(plan.id, e)}
+                  aria-label="Obriši plan"
+                  title="Obriši plan"
+                  className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-lg border border-neutral-200 bg-white text-xs text-neutral-600 opacity-0 transition-opacity hover:border-brand-red/40 hover:text-brand-red focus-visible:opacity-100 group-hover/card:opacity-100"
+                >
+                  ✗
+                </button>
+              </motion.div>
             ))}
-          </motion.div>
+          </div>
         )}
 
-        {/* Pagination */}
         {totalPages > 1 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex items-center justify-center gap-3 mt-8"
-          >
-            <motion.button
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setPage(p => Math.max(1, p - 1))}
-              disabled={page === 1}
-              className="px-5 py-2.5 rounded-xl neu-btn text-sm font-medium text-muted-foreground
-                         hover:text-primary disabled:opacity-30 disabled:cursor-not-allowed"
-            >
-              ← Prethodna
-            </motion.button>
-            <span className="text-sm text-muted-foreground font-semibold px-3 py-2 neu-inset rounded-xl">
-              {page} / {totalPages}
-            </span>
-            <motion.button
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-              disabled={page === totalPages}
-              className="px-5 py-2.5 rounded-xl neu-btn text-sm font-medium text-muted-foreground
-                         hover:text-primary disabled:opacity-30 disabled:cursor-not-allowed"
-            >
-              Sljedeća →
-            </motion.button>
-          </motion.div>
+          <div className="mt-8 flex items-center justify-center gap-3">
+            <button type="button" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
+              className="h-10 rounded-lg border border-neutral-200 bg-white px-4 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-40">← Prethodna</button>
+            <span className="rounded-lg bg-white px-3 py-2 text-sm font-semibold">{page} / {totalPages}</span>
+            <button type="button" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
+              className="h-10 rounded-lg border border-neutral-200 bg-white px-4 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-40">Sljedeća →</button>
+          </div>
         )}
-      </div>
+      </main>
     </div>
   );
 }
