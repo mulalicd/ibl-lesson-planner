@@ -345,3 +345,6 @@ Period: 2026-11-07 … 2026-11-13. Detailed entries follow below the summary; th
 - Rule: never claim a fix from n=2. Log the offending lines, measure on a larger sample (after the 09:00
   quota reset), then decide. The check stays out of the teacher's badge until it is stable and the Director
   approves a label.
+
+### 2026-11-14 — No lessons this session (routine changes only)
+- "Ako jeste" (DL-P26) and the P5 SPEC draft: routine changes, no new gotcha or correction.
