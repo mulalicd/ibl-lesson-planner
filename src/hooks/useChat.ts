@@ -327,9 +327,10 @@ export function useChat() {
 
       // the same language layer as a new plan (DL-P19, DL-P30)
       const shownAnswer = language === 'bosnian' ? normalizeBosnian(answer) : normalizeTemplateLines(answer, language);
-      const revised = extractRevisedSection(shownAnswer, ref.title);
+      const revised = extractRevisedSection(shownAnswer, ref.title, ref.stopTitles);
       const newPlan = revised ? replaceSection(msg.content, ref, revised) : null;
-      if (!newPlan) return 'failed';
+      // nothing usable, or no change at all: report it honestly, the plan stays as it was
+      if (!newPlan || newPlan === msg.content) return 'failed';
       setState(prev => ({
         ...prev,
         activePlan: prev.activePlan === msg.content ? newPlan : prev.activePlan,

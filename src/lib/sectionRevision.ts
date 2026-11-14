@@ -20,6 +20,9 @@ export type SectionRef = {
   nextTitle: string | null;
   /** 0 for the first section with this title, 1 for the second … */
   occurrence: number;
+  /** Titles of the plan's other sections: the AI answer is cut at the first of them, so a revision never
+   *  brings in (and duplicates) another section. */
+  stopTitles?: string[];
 };
 
 /** Line index range [start, end) of the section in the plan text, or null when it cannot be found. */
@@ -45,15 +48,20 @@ export function findSectionRange(planText: string, ref: SectionRef): { start: nu
   return { start, end };
 }
 
-/** Keeps only the revised section from the AI answer: from its heading line on, without a closing box line. */
-export function extractRevisedSection(answer: string, title: string): string | null {
+/** Keeps only the revised section from the AI answer: from its heading line up to the first heading of another
+ *  section (stopTitles), without a closing box line. Null when there is no real content under the heading. */
+export function extractRevisedSection(answer: string, title: string, stopTitles: string[] = []): string | null {
   const lines = answer.replace(/\r/g, '').split('\n');
   const start = lines.findIndex((l) => cleanTitle(l) === title);
   if (start < 0) return null;
-  let end = lines.length;
+  const stops = new Set(stopTitles.filter((t) => t !== title));
+  let end = lines.findIndex((l, i) => i > start && stops.has(cleanTitle(l)));
+  if (end < 0) end = lines.length;
   while (end - 1 > start && (lines[end - 1].trim() === '' || DECORATION.test(lines[end - 1]))) end--;
   const body = lines.slice(start, end);
-  return body.length >= 2 ? body.join('\n') : null; // a heading alone is not a revision
+  // a heading with only box lines under it is not a revision
+  const content = body.slice(1).filter((l) => l.trim() !== '' && !DECORATION.test(l));
+  return content.length > 0 ? body.join('\n') : null;
 }
 
 /** The plan with exactly one section replaced. Null when the section is not found (the plan stays as it is). */

@@ -385,3 +385,18 @@ Period: 2026-11-07 … 2026-11-13. Detailed entries follow below the summary; th
 ### 2026-11-14 — Render check: framer-motion server render starts cards at opacity 0
 - A static render of PlanDisplay (renderToString + built CSS) showed an empty page. The cards are animated in
   from opacity 0. For a static visual check, override the inline opacity/transform in the check page only.
+
+### 2026-11-14 — Director correction: "Prepravi ovaj dio" reported success on an empty card that stayed empty
+- Director: "UDICA ne postoji kao kartica" and "DODATNI RESURSI ZA NASTAVNIKE … prijavio je da je uspješno …
+  ali je ova stavka i dalje prazna".
+- Cause 1 (my instruction): I told him to try the UDICA card from the test fixture. In a real PSI v9.1 plan the
+  hook sits in the header box, not on its own card. Rule: give live-test steps from a real production plan,
+  not from a test fixture.
+- Cause 2 (bug): "DODATNI RESURSI ZA NASTAVNIKE" is a group heading; its sub-sections are their own cards, so
+  its card is empty. The AI returned the whole group. The code took everything after the heading, inserted
+  it before the existing sub-sections (duplicates), and still reported success.
+- Fix: no button on a card without own text; the AI answer is cut at the first heading of another section; an
+  answer without real content, or one that changes nothing, is reported as failed. Three tests fail on the old
+  code and pass on the new.
+- Rule: "success" must be verified against the visible result (the card that was clicked has new text), not
+  against "the code ran".

@@ -317,7 +317,8 @@ export default function PlanDisplay({ planText, planId, className, compact, onRe
   function sectionRef(idx: number): SectionRef {
     const title = parsed.sections[idx].title;
     const occurrence = parsed.sections.slice(0, idx).filter((s) => s.title === title).length;
-    return { title, nextTitle: parsed.sections[idx + 1]?.title ?? null, occurrence };
+    const stopTitles = parsed.sections.map((s) => s.title).filter((t) => t !== title);
+    return { title, nextTitle: parsed.sections[idx + 1]?.title ?? null, occurrence, stopTitles };
   }
 
   async function submitRevision(idx: number) {
@@ -443,7 +444,8 @@ export default function PlanDisplay({ planText, planId, className, compact, onRe
                   <h2 className={cn('font-bold text-sm tracking-tight', section.accentColor)}>
                     {section.title}
                   </h2>
-                  {onReviseSection && (
+                  {/* a group heading without own text (e.g. DODATNI RESURSI ZA NASTAVNIKE) has nothing to revise */}
+                  {onReviseSection && section.content.trim() !== '' && (
                     <button
                       type="button"
                       onClick={() => { setReviseIdx(reviseIdx === idx ? null : idx); setReviseText(''); }}
