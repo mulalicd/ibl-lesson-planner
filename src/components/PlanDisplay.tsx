@@ -68,6 +68,17 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
   const [reviseText, setReviseText] = useState('');
   const [revising, setRevising] = useState(false);
   const reduce = useReducedMotion();
+  // The layout follows the width the workspace really has (it can share the screen with the conversation, DL-P36),
+  // not the width of the screen: table of contents beside the page from 960 px, notes in their own column from 1200 px.
+  const [boxEl, setBoxEl] = useState<HTMLDivElement | null>(null);
+  const [boxWidth, setBoxWidth] = useState(() => (typeof window === 'undefined' ? 1280 : window.innerWidth));
+  useEffect(() => {
+    if (!boxEl || typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(([e]) => setBoxWidth(e.contentRect.width));
+    ro.observe(boxEl);
+    return () => ro.disconnect();
+  }, [boxEl]);
+  const wide = boxWidth >= 960;
 
   // Segments that can be opened as a page in the current view (a group heading without own text is only a label)
   const pages = useMemo(() => segments.map((s, i) => ({ s, i })).filter(({ s }) => hasText(s) && inView(s, view)).map(({ i }) => i), [segments, view]);
@@ -106,11 +117,36 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
   if (!seg) return null;
   const badge = AUDIENCE_BADGE[seg.audience];
   const hasNotes = !!quality || !!onReviseSection;
+  const widest = wide && hasNotes && boxWidth >= 1200;
+
+  const notes = hasNotes ? (<>
+            {quality && <div className="-rotate-1 rounded bg-brand-yellow p-4 text-black shadow-[0_10px_20px_rgba(0,0,0,0.12)]">{quality}</div>}
+            {onReviseSection && (
+              <div className="rotate-[0.6deg] rounded bg-white p-4 shadow-[0_10px_20px_rgba(0,0,0,0.08)]">
+                <button type="button" disabled={reviseDisabled || revising || streaming} onClick={() => setReviseOpen(!reviseOpen)}
+                  className="flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-primary bg-white text-sm font-semibold text-primary disabled:opacity-50">
+                  {revising ? <Loader2 className="h-4 w-4 animate-spin" /> : <PencilLine className="h-4 w-4" />}
+                  {revising ? SECTION_REVISION_TEXT.WORKING : SECTION_REVISION_TEXT.BUTTON}
+                </button>
+                {reviseOpen && (
+                  <form className="mt-3 flex flex-col gap-2" onSubmit={(e) => { e.preventDefault(); void submitRevision(); }}>
+                    <input autoFocus value={reviseText} onChange={(e) => setReviseText(e.target.value)} maxLength={500}
+                      placeholder={SECTION_REVISION_TEXT.PLACEHOLDER} aria-label={SECTION_REVISION_TEXT.PLACEHOLDER}
+                      className="h-11 rounded-lg border border-input bg-white px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+                    <div className="flex gap-2">
+                      <button type="submit" className="h-10 flex-1 rounded-lg bg-primary text-sm font-semibold text-primary-foreground">{SECTION_REVISION_TEXT.SUBMIT}</button>
+                      <button type="button" onClick={() => setReviseOpen(false)} className="h-10 flex-1 rounded-lg bg-muted text-sm font-semibold">{SECTION_REVISION_TEXT.CANCEL}</button>
+                    </div>
+                  </form>
+                )}
+              </div>
+            )}
+          </>) : null;
 
   const toolbar = (
     // Workspace toolbar: in the centre column, above the page (no extra row over the table of contents)
       <div className="mb-3 flex flex-wrap items-center gap-2">
-        <button type="button" onClick={() => setTocOpen(true)} className="flex h-10 items-center gap-2 rounded-lg border border-border bg-white px-3 text-sm font-semibold lg:hidden">
+        <button type="button" onClick={() => setTocOpen(true)} className={cn('flex h-10 items-center gap-2 rounded-lg border border-border bg-white px-3 text-sm font-semibold', wide && 'hidden')}>
           <ListTree className="h-4 w-4" /> Sadržaj
         </button>
         <div className="flex-1" />
@@ -160,23 +196,26 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
   );
 
   return (
-    <div className={cn('w-full', className)} id={planId ? `plan-${planId}` : undefined}>
+    <div ref={setBoxEl} className={cn('w-full', className)} id={planId ? `plan-${planId}` : undefined}>
       {raw ? (
         <>{toolbar}<div className="overflow-x-auto rounded-md bg-white p-6 shadow-[0_18px_40px_rgba(0,0,0,0.12)]">
           <pre className="whitespace-pre font-mono text-xs leading-relaxed text-neutral-800">{planText}</pre>
         </div></>
       ) : (
-        <div className={cn('grid gap-4 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-x-14', hasNotes && 'xl:grid-cols-[240px_minmax(0,1fr)_250px]')}>
+        <div className={cn('grid gap-4', wide && 'grid-cols-[240px_minmax(0,1fr)] gap-x-12', widest && 'grid-cols-[240px_minmax(0,1fr)_250px]')}>
           {/* Table of contents */}
-          <aside className="hidden lg:block">
-            <div className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-auto pr-1">{toc}</div>
+          <aside className={wide ? 'block' : 'hidden'}>
+            <div className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-auto pr-1">
+              {wide && !widest && notes && <div className="mb-5 flex flex-col gap-4 pt-1">{notes}</div>}
+              {toc}
+            </div>
           </aside>
 
           {/* Paper on the desk */}
-          <div className="min-w-0">
+          <div className={cn('min-w-0', wide && 'pr-12')}>
             {toolbar}
             {/* Binder tabs: on a phone along the top edge, on a desktop down the right edge of the page */}
-            <div role="tablist" aria-label="Prikaz po usmjerenju" className="mb-[-1px] flex gap-1.5 pl-4 lg:hidden">
+            <div role="tablist" aria-label="Prikaz po usmjerenju" className={cn('mb-[-1px] flex gap-1.5 pl-4', wide && 'hidden')}>
               {VIEWS.map((v) => (
                 <button key={v.id} type="button" role="tab" aria-selected={view === v.id} onClick={() => setView(v.id)}
                   className={cn('h-11 rounded-t-lg px-4 text-xs font-bold transition-transform', v.tab, view === v.id ? 'translate-y-0' : 'translate-y-1')}>
@@ -185,7 +224,7 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
               ))}
             </div>
             <div className="relative mx-auto max-w-[1040px]">
-              <div role="tablist" aria-label="Prikaz po usmjerenju" className="absolute -right-11 top-10 z-10 hidden flex-col gap-1.5 lg:flex">
+              <div role="tablist" aria-label="Prikaz po usmjerenju" className={cn('absolute -right-11 top-10 z-10 flex-col gap-1.5', wide ? 'flex' : 'hidden')}>
                 {VIEWS.map((v) => (
                   <button key={v.id} type="button" role="tab" aria-selected={view === v.id} onClick={() => setView(v.id)}
                     className={cn('w-11 rounded-r-lg py-4 text-xs font-bold tracking-wide shadow-md transition-transform [writing-mode:vertical-rl]', v.tab, view === v.id ? 'translate-x-2' : 'translate-x-0')}>
@@ -199,7 +238,7 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
                 animate={{ x: 0, rotateY: 0 }}
                 transition={{ duration: 0.45, ease: [0.2, 0.8, 0.2, 1] }}
                 style={{ transformPerspective: 1600, transformOrigin: '0% 50%' }}
-                className="relative rounded-md bg-white px-5 pb-12 pt-6 shadow-[0_1px_0_rgb(221_221_221),0_18px_40px_rgba(0,0,0,0.12)] sm:px-8 sm:pt-7 lg:px-10"
+                className={cn('relative rounded-md bg-white px-5 pb-12 pt-6 shadow-[0_1px_0_rgb(221_221_221),0_18px_40px_rgba(0,0,0,0.12)] sm:pt-7', wide ? 'sm:px-10' : 'sm:px-8')}
               >
                 <div className="mb-4 flex flex-wrap justify-between gap-2 border-b border-neutral-200 pb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                   <span>Internationale Deutsche Schule Sarajevo</span>
@@ -211,7 +250,7 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
                   {seg.minutes && <span className="rounded bg-brand-yellow px-2 py-0.5 text-xs font-bold text-black">{seg.minutes}</span>}
                 </div>
                 <SegmentBlocks blocks={blocks} />
-                <div className="absolute bottom-4 left-5 right-5 flex justify-between text-xs text-muted-foreground sm:left-8 sm:right-8 lg:left-10 lg:right-10">
+                <div className={cn('absolute bottom-4 left-5 right-5 flex justify-between text-xs text-muted-foreground', wide ? 'sm:left-10 sm:right-10' : 'sm:left-8 sm:right-8')}>
                   <span>{PSI_VERSION_LABEL}</span>
                   <span>{pos + 1} / {pages.length}</span>
                 </div>
@@ -230,35 +269,13 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
           </div>
 
           {/* Sticky notes */}
-          {hasNotes && <aside className="flex flex-col gap-4 xl:sticky xl:top-4 xl:self-start">
-            {quality && <div className="-rotate-1 rounded bg-brand-yellow p-4 text-black shadow-[0_10px_20px_rgba(0,0,0,0.12)]">{quality}</div>}
-            {onReviseSection && (
-              <div className="rotate-[0.6deg] rounded bg-white p-4 shadow-[0_10px_20px_rgba(0,0,0,0.08)]">
-                <button type="button" disabled={reviseDisabled || revising || streaming} onClick={() => setReviseOpen(!reviseOpen)}
-                  className="flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-primary bg-white text-sm font-semibold text-primary disabled:opacity-50">
-                  {revising ? <Loader2 className="h-4 w-4 animate-spin" /> : <PencilLine className="h-4 w-4" />}
-                  {revising ? SECTION_REVISION_TEXT.WORKING : SECTION_REVISION_TEXT.BUTTON}
-                </button>
-                {reviseOpen && (
-                  <form className="mt-3 flex flex-col gap-2" onSubmit={(e) => { e.preventDefault(); void submitRevision(); }}>
-                    <input autoFocus value={reviseText} onChange={(e) => setReviseText(e.target.value)} maxLength={500}
-                      placeholder={SECTION_REVISION_TEXT.PLACEHOLDER} aria-label={SECTION_REVISION_TEXT.PLACEHOLDER}
-                      className="h-11 rounded-lg border border-input bg-white px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring" />
-                    <div className="flex gap-2">
-                      <button type="submit" className="h-10 flex-1 rounded-lg bg-primary text-sm font-semibold text-primary-foreground">{SECTION_REVISION_TEXT.SUBMIT}</button>
-                      <button type="button" onClick={() => setReviseOpen(false)} className="h-10 flex-1 rounded-lg bg-muted text-sm font-semibold">{SECTION_REVISION_TEXT.CANCEL}</button>
-                    </div>
-                  </form>
-                )}
-              </div>
-            )}
-          </aside>}
+          {notes && (!wide || widest) && <aside className={cn('flex flex-col gap-4', widest && 'sticky top-4 self-start')}>{notes}</aside>}
         </div>
       )}
 
       {/* Table of contents as a sheet on phones and tablets */}
       {tocOpen && !raw && (
-        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-label="Sadržaj pripreme">
+        <div className={cn('fixed inset-0 z-50', wide && 'hidden')} role="dialog" aria-label="Sadržaj pripreme">
           <button type="button" aria-label="Zatvori sadržaj" className="absolute inset-0 bg-black/40" onClick={() => setTocOpen(false)} />
           <div className="absolute bottom-0 left-0 right-0 max-h-[80vh] overflow-auto rounded-t-2xl bg-background p-3 pb-6">
             <div className="mb-2 flex justify-end">

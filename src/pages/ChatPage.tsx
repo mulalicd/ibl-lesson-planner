@@ -28,7 +28,7 @@ export default function ChatPage() {
     <div className="flex flex-col h-screen bg-background">
       <AppHeader />
       <main className="flex-1 overflow-hidden">
-        <div className="h-full max-w-[1680px] mx-auto">
+        <div className="h-full">
           <ChatInterface initialPlan={initialPlan} />
         </div>
       </main>

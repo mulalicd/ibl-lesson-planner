@@ -819,3 +819,17 @@ Predmet / Razred / Tema / Trajanje / Generiši are binder tabs in the IDSS colou
 the right edge on a computer, along the top on a phone); beside the sheet, the creation steps and a "Zaglavlje
 pripreme" card that fills in as the teacher chooses. Steps, fields, limits, texts and the request sent to the AI are
 unchanged; the flag and duration emoji are replaced by language codes and block marks (IDSS colours only).
+
+**Update 2026-11-14 (DL-P36, planner layout, Director's marked screenshot):**
+- Tablet and computer use the full screen width (no page maximum on any page).
+- The planner has two zones once a plan is being created or shown. Left: the conversation as 3D sheets (the
+  welcome text, then the teacher's parameters as an index card, chat answers, a card per plan) with the composer
+  below. Centre, at the top: the creation block (`CreationPanel`), which grows as the plan is written: steps,
+  lesson, one mark per arrived segment coloured by audience, the segment being written, and the Save / Word actions
+  of the finished plan. Under it, the plan workspace. A phone keeps one column in the same order. Free chat without
+  a plan stays one centred column.
+- Main bar: the colour marks next to the logo are removed (the IDSS logo carries the colours). "IBL Planer" is
+  large and centred; the navigation sits on the right.
+- The plan workspace chooses its layout from the width it really has (table of contents beside the page from
+  960 px, notes in their own column from 1200 px, otherwise above the table of contents), so the page never gets
+  squeezed beside the conversation.

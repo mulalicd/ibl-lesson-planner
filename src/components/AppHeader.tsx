@@ -15,23 +15,22 @@ export default function AppHeader() {
   ];
 
   return (
-    // P6 S2 (direction C): a calm white bar above the desk; the five IDSS colours appear only in the mark.
+    // P6 (direction C; Director 2026-11-14): full width; the IDSS logo carries the colours, so the bar has no colour
+    // marks of its own. The app name is large and centred; navigation sits on the right.
     <header className="sticky top-0 z-50 h-16 flex-shrink-0 border-b border-neutral-200 bg-white">
-      <div className="mx-auto flex h-full max-w-[1680px] items-center justify-between gap-4 px-3 md:px-6">
+      <div className="relative flex h-full items-center justify-between gap-3 px-3 md:px-6">
         {/* Official IDSS logo (Director-supplied, 2026-11-06), served locally from /public/brand. */}
-        <Link to="/chat" className="flex flex-shrink-0 items-center gap-3" aria-label="IBL Planer — početna">
+        <Link to="/chat" className="flex flex-shrink-0 items-center" aria-label="IBL Planer — početna">
           <img src="/brand/idss-logo.png" alt="Internationale Deutsche Schule Sarajevo" width={1460} height={443} className="h-8 w-auto sm:h-9" />
-          <span className="hidden items-center gap-2 border-l border-neutral-200 pl-3 md:flex">
-            <span aria-hidden="true" className="flex gap-0.5">
-              <span className="h-5 w-1.5 rounded-sm bg-brand-blue" /><span className="h-5 w-1.5 rounded-sm bg-brand-lightblue" />
-              <span className="h-5 w-1.5 rounded-sm bg-brand-yellow" /><span className="h-5 w-1.5 rounded-sm bg-brand-red" />
-              <span className="h-5 w-1.5 rounded-sm bg-black" />
-            </span>
-            <span className="font-display text-[15px] font-extrabold tracking-tight">IBL Planer</span>
-          </span>
         </Link>
 
-        <nav aria-label="Glavna navigacija" className="flex h-full items-stretch gap-1">
+        <span aria-hidden="true"
+          className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap font-display text-lg font-extrabold tracking-tight text-black sm:text-2xl lg:text-3xl">
+          IBL Planer
+        </span>
+
+        <div className="flex items-center gap-2 md:gap-3">
+        <nav aria-label="Glavna navigacija" className="flex h-16 items-stretch">
           {navItems.map(item => {
             const active = location.pathname === item.path;
             return (
@@ -40,12 +39,12 @@ export default function AppHeader() {
                 to={item.path}
                 aria-current={active ? 'page' : undefined}
                 className={cn(
-                  'relative flex items-center gap-2 px-4 text-sm font-semibold transition-colors',
+                  'relative flex items-center gap-2 px-3 text-sm font-semibold transition-colors lg:px-4',
                   active ? 'text-primary' : 'text-neutral-600 hover:text-black',
                 )}
               >
                 <item.icon className="h-4 w-4" />
-                <span className="hidden sm:inline">{item.label}</span>
+                <span className="hidden lg:inline">{item.label}</span>
                 {active && <motion.span layoutId="active-tab" className="absolute inset-x-3 bottom-0 h-[3px] rounded-t bg-primary" />}
               </Link>
             );
@@ -53,7 +52,7 @@ export default function AppHeader() {
         </nav>
 
         <div className="flex flex-shrink-0 items-center gap-3">
-          <span className="hidden items-center gap-1.5 text-[11px] font-semibold text-neutral-500 md:flex">
+          <span className="hidden items-center gap-1.5 text-[11px] font-semibold text-neutral-500 xl:flex">
             <Sparkles className="h-3 w-3" /> {PSI_VERSION_LABEL}
           </span>
           {session && (
@@ -67,6 +66,7 @@ export default function AppHeader() {
               <LogOut className="h-4 w-4" />
             </button>
           )}
+        </div>
         </div>
       </div>
     </header>

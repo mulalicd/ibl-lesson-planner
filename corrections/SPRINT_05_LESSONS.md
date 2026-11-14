@@ -462,3 +462,11 @@ Period: 2026-11-07 … 2026-11-14. Detailed entries follow below the summary; th
 - Fix: the form redesigned in direction C (step binder tabs on a sheet, live "Zaglavlje pripreme" card).
 - Rule: for a "whole app" change, list EVERY screen and state of every route (empty, form, chat, loading, plan)
   in the PR, and tick each one off with a screenshot against the approved proposal before asking for a merge.
+
+### 2026-11-14 — Gotcha: a component that shares the screen must size itself by its own width
+- When the planner got a conversation column beside the plan, the workspace still switched layout by SCREEN
+  width (`lg:`/`xl:`). At 1440 px it chose three columns inside ~1000 px, so the page shrank to ~430 px; on a
+  1024 px tablet the binder tabs were cut off at the edge.
+- Fix: `PlanDisplay` measures its own width (ResizeObserver) and picks the layout from that.
+- Rule: a component that can be placed beside other zones decides its layout from its container, not the
+  viewport. Screenshot every new zone layout at 1440, 1024, 768 and 390 px before reporting.

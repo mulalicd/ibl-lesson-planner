@@ -116,7 +116,7 @@ export default function PlanPage() {
       <AppHeader />
 
       {/* P6 S2 (direction C): the plan's title bar, then the workspace — the desk with the plan on it */}
-      <main className="mx-auto max-w-[1680px] px-3 py-4 md:px-6">
+      <main className="px-3 py-4 md:px-6">
         <div className="mb-4 flex flex-col gap-3 rounded-md bg-white px-4 py-3 shadow-[0_1px_0_rgb(221_221_221)] lg:flex-row lg:items-center">
           <div className="min-w-0 flex-1">
             <div className="mb-1 flex items-center gap-2 text-xs font-semibold text-neutral-600">
