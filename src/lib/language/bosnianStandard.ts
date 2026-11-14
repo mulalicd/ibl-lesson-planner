@@ -83,3 +83,9 @@ export function findNonStandardBosnian(text: string): FlaggedWord[] {
 
 /** Cyrillic letters in a Bosnian plan (the standard is Latin script). */
 export const hasCyrillic = (text: string): boolean => /\p{Script=Cyrillic}/u.test(text);
+
+/** P5-5: a stored plan as shown and exported — Bosnian plans get the same grammar-safe fixes as new ones
+ *  (DL-P19). The stored text in the database is never changed by this. */
+export function displayPlanText(text: string, language: string | null | undefined): string {
+  return language === 'bosnian' ? normalizeBosnian(text) : text;
+}
