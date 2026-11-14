@@ -1446,7 +1446,7 @@ DOKAZ UČENJA                          (ne test!)
 --------------------------------------------------------------------------------
 |  Preporuka za [duration_min] min ([tier]):                                   |
 |    MICRO:    Odaberite jedan brzi produkt (5-8 min)                          |
-|    STANDARD: Odaberite jedan sustavan produkt (15-20 min)                    |
+|    STANDARD: Odaberite jedan sistematičan produkt (15-20 min)                |
 |    EXTENDED: Možete kombinovati brzi + složeniji produkt                     |
 ================================================================================
 
@@ -1892,7 +1892,7 @@ BS: Procijenjeno vrijeme
 BS: Odaberite jedan brzi produkt (5-8 min)
   DE: Wählen Sie ein kurzes Produkt (5–8 Min.)
   EN: Choose one quick product (5–8 min)
-BS: Odaberite jedan sustavan produkt (15-20 min)
+BS: Odaberite jedan sistematičan produkt (15-20 min)
   DE: Wählen Sie ein ausführliches Produkt (15–20 Min.)
   EN: Choose one substantial product (15–20 min)
 BS: Možete kombinovati brzi + složeniji produkt

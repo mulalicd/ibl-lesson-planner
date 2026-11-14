@@ -215,3 +215,12 @@ Deno.test("L-3 language_purity: Cyrillic letters inside a German plan fail (seen
   const c = validatePlan(de, { language: "german", duration_min: 45, languagePurity: true }).checks.find((x) => x.id === "language_purity");
   if (c?.ok !== false || !c.detail.includes("Cyrillic")) throw new Error(JSON.stringify(c));
 });
+
+Deno.test("DL-P30 language_purity is measured after the template-line layer (what the teacher sees)", () => {
+  const de = "FORSCHUNGSFRAGE\nWarum schmilzt Schnee?\n|  [X]  Set predmeta za posmatranje |\n| [X]  Da li učenici pričaju više od mene? |\n";
+  const c = validatePlan(de, { language: "german", duration_min: 45, languagePurity: true }).checks.find((x) => x.id === "language_purity");
+  if (!c?.ok) throw new Error("known template lines should be replaced before the check: " + JSON.stringify(c));
+  const free = de + "Učenici rade na zadatku i pišu odgovor.\n";
+  const f = validatePlan(free, { language: "german", duration_min: 45, languagePurity: true }).checks.find((x) => x.id === "language_purity");
+  if (f?.ok !== false) throw new Error("free Bosnian text must still fail: " + JSON.stringify(f));
+});

@@ -3,7 +3,7 @@
 //
 // ONE source (M-7), used by the browser (useChat: correction while the plan streams, zero extra wait) and
 // by the Edge validator (check `bosnian_standard`: what could not be corrected automatically).
-// No imports, so both Vite and Deno can load this file.
+// Only relative ".ts" imports (no packages), so both Vite and Deno can load this file.
 //
 // Two lists:
 //  1. SAFE_FIXES: a word whose standard form has the SAME grammar (only the stem changes, endings stay):
@@ -11,6 +11,8 @@
 //  2. FLAGGED: the standard word declines differently ("rajčica" → "paradajz", "tjedan" → "sedmica"), so a
 //     mechanical swap could break the sentence. These are flagged; "Popravi" asks the AI to rewrite them.
 // The lists are the Director's to extend or change.
+
+import { normalizeTemplateLines } from "./templateLines.ts";
 
 const L = "\\p{L}";
 /** Whole-word pattern: no letter or hyphen directly before/after (so "Pre-op" or "PRE-OUTPUT" in an English
@@ -64,6 +66,7 @@ const FLAGGED: [string, boolean, string][] = [
   ["sveučilišt", true, "univerzitet"], ["nogomet", true, "fudbal"], ["glazb", true, "muzika"],
   ["kazališt", true, "pozorište"], ["povijes", true, "historija"], ["znanost", true, "nauka"],
   ["znanstven", true, "naučni"], ["obitelj", true, "porodica"], ["tvornic", true, "fabrika"], // Director 2026-11-13: only "fabrika"
+  ["sustav", true, "sistem / sistematičan"], // Director 2026-11-14 (DL-P30)
   ["vlak(?:a|u|om|ovi|ova|ovima)?", false, "voz"], ["bezbedn", true, "siguran / sigurnost"],
   ["siječ(?:anj|nja|nju)", false, "januar"], ["veljač", true, "februar"], ["ožuj", true, "mart"],
   ["trav(?:anj|nja|nju)", false, "april"], ["svib(?:anj|nja|nju)", false, "maj"], ["lip(?:anj|nja|nju)", false, "juni"],
@@ -87,5 +90,5 @@ export const hasCyrillic = (text: string): boolean => /\p{Script=Cyrillic}/u.tes
 /** P5-5: a stored plan as shown and exported — Bosnian plans get the same grammar-safe fixes as new ones
  *  (DL-P19). The stored text in the database is never changed by this. */
 export function displayPlanText(text: string, language: string | null | undefined): string {
-  return language === 'bosnian' ? normalizeBosnian(text) : text;
+  return language === 'bosnian' ? normalizeBosnian(text) : normalizeTemplateLines(text, language);
 }

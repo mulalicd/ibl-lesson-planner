@@ -1,4 +1,5 @@
 import { findNonStandardBosnian, hasCyrillic, normalizeBosnian } from "../../../src/lib/language/bosnianStandard.ts";
+import { normalizeTemplateLines } from "../../../src/lib/language/templateLines.ts";
 // validatePlan — deterministic quality checks for a generated IBL plan (P3).
 //
 // Pure function, no I/O. Used by the ibl-chat Edge Function (final SSE
@@ -247,8 +248,10 @@ export function validatePlan(text: string, params: ValidateParams): ValidationRe
   if (params.languagePurity && (params.language === "german" || params.language === "english")) {
     // L-3 (specs/language-quality): Bosnian function words inside a German/English plan. Names with č/ć/š/ž/đ
     // (Bašeskija, Ljubović) are fine, so letters are not counted. The Bosnian footer (A14) is excluded.
-    const footerStart = text.search(/Za savjete, pitanja|Maj[ai] Ljubovi[cć]/);
-    const body = footerStart > 0 ? text.slice(0, footerStart) : text;
+    // DL-P30: measured on the text the teacher sees, i.e. after the template-line layer.
+    const shownText = normalizeTemplateLines(text, params.language);
+    const footerStart = shownText.search(/Za savjete, pitanja|Maj[ai] Ljubovi[cć]/);
+    const body = footerStart > 0 ? shownText.slice(0, footerStart) : shownText;
     const found = [...body.matchAll(BOSNIAN_FUNCTION_WORDS)].map((m) => m[0]);
     const uniq = [...new Set(found)];
     // Cyrillic letters inside Latin words (seen 2026-11-14: "слушаoсе" in a German plan) always fail.
