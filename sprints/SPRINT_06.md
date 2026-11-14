@@ -49,8 +49,8 @@ DEBT (pre-existing, not introduced by P6, logged as future work).
   reading is the Director's DL-P09 decision).
 - PASS — ownership: only the author adds to a conversation; only the plan's author or the admin changes a plan.
 - PASS — no secret in `VITE_` variables; no service-role key in the client.
-- PASS (local) / pending owner run — live adversarial pass: `04_LIVE_CHECK_changes_nothing.sql` (8 attacks, rolls
-  itself back); rehearsal 0 of 8 failed.
+- PASS — live adversarial pass on PRODUCTION: `04_LIVE_CHECK_changes_nothing.sql` run by the Director 2026-11-14:
+  "LIVE CHECK: 0 of 8 FAILED (nothing was changed)" — all 8 PASS (rehearsal: same).
 - N/A — uploads, CSV export, rate-limit changes, new API routes (none in P6).
 
 **Error handling**
@@ -97,8 +97,7 @@ New rules suggested by this sprint:     7 (corrections/SPRINT_06_LESSONS.md, "Co
 **Completed:** everything in NAPREDAK; all SPEC acceptance criteria met with evidence
 (`specs/p6-workspace-redesign/S6_VERIFICATION.md`).
 
-**Not completed / waiting:** the Director runs `04_LIVE_CHECK_changes_nothing.sql` once on production (expected
-message: "LIVE CHECK: 0 of 8 FAILED (nothing was changed)").
+**Not completed / waiting:** nothing in P6. The production live security check passed (0 of 8 failed, 2026-11-14).
 
 **Risks:** the AI may write a table in a shape the renderer does not know yet (three shapes handled); amendment
 titles depend on the AI writing a capitalised title (else the teacher's question is used).
