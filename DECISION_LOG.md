@@ -756,3 +756,16 @@ it no longer describes the changed plan. Saved plans are not revised (no silent 
    are part of each stage's acceptance.
 
 **Consequence:** CONSTITUTION rule 6 text updated. The SPEC records these as decisions; the PLAN follows.
+
+## DL-P34 — P6 direction C "Nastavnički radni sto"; audience view Nastavnik / Učenik (Director, 2026-11-14)
+
+**Decided by:** Director, after S0: "Najviše mi se sviđa C. Nastavnički radni stol. Jezičci u boji po grupama
+daće nam mogućnost da prikažemo sadržaje po logici usmjerenja: Nastavnik vs. Učenik."
+
+**Decision:**
+- Visual direction for P6 is C: the plan as a paper page on a light desk, coloured binder tabs, sticky-note
+  side panel, pages dropping onto the desk during generation.
+- The binder tabs filter the segments by **audience**: Sve / Nastavnik / Učenik. This is a view only: segment
+  names, order and text never change, and every segment stays reachable under "Sve".
+- The audience of each segment is a pedagogical classification. Its mapping
+  (`specs/p6-workspace-redesign/AUDIENCE_MAP.md`) needs the Director's approval before S2.
