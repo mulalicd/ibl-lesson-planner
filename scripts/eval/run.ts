@@ -256,7 +256,7 @@ for (const g of inputs) {
     console.log(`[${v}] ${g.id} ${req.params!.subject} ${req.params!.grade} "${req.params!.topic}" ${req.params!.duration_min}min`);
     const r = await generate(msgs);
     if (!r.ok) { rows.push({ variant: v, id: g.id, ok: false, ms: r.ms, error: r.error }); console.log(`   ERROR ${r.error}`); await writeOutputs(); continue; }
-    const report = validatePlan(r.text, { language: req.params!.language, duration_min: req.params!.duration_min, tier: req.params!.tier, pedagogy: v === "v91" });
+    const report = validatePlan(r.text, { language: req.params!.language, duration_min: req.params!.duration_min, tier: req.params!.tier, pedagogy: v === "v91", languagePurity: true });
     await Deno.mkdir(`${out}/plans/${v}`, { recursive: true });
     await Deno.writeTextFile(`${out}/plans/${v}/${g.id}.txt`, r.text);
     rows.push({ variant: v, id: g.id, served: "served" in r ? r.served : modelId, ok: true, ms: r.ms, finish: r.finish, usage: r.usage, report, chars: r.text.length });
