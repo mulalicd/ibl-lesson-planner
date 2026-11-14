@@ -60,7 +60,7 @@ export type FlaggedWord = { found: string; standard: string };
 // [regex body, prefix?, standard word]. Exact forms where a stem would also hit a correct Bosnian word
 // ("vlakno", "siječe", "kolovoz" = roadway, which is why August is not listed).
 const FLAGGED: [string, boolean, string][] = [
-  ["rajčic", true, "paradajz"], ["tjedn", true, "sedmica"], ["tjedan", false, "sedmica"], ["kruh", true, "hljeb"], // Director 2026-11-13: only "hljeb"
+  ["rajčic", true, "paradajz"], ["generir", true, "generisati (Generiši)"] /* Director 2026-11-13 */, ["tjedn", true, "sedmica"], ["tjedan", false, "sedmica"], ["kruh", true, "hljeb"], // Director 2026-11-13: only "hljeb"
   ["sveučilišt", true, "univerzitet"], ["nogomet", true, "fudbal"], ["glazb", true, "muzika"],
   ["kazališt", true, "pozorište"], ["povijes", true, "historija"], ["znanost", true, "nauka"],
   ["znanstven", true, "naučni"], ["obitelj", true, "porodica"], ["tvornic", true, "fabrika"], // Director 2026-11-13: only "fabrika"
