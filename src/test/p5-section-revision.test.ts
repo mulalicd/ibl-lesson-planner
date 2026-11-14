@@ -58,33 +58,10 @@ describe('P5-4 one segment is replaced, nothing else changes (P6 S2 segments, re
   });
 });
 
-describe('P6 "Ugradi u plan" (DL-P37)', () => {
-  it('keeps only the complete plan from the AI answer, without an introduction', async () => {
-    const { extractFullPlan } = await import('@/lib/sectionRevision');
-    const { isPlanText } = await import('@/lib/planMeta');
-    const { readFileSync } = await import('node:fs');
-    const { resolve } = await import('node:path');
-    const plan = readFileSync(resolve(__dirname, '../../supabase/functions/_shared/fixtures/plan_v91_fotosinteza_bs.txt'), 'utf8');
-    const out = extractFullPlan(`Evo plana s ugrađenim prijedlozima:\n\n${plan}`, isPlanText);
-    expect(out).not.toBeNull();
-    expect(out!.startsWith('Evo')).toBe(false);
-    expect(out).toContain('UDICA');
-    expect(extractFullPlan('Samo kratak odgovor bez plana.', isPlanText)).toBeNull();
-  });
-
-  it('asks for the whole plan in the plan language, with no follow-up questions', async () => {
-    const { buildIncorporateRequest } = await import('@/lib/sectionRevision');
-    const r = buildIncorporateRequest('bosnian');
-    expect(r).toMatch(/COMPLETE lesson plan/);
-    expect(r).toMatch(/no suggested follow-up questions/);
-    expect(r).toMatch(/Bosnian/);
-  });
-});
-
 // the database is never reached in this file: the gate refuses before any call
 vi.mock('@/integrations/supabase/client', () => ({ supabase: { from: () => { throw new Error('database must not be called'); } } }));
 
-describe('P6 "Ugradi u plan" completeness gate (Director 2026-11-14: UDICA was lost)', () => {
+describe('P6 completeness gate for changes to a saved plan (Director 2026-11-14: UDICA was lost)', () => {
   const PLAN = readFileSync(resolve(__dirname, '../../supabase/functions/_shared/fixtures/plan_v91_fotosinteza_bs.txt'), 'utf8');
   const withoutUdica = (() => {
     const segs = parseSegments(PLAN);
@@ -99,22 +76,60 @@ describe('P6 "Ugradi u plan" completeness gate (Director 2026-11-14: UDICA was l
     expect(missingSections(PLAN, PLAN)).toEqual([]);
   });
 
-  it('a plan cut down to a fraction is refused', async () => {
-    const { isMuchShorter } = await import('@/lib/sectionRevision');
-    expect(isMuchShorter(PLAN, PLAN.slice(0, PLAN.length / 2))).toBe(true);
-    expect(isMuchShorter(PLAN, PLAN)).toBe(false);
-  });
-
-  it('the instruction lists every section that must stay', async () => {
-    const { buildIncorporateRequest } = await import('@/lib/sectionRevision');
-    const titles = parseSegments(PLAN).map((s) => s.title);
-    const r = buildIncorporateRequest('bosnian', titles);
-    expect(r).toContain(`ALL ${titles.length} sections`);
-    for (const t of titles) expect(r).toContain(`- ${t}`);
-  });
-
   it('a plan without a section is never written over the saved plan', async () => {
     const { replacePlanText } = await import('@/lib/planConversations');
     expect(await replacePlanText('p', null, PLAN, withoutUdica)).toBe('error');
+  });
+});
+
+describe('P6 amendments (Director 2026-11-14: "originalni plan ostaje intaktan … amandman 1, 2")', () => {
+  const PLAN = readFileSync(resolve(__dirname, '../../supabase/functions/_shared/fixtures/plan_v91_fotosinteza_bs.txt'), 'utf8');
+  const ANSWER = [
+    'Razumijem. Generišem rubriku za ocjenjivanje "exit ticketa" kao dokaza učenja.',
+    '',
+    'Evo rubrike:',
+    '',
+    'RUBRIKA ZA OCJENJIVANJE DOKAZA UČENJA: EXIT TICKET',
+    '',
+    'KRITERIJ                 4 - Iznad očekivanja         3 - Ispunjeno očekivanje',
+    '1. Upotreba dokaza       Sintetizuje dokaze.          Koristi dokaze.',
+    '2. Dubina rezonovanja    Analizira interakciju.       Objašnjava uticaj.',
+    '',
+    'Moguća sljedeća pitanja:',
+    '- "Kako mogu koristiti ovu rubriku za formativno ocjenjivanje?"',
+  ].join('\n');
+
+  it('keeps the answer word for word, without the intro and the follow-up questions', async () => {
+    const { amendmentFromAnswer } = await import('@/lib/planAppendix');
+    const a = amendmentFromAnswer(ANSWER, 'Generiši rubriku za ocjenjivanje dokaza učenja')!;
+    expect(a.title).toBe('RUBRIKA ZA OCJENJIVANJE DOKAZA UČENJA: EXIT TICKET');
+    expect(a.body).toContain('2. Dubina rezonovanja    Analizira interakciju.       Objašnjava uticaj.');
+    expect(a.body).not.toContain('Razumijem');
+    expect(a.body).not.toContain('Moguća sljedeća pitanja');
+  });
+
+  it('the original plan stays intact; amendments are numbered after it', async () => {
+    const { amendmentFromAnswer, addAmendment } = await import('@/lib/planAppendix');
+    const a = amendmentFromAnswer(ANSWER, 'x')!;
+    const one = addAmendment(PLAN, a, 'bosnian');
+    const two = addAmendment(one, { title: 'UDICA 5 minuta, nova verzija', body: 'Nova udica.' }, 'bosnian');
+    const before = parseSegments(PLAN).map((s) => s.title);
+    const after = parseSegments(two).map((s) => s.title);
+    expect(after).toHaveLength(before.length + 2);
+    expect(after[after.length - 3]).toBe('AMANDMAN 1 — RUBRIKA ZA OCJENJIVANJE DOKAZA UČENJA, EXIT TICKET');
+    expect(after[after.length - 2]).toBe('AMANDMAN 2 — UDICA 5 minuta, nova verzija');
+    expect(after[after.length - 1]).toMatch(/^ŠTA MOŽETE URADITI SLJEDEĆE/);
+    // every line of the original plan is still there, in order
+    const lines = two.split('\n');
+    let at = -1;
+    for (const l of PLAN.split('\n')) { const k = lines.indexOf(l, at + 1); expect(k, l).toBeGreaterThan(at); at = k; }
+  });
+
+  it('a German plan gets "ERGÄNZUNG"; without a title line the question names it', async () => {
+    const { amendmentFromAnswer, addAmendment } = await import('@/lib/planAppendix');
+    const a = amendmentFromAnswer('Pokažite kratki video od 3 minute.', 'Predloži konkretan video?')!;
+    expect(a.title).toBe('PREDLOŽI KONKRETAN VIDEO');
+    expect(addAmendment('PLAN\ntext', a, 'german')).toContain('ERGÄNZUNG 1 — PREDLOŽI KONKRETAN VIDEO');
+    expect(amendmentFromAnswer('Moguća sljedeća pitanja:\n- x', 'q')).toBeNull();
   });
 });

@@ -8,7 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 export default function ChatPage() {
   const [searchParams] = useSearchParams();
   const planId = searchParams.get('plan_id');
-  const [initialPlan, setInitialPlan] = useState<{ id: string; text: string; language: string; owner_id: string | null } | null>(null);
+  const [initialPlan, setInitialPlan] = useState<{ id: string; text: string; raw: string; language: string; owner_id: string | null } | null>(null);
 
   useEffect(() => {
     if (planId) {
@@ -19,7 +19,7 @@ export default function ChatPage() {
         .single()
         .then(({ data }) => {
           if (data) {
-            setInitialPlan({ id: data.id, text: displayPlanText(data.plan_text, data.language), language: data.language, owner_id: data.owner_id }); // P5-5
+            setInitialPlan({ id: data.id, text: displayPlanText(data.plan_text, data.language), raw: data.plan_text, language: data.language, owner_id: data.owner_id }); // P5-5
           }
         });
     }

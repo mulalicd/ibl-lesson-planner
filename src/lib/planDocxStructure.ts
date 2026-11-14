@@ -5,6 +5,8 @@
  * (QUALITY_FINDINGS U-10). The plan text itself is not changed: every word ends up in a block.
  */
 
+import { headingOf } from './planSegments.ts';
+
 export type PlanBlock =
   | { type: 'heading'; text: string }
   | { type: 'para'; text: string }
@@ -48,6 +50,38 @@ function joinCell(a: string, b: string): string {
   return a.endsWith('-') ? a.slice(0, -1) + b : `${a} ${b}`;
 }
 
+/** A line that may belong to a table whose columns are aligned with spaces (no "|"), e.g. an AI rubric. */
+const spaceAligned = (l: string) => !!l.trim() && !/^\s*[|│[]/.test(l) && !DRAWING.test(l) && / {3,}\S/.test(l);
+
+/**
+ * A table whose columns are aligned with spaces (Director 2026-11-14: an AI rubric showed as "a · b · c" lines).
+ * Columns are where EVERY line of the block has a run of at least two spaces. A line whose first cell is empty or
+ * starts in lower case continues the row above (a wrapped cell). Null unless there are 3+ columns and 2+ rows.
+ */
+function alignedTable(lines: string[]): string[][] | null {
+  if (lines.length < 2) return null;
+  const width = Math.max(...lines.map((l) => l.length));
+  const blank = (c: number) => lines.every((l) => c >= l.length || l[c] === ' ');
+  const starts: number[] = [];
+  for (let c = 0; c < width; c++) {
+    if (blank(c)) continue;
+    if (c === 0 || (blank(c - 1) && (c < 2 || blank(c - 2)))) starts.push(c);
+  }
+  if (starts.length < 3) return null;
+  const cellsOf = (l: string) => starts.map((s0, k) => l.slice(s0, k + 1 < starts.length ? starts[k + 1] : undefined).trim());
+  const rows: string[][] = [];
+  for (const l of lines) {
+    const cells = cellsOf(l);
+    const continues = rows.length > 0 && (!cells[0] || /^\p{Ll}/u.test(cells[0]));
+    if (continues) {
+      const prev = rows[rows.length - 1];
+      cells.forEach((c, i) => { prev[i] = joinCell(prev[i] ?? '', c); });
+    } else rows.push(cells);
+  }
+  const full = rows.filter((r) => r.filter(Boolean).length >= 3).length;
+  return rows.length >= 2 && full >= 2 ? rows : null;
+}
+
 export function structurePlan(planText: string): PlanBlock[] {
   const blocks: PlanBlock[] = [];
   let table: string[][] | null = null;
@@ -65,8 +99,20 @@ export function structurePlan(planText: string): PlanBlock[] {
     tableRaw = [];
   };
 
-  for (const raw of planText.replace(/\r/g, '').split('\n')) {
-    const line = raw.replace(/\s+$/, '');
+  const all = planText.replace(/\r/g, '').split('\n');
+  for (let idx = 0; idx < all.length; idx++) {
+    const line = all[idx].replace(/\s+$/, '');
+    if (!table && spaceAligned(line)) {
+      let end = idx;
+      while (end + 1 < all.length && all[end + 1].trim() && !/^\s*[|│[]/.test(all[end + 1]) && !DRAWING.test(all[end + 1])
+        && (/ {3,}\S/.test(all[end + 1]) || /^ {3,}\S/.test(all[end + 1]))) end++;
+      const rows = alignedTable(all.slice(idx, end + 1).map((l) => l.replace(/\s+$/, '')));
+      if (rows) {
+        blocks.push({ type: 'table', rows });
+        idx = end;
+        continue;
+      }
+    }
     const cells = rowCells(line);
     if (cells) {
       tableRaw.push(line);
@@ -97,7 +143,8 @@ export function structurePlan(planText: string): PlanBlock[] {
       continue;
     }
     const trimmed = text.trim();
-    if (isHeading(trimmed) && !ALIGNED.test(trimmed)) blocks.push({ type: 'heading', text: trimmed });
+    // a heading of the plan's own sections ("UDICA      5 minuta") is a heading too, written with single spaces
+    if ((isHeading(trimmed) && !ALIGNED.test(trimmed)) || headingOf(trimmed)) blocks.push({ type: 'heading', text: headingOf(trimmed) ? trimmed.replace(/\s{2,}/g, ' ') : trimmed });
     else if (ALIGNED.test(trimmed) && KEY_VALUE.test(trimmed) && !DRAWING.test(trimmed)) {
       // "Ko predstavlja: …   Kome: …" — label/value pairs, not a drawing: one readable line
       blocks.push({ type: 'para', text: trimmed.replace(/: {2,}/g, ': ').replace(/ {3,}/g, '  ·  ') });

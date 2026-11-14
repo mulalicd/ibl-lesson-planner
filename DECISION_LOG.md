@@ -901,3 +901,19 @@ without UDICA and it was saved — the only check was "is it a plan" (header + i
   told which sections are missing and the plan stays as it was;
 - "Vrati plan od prije ugradnje" on the plan page (author of the plan or admin) gives the plan back its text from
   `plan_text_before` and clears the marker.
+
+**Update 2026-11-14 (DL-P37, "Ugradi u plan" replaced — Director: "Dodaj + Prepravi" and "originalni plan ostaje
+intaktan a u nastavku se lijepi dodatni AI razgovor kao amandman 1, 2 …"):**
+- Finding: rewriting the whole plan by the AI is not reliable (UDICA lost once; a rubric reduced to one sentence),
+  and it can change parts nobody discussed. "Ugradi u plan" is removed.
+- A saved plan is never rewritten. What the teacher takes from a conversation is added after the plan, word for word,
+  as numbered amendments before the app hint "ŠTA MOŽETE URADITI SLJEDEĆE" (`src/lib/planAppendix.ts`):
+  - "Dodaj u plan" under each AI answer → "AMANDMAN n — <the answer's title or the question>"; the AI's intro and
+    "Moguća sljedeća pitanja" are left out;
+  - "Prepravi ovaj dio" on a saved plan → the section stays; the AI's new version becomes
+    "AMANDMAN n — <section>, nova verzija" (ERGÄNZUNG / AMENDMENT in German / English plans).
+  - The amendment is added to the text AS STORED, so every original line stays byte for byte.
+- Both: author of the plan or admin (the database decides); the text from before the conversation's first change is
+  kept (`plan_text_before`, written once); "Vrati plan od prije izmjena" gives it back.
+- Display: tables aligned with spaces (AI rubrics) are real tables on screen and in Word; plan section headings are
+  Word headings, written with ", " instead of " — "; an aligned table row is never taken for a section heading.
