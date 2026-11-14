@@ -59,8 +59,18 @@ Deno.test("timeline total that does not match the duration fails", () => {
   if (!failed(GOOD_BS.replace("Ukupno: 45 min", "Ukupno: 50 min")).includes("timeline_matches_duration")) throw new Error("not caught");
 });
 
-Deno.test("ASCII-folded Bosnian headings fail the diacritics check", () => {
-  if (!failed(GOOD_BS.replace("ISTRAŽIVAČKO PITANJE", "ISTRAZIVACKO PITANJE")).includes("bosnian_diacritics")) throw new Error("not caught");
+Deno.test("ASCII-folded Bosnian text fails the diacritics check", () => {
+  if (!failed(GOOD_BS.replace("Škola:", "Skola:")).includes("bosnian_diacritics")) throw new Error("not caught");
+});
+
+Deno.test("DL-P32: an ASCII-folded or misspelled fixed heading is corrected before the checks (as the teacher sees it)", () => {
+  const f = failed(GOOD_BS.replace("ISTRAŽIVAČKO PITANJE", "ISTRAZIVACKO PITANJE").replace("PREPORUKE ZA IZVOĐENJE ČASA", "PREPORUKE ZA IZVOĐENJE ČASSA"));
+  if (f.includes("bosnian_diacritics") || f.includes("section_iq") || f.includes("section_delivery")) throw new Error(f.join());
+});
+
+Deno.test("DL-P32: a word with the same letter three times is flagged (Bosnian), never in German", () => {
+  if (!failed(GOOD_BS.replace("fotosintezi", "fotosinteeezi")).includes("spelling_suspect")) throw new Error("not caught");
+  if (failed(GOOD_BS).includes("spelling_suspect")) throw new Error("false alarm on the good plan");
 });
 
 Deno.test("an unmarked named source fails", () => {

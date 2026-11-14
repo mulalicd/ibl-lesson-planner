@@ -1,5 +1,6 @@
 import { findNonStandardBosnian, hasCyrillic, normalizeBosnian } from "../../../src/lib/language/bosnianStandard.ts";
 import { normalizeTemplateLines } from "../../../src/lib/language/templateLines.ts";
+import { findTripleLetters, fixHeadingTypos } from "../../../src/lib/language/headingGuard.ts";
 // validatePlan — deterministic quality checks for a generated IBL plan (P3).
 //
 // Pure function, no I/O. Used by the ibl-chat Edge Function (final SSE
@@ -168,7 +169,9 @@ function timelineCheck(text: string, duration: number): CheckResult {
   return { id: "timeline_matches_duration", ok: maxEnd === duration, detail: `timeline ends at ${maxEnd} min vs ${duration} min` };
 }
 
-export function validatePlan(text: string, params: ValidateParams): ValidationReport {
+export function validatePlan(rawText: string, params: ValidateParams): ValidationReport {
+  // DL-P32: checked as the teacher sees it, i.e. with misspelled fixed headings corrected (same function as the browser)
+  const text = fixHeadingTypos(rawText, params.language);
   const checks: CheckResult[] = [];
   const upper = fold(text).toUpperCase();
   const add = (id: string, ok: boolean, detail: string) => checks.push({ id, ok, detail });
@@ -238,6 +241,12 @@ export function validatePlan(text: string, params: ValidateParams): ValidationRe
     const uniq = [...new Set(flagged.map((h) => `${h.found} → ${h.standard}`))];
     add("bosnian_standard", flagged.length === 0 && !cyr,
       cyr ? "Cyrillic letters found" : uniq.length ? uniq.slice(0, 12).join(", ") : "ok");
+  }
+
+  // DL-P32 (L-2 step 1): the same letter three times in a row is flagged, never changed (Bosnian and English)
+  if (params.language === "bosnian" || params.language === "english") {
+    const triple = findTripleLetters(text, params.language);
+    add("spelling_suspect", triple.length === 0, triple.length ? triple.slice(0, 10).join(", ") : "ok");
   }
 
   // External sources must be marked "to verify" (DL-P13 item 2)

@@ -13,6 +13,7 @@
 // The lists are the Director's to extend or change.
 
 import { normalizeTemplateLines } from "./templateLines.ts";
+import { fixHeadingTypos } from "./headingGuard.ts";
 
 const L = "\\p{L}";
 /** Whole-word pattern: no letter or hyphen directly before/after (so "Pre-op" or "PRE-OUTPUT" in an English
@@ -90,5 +91,5 @@ export const hasCyrillic = (text: string): boolean => /\p{Script=Cyrillic}/u.tes
 /** P5-5: a stored plan as shown and exported — Bosnian plans get the same grammar-safe fixes as new ones
  *  (DL-P19). The stored text in the database is never changed by this. */
 export function displayPlanText(text: string, language: string | null | undefined): string {
-  return language === 'bosnian' ? normalizeBosnian(text) : normalizeTemplateLines(text, language);
+  return fixHeadingTypos(language === 'bosnian' ? normalizeBosnian(text) : normalizeTemplateLines(text, language), language);
 }
