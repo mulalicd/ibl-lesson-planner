@@ -892,3 +892,12 @@ unchanged; the flag and duration emoji are replaced by language codes and block 
 matrix, rollback twice with rows kept, apply again).
 
 **Rollback:** `03_ROLLBACK.sql` closes the tables again (rows kept); revert the app PR.
+
+**Update 2026-11-14 (DL-P37, after the Director's first test: "nigdje ne vidim udicu"):** the AI returned a plan
+without UDICA and it was saved — the only check was "is it a plan" (header + inquiry question). Now:
+- the instruction lists every section heading that must stay (`buildIncorporateRequest(language, titles)`);
+- a new plan that lacks any section of the old plan, or is much shorter (< 80 %), is never offered and never written
+  (`missingSections`, `isMuchShorter`; checked when the answer arrives AND again in `replacePlanText`); the teacher is
+  told which sections are missing and the plan stays as it was;
+- "Vrati plan od prije ugradnje" on the plan page (author of the plan or admin) gives the plan back its text from
+  `plan_text_before` and clears the marker.

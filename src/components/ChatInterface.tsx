@@ -237,10 +237,12 @@ export default function ChatInterface({ initialPlan }: ChatInterfaceProps) {
   async function handleIncorporate() {
     if (!contextPlan) return;
     setIncorporating(true);
-    const plan = await chat.incorporateConversation(contextPlan.text, contextPlan.language ?? undefined);
+    const result = await chat.incorporateConversation(contextPlan.text, contextPlan.language ?? undefined);
     setIncorporating(false);
-    if (plan) setProposal(plan);
-    else toast.error('AI nije vratio cijeli plan. Pokušajte ponovo.');
+    if (result.ok) setProposal(result.plan);
+    else toast.error('AI nije vratio cijeli plan, pa ništa nije promijenjeno. Pokušajte ponovo.', {
+      description: result.missing.length ? `Nedostaje: ${result.missing.slice(0, 5).join(', ')}${result.missing.length > 5 ? '…' : ''}` : undefined,
+    });
   }
 
   async function handleSaveProposal() {

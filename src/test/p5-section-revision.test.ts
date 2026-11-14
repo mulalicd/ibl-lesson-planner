@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { extractRevisedSection, replaceSection, buildRevisionRequest, type SectionRef } from '@/lib/sectionRevision';
@@ -78,5 +78,43 @@ describe('P6 "Ugradi u plan" (DL-P37)', () => {
     expect(r).toMatch(/COMPLETE lesson plan/);
     expect(r).toMatch(/no suggested follow-up questions/);
     expect(r).toMatch(/Bosnian/);
+  });
+});
+
+// the database is never reached in this file: the gate refuses before any call
+vi.mock('@/integrations/supabase/client', () => ({ supabase: { from: () => { throw new Error('database must not be called'); } } }));
+
+describe('P6 "Ugradi u plan" completeness gate (Director 2026-11-14: UDICA was lost)', () => {
+  const PLAN = readFileSync(resolve(__dirname, '../../supabase/functions/_shared/fixtures/plan_v91_fotosinteza_bs.txt'), 'utf8');
+  const withoutUdica = (() => {
+    const segs = parseSegments(PLAN);
+    const u = segs.find((s) => s.head === 'UDICA')!;
+    const lines = PLAN.split('\n');
+    return [...lines.slice(0, u.start), ...lines.slice(u.end)].join('\n');
+  })();
+
+  it('names the section the AI left out', async () => {
+    const { missingSections } = await import('@/lib/sectionRevision');
+    expect(missingSections(PLAN, withoutUdica)).toEqual([expect.stringMatching(/^UDICA/)]);
+    expect(missingSections(PLAN, PLAN)).toEqual([]);
+  });
+
+  it('a plan cut down to a fraction is refused', async () => {
+    const { isMuchShorter } = await import('@/lib/sectionRevision');
+    expect(isMuchShorter(PLAN, PLAN.slice(0, PLAN.length / 2))).toBe(true);
+    expect(isMuchShorter(PLAN, PLAN)).toBe(false);
+  });
+
+  it('the instruction lists every section that must stay', async () => {
+    const { buildIncorporateRequest } = await import('@/lib/sectionRevision');
+    const titles = parseSegments(PLAN).map((s) => s.title);
+    const r = buildIncorporateRequest('bosnian', titles);
+    expect(r).toContain(`ALL ${titles.length} sections`);
+    for (const t of titles) expect(r).toContain(`- ${t}`);
+  });
+
+  it('a plan without a section is never written over the saved plan', async () => {
+    const { replacePlanText } = await import('@/lib/planConversations');
+    expect(await replacePlanText('p', null, PLAN, withoutUdica)).toBe('error');
   });
 });

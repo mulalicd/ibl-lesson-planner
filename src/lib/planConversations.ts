@@ -12,6 +12,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { ChangeResult } from '@/lib/planActions';
 import { extractInquiryQuestion } from '@/lib/planMeta';
+import { missingSections } from '@/lib/sectionRevision';
 import {
   ConversationAuthorRowSchema,
   ConversationMessageRowSchema,
@@ -24,6 +25,8 @@ export interface PlanConversation {
   created_at: string;
   author: string | null;
   replacedPlan: boolean;
+  /** The plan text that "Ugradi u plan" replaced (to give it back with "Vrati plan od prije ugradnje"). */
+  planTextBefore: string | null;
   messages: StoredMessage[];
 }
 
@@ -84,6 +87,7 @@ export async function fetchPlanConversations(planId: string): Promise<PlanConver
         created_at: c.created_at,
         author: names.get(c.id) ?? null,
         replacedPlan: !!c.plan_text_before,
+        planTextBefore: c.plan_text_before,
         messages: messages.filter((m) => m.conversation_id === c.id).map(({ role, content, created_at }) => ({ role, content, created_at })),
       }))
       .filter((c) => c.messages.length > 0);
@@ -96,6 +100,8 @@ export async function fetchPlanConversations(planId: string): Promise<PlanConver
 /** "Ugradi u plan": the plan's new text (author of the plan or admin only — the database decides). The replaced text
  *  is kept on the conversation first, so nothing is lost if the plan change then fails or is refused. */
 export async function replacePlanText(planId: string, conversationId: string | null, before: string, after: string): Promise<ChangeResult> {
+  // second barrier: a plan that lost a section is never written over the teacher's plan
+  if (missingSections(before, after).length) return 'error';
   try {
     if (conversationId) {
       const { error } = await supabase.from('conversations').update({ plan_text_before: before }).eq('id', conversationId);
@@ -113,6 +119,29 @@ export async function replacePlanText(planId: string, conversationId: string | n
     return result;
   } catch (e) {
     console.error('plan text update failed:', e);
+    return 'error';
+  }
+}
+
+/** "Vrati plan od prije ugradnje": the plan gets back the text it had before "Ugradi u plan" (author of the plan or
+ *  admin — the database decides); then the conversation no longer says it replaced the plan. */
+export async function restorePlanText(planId: string, conversationId: string, before: string): Promise<ChangeResult> {
+  try {
+    const { data, error } = await supabase
+      .from('plans')
+      .update({ plan_text: before, inquiry_question: extractInquiryQuestion(before) })
+      .eq('id', planId)
+      .select('id');
+    if (error) {
+      console.error('plan restore failed:', error.message);
+      return 'error';
+    }
+    if (!data || data.length === 0) return 'forbidden';
+    const { error: cErr } = await supabase.from('conversations').update({ plan_text_before: null }).eq('id', conversationId);
+    if (cErr) console.error('restore marker not cleared:', cErr.message);
+    return 'ok';
+  } catch (e) {
+    console.error('plan restore failed:', e);
     return 'error';
   }
 }
