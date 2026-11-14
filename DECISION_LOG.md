@@ -807,3 +807,8 @@ daće nam mogućnost da prikažemo sadržaje po logici usmjerenja: Nastavnik vs.
   marker.
 
 **Rollback:** revert PR #39.
+
+**Update 2026-11-14 (DL-P36):** the Director approved the result ("C odobren") with one correction: "manje praznog
+prostora između tekstova; prostor mora biti bolje iskorišten". Applied: a wider page (up to 1040 px), denser type
+and spacing, wrapped plan lines joined into paragraphs for reading (display only; the stored text and the Word
+export are unchanged), tighter tables, cards and title bars, and the workspace toolbar moved above the page.

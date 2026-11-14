@@ -17,7 +17,7 @@ export default function AppHeader() {
   return (
     // P6 S2 (direction C): a calm white bar above the desk; the five IDSS colours appear only in the mark.
     <header className="sticky top-0 z-50 h-16 flex-shrink-0 border-b border-neutral-200 bg-white">
-      <div className="mx-auto flex h-full max-w-[1600px] items-center justify-between gap-4 px-4 md:px-8">
+      <div className="mx-auto flex h-full max-w-[1680px] items-center justify-between gap-4 px-3 md:px-6">
         {/* Official IDSS logo (Director-supplied, 2026-11-06), served locally from /public/brand. */}
         <Link to="/chat" className="flex flex-shrink-0 items-center gap-3" aria-label="IBL Planer — početna">
           <img src="/brand/idss-logo.png" alt="Internationale Deutsche Schule Sarajevo" width={1460} height={443} className="h-8 w-auto sm:h-9" />

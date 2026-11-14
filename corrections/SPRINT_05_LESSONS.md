@@ -447,3 +447,10 @@ Period: 2026-11-07 … 2026-11-14. Detailed entries follow below the summary; th
 - Fix: PR #39 back to draft; S1 and S2 ship together, and only when the app matches the approved proposal.
 - Rule: never ask the owner to approve a stage whose screenshots do not yet show what he approved. Staging is an
   engineering detail; the owner sees the approved result or nothing.
+
+### 2026-11-14 — Director correction: too much empty space ("C odobren. Korekcija: manje praznog prostora")
+- The first build of direction C copied the proposal's generous spacing. On a real 25-segment plan with long
+  texts, that wastes the screen. The plan's lines are wrapped at about 78 characters, so every wrapped line was
+  shown as its own paragraph.
+- Fix: denser type and spacing, a wider page, and wrapped lines joined into paragraphs for reading (display only).
+- Rule: judge density on a real, long production output, not on the short texts of a mock-up.

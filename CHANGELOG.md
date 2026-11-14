@@ -78,3 +78,4 @@ One line per feature, per Commander E-10.
 - [2026-11-14] [AI] L-2 step 1: misspelled fixed headings are corrected to the PSI heading; words with three equal letters are flagged ("Moguća greška u pisanju") (DL-P32).
 - [2026-11-14] [DESIGN] P6 S1: IDSS-only colour tokens (five colours, white, neutral greys), Tailwind palette restricted to them, CI colour guard, self-hosted Manrope + Inter (DL-P35).
 - [2026-11-14] [DESIGN] P6 total redesign, direction C "Nastavnički radni sto": plan workspace with Sve/Nastavnik/Učenik tabs, creation steps and live build-up, library, sign-in, header (DL-P36).
+- [2026-11-14] [DESIGN] P6: denser workspace after the Director's review — wider page, wrapped lines joined into paragraphs, tighter spacing (DL-P36).

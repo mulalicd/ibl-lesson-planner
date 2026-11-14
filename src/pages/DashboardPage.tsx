@@ -107,9 +107,9 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-background">
       <AppHeader />
 
-      <main className="mx-auto max-w-[1600px] px-4 py-6 md:px-8">
+      <main className="mx-auto max-w-[1680px] px-3 py-4 md:px-6">
         {/* Title bar with the Moji / Svi binder tabs */}
-        <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <div role="group" aria-label="Prikaz planova" className="mb-[-1px] flex gap-1.5">
               {(['mine', 'all'] as const).map((sc) => (
@@ -127,7 +127,7 @@ export default function DashboardPage() {
                 </button>
               ))}
             </div>
-            <div className="rounded-b-md rounded-tr-md bg-white px-5 py-4 shadow-[0_1px_0_rgb(221_221_221)]">
+            <div className="rounded-b-md rounded-tr-md bg-white px-4 py-3 shadow-[0_1px_0_rgb(221_221_221)]">
               <h1 className="font-display text-2xl font-extrabold tracking-tight">{planScopeTitle(scope)}</h1>
               <p className="mt-0.5 text-sm text-muted-foreground">{total} {total === 1 ? 'plan' : 'planova'} ukupno</p>
             </div>
@@ -138,7 +138,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Filters: always visible on a desktop, behind "Filteri" on a phone */}
-        <div className="mb-6 rounded-md bg-white p-3 shadow-[0_1px_0_rgb(221_221_221)]">
+        <div className="mb-4 rounded-md bg-white p-2.5 shadow-[0_1px_0_rgb(221_221_221)]">
           <div className="flex flex-wrap items-center gap-3">
             <div className="relative min-w-[200px] flex-1 lg:max-w-[340px]">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
@@ -206,7 +206,7 @@ export default function DashboardPage() {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6">
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-4">
             {plans.map((plan, i) => (
               <motion.div
                 key={plan.id}

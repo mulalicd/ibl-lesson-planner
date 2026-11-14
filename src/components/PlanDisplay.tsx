@@ -107,15 +107,33 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
   const badge = AUDIENCE_BADGE[seg.audience];
   const hasNotes = !!quality || !!onReviseSection;
 
+  const toolbar = (
+    // Workspace toolbar: in the centre column, above the page (no extra row over the table of contents)
+      <div className="mb-3 flex flex-wrap items-center gap-2">
+        <button type="button" onClick={() => setTocOpen(true)} className="flex h-10 items-center gap-2 rounded-lg border border-border bg-white px-3 text-sm font-semibold lg:hidden">
+          <ListTree className="h-4 w-4" /> Sadržaj
+        </button>
+        <div className="flex-1" />
+        <button type="button" onClick={() => setRaw(!raw)} className="flex h-10 items-center gap-1.5 rounded-lg border border-border bg-white px-3 text-xs font-semibold text-neutral-700 hover:text-primary">
+          {raw ? <BookOpen className="h-4 w-4" /> : <Code2 className="h-4 w-4" />}
+          {raw ? 'Radni sto' : 'Izvorni tekst'}
+        </button>
+        <button type="button" onClick={handleCopy} className="flex h-10 items-center gap-1.5 rounded-lg border border-border bg-white px-3 text-xs font-semibold text-neutral-700 hover:text-primary">
+          {copied ? <Check className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
+          {copied ? 'Kopirano' : 'Kopiraj'}
+        </button>
+      </div>
+  );
+
   const toc = (
     <nav aria-label="Sadržaj pripreme" className="flex flex-col gap-0.5">
-      <div className="px-3 pb-1 font-display text-sm font-extrabold">Sadržaj</div>
-      <div className="px-3 pb-3 text-xs text-muted-foreground">{VIEW_NOTE[view]} · {pages.length}</div>
+      <div className="px-2.5 pb-0.5 font-display text-sm font-extrabold">Sadržaj</div>
+      <div className="px-2.5 pb-2 text-xs text-muted-foreground">{VIEW_NOTE[view]} · {pages.length}</div>
       {segments.map((s, i) => {
         if (!inView(s, view)) return null;
         const b = AUDIENCE_BADGE[s.audience];
         if (!hasText(s)) {
-          return <div key={i} className="px-3 pb-1 pt-3 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">{s.title}</div>;
+          return <div key={i} className="px-2.5 pb-0.5 pt-2 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">{s.title}</div>;
         }
         const on = i === cur;
         return (
@@ -128,7 +146,7 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
             onClick={() => open(i)}
             aria-current={on ? 'page' : undefined}
             className={cn(
-              'flex min-h-[36px] w-full items-center gap-2 rounded-lg px-3 text-left text-[13px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+              'flex min-h-[30px] w-full items-center gap-2 rounded-md px-2.5 text-left text-[13px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
               on ? cn('bg-white font-bold text-black shadow-sm', b.rail) : 'font-medium text-neutral-800 hover:bg-white/70',
             )}
           >
@@ -143,28 +161,12 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
 
   return (
     <div className={cn('w-full', className)} id={planId ? `plan-${planId}` : undefined}>
-      {/* Workspace toolbar */}
-      <div className="mb-4 flex flex-wrap items-center gap-2">
-        <button type="button" onClick={() => setTocOpen(true)} className="flex h-10 items-center gap-2 rounded-lg border border-border bg-white px-3 text-sm font-semibold lg:hidden">
-          <ListTree className="h-4 w-4" /> Sadržaj
-        </button>
-        <div className="flex-1" />
-        <button type="button" onClick={() => setRaw(!raw)} className="flex h-10 items-center gap-1.5 rounded-lg border border-border bg-white px-3 text-xs font-semibold text-neutral-700 hover:text-primary">
-          {raw ? <BookOpen className="h-4 w-4" /> : <Code2 className="h-4 w-4" />}
-          {raw ? 'Radni sto' : 'Izvorni tekst'}
-        </button>
-        <button type="button" onClick={handleCopy} className="flex h-10 items-center gap-1.5 rounded-lg border border-border bg-white px-3 text-xs font-semibold text-neutral-700 hover:text-primary">
-          {copied ? <Check className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
-          {copied ? 'Kopirano' : 'Kopiraj'}
-        </button>
-      </div>
-
       {raw ? (
-        <div className="overflow-x-auto rounded-md bg-white p-6 shadow-[0_18px_40px_rgba(0,0,0,0.12)]">
+        <>{toolbar}<div className="overflow-x-auto rounded-md bg-white p-6 shadow-[0_18px_40px_rgba(0,0,0,0.12)]">
           <pre className="whitespace-pre font-mono text-xs leading-relaxed text-neutral-800">{planText}</pre>
-        </div>
+        </div></>
       ) : (
-        <div className={cn('grid gap-6 lg:grid-cols-[250px_minmax(0,1fr)] lg:gap-x-16', hasNotes && 'xl:grid-cols-[250px_minmax(0,1fr)_260px]')}>
+        <div className={cn('grid gap-4 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-x-14', hasNotes && 'xl:grid-cols-[240px_minmax(0,1fr)_250px]')}>
           {/* Table of contents */}
           <aside className="hidden lg:block">
             <div className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-auto pr-1">{toc}</div>
@@ -172,6 +174,7 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
 
           {/* Paper on the desk */}
           <div className="min-w-0">
+            {toolbar}
             {/* Binder tabs: on a phone along the top edge, on a desktop down the right edge of the page */}
             <div role="tablist" aria-label="Prikaz po usmjerenju" className="mb-[-1px] flex gap-1.5 pl-4 lg:hidden">
               {VIEWS.map((v) => (
@@ -181,7 +184,7 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
                 </button>
               ))}
             </div>
-            <div className="relative mx-auto max-w-[820px]">
+            <div className="relative mx-auto max-w-[1040px]">
               <div role="tablist" aria-label="Prikaz po usmjerenju" className="absolute -right-11 top-10 z-10 hidden flex-col gap-1.5 lg:flex">
                 {VIEWS.map((v) => (
                   <button key={v.id} type="button" role="tab" aria-selected={view === v.id} onClick={() => setView(v.id)}
@@ -196,30 +199,30 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
                 animate={{ x: 0, rotateY: 0 }}
                 transition={{ duration: 0.45, ease: [0.2, 0.8, 0.2, 1] }}
                 style={{ transformPerspective: 1600, transformOrigin: '0% 50%' }}
-                className="relative min-h-[560px] rounded-md bg-white px-6 pb-16 pt-8 shadow-[0_1px_0_rgb(221_221_221),0_18px_40px_rgba(0,0,0,0.12)] sm:px-12 sm:pt-12 lg:px-16"
+                className="relative rounded-md bg-white px-5 pb-12 pt-6 shadow-[0_1px_0_rgb(221_221_221),0_18px_40px_rgba(0,0,0,0.12)] sm:px-8 sm:pt-7 lg:px-10"
               >
-                <div className="mb-7 flex flex-wrap justify-between gap-2 border-b border-neutral-200 pb-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                <div className="mb-4 flex flex-wrap justify-between gap-2 border-b border-neutral-200 pb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                   <span>Internationale Deutsche Schule Sarajevo</span>
                   <span>{badge.label}</span>
                 </div>
-                <h2 className="mb-2 font-display text-[28px] font-extrabold leading-tight tracking-tight sm:text-[34px]">{seg.title}</h2>
-                <div className="mb-6 flex flex-wrap items-center gap-2">
+                <h2 className="mb-1.5 font-display text-[24px] font-extrabold leading-tight tracking-tight sm:text-[28px]">{seg.title}</h2>
+                <div className="mb-4 flex flex-wrap items-center gap-2">
                   <span className={cn('rounded px-2 py-0.5 text-[11px] font-bold', badge.cls)}>{badge.short}</span>
                   {seg.minutes && <span className="rounded bg-brand-yellow px-2 py-0.5 text-xs font-bold text-black">{seg.minutes}</span>}
                 </div>
                 <SegmentBlocks blocks={blocks} />
-                <div className="absolute bottom-5 left-6 right-6 flex justify-between text-xs text-muted-foreground sm:left-12 sm:right-12 lg:left-16 lg:right-16">
+                <div className="absolute bottom-4 left-5 right-5 flex justify-between text-xs text-muted-foreground sm:left-8 sm:right-8 lg:left-10 lg:right-10">
                   <span>{PSI_VERSION_LABEL}</span>
                   <span>{pos + 1} / {pages.length}</span>
                 </div>
               </motion.article>
-              <div className="mt-4 flex flex-wrap justify-between gap-3">
+              <div className="mt-3 flex flex-wrap justify-between gap-3">
                 <button type="button" disabled={prevIdx === null} onClick={() => prevIdx !== null && open(prevIdx)}
-                  className="flex h-12 max-w-[48%] items-center gap-2 rounded-lg border border-neutral-300 bg-white px-4 text-sm font-semibold disabled:opacity-40">
+                  className="flex h-11 max-w-[48%] items-center gap-2 rounded-lg border border-neutral-300 bg-white px-4 text-sm font-semibold disabled:opacity-40">
                   <ChevronLeft className="h-4 w-4 flex-none" /><span className="truncate">{prevIdx !== null ? segments[prevIdx].title : 'Početak'}</span>
                 </button>
                 <button type="button" disabled={nextIdx === null} onClick={() => nextIdx !== null && open(nextIdx)}
-                  className="flex h-12 max-w-[48%] items-center gap-2 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground disabled:opacity-40">
+                  className="flex h-11 max-w-[48%] items-center gap-2 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground disabled:opacity-40">
                   <span className="truncate">{nextIdx !== null ? segments[nextIdx].title : 'Kraj'}</span><ChevronRight className="h-4 w-4 flex-none" />
                 </button>
               </div>
@@ -227,7 +230,7 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
           </div>
 
           {/* Sticky notes */}
-          {hasNotes && <aside className="flex flex-col gap-5 xl:sticky xl:top-4 xl:self-start">
+          {hasNotes && <aside className="flex flex-col gap-4 xl:sticky xl:top-4 xl:self-start">
             {quality && <div className="-rotate-1 rounded bg-brand-yellow p-4 text-black shadow-[0_10px_20px_rgba(0,0,0,0.12)]">{quality}</div>}
             {onReviseSection && (
               <div className="rotate-[0.6deg] rounded bg-white p-4 shadow-[0_10px_20px_rgba(0,0,0,0.08)]">
@@ -269,21 +272,42 @@ export default function PlanDisplay({ planText, planId, className, onReviseSecti
   );
 }
 
+/** Lines of the plan are wrapped at about 78 characters inside its boxes. For reading, a line that continues the
+ *  sentence of the line before (no closing punctuation before, a lower-case start, or a hyphen break) joins it into
+ *  one paragraph. Only line breaks change (and a hyphen that split a word at a line break). */
+function joinWrapped(blocks: PlanBlock[]): PlanBlock[] {
+  const out: PlanBlock[] = [];
+  for (const b of blocks) {
+    const prev = out[out.length - 1];
+    if (b.type === 'para' && prev?.type === 'para' && !/^(\[[ xX✓✔]\]|[-•–]\s|\d+[.)]\s)/.test(b.text)) {
+      const p = prev.text.trimEnd();
+      const continues = /-$/.test(p) || (!/[.:?!“”"]$/.test(p) && /^[\p{Ll}(„"']/u.test(b.text.trimStart()));
+      if (continues) {
+        out[out.length - 1] = { type: 'para', text: /-$/.test(p) ? p.slice(0, -1) + b.text.trimStart() : `${p} ${b.text.trimStart()}` };
+        continue;
+      }
+    }
+    out.push(b);
+  }
+  return out;
+}
+
 /** The text of one segment: headings, paragraphs (with checkboxes and lists), real tables and drawings. */
-function SegmentBlocks({ blocks }: { blocks: PlanBlock[] }) {
+function SegmentBlocks({ blocks: raw }: { blocks: PlanBlock[] }) {
+  const blocks = joinWrapped(raw);
   return (
-    <div className="flex flex-col gap-3 text-[16px] leading-[1.7] text-neutral-900">
+    <div className="flex flex-col gap-1.5 text-[15px] leading-[1.55] text-neutral-900">
       {blocks.map((b, i) => {
-        if (b.type === 'blank') return <div key={i} className="h-1" />;
-        if (b.type === 'heading') return <h3 key={i} className="mt-3 font-display text-lg font-bold text-black">{b.text}</h3>;
+        if (b.type === 'blank') return <div key={i} className="h-0.5" />;
+        if (b.type === 'heading') return <h3 key={i} className="mt-2 font-display text-base font-bold text-black">{b.text}</h3>;
         if (b.type === 'mono') return <pre key={i} className="overflow-x-auto whitespace-pre rounded bg-neutral-50 px-3 py-1 font-mono text-[12px] leading-relaxed text-neutral-800">{b.text}</pre>;
         if (b.type === 'table') {
           const [head, ...rows] = b.rows;
           return (
             <div key={i} className="overflow-x-auto">
-              <table className="w-full border-collapse text-[14px] leading-normal">
-                <thead><tr>{head.map((c, k) => <th key={k} className="border-b-2 border-black px-2.5 py-2 text-left align-bottom text-xs font-bold">{c}</th>)}</tr></thead>
-                <tbody>{rows.map((r, k) => <tr key={k}>{r.map((c, m) => <td key={m} className="border-b border-neutral-200 px-2.5 py-2 align-top">{c}</td>)}</tr>)}</tbody>
+              <table className="w-full border-collapse text-[13.5px] leading-snug">
+                <thead><tr>{head.map((c, k) => <th key={k} className="border-b-2 border-black px-2 py-1.5 text-left align-bottom text-xs font-bold">{c}</th>)}</tr></thead>
+                <tbody>{rows.map((r, k) => <tr key={k}>{r.map((c, m) => <td key={m} className="border-b border-neutral-200 px-2 py-1.5 align-top">{c}</td>)}</tr>)}</tbody>
               </table>
             </div>
           );
@@ -293,15 +317,15 @@ function SegmentBlocks({ blocks }: { blocks: PlanBlock[] }) {
         if (box) {
           const on = box[1] !== ' ';
           return (
-            <div key={i} className="flex items-start gap-3">
-              <span aria-hidden="true" className={cn('mt-1 flex h-5 w-5 flex-none items-center justify-center rounded border-2 text-xs', on ? 'border-primary bg-primary text-white' : 'border-neutral-300 bg-white')}>{on ? '✓' : ''}</span>
+            <div key={i} className="flex items-start gap-2.5">
+              <span aria-hidden="true" className={cn('mt-0.5 flex h-[18px] w-[18px] flex-none items-center justify-center rounded border-2 text-[11px]', on ? 'border-primary bg-primary text-white' : 'border-neutral-300 bg-white')}>{on ? '✓' : ''}</span>
               <span className="sr-only">{on ? 'označeno: ' : 'nije označeno: '}</span>
               <span>{box[2]}</span>
             </div>
           );
         }
         const bullet = t.match(/^[-•–]\s+(.*)$/);
-        if (bullet) return <div key={i} className="flex gap-3"><span aria-hidden="true" className="mt-[11px] h-1.5 w-1.5 flex-none rotate-45 bg-primary" /><span>{bullet[1]}</span></div>;
+        if (bullet) return <div key={i} className="flex gap-3"><span aria-hidden="true" className="mt-[9px] h-1.5 w-1.5 flex-none rotate-45 bg-primary" /><span>{bullet[1]}</span></div>;
         return <p key={i} className="m-0 whitespace-pre-line">{t}</p>;
       })}
     </div>

@@ -116,8 +116,8 @@ export default function PlanPage() {
       <AppHeader />
 
       {/* P6 S2 (direction C): the plan's title bar, then the workspace — the desk with the plan on it */}
-      <main className="mx-auto max-w-[1600px] px-4 py-6 md:px-8">
-        <div className="mb-6 flex flex-col gap-4 rounded-md bg-white px-5 py-4 shadow-[0_1px_0_rgb(221_221_221)] lg:flex-row lg:items-center">
+      <main className="mx-auto max-w-[1680px] px-3 py-4 md:px-6">
+        <div className="mb-4 flex flex-col gap-3 rounded-md bg-white px-4 py-3 shadow-[0_1px_0_rgb(221_221_221)] lg:flex-row lg:items-center">
           <div className="min-w-0 flex-1">
             <div className="mb-1 flex items-center gap-2 text-xs font-semibold text-neutral-600">
               <Link to="/dashboard" className="flex items-center gap-1 hover:text-primary"><ArrowLeft className="h-3.5 w-3.5" /> Moji planovi</Link>

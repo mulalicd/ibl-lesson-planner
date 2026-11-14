@@ -19,12 +19,12 @@ export default function PlanCard({ plan, className }: PlanCardProps) {
     <Link
       to={`/plan/${plan.id}`}
       className={cn(
-        'group flex min-h-[230px] flex-col rounded-md bg-white p-5 shadow-[0_1px_0_rgb(221_221_221),0_14px_30px_rgba(0,0,0,0.10)]',
+        'group flex min-h-[190px] flex-col rounded-md bg-white p-4 shadow-[0_1px_0_rgb(221_221_221),0_14px_30px_rgba(0,0,0,0.10)]',
         'transition-transform duration-200 ease-out hover:-translate-y-1 hover:rotate-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
         className
       )}
     >
-      <div className="mb-3 flex items-center justify-between gap-2 border-b border-neutral-200 pb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+      <div className="mb-2 flex items-center justify-between gap-2 border-b border-neutral-200 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
         <span className="truncate">{showText(plan.subject)} · <GraduationCap className="inline h-3 w-3" /> {showGrade(plan.grade)}</span>
         <span className="flex flex-none items-center gap-1.5">
           <span className={cn('rounded px-2 py-0.5 text-[10px] font-bold normal-case tracking-normal', plan.tier ? TIER_COLORS[plan.tier] : '')}>{tierLabel}</span>
@@ -32,15 +32,15 @@ export default function PlanCard({ plan, className }: PlanCardProps) {
         </span>
       </div>
 
-      <h3 className="mb-2 font-display text-lg font-extrabold leading-snug text-black transition-colors group-hover:text-primary">
+      <h3 className="mb-1 font-display text-[17px] font-extrabold leading-snug text-black transition-colors group-hover:text-primary">
         {truncate(showText(plan.topic), 70)}
       </h3>
 
       {plan.inquiry_question && (
-        <p className="mb-3 text-sm leading-relaxed text-primary">„{truncate(plan.inquiry_question, 110)}“</p>
+        <p className="mb-2 text-sm leading-snug text-primary">„{truncate(plan.inquiry_question, 110)}“</p>
       )}
 
-      <div className="mt-auto flex items-center gap-3 border-t border-neutral-200 pt-3 text-[11px] text-muted-foreground">
+      <div className="mt-auto flex items-center gap-3 border-t border-neutral-200 pt-2 text-[11px] text-muted-foreground">
         <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {showMinutes(plan.duration_min)}</span>
         <span>{formatDate(plan.created_at)}</span>
         {plan.author && (
