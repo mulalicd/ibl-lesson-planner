@@ -62,7 +62,7 @@ const PEDAGOGY_SECTIONS: Record<string, string[]> = {
 // Forms of work, any inflection (Grupa/Grupe/u grupama, u paru/u parovima, Frontalno/frontalni rad …).
 // Bosnian words that never occur in correct German or English text ("da", "je", "i" excluded: they do).
 const BOSNIAN_FUNCTION_WORDS = /(?<![\p{L}-])(su|na|za|se|od|kako|koji|koja|koje|nije|ili|šta|što|učenici|učenik|učenika|nastavnik|nastavnica|časa|čas|odgovor|pitanje)(?![\p{L}-])/gu;
-const GROUPING = /(INDIVID|SAMOSTALN|U PAR|PAROVI|GRUP|FRONTAL|CIJELI RAZRED|EINZEL|PARTNER|GRUPPE|PLENUM|PAIRS?\b|GROUPS?\b|WHOLE CLASS)/;
+const GROUPING = /(INDIVID|SAMOSTALN|U PAR|PAROVI|GRUP|FRONTAL|CIJELI RAZRED|EINZEL|PARTNER|PAAR|GRUPPE|PLENUM|PAIRS?\b|GROUPS?\b|WHOLE CLASS)/;
 const ALL_HEADINGS = [...Object.values(SECTIONS).flat(), ...Object.values(PEDAGOGY_SECTIONS).flat()];
 
 /** Lines of the section that starts at the first line containing one of `keys`, up to the next known heading. */

@@ -190,6 +190,14 @@ Deno.test("P4 phases_complete: a wrapped table row is one phase ('INDIVIDU-' + '
   if (!c?.ok || !c.detail.startsWith("4/4")) throw new Error(JSON.stringify(c));
 });
 
+Deno.test("P4 phases_complete: German 'Paararbeit' states the form of work (eval run 43543883627, g14)", () => {
+  const row = '| 35-45 | Refleksija učenika | Individualno | provjeravaju "Mogu …" | sluša | listić — dokaz za I3 |';
+  if (!GOOD_V91.includes(row)) throw new Error("fixture row not found — test would be vacuous");
+  const paar = GOOD_V91.replace(row, row.replace("Individualno", "Paararbeit"));
+  const c = validatePlan(paar, { language: "bosnian", duration_min: 45, pedagogy: true }).checks.find((x) => x.id === "phases_complete");
+  if (!c?.ok) throw new Error(JSON.stringify(c));
+});
+
 Deno.test("L-3 language_purity (eval only): Bosnian words in an English plan are found; names and the A14 footer are not", () => {
   const en = "INQUIRY QUESTION\nWhy did Mula Mustafa Bašeskija write a chronicle?\nStudents compare sources.\n" +
     "Za savjete, pitanja i ideje budite slobodni da se obratite gospođi Maji Ljubović na: maja.ljubovic@idss.ba";

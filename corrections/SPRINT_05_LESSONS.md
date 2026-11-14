@@ -361,3 +361,18 @@ Period: 2026-11-07 … 2026-11-13. Detailed entries follow below the summary; th
 - The first render of the structured export merged the "Ukupno" row into the row above, kept key/value lines
   in monospace, and printed "School: · …". All tests were green at that point.
 - Confirms the 2026-11-10 rule: render generated documents and look at them before the PR.
+
+### 2026-11-14 — Observation: DL-P29 template lines help one lesson, another copies instead
+- Eval run 43543883627 (8 lessons, with the DE/EN template list): g02 is now clean, but g14 copied
+  "Set predmeta za posmatranje / Experimentierset" and "povratak na". language_purity 6/7 (before: 5/6).
+  Bosnian g01 28/28 and English g26 26/26: no regression. Prompt +2,200 tokens.
+- Rule: prompt changes reduce verbatim copying; they cannot guarantee zero. A guarantee needs a
+  deterministic layer after generation (exact known template lines → their DE/EN line), like
+  normalizeBosnian for Bosnian.
+- Same run: validator false negative, "PAARARBEIT" (German pair work) was not in GROUPING. Fixed with a
+  test. And a model typo in a heading ("TIPPPS & TRICKS") made section_tips fail: first hard evidence for
+  L-2 (misspellings), in German.
+
+### 2026-11-14 — Environment gotcha: the worker restart removed deno; the deno.land installer is blocked (403)
+- Deno tests could not run locally after the restart. The CI workflow (ci.yml, on pull_request) runs them,
+  so the PR check is the evidence. Say so in the report instead of claiming a local run.
